@@ -12,6 +12,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
@@ -22,7 +23,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 	public class CaracterizacaoController : DefaultController
 	{
 		#region Propriedades
-
+		BarragemDispensaLicencaBus _busB = new BarragemDispensaLicencaBus();
 		CaracterizacaoBus _bus = new CaracterizacaoBus(new CaracterizacaoValidar());
 		CaracterizacaoInternoBus _internoBus = new CaracterizacaoInternoBus();
 		CaracterizacaoValidar _validar = new CaracterizacaoValidar();
@@ -154,6 +155,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
 				{
 					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
+
 				}
 				else
 				{

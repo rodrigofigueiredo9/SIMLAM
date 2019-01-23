@@ -8,7 +8,7 @@
 	<legend class="titFiltros">Barragem Associada</legend>
 
 	<div class="dataGrid">
-		
+		<input type="hidden" class="dependencias"n value="<%= Model.projetoDigital.Dependencias.Count%>" />
 		<button title="Cadastrar" class="btnAdicionar floatRight" role="button" style="margin:0.5%"><strong>+ Barragem</strong></button>		
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>

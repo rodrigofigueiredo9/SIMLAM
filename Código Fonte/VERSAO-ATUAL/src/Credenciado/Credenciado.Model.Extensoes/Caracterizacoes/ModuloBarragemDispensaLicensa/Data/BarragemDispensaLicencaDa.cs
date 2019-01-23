@@ -223,7 +223,40 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-        internal void CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao, BancoDeDados banco)
+		public void ExcluirPorId(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+				
+				#region Histórico
+
+				//Atualizar o tid para a nova ação
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.excluir, bancoDeDados, null);
+
+				#endregion
+
+				#region Apaga os dados da caracterização
+
+				comando = bancoDeDados.CriarComandoPlSql(
+				@"begin 
+					delete from crt_barragem_dispensa_lic where id = :id;
+				end;", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
+		internal void CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao, BancoDeDados banco)
         {
 
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
@@ -373,7 +406,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				c.fase, c.possui_monge, c.tipo_monge, c.especificacao_monge, c.possui_vertedouro, c.tipo_vertedouro, c.especificacao_vertedouro, 
                 c.possui_estrutura_hidrau, c.adequacoes_realizada, c.data_inicio_obra, c.data_previsao_obra, c.easting, c.northing, c.formacao_resp_tec, 
                 c.especificacao_rt, c.autorizacao, c.numero_art_elaboracao, c.numero_art_execucao 
-                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt
+                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt, Tab_projeto_digital p
 					where exists
 					(
 						select 1 from TAB_TITULO t
@@ -532,7 +565,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				int retornoComando = 0;
 
 				Comando comando = bancoDeDados.CriarComando(@"select dependencia_id from tab_proj_digital_dependencias WHERE PROJETO_DIGITAL_ID = :projetoDigitalId", EsquemaCredenciadoBanco);
-				
+
 				comando.AdicionarParametroEntrada("projetoDigitalId", projetoDigitalId, DbType.UInt32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -554,7 +587,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					while(reader.Read())
+					while (reader.Read())
 					{
 						caracterizacao.Id = reader.GetValue<int>("id");
 						caracterizacao.CredenciadoID = retornoComando;
@@ -595,13 +628,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.Autorizacao.Id = reader.GetValue<int>("autorizacao");
 						caracterizacao.NumeroARTElaboracao = reader.GetValue<string>("numero_art_elaboracao");
 						caracterizacao.NumeroARTExecucao = reader.GetValue<string>("numero_art_execucao");
-					}
 
+						ListaBarragem.Add(caracterizacao);
+
+					}
 					reader.Close();
 				}
-				ListaBarragem.Add(caracterizacao);
 			}
-
 			return ListaBarragem;
 		}
 

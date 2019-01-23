@@ -128,8 +128,7 @@
 								<input type="hidden" class="hdnUrlExcluir" value="<%= Html.Encode(item.UrlExcluir) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
-
-								<% if (item.PodeAssociar) { %><input title="Associar ao projeto digital" class="icone associar btnAssociar" type="button" /><% } %>
+								<% if (item.PodeAssociar && !Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><input title="Associar ao projeto digital" class="icone associar btnAssociar" type="button" /><% } %>
 								<% if (item.PodeCopiar) { %><input title="Copiar do institucional" class="icone comparar btnCopiar" type="button" /><% } %>
 								<% if (item.PodeVisualizar) { %><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/><% } %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>

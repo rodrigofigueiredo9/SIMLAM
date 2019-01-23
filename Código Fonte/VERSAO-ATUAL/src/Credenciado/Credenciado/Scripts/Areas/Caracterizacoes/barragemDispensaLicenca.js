@@ -39,7 +39,7 @@ BarragemDispensaLicenca = {
 		BarragemDispensaLicenca.container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
 		BarragemDispensaLicenca.container.delegate('.btnEditar', 'click', BarragemDispensaLicenca.editar);
 
-
+		BarragemDispensaLicenca.container.bloquearCriar();
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -376,6 +376,15 @@ BarragemDispensaLicenca = {
         MasterPage.carregando(false);
 	},
 
+	bloquearCriar: function(){
+		var preenchido = $(this).closest('tr').find('.dependencias').val();
+		debugger;
+		if (preenchido > 1)
+		{
+			document.getElementById('btnAdicionar').disabled = true;
+		}
+	},
+
 	criar: function () {
 		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
 			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
@@ -397,41 +406,60 @@ BarragemDispensaLicenca = {
 			}
 		);
 	},
-
+	
 	desassociar: function () {
-		var linha = $(this).closest('tr');
-		var caracterizacaoTipo = $('.hdnCaracterizacaoTipo', linha).val();
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		//dependenciaTipos.TipoCaracterizacao
+		var dependencias = $(this).closest('tr').find('.dependencias').val();
 
-		var objeto = {
-			Id: BarragemDispensaLicenca.settings.projetoDigitalID,
-			EmpreendimentoId: BarragemDispensaLicenca.settings.empreendimentoID,
-			Dependencias: [{ DependenciaTipo: BarragemDispensaLicenca.settings.dependenciaTipos.TipoCaracterizacao, DependenciaCaracterizacao: caracterizacaoTipo }]
-		};
+		if (dependencias > 1)
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Desassociar Barragem',
+				conteudo: 'Deseja realmente desassociar?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
 
-		MasterPage.carregando(true);
-		$.ajax({
-			url: BarragemDispensaLicenca.settings.urls.DesassociarCaracterizacao,
-			data: JSON.stringify(objeto),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, Caracterizacao.container);
-			},
-			success: function (response, textStatus, XMLHttpRequest) {
-				if (response.EhValido) {
-					MasterPage.redireciona(response.UrlRedirecionar);
-					return;
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
 				}
+			});
+		}
+		else
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Desassociar Barragem e EXCLUIR',
+				conteudo: 'Deseja realmente desassociar e excluir a barragem criada?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
 
-				if (response.Msg && response.Msg.length > 0) {
-					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
 				}
-			}
-		});
-		MasterPage.carregando(false);
+			});
+		}
 	},
 
 	editar: function () {

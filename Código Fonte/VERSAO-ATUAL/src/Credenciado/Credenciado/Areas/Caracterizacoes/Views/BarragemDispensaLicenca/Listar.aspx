@@ -13,7 +13,7 @@
 				urls: {
 					salvar: '<%= Url.Action("Criar", "BarragemDispensaLicenca") %>',
 					associar: '<%= Url.Action("AssociarCaracterizacaoProjetoDigital", "BarragemDispensaLicenca") %>',
-					desassociar: '<%= Url.Action("DesassociarCaracterizacaoProjetoDigital", "Caracterizacao")%>',
+					desassociar: '<%= Url.Action("DesassociarCaracterizacaoProjetoDigital", "BarragemDispensaLicenca")%>',
 					visualizar: '<%= Url.Action("Visualizar", "BarragemDispensaLicenca")%>',
 					editar: '<%= Url.Action("Editar", "BarragemDispensaLicenca")%>',
 
@@ -41,8 +41,7 @@
 		</div>
 
 		<div class="block box">
-			<input class="floatLeft btnSalvar" type="button" value="Salvar" />
-			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoID, projetoDigitalId = Request.Params["projetoDigitalId"] }) %>">Cancelar</a></span>
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoID, projetoDigitalId = Request.Params["projetoDigitalId"] }) %>">Voltar</a></span>
 		</div>
 	</div>
 </asp:Content>

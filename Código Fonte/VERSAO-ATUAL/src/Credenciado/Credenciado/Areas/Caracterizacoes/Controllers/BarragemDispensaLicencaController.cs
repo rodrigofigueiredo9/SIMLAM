@@ -203,7 +203,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
 				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
 			}
-
+			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
 			caracterizacao.EmpreendimentoID = id;
@@ -228,8 +228,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
 			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, projetoDigitalId);
-			vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
-
+			int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
+			if (result != 0)
+				vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
+			vm.projetoDigital.Dependencias = projetoDigitalBus.ObterDependencias(projetoDigitalId);
 			return View(vm);
 		}
 
@@ -257,5 +259,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
+		[Permite(Tipo = ePermiteTipo.Logado)]
+		public ActionResult DesassociarCaracterizacaoProjetoDigital(int projetoDigitalId, int caracterizacao)
+		{
+			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
+			var projetoDigital = projetoDigitalBus.Obter(projetoDigitalId);
+			projetoDigitalBus.DesassociarDependencias(projetoDigital);
+			var dependencias = projetoDigitalBus.ObterDependencias(projetoDigitalId);
+			if (dependencias.Count == 0)
+				_bus.ExcluirPorId(caracterizacao);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@UrlRedirecionar = Url.Action("Listar", "BarragemDispensaLicenca", new { id = projetoDigital.EmpreendimentoId, projetoDigitalId = projetoDigital.Id, Msg = Validacao.QueryParam() })
+			}, JsonRequestBehavior.AllowGet);
+		}
 	}
 }
