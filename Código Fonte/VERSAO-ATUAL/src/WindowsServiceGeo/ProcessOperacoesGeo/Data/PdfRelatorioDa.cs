@@ -445,7 +445,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
-				
+
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
@@ -818,7 +818,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			else if (ticketType == OperacoesGeoDa.OPERACAO_ATIVIDADE_TITULO)
 			{
 				#region Atividade por título
-				
+
 				int titulo;
 
 				strSQL = @"select titulo from tab_fila where projeto = :projeto and tipo = :tipo and etapa = :etapa and data_fim is null and rownum = 1";
@@ -1109,7 +1109,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 							idsList.Add(reader["id"]);
 						}
 
-						if(idsList.Count > 0)
+						if (idsList.Count > 0)
 							result["AATIV"] = string.Join(",", idsList.ToArray());
 
 						reader.Close();
@@ -1122,10 +1122,9 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			{
 				#region CADASTRO_PROPRIEDADE
 
-				strSQL = @"select 'ATP' classe, 'Área Total da Propriedade' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_atp_1 where projeto=:projeto
-                    union all select 'AFD' classe, 'Área de Faixa de Domínio' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_afd where projeto=:projeto
-                    union all select 'APMP' classe, 'Área da Propriedade por Matrícula ou Posse' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_apmp where projeto=:projeto
-                    union all select 'AFS' classe, 'Área de Faixa de Servidão' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_rf_afs where projeto=:projeto";
+				strSQL = @"select 'ATP' classe, 'Área Total da Propriedade' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_atp where projeto=:projeto                    
+                    union all select 'APMP' classe, 'Área da Propriedade por Matrícula ou Posse' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_apmp where projeto=:projeto";
+
 
 				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 
@@ -1147,7 +1146,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 
 				//Ordenadas TMP_ATP
-				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from tmp_rf_atp_1 t where t.projeto=:projeto) t";
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from tmp_atp t where t.projeto=:projeto) t";
 
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
@@ -1222,7 +1221,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
                                 (select a.texto from {0}lov_caracterizacao_tipo a where a.id=p.caracterizacao) atividade,
                                 (select a.id from {0}crt_projeto_geo a where a.empreendimento=p.empreendimento and a.caracterizacao=1) dominialidade,
                                 (select round(a.geometry.sdo_point.x) ||';'|| round(a.geometry.sdo_point.y) from geo_emp_localizacao a where a.empreendimento=p.empreendimento) coordenada,
-								(select sdo_geom.sdo_length(a.geometry, 0.0001) from tmp_rf_atp_1 a where a.projeto=p.id) atp_perimetro   
+								(select sdo_geom.sdo_length(a.geometry, 0.0001) from tmp_atp a where a.projeto=p.id) atp_perimetro   
                             from 
                                 {0}tmp_projeto_geo p, 
                                 {0}tab_empreendimento_endereco t 
