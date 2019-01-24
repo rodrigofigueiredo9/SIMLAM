@@ -14,12 +14,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public int Id { get; set; }
 		public string Tid { get; set; }
 		public int EmpreendimentoID { get; set; }
-        public int EmpreendimentoCodigo { get; set; }
+		public int EmpreendimentoCodigo { get; set; }
 		public int AtividadeID { get; set; }
 		public string Atividade { get; set; }
 
 		public eBarragemTipo BarragemTipo { get; set; }
-		public eRTElabocarao rtElaboracao  { get; set; }
+		public eRTElabocarao rtElaboracao { get; set; }
 		public eFase faseInstalacao { get; set; }
 		public List<BarragemCoordenada> coordenadas { get; set; }
 
@@ -30,11 +30,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public decimal comprimentoBarramento { get; set; }
 		public decimal larguraBaseBarramento { get; set; }
 		public decimal larguraCristaBarramento { get; set; }
-		public List<int> Finalidade { get; set; }
+		public List<int> finalidade { get; set; }
 		public string cursoHidrico { get; set; }
 		public decimal areaBaciaContribuicao { get; set; }
 		public decimal intensidadeMaxPrecipitacao { get; set; }
-		public string fonteDadosIntensidadeMax { get; set; }
+		public string fonteDadosPrecipitacao { get; set; }
 		public decimal periodoRetorno { get; set; }
 		public decimal coeficienteEscoamento { get; set; }
 		public string fonteDadosCoeficienteEscoamento { get; set; }
@@ -62,9 +62,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public Arquivo.Arquivo Autorizacao { get; set; }
 		public string NumeroARTElaboracao { get; set; }
 		public string NumeroARTExecucao { get; set; }
-        public int InternoID { get; set; }
-        public string InternoTID { get; set; }
-        public int CredenciadoID { get; set; }
+		public int InternoID { get; set; }
+		public string InternoTID { get; set; }
+		public int CredenciadoID { get; set; }
 
 		public BarragemConstruidaAConstruir construidaConstruir { get; set; }
 		public List<BarragemRT> responsaveisTecnicos { get; set; }
@@ -73,6 +73,15 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		{
 			Coordenada = new Coordenada();
 			Autorizacao = new Arquivo.Arquivo();
+			construidaConstruir = new BarragemConstruidaAConstruir();
+			responsaveisTecnicos = new List<BarragemRT>();
+			for (var i = 0; i < 6; i++)
+			{
+				BarragemRT rt = new BarragemRT();
+				if (i == 1) rt.autorizacaoCREA = new Arquivo.Arquivo();
+
+				responsaveisTecnicos.Add(rt);
+			}
 		}
 	}
 }

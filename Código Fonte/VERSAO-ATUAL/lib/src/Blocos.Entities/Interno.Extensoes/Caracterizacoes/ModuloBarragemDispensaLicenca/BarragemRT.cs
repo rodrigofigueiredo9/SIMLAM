@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
+using Tecnomapas.Blocos.Entities.Interno.ModuloProfissao;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca
 {
@@ -14,9 +15,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public int id { get; set; }
 		public eTipoRT tipo { get; set; }
 		public string nome { get; set; }
-		public string profissao { get; set; }
+		public Profissao profissao { get; set; }
 		public string registroCREA { get; set; }
-		public Arquivo.Arquivo AutorizacaoCREA { get; set; }
+		public string numeroART { get; set; }
+		public Arquivo.Arquivo autorizacaoCREA { get; set; }
 
 		public BarragemRT() { }
 	}

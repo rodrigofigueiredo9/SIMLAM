@@ -25,23 +25,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                 return false;
             }
 
-            BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
+            //BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
 
-            if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
-            {
-                Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-                return false;
-            }
+            //if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
+            //{
+            //    Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
+            //    return false;
+            //}
 
-            if (!Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
-            {
-                return false;
-            }
+            //if (!Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
+            //{
+            //    return false;
+            //}
 
-            if (caracterizacao.AtividadeID <= 0)
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneAtividade);
-            }
+            //if (caracterizacao.AtividadeID <= 0)
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneAtividade);
+            //}
 
             //if (!caracterizacao.BarragemTipo.HasValue)
             //{
@@ -103,158 +103,158 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
             //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVolumeArmazenadoZero);
             //}
 
-            if (caracterizacao.Fase.GetValueOrDefault() <= 0)
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFase);
-            }
-            if (caracterizacao.Fase.HasValue)
-            {
-                switch (caracterizacao.Fase.GetValueOrDefault())
-                {
-                    case (int)eFase.Construida:
-                        #region FASE: Construida
-                        if (!caracterizacao.PossuiMonge.HasValue)
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiMonge);
-                        }
-                        else if (Convert.ToBoolean(caracterizacao.PossuiMonge))
-                        {
-                            if (!caracterizacao.MongeTipo.HasValue || caracterizacao.MongeTipo.GetValueOrDefault() <= 0)
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoMonge);
-                            }
-                            else if (caracterizacao.MongeTipo.GetValueOrDefault() == (int)eMongeTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoMonge))
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoMonge);
-                            }
-                        }
+            //if (caracterizacao.Fase.GetValueOrDefault() <= 0)
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFase);
+            //}
+            //if (caracterizacao.Fase.HasValue)
+            //{
+            //    switch (caracterizacao.Fase.GetValueOrDefault())
+            //    {
+            //        case (int)eFase.Construida:
+            //            #region FASE: Construida
+            //            if (!caracterizacao.PossuiMonge.HasValue)
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiMonge);
+            //            }
+            //            else if (Convert.ToBoolean(caracterizacao.PossuiMonge))
+            //            {
+            //                if (!caracterizacao.MongeTipo.HasValue || caracterizacao.MongeTipo.GetValueOrDefault() <= 0)
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoMonge);
+            //                }
+            //                else if (caracterizacao.MongeTipo.GetValueOrDefault() == (int)eMongeTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoMonge))
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoMonge);
+            //                }
+            //            }
 
-                        if (!caracterizacao.PossuiVertedouro.HasValue)
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiVertedouro);
-                        }
-                        else if (Convert.ToBoolean(caracterizacao.PossuiVertedouro))
-                        {
-                            if (!caracterizacao.VertedouroTipo.HasValue || caracterizacao.VertedouroTipo <= 0)
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoVertedouro);
-                            }
-                            else if (caracterizacao.VertedouroTipo == (int)eVertedouroTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoVertedouro))
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoVertedouro);
-                            }
-                        }
+            //            if (!caracterizacao.PossuiVertedouro.HasValue)
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiVertedouro);
+            //            }
+            //            else if (Convert.ToBoolean(caracterizacao.PossuiVertedouro))
+            //            {
+            //                if (!caracterizacao.VertedouroTipo.HasValue || caracterizacao.VertedouroTipo <= 0)
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoVertedouro);
+            //                }
+            //                else if (caracterizacao.VertedouroTipo == (int)eVertedouroTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoVertedouro))
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoVertedouro);
+            //                }
+            //            }
 
-                        if ((caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge)) ||
-                            (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro)))
-                        {
-                            if (!caracterizacao.PossuiEstruturaHidraulica.HasValue)
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiEstruturaHidraulica);
-                            }
-                        }
+            //            if ((caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge)) ||
+            //                (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro)))
+            //            {
+            //                if (!caracterizacao.PossuiEstruturaHidraulica.HasValue)
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePossuiEstruturaHidraulica);
+            //                }
+            //            }
 
-                        if ((caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge)) ||
-                            (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro)) ||
-                            (caracterizacao.PossuiEstruturaHidraulica.HasValue && !Convert.ToBoolean(caracterizacao.PossuiEstruturaHidraulica)))
-                        {
-                            if (string.IsNullOrWhiteSpace(caracterizacao.AdequacoesRealizada))
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAdequacoesRealizada);
-                            }
-                        }
-                        #endregion
-                        break;
-                    case (int)eFase.AConstruir:
-                        #region FASE: A construir
-                        if (!caracterizacao.MongeTipo.HasValue || caracterizacao.MongeTipo.GetValueOrDefault() <= 0)
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoMonge);
-                        }
-                        else if (caracterizacao.MongeTipo == (int)eMongeTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoMonge))
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoMonge);
-                        }
+            //            if ((caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge)) ||
+            //                (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro)) ||
+            //                (caracterizacao.PossuiEstruturaHidraulica.HasValue && !Convert.ToBoolean(caracterizacao.PossuiEstruturaHidraulica)))
+            //            {
+            //                if (string.IsNullOrWhiteSpace(caracterizacao.AdequacoesRealizada))
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAdequacoesRealizada);
+            //                }
+            //            }
+            //            #endregion
+            //            break;
+            //        case (int)eFase.AConstruir:
+            //            #region FASE: A construir
+            //            if (!caracterizacao.MongeTipo.HasValue || caracterizacao.MongeTipo.GetValueOrDefault() <= 0)
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoMonge);
+            //            }
+            //            else if (caracterizacao.MongeTipo == (int)eMongeTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoMonge))
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoMonge);
+            //            }
 
-                        if (!caracterizacao.VertedouroTipo.HasValue || caracterizacao.VertedouroTipo <= 0)
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoVertedouro);
-                        }
-                        else if (caracterizacao.VertedouroTipo == (int)eVertedouroTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoVertedouro))
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoVertedouro);
-                        }
+            //            if (!caracterizacao.VertedouroTipo.HasValue || caracterizacao.VertedouroTipo <= 0)
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTipoVertedouro);
+            //            }
+            //            else if (caracterizacao.VertedouroTipo == (int)eVertedouroTipo.Outros && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoVertedouro))
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoVertedouro);
+            //            }
 
-                        #region datas da obra
-                        DateTime testeDataInicio;
-                        if (string.IsNullOrWhiteSpace(caracterizacao.DataInicioObra))
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataInicioObra);
-                        }
-                        else
-                        {
-                            if (!DateTime.TryParse(caracterizacao.DataInicioObra, out testeDataInicio))
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataInicioObraFormatoValido);
-                            }
-                        }
+            //            #region datas da obra
+            //            DateTime testeDataInicio;
+            //            if (string.IsNullOrWhiteSpace(caracterizacao.DataInicioObra))
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataInicioObra);
+            //            }
+            //            else
+            //            {
+            //                if (!DateTime.TryParse(caracterizacao.DataInicioObra, out testeDataInicio))
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataInicioObraFormatoValido);
+            //                }
+            //            }
 
-                        DateTime testeDataTermino;
-                        if (string.IsNullOrWhiteSpace(caracterizacao.DataPrevisaoTerminoObra))
-                        {
-                            Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataPrevisaoTerminoObra);
-                        }
-                        else
-                        {
-                            if (!DateTime.TryParse(caracterizacao.DataPrevisaoTerminoObra, out testeDataTermino))
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataPrevisaoTerminoObraFormatoValido);
-                            }
-                        }
+            //            DateTime testeDataTermino;
+            //            if (string.IsNullOrWhiteSpace(caracterizacao.DataPrevisaoTerminoObra))
+            //            {
+            //                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataPrevisaoTerminoObra);
+            //            }
+            //            else
+            //            {
+            //                if (!DateTime.TryParse(caracterizacao.DataPrevisaoTerminoObra, out testeDataTermino))
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDataPrevisaoTerminoObraFormatoValido);
+            //                }
+            //            }
 
-                        if (DateTime.TryParse(caracterizacao.DataInicioObra, out testeDataInicio) && DateTime.TryParse(caracterizacao.DataPrevisaoTerminoObra, out testeDataTermino))
-                        {
-                            if (testeDataInicio > testeDataTermino)
-                            {
-                                Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoObraValido);
-                            }
-                        }
-                        #endregion
+            //            if (DateTime.TryParse(caracterizacao.DataInicioObra, out testeDataInicio) && DateTime.TryParse(caracterizacao.DataPrevisaoTerminoObra, out testeDataTermino))
+            //            {
+            //                if (testeDataInicio > testeDataTermino)
+            //                {
+            //                    Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoObraValido);
+            //                }
+            //            }
+            //            #endregion
 
-                        #endregion
-                        break;
-                }
-            }
+            //            #endregion
+            //            break;
+            //    }
+            //}
 
-            if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.EastingUtmTexto))
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting);
-            }
+            //if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.EastingUtmTexto))
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting);
+            //}
 
-            if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.NorthingUtmTexto))
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing);
-            }
+            //if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.NorthingUtmTexto))
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing);
+            //}
 
-            if (caracterizacao.FormacaoRT <= 0)
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFormacaoRT);
-            }
+            //if (caracterizacao.FormacaoRT <= 0)
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFormacaoRT);
+            //}
 
-            if (((Convert.ToInt32(eFormacaoRTCodigo.Outros) & caracterizacao.FormacaoRT) != 0) && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoRT))
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoRT);
-            }
+            //if (((Convert.ToInt32(eFormacaoRTCodigo.Outros) & caracterizacao.FormacaoRT) != 0) && string.IsNullOrWhiteSpace(caracterizacao.EspecificacaoRT))
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEspecificacaoRT);
+            //}
 
-            if (caracterizacao.Autorizacao == null || string.IsNullOrWhiteSpace(caracterizacao.Autorizacao.Nome))
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeArquivo);
-            }
+            //if (caracterizacao.Autorizacao == null || string.IsNullOrWhiteSpace(caracterizacao.Autorizacao.Nome))
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeArquivo);
+            //}
 
-            if (string.IsNullOrWhiteSpace(caracterizacao.NumeroARTElaboracao))
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroARTElaboracao);
-            }
+            //if (string.IsNullOrWhiteSpace(caracterizacao.NumeroARTElaboracao))
+            //{
+            //    Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroARTElaboracao);
+            //}
 
             return Validacao.EhValido;
         }

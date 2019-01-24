@@ -19,17 +19,22 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public int faixaCercada { get; set; }
 		public string descricacaoDesenvolvimentoAPP { get; set; }
 		public bool barramentoNormas { get; set; }
-		public decimal barramentoAdequacoes { get; set; }
+		public string barramentoAdequacoes { get; set; }
 
 		public int vazaoMinTipo { get; set; }
 		public decimal vazaoMinDiametro { get; set; }
 		public bool vazaoMinInstalado { get; set; }
-		public decimal vazaoMinAdequacoes { get; set; }
+		public bool vazaoMinNormas { get; set; }
+		public string vazaoMinAdequacoes { get; set; }
 
 		public int vazaoMaxTipo { get; set; }
 		public decimal vazaoMaxDiametro { get; set; }
 		public bool vazaoMaxInstalado { get; set; }
-		public decimal vazaoMaxAdequacoes { get; set; }
+		public bool vazaoMaxNormas { get; set; }
+		public string vazaoMaxAdequacoes { get; set; }
+
+		public int mesInicioObra { get; set; }
+		public int anoInicioObra { get; set; }
 
 		public BarragemConstruidaAConstruir() { }
 	}

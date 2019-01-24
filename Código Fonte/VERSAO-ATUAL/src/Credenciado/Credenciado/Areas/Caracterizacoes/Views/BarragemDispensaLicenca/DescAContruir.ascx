@@ -20,11 +20,11 @@
 		<b>Dispositivo de vazão mínima</b> <br />
 		<div class="coluna20 divRadioEsconder">
 			<label for="MongeTipo">Tipo *</label>
-			<%= Html.DropDownList("MongeTipo", Model.MongeTiposLst, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="ddlMongeTipo" })) %>
+			<%= Html.DropDownList("TipoDispositivoVazaoMinAConstruir", Model.MongeTiposLst, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="ddlTipoDispositivoVazaoMinAConstruir" })) %>
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMinAConstruir", maxlength = "14" })) %>
 		</div>
 	</div>
 
@@ -36,7 +36,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMax">Largura e altura ou diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
 		</div>
 		<br />
 	</div>
@@ -46,11 +46,11 @@
 		
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Dia *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
 		</div>
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Mês *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.AreaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
 		</div>
 	</div>
 	

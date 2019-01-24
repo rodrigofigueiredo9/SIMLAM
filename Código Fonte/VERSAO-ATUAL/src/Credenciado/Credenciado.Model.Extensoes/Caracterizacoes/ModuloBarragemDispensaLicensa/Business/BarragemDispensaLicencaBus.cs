@@ -63,22 +63,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			try
 			{
-				#region Configurar
-
-				if (caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge))
-				{
-					caracterizacao.MongeTipo = null;
-					caracterizacao.EspecificacaoMonge = string.Empty;
-				}
-
-				if (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro))
-				{
-					caracterizacao.VertedouroTipo = null;
-					caracterizacao.EspecificacaoVertedouro = string.Empty;
-				}
-
-				#endregion
-
 				if (_validar.Salvar(caracterizacao, projetoDigitalId))
 				{
 					GerenciadorTransacao.ObterIDAtual();
@@ -88,31 +72,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						bancoDeDados.IniciarTransacao();
 
 						#region Arquivo
+						var rt = caracterizacao.responsaveisTecnicos.Where(x => x.tipo == eTipoRT.ElaboracaoProjeto);
 
-						if (caracterizacao.Autorizacao != null)
+						if (caracterizacao.responsaveisTecnicos[1].autorizacaoCREA != null)
 						{
-							if (!string.IsNullOrWhiteSpace(caracterizacao.Autorizacao.Nome))
+							if (!string.IsNullOrWhiteSpace(caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Nome))
 							{
-								if (caracterizacao.Autorizacao.Id != null && caracterizacao.Autorizacao.Id == 0)
+								if (caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id != null &&
+									caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id == 0)
 								{
 									ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
-									caracterizacao.Autorizacao = _busArquivo.Copiar(caracterizacao.Autorizacao);
+									caracterizacao.responsaveisTecnicos[1].autorizacaoCREA = _busArquivo.Copiar(caracterizacao.responsaveisTecnicos[1].autorizacaoCREA);
 								}
 
-								if (caracterizacao.Autorizacao.Id == 0)
+								if (caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id == 0)
 								{
 									ArquivoDa _arquivoDa = new ArquivoDa();
-									_arquivoDa.Salvar(caracterizacao.Autorizacao, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
+									_arquivoDa.Salvar(caracterizacao.responsaveisTecnicos[1].autorizacaoCREA, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
 								}
 							}
 							else
 							{
-								caracterizacao.Autorizacao.Id = null;
+								caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id = null;
 							}
 						}
 						else
 						{
-							caracterizacao.Autorizacao = new Blocos.Arquivo.Arquivo();
+							caracterizacao.responsaveisTecnicos[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 						}
 
 						#endregion

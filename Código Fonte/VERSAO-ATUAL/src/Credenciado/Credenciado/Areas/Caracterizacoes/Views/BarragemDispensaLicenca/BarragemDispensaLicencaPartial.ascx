@@ -33,17 +33,17 @@
 		<div>
 			<label>Há (houve) necessidade de supressão de vegetação em estágio médio de regeneração para implantação da barragem?</label><br />
 			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
-			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
 		</div>
 		<div>
 			<label>Haverá necessidade de realocação de núcleos populacionais ou rodovias?</label><br />
-			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Sim
-			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
 		</div>
 		<div>
 			<label>Esta declaração de dispensa está sendo elaborada para barragens contíguas num mesmo imóvel?</label><br />
-			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Sim
-			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemTipo" })) %> Não
+			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
 		</div>
 	</div>
 

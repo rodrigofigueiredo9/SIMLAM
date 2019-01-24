@@ -54,7 +54,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 ListaCredenciadoBus.BarragemDispensaLicencaBarragemTipo,
                 ListaCredenciadoBus.BarragemDispensaLicencaFase,
                 ListaCredenciadoBus.BarragemDispensaLicencaMongeTipo,
-                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
+                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
+				ListaCredenciadoBus.Profissoes
             );
 
             return View(vm);
@@ -116,7 +117,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 ListaCredenciadoBus.BarragemDispensaLicencaBarragemTipo,
                 ListaCredenciadoBus.BarragemDispensaLicencaFase,
                 ListaCredenciadoBus.BarragemDispensaLicencaMongeTipo,
-                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
+                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
+				ListaCredenciadoBus.Profissoes
             );
 
             return View(vm);
@@ -164,7 +166,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 ListaCredenciadoBus.BarragemDispensaLicencaBarragemTipo,
                 ListaCredenciadoBus.BarragemDispensaLicencaFase,
                 ListaCredenciadoBus.BarragemDispensaLicencaMongeTipo,
-                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
+                ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
+				ListaCredenciadoBus.Profissoes
             );
 
             vm.IsVisualizar = true;

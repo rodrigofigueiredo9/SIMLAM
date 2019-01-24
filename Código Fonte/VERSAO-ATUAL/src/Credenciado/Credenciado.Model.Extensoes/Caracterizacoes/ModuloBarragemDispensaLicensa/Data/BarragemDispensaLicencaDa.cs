@@ -57,59 +57,141 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				bancoDeDados.IniciarTransacao();
 
+				#region Barragem
 				Comando comando = bancoDeDados.CriarComando(@"
-				insert into crt_barragem_dispensa_lic (id, tid, empreendimento, atividade, tipo_barragem, finalidade_atividade, curso_hidrico, vazao_enchente, area_bacia_contribuicao, 
-				precipitacao, periodo_retorno, coeficiente_escoamento, tempo_concentracao, equacao_calculo, area_alagada, volume_armazenado, fase, possui_monge, tipo_monge, especificacao_monge, 
-				possui_vertedouro, tipo_vertedouro, especificacao_vertedouro, possui_estrutura_hidrau, adequacoes_realizada, data_inicio_obra, data_previsao_obra, easting, northing, formacao_resp_tec, 
-				especificacao_rt, autorizacao, numero_art_elaboracao, numero_art_execucao, interno_id, interno_tid)
-				values (seq_crt_barragem_dispensa_lic.nextval, :tid, :empreendimento, :atividade, :tipo_barragem, :finalidade_atividade, :curso_hidrico, :vazao_enchente, :area_bacia_contribuicao, 
-				:precipitacao, :periodo_retorno, :coeficiente_escoamento, :tempo_concentracao, :equacao_calculo, :area_alagada, :volume_armazenado, :fase, :possui_monge, :tipo_monge, :especificacao_monge, 
-				:possui_vertedouro, :tipo_vertedouro, :especificacao_vertedouro, :possui_estrutura_hidrau, :adequacoes_realizada, :data_inicio_obra, :data_previsao_obra, :easting, :northing, :formacao_resp_tec, 
-				:especificacao_rt, :autorizacao, :numero_art_elaboracao, :numero_art_execucao, :interno_id, :interno_tid) returning id into :id", EsquemaCredenciadoBanco);
+				insert into crt_barragem_dispensa_lic (id, tid, empreendimento, atividade, tipo_barragem, curso_hidrico, 
+					vazao_enchente, area_bacia_contribuicao, precipitacao, periodo_retorno, coeficiente_escoamento, tempo_concentracao, 
+					equacao_calculo, area_alagada, volume_armazenado, fase, interno_id, interno_tid,
+					possui_barragem_contigua, altura_barramento, comprimento_barramento, largura_base_barramento, largura_crista_barramento,
+					fonte_precipitacao, fonte_coeficiente_escoamento, fonte_vazao_enchente)
+				values (seq_crt_barragem_dispensa_lic.nextval, :tid, :empreendimento, :atividade, :tipo_barragem, :curso_hidrico, 
+						:vazao_enchente, :area_bacia_contribuicao, :precipitacao, :periodo_retorno, :coeficiente_escoamento, :tempo_concentracao, 
+						:equacao_calculo, :area_alagada, :volume_armazenado, :fase, :interno_id, :interno_tid,
+						:possui_barragem_contigua, :altura_barramento, :comprimento_barramento, :largura_base_barramento, :largura_crista_barramento,
+						:fonte_precipitacao, :fonte_coeficiente_escoamento, :fonte_vazao_enchente) 
+					returning id into :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("atividade", caracterizacao.AtividadeID, DbType.Int32);
-				comando.AdicionarParametroEntrada("tipo_barragem", caracterizacao.BarragemTipo, DbType.Int32);
-				//comando.AdicionarParametroEntrada("finalidade_atividade", caracterizacao.FinalidadeAtividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_barragem", (int)caracterizacao.BarragemTipo, DbType.Int32);
 				comando.AdicionarParametroEntrada("curso_hidrico", caracterizacao.cursoHidrico, DbType.String);
 				comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
 				comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("precipitacao", caracterizacao.Precipitacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Int32);
-				comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.String);
-				comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.String);
+				comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.Decimal);
+				comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.EquacaoCalculo, DbType.String);
 				comando.AdicionarParametroEntrada("area_alagada", caracterizacao.areaAlagada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("volume_armazenado", caracterizacao.volumeArmazanado, DbType.Decimal);
 				comando.AdicionarParametroEntrada("fase", caracterizacao.Fase, DbType.Int32);
-				comando.AdicionarParametroEntrada("possui_monge", caracterizacao.PossuiMonge, DbType.Int32);//TODO
-				comando.AdicionarParametroEntrada("tipo_monge", caracterizacao.MongeTipo, DbType.Int32);
-				comando.AdicionarParametroEntrada("especificacao_monge", caracterizacao.EspecificacaoMonge, DbType.String);
-				comando.AdicionarParametroEntrada("possui_vertedouro", caracterizacao.PossuiVertedouro, DbType.Int32);//TODO
-                comando.AdicionarParametroEntrada("tipo_vertedouro", caracterizacao.VertedouroTipo, DbType.Int32);
-				comando.AdicionarParametroEntrada("especificacao_vertedouro", caracterizacao.EspecificacaoVertedouro, DbType.String);
-				comando.AdicionarParametroEntrada("possui_estrutura_hidrau", caracterizacao.PossuiEstruturaHidraulica, DbType.Int32);//TODO
-				comando.AdicionarParametroEntrada("adequacoes_realizada", caracterizacao.AdequacoesRealizada, DbType.String);
-				comando.AdicionarParametroEntrada("data_inicio_obra", caracterizacao.DataInicioObra, DbType.String);
-				comando.AdicionarParametroEntrada("data_previsao_obra", caracterizacao.DataPrevisaoTerminoObra, DbType.String);
-				comando.AdicionarParametroEntrada("easting", caracterizacao.Coordenada.EastingUtmTexto, DbType.Int64);
-				comando.AdicionarParametroEntrada("northing", caracterizacao.Coordenada.NorthingUtmTexto, DbType.Int64);
-				comando.AdicionarParametroEntrada("formacao_resp_tec", caracterizacao.FormacaoRT, DbType.Int32);
-				comando.AdicionarParametroEntrada("especificacao_rt", caracterizacao.EspecificacaoRT, DbType.String);
-                comando.AdicionarParametroEntrada("autorizacao", caracterizacao.Autorizacao.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("numero_art_elaboracao", caracterizacao.NumeroARTElaboracao, DbType.String);
-				comando.AdicionarParametroEntrada("numero_art_execucao", caracterizacao.NumeroARTExecucao, DbType.String);
-                comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
-                comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
-				
+
+				comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
+				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
+
+				comando.AdicionarParametroEntrada("possui_barragem_contigua", caracterizacao.barragemContiguaMesmoNivel, DbType.Int32);
+				comando.AdicionarParametroEntrada("altura_barramento", caracterizacao.alturaBarramento, DbType.Decimal);
+				comando.AdicionarParametroEntrada("comprimento_barramento", caracterizacao.comprimentoBarramento, DbType.Decimal);
+				comando.AdicionarParametroEntrada("largura_base_barramento", caracterizacao.larguraBaseBarramento, DbType.Decimal);
+				comando.AdicionarParametroEntrada("largura_crista_barramento", caracterizacao.larguraCristaBarramento, DbType.Decimal);
+				comando.AdicionarParametroEntrada("fonte_precipitacao", caracterizacao.fonteDadosPrecipitacao, DbType.String);
+				comando.AdicionarParametroEntrada("fonte_coeficiente_escoamento", caracterizacao.fonteDadosCoeficienteEscoamento, DbType.String);
+				comando.AdicionarParametroEntrada("fonte_vazao_enchente", caracterizacao.fonteDadosVazaoEnchente, DbType.String);
+
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				caracterizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+				#endregion
 
-				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.criar, bancoDeDados);
+				#region Construida/A Construir
+				comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_construida_con (id, barragem, supressao_app, largura_demarcada, largura_demarcada_legislacao,
+						faixa_cercada, descricao_desen_app, demarcacao_app, barramento_normas, barramento_adequacoes, vazao_min_tipo, vazao_min_diametro,
+						vazao_min_instalado, vazao_min_normas, vazao_min_adequacoes, vazao_max_tipo, vazao_max_diametro,
+						vazao_max_instalado, vazao_max_normas, vazao_max_adequacoes, mes_inicio_obra, ano_inicio_obra)
+				values (seq_crt_barragem_const.nextval, :barragem, :supressao_app, :largura_demarcada, :largura_demarcada_legislacao,
+						:faixa_cercada, :descricao_desen_app, :demarcacao_app, :barramento_normas, :barramento_adequacoes, :vazao_min_tipo, :vazao_min_diametro,
+						:vazao_min_instalado, :vazao_min_normas, :vazao_min_adequacoes, :vazao_max_tipo, :vazao_max_diametro,
+						:vazao_max_instalado, :vazao_max_normas, :vazao_max_adequacoes, :mes_inicio_obra, :ano_inicio_obra)  ", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("supressao_app", caracterizacao.construidaConstruir.isSupressaoAPP, DbType.Int32);
+				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
+				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
+				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
+				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);
+				comando.AdicionarParametroEntrada("demarcacao_app", caracterizacao.construidaConstruir.isDemarcacaoAPP, DbType.Int32);
+				comando.AdicionarParametroEntrada("barramento_normas", caracterizacao.construidaConstruir.barramentoNormas, DbType.Int32);
+				comando.AdicionarParametroEntrada("barramento_adequacoes", caracterizacao.construidaConstruir.barramentoAdequacoes, DbType.String);
+				comando.AdicionarParametroEntrada("vazao_min_tipo", (int)caracterizacao.construidaConstruir.vazaoMinTipo, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_min_diametro", caracterizacao.construidaConstruir.vazaoMinDiametro, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_min_instalado", caracterizacao.construidaConstruir.vazaoMinInstalado, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_min_normas", caracterizacao.construidaConstruir.vazaoMinNormas, DbType.Int32);
+				comando.AdicionarParametroEntrada("vazao_min_adequacoes", caracterizacao.construidaConstruir.vazaoMinAdequacoes, DbType.String);
+				comando.AdicionarParametroEntrada("vazao_max_tipo", (int)caracterizacao.construidaConstruir.vazaoMaxTipo, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_max_diametro", caracterizacao.construidaConstruir.vazaoMaxDiametro, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_max_instalado", caracterizacao.construidaConstruir.vazaoMaxInstalado, DbType.Int32);
+				comando.AdicionarParametroEntrada("vazao_max_normas", caracterizacao.construidaConstruir.vazaoMaxNormas, DbType.Int32);
+				comando.AdicionarParametroEntrada("vazao_max_adequacoes", caracterizacao.construidaConstruir.vazaoMaxAdequacoes, DbType.String);
+				comando.AdicionarParametroEntrada("mes_inicio_obra", caracterizacao.construidaConstruir.mesInicioObra, DbType.Int32);
+				comando.AdicionarParametroEntrada("ano_inicio_obra", caracterizacao.construidaConstruir.anoInicioObra, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				#endregion
+
+				#region Coordenadas
+				caracterizacao.coordenadas.ForEach(x => {
+					comando = bancoDeDados.CriarComando(@"
+					insert into crt_barragem_coordenada (id, barragem, tipo, northing, easting)
+						values (seq_crt_barragem_coordenada.nextval, :barragem, :tipo, :northing, :easting)", EsquemaCredenciadoBanco);
+
+					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
+					comando.AdicionarParametroEntrada("northing", x.northing, DbType.Int32);
+					comando.AdicionarParametroEntrada("easting", x.easting, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				});
+				#endregion
+
+				#region Responsaveis Técnicos
+				caracterizacao.responsaveisTecnicos.ForEach(x => {
+					comando = bancoDeDados.CriarComando(@"
+					insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
+						numero_art, autorizacao_crea)
+					values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
+						:numero_art, :autorizacao_crea) ", EsquemaCredenciadoBanco);
+					var arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
+					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
+					comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
+					comando.AdicionarParametroEntrada("profissao", x.profissao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
+					comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
+					comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				});
+				#endregion
+
+				#region Finalidade Atividade
+				caracterizacao.finalidade.ForEach(x => {
+					comando = bancoDeDados.CriarComando(@"
+					insert into crt_barragem_finaldiade_ativ(id, barragem, atividade)
+						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
+
+					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("atividade", x, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				});
+				#endregion
+
+				//Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
 

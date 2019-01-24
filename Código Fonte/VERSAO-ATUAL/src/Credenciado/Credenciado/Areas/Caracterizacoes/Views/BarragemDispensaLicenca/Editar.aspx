@@ -13,7 +13,9 @@
 					coordenadaGeo: '<%= Url.Action("CoordenadaPartial", "Mapa", new {area="GeoProcessamento" })%>',
 					salvar: '<%= Url.Action("Editar", "BarragemDispensaLicenca") %>',
 					salvarConfirm: '<%= Url.Action("SalvarConfirm", "BarragemDispensaLicenca") %>'
-				}
+				},
+				mensagens: <%= Model.Mensagens %>,
+				idsTela: <%= Model.IdsTela %>
 			});
 		});
 	</script>

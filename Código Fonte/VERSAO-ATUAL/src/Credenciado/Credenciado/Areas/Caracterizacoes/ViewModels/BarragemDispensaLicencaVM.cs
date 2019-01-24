@@ -18,6 +18,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
         public List<Lista> FasesLst { get; set; }
         public List<SelectListItem> MongeTiposLst { get; set; }
         public List<SelectListItem> VertedouroTiposLst { get; set; }
+        public List<List<SelectListItem>> profissoesLst { get; set; }
         public bool IsVisualizar { get; set; }
 
         public string Mensagens
@@ -49,11 +50,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
             }
         }
 
-        public BarragemDispensaLicencaVM(BarragemDispensaLicenca entidade, Atividade atividade, List<Lista> finalidades, List<Lista> formacoesRT, List<Lista> barragemTipos, List<Lista> fases, List<Lista> mongeTipos, List<Lista> vertedouroTipos)
+        public BarragemDispensaLicencaVM(BarragemDispensaLicenca entidade, Atividade atividade, List<Lista> finalidades, List<Lista> formacoesRT, List<Lista> barragemTipos, List<Lista> fases, List<Lista> mongeTipos, List<Lista> vertedouroTipos, List<ProfissaoLst> profissoes)
         {
             Caracterizacao = entidade ?? new BarragemDispensaLicenca();
-
             List<Lista> atividades = new List<Lista>();
+			profissoesLst = new List<List<SelectListItem>>();
+
+
             atividades.Add(new Lista() { Id = atividade.Id.ToString(), Texto = atividade.NomeAtividade });
             Atividades = ViewModelHelper.CriarSelectList(atividades, isFiltrarAtivo: false, itemTextoPadrao: false);
 
@@ -63,7 +66,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
             FasesLst = fases;
             MongeTiposLst = ViewModelHelper.CriarSelectList(mongeTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.MongeTipo.ToString());
             VertedouroTiposLst = ViewModelHelper.CriarSelectList(vertedouroTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.VertedouroTipo.ToString());
-        }
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[0].id.ToString()));
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[1].id.ToString()));
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[2].id.ToString()));
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[3].id.ToString()));
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[4].id.ToString()));
+			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[5].id.ToString()));
+		}
 
         public string AutorizacaoJson
         {
