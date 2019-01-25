@@ -130,8 +130,7 @@
 								<input type="hidden" class="especieId" value='<%: produto.EspeciePopularId%>' />
 							</td>
 							<td>
-								<% var qtd = (String.IsNullOrEmpty(produto.Quantidade) ? "" : Convert.ToDecimal(produto.Quantidade).ToStringTrunc()); %>
-								<span class="quantidade" title="<%:qtd%>"><%: qtd %></span>
+								<span class="quantidade" title="<%:produto.Quantidade%>"><%: produto.Quantidade %></span>
 							</td>
 							<td>
 								<span class="destinacao" title="<%:produto.DestinacaoMaterialTexto%>"><%: produto.DestinacaoMaterialTexto%></span>
