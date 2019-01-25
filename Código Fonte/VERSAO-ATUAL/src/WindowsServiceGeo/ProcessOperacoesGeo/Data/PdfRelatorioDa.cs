@@ -445,7 +445,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
-				
+
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
@@ -818,7 +818,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			else if (ticketType == OperacoesGeoDa.OPERACAO_ATIVIDADE_TITULO)
 			{
 				#region Atividade por título
-				
+
 				int titulo;
 
 				strSQL = @"select titulo from tab_fila where projeto = :projeto and tipo = :tipo and etapa = :etapa and data_fim is null and rownum = 1";
@@ -1109,7 +1109,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 							idsList.Add(reader["id"]);
 						}
 
-						if(idsList.Count > 0)
+						if (idsList.Count > 0)
 							result["AATIV"] = string.Join(",", idsList.ToArray());
 
 						reader.Close();
@@ -1124,7 +1124,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				strSQL = @"select 'ATP' classe, 'Área Total da Propriedade' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_atp where projeto=:projeto                    
                     union all select 'APMP' classe, 'Área da Propriedade por Matrícula ou Posse' descricao, '' subtipo, nvl(sum(area_m2),0) area_m2 from tmp_apmp where projeto=:projeto";
-                    
+
 
 				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
 
@@ -1155,7 +1155,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 					result["ORDENADAS_ATP"] = this.banco.ExecutarList<Decimal>(comando);
 				}
 
-				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from tmp_aativ t where t.projeto=:projeto order by 1";
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, sdo_geom.sdo_length(t.geometry, 0.00001) perimetro, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from tmp_aativ t where t.projeto=:projeto order by 1";
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
