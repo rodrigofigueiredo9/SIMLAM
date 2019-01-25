@@ -622,7 +622,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								produto = new ExploracaoFlorestalProduto();
 								produto.Id = Convert.ToInt32(readerAux["id"]);
 								produto.Tid = readerAux["tid"].ToString();
-								produto.Quantidade = readerAux["quantidade"].ToString();
+
+								if(exploracao.GeometriaTipoId == (int)eTipoGeometria.Ponto)
+									produto.Quantidade = Convert.ToInt32(readerAux["quantidade"]).ToString();
+								else
+									produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
 
 								if (readerAux["produto"] != null && !Convert.IsDBNull(readerAux["produto"]))
 								{
@@ -1005,7 +1009,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							where cp.exploracao_florestal = c.id
 							and rownum = 1)) geometria_texto,
 						(select sum(case when cp.area_requerida > 0 then cp.area_requerida else cp.arvores_requeridas end) from crt_exp_florestal_exploracao cp
-							where cp.exploracao_florestal = c.id) quantidade
+							where cp.exploracao_florestal = c.id) quantidade,
+						(select cp.geometria from crt_exp_florestal_exploracao cp
+							where cp.exploracao_florestal = c.id
+							and rownum = 1) geometria
 						from crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade) where 1=1 " + comandtxt +
 						Blocos.Etx.ModuloCore.Data.DaHelper.Ordenar(colunas, ordenar, filtros.OdenarPor == 0), (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
@@ -1026,7 +1033,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							TipoExploracaoTexto = reader.GetValue<string>("tipo_exploracao_texto"),
 							Localizador = reader.GetValue<string>("localizador"),
 							GeometriaPredominanteTexto = reader.GetValue<string>("geometria_texto"),
-							Quantidade = (reader.GetValue<decimal>("quantidade")).ToString("N2")
+							Quantidade = (eTipoGeometria)reader.GetValue<int>("geometria") == eTipoGeometria.Ponto ?
+							(reader.GetValue<decimal>("quantidade")).ToString("N0") : (reader.GetValue<decimal>("quantidade")).ToString("N2")
 						};
 
 						if (!Convert.IsDBNull(reader["codigo_exploracao"]))

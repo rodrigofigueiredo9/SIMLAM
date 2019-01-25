@@ -16,7 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			get
 			{
-				return (Quantidade <= 0) ? " - " : Quantidade.ToStringTrunc(2);
+				return (Quantidade <= 0) ? " - " : (UnidadeMedida.Contains("und") ? Quantidade.ToStringTrunc(0) : Quantidade.ToStringTrunc(2));
 			}
 		}
 

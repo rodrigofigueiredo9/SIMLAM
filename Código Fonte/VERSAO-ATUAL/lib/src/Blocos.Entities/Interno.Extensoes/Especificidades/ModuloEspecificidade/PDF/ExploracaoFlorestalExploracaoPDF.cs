@@ -25,8 +25,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			get
 			{
-				if (this.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono &&
-					!string.IsNullOrWhiteSpace(this.AreaCroqui))
+				if (this.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
 				{
 					return "m²";
 				}
@@ -79,8 +78,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			get
 			{
-				if (this.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono &&
-					!string.IsNullOrWhiteSpace(this.AreaCroquiHa))
+				if (this.GeometriaTipoId == (int)eExploracaoFlorestalGeometria.Poligono)
 				{
 					return "ha";
 				}
