@@ -1361,14 +1361,16 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 				tabelaLinha.DefaultCell.Rowspan = 2;
 				tabelaLinha.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
 				tabelaLinha.AddCell(new Phrase(new Chunk("Código", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.AddCell(new Phrase(new Chunk("Matrícula/Posse", PdfMetodosAuxiliares.arial8Negrito)));
+				
 				//coluna opcional
 
 				tabelaLinha.DefaultCell.Colspan = 2;
 				tabelaLinha.AddCell(new Phrase(new Chunk("Área (m²)", PdfMetodosAuxiliares.arial8Negrito)));
-				tabelaLinha.DefaultCell.Rowspan = 1;
 				
 				tabelaLinha.DefaultCell.Colspan = 1;
+				tabelaLinha.AddCell(new Phrase(new Chunk("Perímetro", PdfMetodosAuxiliares.arial8Negrito)));
+
+				tabelaLinha.DefaultCell.Rowspan = 1;
 
 				tabelaLinha.DefaultCell.Colspan = 6;
 				tabelaLinha.AddCell(new Phrase(new Chunk(header, PdfMetodosAuxiliares.arial8Negrito)));
@@ -1393,14 +1395,13 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 				foreach (Hashtable ht in hashList)
 				{
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "CODIGO"), PdfMetodosAuxiliares.arial8)));
-
-					tabelaLinha.AddCell(new Phrase(new Chunk(FormatStringField(ht, "APMP_NOME"), PdfMetodosAuxiliares.arial8)));
-
 					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-
+										
 					tabelaLinha.DefaultCell.Colspan = 2;
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(ht, "AREA_M2"), PdfMetodosAuxiliares.arial8)));
 					tabelaLinha.DefaultCell.Colspan = 1;
+
+					tabelaLinha.AddCell(new Phrase(new Chunk(FormatNumberField(ht, "PERIMETRO",3), PdfMetodosAuxiliares.arial8)));
 
 					tabelaLinha.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
 					tabelaLinha.AddCell(new Phrase(new Chunk(FormatSNField(ht, "ROCHA"), PdfMetodosAuxiliares.arial8)));

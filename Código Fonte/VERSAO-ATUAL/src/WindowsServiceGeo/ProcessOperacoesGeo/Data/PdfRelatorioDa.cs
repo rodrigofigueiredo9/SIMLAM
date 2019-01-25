@@ -1155,7 +1155,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 					result["ORDENADAS_ATP"] = this.banco.ExecutarList<Decimal>(comando);
 				}
 
-				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from tmp_aativ t where t.projeto=:projeto order by 1";
+				strSQL = @"select t.codigo, (select a.nome from geo_apmp a where a.id = t.cod_apmp) apmp_nome, sdo_geom.sdo_length(t.geometry, 0.00001) perimetro, t.area_m2, t.rocha, t.massa_dagua, t.avn, t.aa, t.afs, t.rest_declividade, t.arl, t.rppn, t.app from tmp_aativ t where t.projeto=:projeto order by 1";
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
