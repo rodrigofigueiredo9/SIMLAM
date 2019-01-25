@@ -138,5 +138,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem ImprimirDocumentosDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível Imprimir Documentos." }; } }
 		public Mensagem ImprimirDocumentosConcluido { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Passo 4 – Imprimir Documentos concluído com sucesso." }; } }
+
+		public Mensagem BarragemAssociada { get { return new Mensagem() { Texto = "Já existe uma barragem associada ao projeto digital!", Tipo = eTipoMensagem.Advertencia }; } }
 	}
 }

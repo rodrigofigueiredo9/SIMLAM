@@ -1,5 +1,4 @@
-/// <reference path="../jquery.json-2.2.min.js" />
-/// <reference path="../../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -11,7 +10,9 @@ BarragemDispensaLicenca = {
 		},
 		containerCoordenada: null,
         mensagens: null,
-        idsTela: null
+		idsTela: null,
+		projetoDigitalId: null,
+		empreendimentoId: null
     },
     container: null,
 
@@ -40,6 +41,7 @@ BarragemDispensaLicenca = {
 		container.delegate('.rbVazaoMaxNormas', 'change', BarragemDispensaLicenca.onChangeVazaoMaxNormas);
 		container.delegate('.cbCopiaDeclarante', 'change', BarragemDispensaLicenca.onCheckCopiaDeclarante);
 
+		//BarragemDispensaLicenca.bloquearCriar();
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -517,6 +519,110 @@ BarragemDispensaLicenca = {
         });
 
         MasterPage.carregando(false);
+	},
+
+	//bloquearCriar: function(){
+	//	var preenchido = $('.dependencias', BarragemDispensaLicenca.container).val()
+	//	if (preenchido = true)
+	//	{
+	//		$('.btnAdicionar').prop('disabled', true);
+	//		$('.btnAdicionar').addClass('disabled'); //lembrar de adicionar o css
+	//	}
+	//	if (preenchido = true)
+	//	{
+	//		$('.btnAssociar').prop('disabled', true);
+	//		$('.btnAssociar').addClass('disabled');
+	//	}
+
+	//},
+
+	criar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
+			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+	},
+
+	associar: function () {
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		var tid = $(this).closest('tr').find('.hdnTid').val();		
+		$.get(BarragemDispensaLicenca.settings.urls.associar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao, tid: tid },
+			function (response) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+					return;
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		);
+	},
+	
+	desassociar: function () {
+		debugger;
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		//dependenciaTipos.TipoCaracterizacao
+		var dependencias = $(this).closest('tr').find('.dependencias').val();
+
+		if (dependencias == "True")
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Desassociar Barragem',
+				conteudo: 'Deseja realmente desassociar?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
+
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
+				}
+			});
+		}
+		else
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Desassociar Barragem e EXCLUIR',
+				conteudo: 'Deseja realmente desassociar e excluir a barragem criada?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
+
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
+				}
+			});
+		}
+	},
+
+	editar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.editar + '/' + BarragemDispensaLicenca.settings.empreendimentoId + '?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+	},
+
+	visualizar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' +
+			BarragemDispensaLicenca.settings.empreendimentoId +
+			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
+			'&retornarVisualizar=' + ($('.btnFinalizarPasso', BarragemDispensaLicenca.container).length <= 0));
 	},
 
 	//-------------------------BARRGGEM CONSTRUIDA--------------------//

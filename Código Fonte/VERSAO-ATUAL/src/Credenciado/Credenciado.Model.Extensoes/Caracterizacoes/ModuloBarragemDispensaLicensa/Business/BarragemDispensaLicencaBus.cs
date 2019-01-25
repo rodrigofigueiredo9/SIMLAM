@@ -156,6 +156,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
+		public bool ExcluirPorId(int projetoDigitalId, BancoDeDados banco = null, bool validarDependencias = true)
+		{
+			try
+			{
+				
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ExcluirPorId(projetoDigitalId, bancoDeDados);
+
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
+
+					bancoDeDados.Commit();
+				}
+
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		public bool CopiarDadosInstitucional(int empreendimentoID, int empreendimentoInternoID, BancoDeDados banco)
 		{
 			if (banco == null)
@@ -295,7 +320,39 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return barragem;
 		}
 
-		public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragens = _da.ObterLista(empreendimentoId, projetoDigitalId, simplificado, banco); 
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragens;
+		}
+
+		public List<BarragemDispensaLicenca> ObterBarragemAssociada(int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragem = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragem = _da.ObterBarragemAssociada(projetoDigitalId, simplificado, banco);
+			}
+			catch(Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragem;
+		}
+
+			public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
 		{
 			BarragemDispensaLicenca barragem = null;
 
@@ -327,6 +384,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			//Para o caso da coluna da atividade estar na tabela principal
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
+
+		public bool PossuiAssociacaoExterna(int empreendimento, BancoDeDados banco = null) => _da.PossuiAssociacaoExterna(empreendimento, banco);
 
 		#endregion
 

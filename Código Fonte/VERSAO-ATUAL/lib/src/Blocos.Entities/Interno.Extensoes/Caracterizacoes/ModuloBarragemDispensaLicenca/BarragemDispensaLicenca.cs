@@ -62,9 +62,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public Arquivo.Arquivo Autorizacao { get; set; }
 		public string NumeroARTElaboracao { get; set; }
 		public string NumeroARTExecucao { get; set; }
-		public int InternoID { get; set; }
-		public string InternoTID { get; set; }
-		public int CredenciadoID { get; set; }
+        public int InternoID { get; set; }
+        public string InternoTID { get; set; }
+        public int CredenciadoID { get; set; }
+		public bool PossuiAssociacaoExterna { get; set; }
 
 		public BarragemConstruidaAConstruir construidaConstruir { get; set; }
 		public List<BarragemRT> responsaveisTecnicos { get; set; }
