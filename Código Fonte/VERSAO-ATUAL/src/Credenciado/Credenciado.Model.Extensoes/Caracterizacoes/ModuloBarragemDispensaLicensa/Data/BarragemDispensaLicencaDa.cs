@@ -739,7 +739,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			throw new NotImplementedException();
 		}
 
-		internal bool PossuiAssociacaoExterna(int empreendimento, BancoDeDados banco = null)
+		internal bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
@@ -751,9 +751,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					select 1 from {0}TAB_PROJETO_DIGITAL p
 					where p.EMPREENDIMENTO = :empreendimento
 					and p.id = d.PROJETO_DIGITAL_ID
+					and p.id <> :projeto_digital
 				)", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				comando.AdicionarParametroEntrada("projeto_digital", projetoDigitalId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
 

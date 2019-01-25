@@ -372,7 +372,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
 
-		public bool PossuiAssociacaoExterna(int empreendimento, BancoDeDados banco = null) => _da.PossuiAssociacaoExterna(empreendimento, banco);
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
 
 		#endregion
 
