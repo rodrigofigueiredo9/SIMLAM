@@ -50,6 +50,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
         public int InternoID { get; set; }
         public string InternoTID { get; set; }
         public int CredenciadoID { get; set; }
+		public bool PossuiAssociacaoExterna { get; set; }
 
 		public BarragemDispensaLicenca()
 		{

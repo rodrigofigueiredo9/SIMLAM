@@ -8,7 +8,6 @@
 	<legend class="titFiltros">Barragens Cadastradas</legend>
 
 	<div class="dataGrid">
-		
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>
 					<tr>

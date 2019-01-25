@@ -39,7 +39,7 @@ BarragemDispensaLicenca = {
 		BarragemDispensaLicenca.container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
 		BarragemDispensaLicenca.container.delegate('.btnEditar', 'click', BarragemDispensaLicenca.editar);
 
-		BarragemDispensaLicenca.container.bloquearCriar();
+		//BarragemDispensaLicenca.bloquearCriar();
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -376,14 +376,20 @@ BarragemDispensaLicenca = {
         MasterPage.carregando(false);
 	},
 
-	bloquearCriar: function(){
-		var preenchido = $(this).closest('tr').find('.dependencias').val();
-		debugger;
-		if (preenchido > 1)
-		{
-			document.getElementById('btnAdicionar').disabled = true;
-		}
-	},
+	//bloquearCriar: function(){
+	//	var preenchido = $('.dependencias', BarragemDispensaLicenca.container).val()
+	//	if (preenchido = true)
+	//	{
+	//		$('.btnAdicionar').prop('disabled', true);
+	//		$('.btnAdicionar').addClass('disabled'); //lembrar de adicionar o css
+	//	}
+	//	if (preenchido = true)
+	//	{
+	//		$('.btnAssociar').prop('disabled', true);
+	//		$('.btnAssociar').addClass('disabled');
+	//	}
+
+	//},
 
 	criar: function () {
 		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
@@ -408,11 +414,12 @@ BarragemDispensaLicenca = {
 	},
 	
 	desassociar: function () {
+		debugger;
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
 		//dependenciaTipos.TipoCaracterizacao
 		var dependencias = $(this).closest('tr').find('.dependencias').val();
 
-		if (dependencias > 1)
+		if (dependencias == "True")
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',

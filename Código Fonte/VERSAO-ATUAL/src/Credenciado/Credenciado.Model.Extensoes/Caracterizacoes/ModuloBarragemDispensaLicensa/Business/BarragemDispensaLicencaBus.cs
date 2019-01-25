@@ -372,6 +372,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
 
+		public bool PossuiAssociacaoExterna(int empreendimento, BancoDeDados banco = null) => _da.PossuiAssociacaoExterna(empreendimento, banco);
+
 		#endregion
 
 		#region Auxilizares

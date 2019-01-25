@@ -406,28 +406,42 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				c.fase, c.possui_monge, c.tipo_monge, c.especificacao_monge, c.possui_vertedouro, c.tipo_vertedouro, c.especificacao_vertedouro, 
                 c.possui_estrutura_hidrau, c.adequacoes_realizada, c.data_inicio_obra, c.data_previsao_obra, c.easting, c.northing, c.formacao_resp_tec, 
                 c.especificacao_rt, c.autorizacao, c.numero_art_elaboracao, c.numero_art_execucao 
-                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt, Tab_projeto_digital p
+                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt
 					where exists
 					(
-						select 1 from TAB_TITULO t
-						where exists
+
+						select 1 from TAB_PROJ_DIGITAL_DEPENDENCIAS d
+						where d.DEPENDENCIA_ID = c.id
+						and d.DEPENDENCIA_TIPO = :dependencia_tipo
+						and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
+						and exists 
 						(
-							select 1 from TAB_PROJ_DIGITAL_DEPENDENCIAS d
-							where d.DEPENDENCIA_ID = c.id
-							and exists
+							select 1 from TAB_PROJETO_DIGITAL p
+							where d.PROJETO_DIGITAL_ID = p.id							
+							and c.EMPREENDIMENTO = p.EMPREENDIMENTO
+							and exists 
 							(
-								select 1 from TAB_PROJETO_DIGITAL p
-								where d.PROJETO_DIGITAL_ID = p.id
+								select 1 from TAB_TITULO t 
+								where t.situacao = :titulo_situacao
 								and p.REQUERIMENTO = t.REQUERIMENTO
-								and p.id <> :projeto_digital_id
-							) 
-						)
-						and t.situacao = 8
+							)
+						)			
+					)
+					and not exists 
+					(
+						select 1 from TAB_PROJ_DIGITAL_DEPENDENCIAS d
+						where d.DEPENDENCIA_ID = c.id
+						and d.DEPENDENCIA_TIPO = :dependencia_tipo
+						and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
+						and d.PROJETO_DIGITAL_ID = :projeto_digital_id
 					)
 					and c.EMPREENDIMENTO = :empreendimentoId and lt.id = c.TIPO_BARRAGEM", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimentoId", empreendimentoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("projeto_digital_id", projetoDigitalId, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo_situacao", (int)eTituloSituacao.Valido, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -580,10 +594,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                 c.periodo_retorno, c.coeficiente_escoamento, c.tempo_concentracao, c.equacao_calculo, c.area_alagada, c.volume_armazenado, 
 				c.fase, c.possui_monge, c.tipo_monge, c.especificacao_monge, c.possui_vertedouro, c.tipo_vertedouro, c.especificacao_vertedouro, 
                 c.possui_estrutura_hidrau, c.adequacoes_realizada, c.data_inicio_obra, c.data_previsao_obra, c.easting, c.northing, c.formacao_resp_tec, 
-                c.especificacao_rt, c.autorizacao, c.numero_art_elaboracao, c.numero_art_execucao 
+                c.especificacao_rt, c.autorizacao, c.numero_art_elaboracao, c.numero_art_execucao,
+				(select count(*) from TAB_PROJ_DIGITAL_DEPENDENCIAS d
+				where d.DEPENDENCIA_ID = c.id
+				and d.DEPENDENCIA_TIPO = :dependencia_tipo
+				and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
+				and exists
+				(
+					select 1 from TAB_PROJETO_DIGITAL p
+					where c.EMPREENDIMENTO = p.EMPREENDIMENTO
+					and p.id = d.PROJETO_DIGITAL_ID
+				)) as possui_associacao_externa
                 from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt where lt.id = c.tipo_barragem and c.id = :retornoComando", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("retornoComando", retornoComando, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -628,6 +654,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.Autorizacao.Id = reader.GetValue<int>("autorizacao");
 						caracterizacao.NumeroARTElaboracao = reader.GetValue<string>("numero_art_elaboracao");
 						caracterizacao.NumeroARTExecucao = reader.GetValue<string>("numero_art_execucao");
+						caracterizacao.PossuiAssociacaoExterna = reader.GetValue<int>("possui_associacao_externa") > 1;
 
 						ListaBarragem.Add(caracterizacao);
 
@@ -710,6 +737,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		internal CaracterizacaoPDF ObterDadosPdfTitulo(int empreendimento, int atividade, BancoDeDados banco)
 		{
 			throw new NotImplementedException();
+		}
+
+		internal bool PossuiAssociacaoExterna(int empreendimento, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}TAB_PROJ_DIGITAL_DEPENDENCIAS d
+				where d.DEPENDENCIA_TIPO = :dependencia_tipo
+				and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
+				and exists
+				(
+					select 1 from {0}TAB_PROJETO_DIGITAL p
+					where p.EMPREENDIMENTO = :empreendimento
+					and p.id = d.PROJETO_DIGITAL_ID
+				)", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
 		}
 
 		#endregion
