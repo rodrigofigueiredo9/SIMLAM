@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
+using System.Linq;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Data
 {
@@ -445,15 +446,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
-                Comando comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento, c.atividade, c.tipo_barragem, 
-                lt.texto tipo_barragem_texto, c.finalidade_atividade, c.curso_hidrico, c.vazao_enchente, c.area_bacia_contribuicao, c.precipitacao, 
-                c.periodo_retorno, c.coeficiente_escoamento, c.tempo_concentracao, c.equacao_calculo, c.area_alagada, c.volume_armazenado, 
-				c.fase, c.possui_monge, c.tipo_monge, c.especificacao_monge, c.possui_vertedouro, c.tipo_vertedouro, c.especificacao_vertedouro, 
-                c.possui_estrutura_hidrau, c.adequacoes_realizada, c.data_inicio_obra, c.data_previsao_obra, c.easting, c.northing, c.formacao_resp_tec, 
-                c.especificacao_rt, c.autorizacao, c.numero_art_elaboracao, c.numero_art_execucao 
-                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt where lt.id = c.tipo_barragem and c.id = :id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"
+					select  b.id, b.tid, b.empreendimento, b.atividade, b.tipo_barragem, b.curso_hidrico, 
+							b.vazao_enchente, b.area_bacia_contribuicao, b.precipitacao, b.periodo_retorno, 
+							b.coeficiente_escoamento, b.tempo_concentracao, b.equacao_calculo, b.area_alagada, 
+							b.volume_armazenado, b.fase, b.interno_id, b.interno_tid, b.possui_barragem_contigua, 
+							b.altura_barramento, b.comprimento_barramento, b.largura_base_barramento, b.largura_crista_barramento,
+							b.fonte_precipitacao, b.fonte_coeficiente_escoamento, b.fonte_vazao_enchente,
+							c.id contruida_construir, c.supressao_app, c.largura_demarcada, c.largura_demarcada_legislacao,
+							c.faixa_cercada, c.descricao_desen_app, c.demarcacao_app, c.barramento_normas, 
+							c.barramento_adequacoes, c.vazao_min_tipo, c.vazao_min_diametro, c.vazao_min_instalado, 
+							c.vazao_min_normas, c.vazao_min_adequacoes, c.vazao_max_tipo, c.vazao_max_diametro,
+							c.vazao_max_instalado, c.vazao_max_normas, c.vazao_max_adequacoes, c.mes_inicio_obra, c.ano_inicio_obra
+					from crt_barragem_dispensa_lic b
+					inner join crt_barragem_construida_con c on b.id = c.barragem
+					where b.id = :id", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -462,14 +471,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (reader.Read())
 					{
 						caracterizacao.Id = reader.GetValue<int>("id");
-                        caracterizacao.CredenciadoID = id;
+						caracterizacao.CredenciadoID = id;
 						caracterizacao.Tid = reader.GetValue<string>("tid");
-                        caracterizacao.InternoID = reader.GetValue<int>("interno_id");
-                        caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
+						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
+						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.AtividadeID = reader.GetValue<int>("atividade");
-						//caracterizacao.BarragemTipo = reader.GetValue<int>("tipo_barragem");
+						caracterizacao.BarragemTipo = (eBarragemTipo)reader.GetValue<int>("tipo_barragem");
 						//caracterizacao.BarragemTipoTexto = reader.GetValue<string>("tipo_barragem_texto");
 						//caracterizacao.FinalidadeAtividade = reader.GetValue<int>("finalidade_atividade");
 						caracterizacao.cursoHidrico = reader.GetValue<string>("curso_hidrico");
@@ -482,30 +491,97 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.EquacaoCalculo = reader.GetValue<string>("equacao_calculo");
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
-						caracterizacao.Fase = reader.GetValue<int?>("fase");
-						caracterizacao.PossuiMonge = reader.GetValue<int?>("possui_monge");
-						caracterizacao.MongeTipo = reader.GetValue<int>("tipo_monge");
-						caracterizacao.EspecificacaoMonge = reader.GetValue<string>("especificacao_monge");
-						caracterizacao.PossuiVertedouro = reader.GetValue<int?>("possui_vertedouro");
-						caracterizacao.VertedouroTipo = reader.GetValue<int>("tipo_vertedouro");
-						caracterizacao.EspecificacaoVertedouro = reader.GetValue<string>("especificacao_vertedouro");
-						caracterizacao.PossuiEstruturaHidraulica = reader.GetValue<int?>("possui_estrutura_hidrau");
-						caracterizacao.AdequacoesRealizada = reader.GetValue<string>("adequacoes_realizada");
-						caracterizacao.DataInicioObra = reader.GetValue<string>("data_inicio_obra");
-						caracterizacao.DataPrevisaoTerminoObra = reader.GetValue<string>("data_previsao_obra");
-						caracterizacao.Coordenada.EastingUtmTexto = reader.GetValue<string>("easting");
-						caracterizacao.Coordenada.NorthingUtmTexto = reader.GetValue<string>("northing");
-						caracterizacao.FormacaoRT = reader.GetValue<int>("formacao_resp_tec");
-						caracterizacao.EspecificacaoRT = reader.GetValue<string>("especificacao_rt");
-                        caracterizacao.Autorizacao.Id = reader.GetValue<int>("autorizacao");
-						caracterizacao.NumeroARTElaboracao = reader.GetValue<string>("numero_art_elaboracao");
-						caracterizacao.NumeroARTExecucao = reader.GetValue<string>("numero_art_execucao");
+						caracterizacao.Fase = reader.GetValue<int>("fase");
+
+						caracterizacao.barragemContiguaMesmoNivel = reader.GetValue<bool>("possui_barragem_contigua");
+						caracterizacao.alturaBarramento = reader.GetValue<decimal>("altura_barramento");
+						caracterizacao.comprimentoBarramento = reader.GetValue<decimal>("comprimento_barramento");
+						caracterizacao.larguraBaseBarramento = reader.GetValue<decimal>("largura_base_barramento");
+						caracterizacao.larguraCristaBarramento = reader.GetValue<decimal>("largura_crista_barramento");
+						caracterizacao.fonteDadosPrecipitacao = reader.GetValue<string>("fonte_precipitacao");
+						caracterizacao.fonteDadosCoeficienteEscoamento = reader.GetValue<string>("fonte_coeficiente_escoamento");
+						caracterizacao.fonteDadosVazaoEnchente = reader.GetValue<string>("fonte_vazao_enchente");
+						caracterizacao.construidaConstruir.id = reader.GetValue<int>("contruida_construir");
+						caracterizacao.construidaConstruir.isSupressaoAPP = reader.GetValue<bool>("supressao_app");
+						caracterizacao.construidaConstruir.larguraDemarcada = reader.GetValue<decimal>("largura_demarcada");
+						caracterizacao.construidaConstruir.larguraDemarcadaLegislacao = reader.GetValue<bool>("largura_demarcada_legislacao");
+						caracterizacao.construidaConstruir.faixaCercada = reader.GetValue<int>("faixa_cercada");
+						caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
+						caracterizacao.construidaConstruir.isDemarcacaoAPP = reader.GetValue<int>("demarcacao_app");
+						caracterizacao.construidaConstruir.barramentoNormas = reader.GetValue<bool>("barramento_normas");
+						caracterizacao.construidaConstruir.barramentoAdequacoes = reader.GetValue<string>("barramento_adequacoes");
+						caracterizacao.construidaConstruir.vazaoMinTipo = reader.GetValue<int>("vazao_min_tipo");
+						caracterizacao.construidaConstruir.vazaoMinDiametro = reader.GetValue<decimal>("vazao_min_diametro");
+						caracterizacao.construidaConstruir.vazaoMinInstalado = reader.GetValue<bool>("vazao_min_instalado");
+						caracterizacao.construidaConstruir.vazaoMinNormas = reader.GetValue<bool>("vazao_min_normas");
+						caracterizacao.construidaConstruir.vazaoMinAdequacoes = reader.GetValue<string>("vazao_min_adequacoes");
+						caracterizacao.construidaConstruir.vazaoMaxTipo = reader.GetValue<int>("vazao_max_tipo");
+						caracterizacao.construidaConstruir.vazaoMaxDiametro = reader.GetValue<decimal>("vazao_max_diametro");
+						caracterizacao.construidaConstruir.vazaoMaxInstalado = reader.GetValue<bool>("vazao_max_instalado");
+						caracterizacao.construidaConstruir.vazaoMaxNormas = reader.GetValue<bool>("vazao_max_normas");
+						caracterizacao.construidaConstruir.vazaoMaxAdequacoes = reader.GetValue<string>("vazao_max_adequacoes");
+						caracterizacao.construidaConstruir.mesInicioObra = reader.GetValue<int>("mes_inicio_obra");
+						caracterizacao.construidaConstruir.anoInicioObra = reader.GetValue<int>("ano_inicio_obra");
 					}
 
 					reader.Close();
 				}
-			}
 
+				#region Coordenadas
+				comando = bancoDeDados.CriarComando(@"
+					select c.id, c.tipo, c.northing, c.easting from crt_barragem_coordenada c
+						where c.barragem = :barragem order by tipo", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var obj = caracterizacao.coordenadas.FirstOrDefault(x => (int)x.tipo == reader.GetValue<int>("tipo"));
+						obj.id = reader.GetValue<int>("id");
+						obj.tipo = (eTipoCoordenadaBarragem)reader.GetValue<int>("tipo");
+						obj.northing = reader.GetValue<int>("northing");
+						obj.easting = reader.GetValue<int>("easting");
+					}
+				}
+				#endregion
+
+				#region Responsaveis Tecnicos
+				comando = bancoDeDados.CriarComando(@"
+					select r.id, r.tipo, r.nome, r.profissao, r.registro_crea, r.numero_art, r.autorizacao_crea
+						from crt_barragem_responsavel r where r.barragem = :barragem", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						var obj = caracterizacao.responsaveisTecnicos.FirstOrDefault(x => (int)x.tipo == reader.GetValue<int>("tipo"));
+						obj.id = reader.GetValue<int>("id");
+						obj.tipo = (eTipoRT)reader.GetValue<int>("tipo");
+						obj.nome = reader.GetValue<string>("nome");
+						obj.profissao.Id = reader.GetValue<int>("profissao");
+						obj.registroCREA = reader.GetValue<string>("registro_crea");
+						obj.numeroART = reader.GetValue<string>("numero_art");
+						if(obj.tipo == eTipoRT.ElaboracaoProjeto)
+							obj.autorizacaoCREA.Id = reader.GetValue<int>("autorizacao_crea");
+					}
+				}
+				#endregion
+
+				#region Finalidade Atividade
+				comando = bancoDeDados.CriarComando(@"
+					select  f.atividade from crt_barragem_finaldiade_ativ f where f.barragem = :barragem", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+
+				caracterizacao.finalidade = bancoDeDados.ExecutarList<int>(comando);
+				#endregion
+
+
+			}
 			return caracterizacao;
 		}
 

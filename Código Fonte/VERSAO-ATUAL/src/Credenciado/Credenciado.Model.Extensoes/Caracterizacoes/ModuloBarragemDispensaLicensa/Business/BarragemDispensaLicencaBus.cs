@@ -239,6 +239,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Obter
 
+		public BarragemDispensaLicenca Obter(int id, int empreendimentoId, int projetoDigitalId = 0, bool simplificado = false, BancoDeDados banco = null)
+		{
+			BarragemDispensaLicenca barragem = null;
+			try
+			{
+				barragem = _da.Obter(empreendimentoId, simplificado: simplificado);
+
+				var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+				if (rt.autorizacaoCREA.Id > 0)
+				{
+					rt.autorizacaoCREA = _busArquivo.Obter(rt.autorizacaoCREA.Id.GetValueOrDefault());
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return barragem;
+		}
+
 		public BarragemDispensaLicenca ObterPorEmpreendimento(int empreendimentoId, int projetoDigitalId = 0, bool simplificado = false, BancoDeDados banco = null)
 		{
 			BarragemDispensaLicenca barragem = null;
@@ -248,7 +269,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				if (caracterizacoesAssociadas != null && caracterizacoesAssociadas.Count > 0)
 				{
-					barragem = ObterHistorico(caracterizacoesAssociadas.FirstOrDefault().Id, caracterizacoesAssociadas.FirstOrDefault().Tid);
+					barragem = _da.Obter(caracterizacoesAssociadas.FirstOrDefault().Id, simplificado: simplificado);
+					//barragem = ObterHistorico(caracterizacoesAssociadas.FirstOrDefault().Id, caracterizacoesAssociadas.FirstOrDefault().Tid);
+					var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+					if (rt.autorizacaoCREA.Id > 0)
+					{
+						rt.autorizacaoCREA = _busArquivo.Obter(rt.autorizacaoCREA.Id.GetValueOrDefault());
+					}
 				}
 				else
 				{

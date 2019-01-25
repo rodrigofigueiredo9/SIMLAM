@@ -75,12 +75,23 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 			Autorizacao = new Arquivo.Arquivo();
 			construidaConstruir = new BarragemConstruidaAConstruir();
 			responsaveisTecnicos = new List<BarragemRT>();
+			coordenadas = new List<BarragemCoordenada>();
+
 			for (var i = 0; i < 6; i++)
 			{
 				BarragemRT rt = new BarragemRT();
 				if (i == 1) rt.autorizacaoCREA = new Arquivo.Arquivo();
+				rt.tipo = (eTipoRT)i+1;
 
 				responsaveisTecnicos.Add(rt);
+			}
+
+			for (var i = 0; i < 3; i++)
+			{
+				BarragemCoordenada coord = new BarragemCoordenada();
+				coord.tipo = (eTipoCoordenadaBarragem)i+1;
+
+				coordenadas.Add(coord);
 			}
 		}
 	}

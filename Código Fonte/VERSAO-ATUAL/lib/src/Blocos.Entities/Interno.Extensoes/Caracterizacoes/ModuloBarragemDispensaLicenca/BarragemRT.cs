@@ -20,6 +20,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string numeroART { get; set; }
 		public Arquivo.Arquivo autorizacaoCREA { get; set; }
 
-		public BarragemRT() { }
+		public BarragemRT() {
+			profissao = new Profissao();
+		}
 	}
 }
