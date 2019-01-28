@@ -381,12 +381,12 @@ BarragemDispensaLicenca = {
 		if (count > 0)
 		{
 			$('.btnAdicionar').prop('disabled', true);
-			$('.btnAdicionar').addClass('disabled'); //lembrar de adicionar o css
+			$('.btnAdicionar').addClass('disabled');
 		}
 		if (count > 0)
 		{
 			$('.btnAssociar').prop('disabled', true);
-			$('.btnAssociar').addClass('disabled');
+			$('.btnAssociar').addClass('desativado');
 		}
 
 	},
@@ -414,7 +414,6 @@ BarragemDispensaLicenca = {
 	},
 	
 	desassociar: function () {
-		debugger;
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
 		//dependenciaTipos.TipoCaracterizacao
 		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();

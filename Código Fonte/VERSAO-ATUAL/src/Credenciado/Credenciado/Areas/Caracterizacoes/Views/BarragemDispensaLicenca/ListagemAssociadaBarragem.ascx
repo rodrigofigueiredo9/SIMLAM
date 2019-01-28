@@ -9,7 +9,7 @@
 
 	<div class="dataGrid">
 		<input type="hidden" class="associadoAoProjeto" value="<%= Model.CaracterizacoesAssociadas.Count%>" />
-		<button title="Cadastrar" class="btnAdicionar floatRight" role="button" style="margin:0.5%"><strong>+ Barragem</strong></button>		
+		<input title="Cadastrar" class="btnAdicionar floatRight ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" style="margin:0.5%" value="+ Barragem">
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>
 					<tr>
@@ -26,7 +26,7 @@
 						{%>
 					<tr>
 						
-						<td title="<%=Html.Encode(item.FinalidadeAtividade)%>"><%=Html.Encode(item.FinalidadeAtividade)%></td>
+						<td title="<%=Html.Encode(item.FinalidadeTexto)%>"><%=Html.Encode(item.FinalidadeTexto)%></td>
 						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
 						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
 						<td title="Cadastrada">Cadastrada</td>

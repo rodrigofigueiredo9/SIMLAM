@@ -17,6 +17,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
         public int EmpreendimentoCodigo { get; set; }
 		public int AtividadeID { get; set; }
 		public string Atividade { get; set; }
+		public string FinalidadeTexto{ get; set; }
 		public int? BarragemTipo { get; set; }
 		public string BarragemTipoTexto { get; set; }
 		public int FinalidadeAtividade { get; set; }
