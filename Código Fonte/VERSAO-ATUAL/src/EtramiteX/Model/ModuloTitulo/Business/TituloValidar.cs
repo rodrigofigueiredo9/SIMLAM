@@ -605,7 +605,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				Validacao.Add(Mensagem.Titulo.ProtocoloNaoEstaEmPosse(titulo.Protocolo.IsProcesso, titulo.Protocolo.Numero));
 			}
 
-			if (titulo.Situacao == null || titulo.Situacao.Id != 1)
+			if (titulo.Situacao == null || (titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro && titulo.Situacao.Id != (int)eTituloSituacao.Cadastrado))
 			{
 				Validacao.Add(Mensagem.Titulo.SituacaoExcluir(titulo.Situacao.Texto));
 			}
