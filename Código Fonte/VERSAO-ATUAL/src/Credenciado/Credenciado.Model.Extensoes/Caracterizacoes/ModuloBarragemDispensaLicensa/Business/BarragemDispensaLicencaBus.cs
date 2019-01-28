@@ -264,12 +264,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Obter
 
-		public BarragemDispensaLicenca Obter(int id, int empreendimentoId, int projetoDigitalId = 0, bool simplificado = false, BancoDeDados banco = null)
+		public BarragemDispensaLicenca Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
 			BarragemDispensaLicenca barragem = null;
 			try
 			{
-				barragem = _da.Obter(empreendimentoId, simplificado: simplificado);
+				barragem = _da.Obter(id, simplificado: simplificado);
 
 				var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
 				if (rt.autorizacaoCREA.Id > 0)

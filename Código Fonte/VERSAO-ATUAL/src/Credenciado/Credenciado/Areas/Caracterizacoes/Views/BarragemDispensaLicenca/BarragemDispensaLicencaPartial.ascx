@@ -54,11 +54,11 @@
 			<%Html.RenderPartial("DescricaoGeralBarragem", Model);%>
 		</div>
 		
-		<div class="divBarragemContruida hide">
+		<div class="divBarragemContruida <%=(Model.Caracterizacao.Fase == (int)eFase.Construida) ? "" : "hide"%>">
 			<%Html.RenderPartial("DescContruida", Model);%>
 		</div>
 
-		<div class="divBarragemAContruir hide">
+		<div class="divBarragemAContruir <%=(Model.Caracterizacao.Fase == (int)eFase.AConstruir) ? "" : "hide"%>">
 			<%Html.RenderPartial("DescAContruir", Model);%>
 		</div>
 

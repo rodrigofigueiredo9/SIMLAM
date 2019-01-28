@@ -33,7 +33,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public List<int> finalidade { get; set; }
 		public string cursoHidrico { get; set; }
 		public decimal areaBaciaContribuicao { get; set; }
-		public decimal intensidadeMaxPrecipitacao { get; set; }
+		public decimal precipitacao { get; set; }
 		public string fonteDadosPrecipitacao { get; set; }
 		public decimal periodoRetorno { get; set; }
 		public decimal coeficienteEscoamento { get; set; }
@@ -43,7 +43,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public decimal vazaoEnchente { get; set; }
 		public string fonteDadosVazaoEnchente { get; set; }
 
-		public decimal? Precipitacao { get; set; }
 		public string EquacaoCalculo { get; set; }
 		public int? Fase { get; set; }
 		public int? PossuiMonge { get; set; }
@@ -77,6 +76,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 			construidaConstruir = new BarragemConstruidaAConstruir();
 			responsaveisTecnicos = new List<BarragemRT>();
 			coordenadas = new List<BarragemCoordenada>();
+			finalidade = new List<int>();
 
 			for (var i = 0; i < 6; i++)
 			{

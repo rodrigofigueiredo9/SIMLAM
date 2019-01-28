@@ -26,13 +26,13 @@
 		
 		<div class="coluna40">
 			<label for="larguraDemarcada">Qual a largura demarcada (m)? *</label>
-			<%= Html.TextBox("construidaConstruir.larguraDemarcada", Model.Caracterizacao.construidaConstruir.larguraDemarcada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraDemarcada", maxlength = "22" })) %>
+			<%= Html.TextBox("larguraDemarcada", Model.Caracterizacao.construidaConstruir.larguraDemarcada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraDemarcada", maxlength = "22" })) %>
 		</div>
 		<div class="block coluna80">
 			<div class="coluna80">
 				<label for="larguraDemarcadaLegislacao">A largura demarcada atende à legislaçao? *</label>
-				<%= Html.RadioButton("construidaConstruir.larguraDemarcadaLegislacao", String.Empty, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbLarguraDemarcadaLegislacao" })) %> Sim
-				<%= Html.RadioButton("SupresconstruidaConstruir.larguraDemarcadaLegislacao", String.Empty, false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbLarguraDemarcadaLegislacao" })) %> Não
+				<%= Html.RadioButton("larguraDemarcadaLegislacao", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbLarguraDemarcadaLegislacao" })) %> Sim
+				<%= Html.RadioButton("larguraDemarcadaLegislacao", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbLarguraDemarcadaLegislacao" })) %> Não
 			</div>
 		</div>
 		<div class="blockv coluna80">

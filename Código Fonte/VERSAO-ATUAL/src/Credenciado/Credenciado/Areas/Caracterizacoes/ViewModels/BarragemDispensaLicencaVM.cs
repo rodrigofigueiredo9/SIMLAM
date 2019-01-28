@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloProjetoDigital;
@@ -64,12 +66,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
             atividades.Add(new Lista() { Id = atividade.Id.ToString(), Texto = atividade.NomeAtividade });
             Atividades = ViewModelHelper.CriarSelectList(atividades, isFiltrarAtivo: false, itemTextoPadrao: false);
 
-            FinalidadesAtividade = finalidades;
+			FinalidadesAtividade = finalidades.Select(x => new Lista() {
+				Codigo = x.Codigo,
+				Id = x.Id,
+				Texto = x.Texto,
+				Tid = x.Tid,
+				Tipo = x.Tipo,
+				IsAtivo = entidade.finalidade.Exists(y => y == Convert.ToInt32(x.Id))
+			}).ToList();
+
             FormacoesRTLst = formacoesRT;
             BarragemTiposLst = barragemTipos;
             FasesLst = fases;
-            MongeTiposLst = ViewModelHelper.CriarSelectList(mongeTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.MongeTipo.ToString());
-            VertedouroTiposLst = ViewModelHelper.CriarSelectList(vertedouroTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.VertedouroTipo.ToString());
+            MongeTiposLst = ViewModelHelper.CriarSelectList(mongeTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.construidaConstruir.vazaoMinTipo.ToString());
+            VertedouroTiposLst = ViewModelHelper.CriarSelectList(vertedouroTipos, isFiltrarAtivo: true, itemTextoPadrao: true, selecionado: Caracterizacao.construidaConstruir.vazaoMaxTipo.ToString());
 			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[0].id.ToString()));
 			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[1].id.ToString()));
 			profissoesLst.Add(ViewModelHelper.CriarSelectList(profissoes, selecionado: Caracterizacao.responsaveisTecnicos[2].id.ToString()));

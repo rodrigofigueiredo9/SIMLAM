@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                         caracterizacao.cursoHidrico = reader.GetValue<string>("curso_hidrico");
                         caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
                         caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
-                        caracterizacao.Precipitacao = reader.GetValue<decimal>("precipitacao");
+                        caracterizacao.precipitacao = reader.GetValue<decimal>("precipitacao");
                         caracterizacao.periodoRetorno = reader.GetValue<int>("periodo_retorno");
                         caracterizacao.coeficienteEscoamento = reader.GetValue<decimal>("coeficiente_escoamento");
                         caracterizacao.tempoConcentracao = reader.GetValue<decimal>("tempo_concentracao");

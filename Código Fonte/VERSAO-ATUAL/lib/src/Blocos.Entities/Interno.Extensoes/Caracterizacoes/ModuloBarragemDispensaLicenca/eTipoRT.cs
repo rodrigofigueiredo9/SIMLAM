@@ -9,17 +9,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 	public enum eTipoRT
 	{
 		Nulo = 0,
-		[Description("RT Elaboração Declaração")]
+		[Description("Elaboração Declaração")]
 		ElaboracaoDeclaracao,
-		[Description("RT Elaboração Projeto")]
+		[Description("Elaboração Projeto")]
 		ElaboracaoProjeto,
-		[Description("RT Execucao Barragem")]
+		[Description("Execucao Barragem")]
 		ExecucaoBarragem,
-		[Description("RT Elaboração Estudo Ambiental")]
+		[Description("Elaboração Estudo Ambiental")]
 		ElaboracaoEstudoAmbiental,
-		[Description("RT Elaboração Plano de Recuperação")]
+		[Description("Elaboração Plano de Recuperação")]
 		ElaboracaoPlanoRecuperacao,
-		[Description("RT Execução Plano de Recuperação")]
+		[Description("Execução Plano de Recuperação")]
 		ExecucaoPlanoRecuperacao
 	}
 }

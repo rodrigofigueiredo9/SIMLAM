@@ -20,7 +20,7 @@
 			<div class="coluna80">
 			<label for="TipoBarragem">Tipo da barragem *</label>
 			<% foreach (var item in Model.BarragemTiposLst) { %>
-			<label><%= Html.RadioButton("TipoBarragem", item.Id, (false), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
+			<label><%= Html.RadioButton("TipoBarragem", item.Id, item.IsAtivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
 			<% } %>
 		</div>
 		</div>
@@ -124,34 +124,6 @@
 			</div>
 		<%} %>
 		</div>
-			<%--<label class ="coluna40">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Abastecimento humano (exceto abastecimento público)
-			</label>
-			<label class ="coluna25">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Irrigação
-			</label>
-			<label class ="coluna25">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Regularização de varão
-			</label>
-			<label class ="coluna40">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Agricultura
-			</label>
-			<label class ="coluna25">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Reservação de água
-			</label>
-			<label class ="coluna25">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Ecoturismo ou turismo rural
-			</label>
-			<label class ="coluna40">
-				<%= Html.CheckBox("FinalidadeAtividade", false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "checkbox cbFinalidadeAtividade", @title = "item.txto", @value = "item.texto" }))%>
-				Dessedentação de animais
-			</label>--%>
 	</div>
 			
 	<div class="box">
@@ -170,7 +142,7 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="intensidadeMaxPrecipitacao">Intensidade máxima média de precipitação (mm/h) *</label>
-				<%= Html.TextBox("intensidadeMaxPrecipitacao", Model.Caracterizacao.intensidadeMaxPrecipitacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtIntensidadeMaxPrecipitacao", maxlength = "14" })) %>
+				<%= Html.TextBox("intensidadeMaxPrecipitacao", Model.Caracterizacao.precipitacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtIntensidadeMaxPrecipitacao", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">
 				<label for="fonteDadosIntensidadeMax">Fonte de dados *</label>

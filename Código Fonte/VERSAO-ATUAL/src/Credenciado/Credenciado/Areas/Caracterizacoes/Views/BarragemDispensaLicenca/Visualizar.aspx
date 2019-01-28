@@ -8,7 +8,11 @@
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/barragemDispensaLicenca.js") %>"></script>
 	<script type="text/javascript">
 		$(function () {
-			BarragemDispensaLicenca.load($('#central'));
+			BarragemDispensaLicenca.load($('#central'),
+				{
+				mensagens: <%= Model.Mensagens %>,
+				idsTela: <%= Model.IdsTela %>
+			});
 		});
 	</script>
 </asp:Content>

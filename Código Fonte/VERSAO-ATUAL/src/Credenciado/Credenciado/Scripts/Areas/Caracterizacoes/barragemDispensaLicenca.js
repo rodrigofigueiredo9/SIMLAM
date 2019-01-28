@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -32,6 +32,12 @@ BarragemDispensaLicenca = {
         container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
         container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
 		container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvarConfirm);
+		container.delegate('.btnAdicionar', 'click', BarragemDispensaLicenca.criar);
+
+		container.delegate('.btnAssociar', 'click', BarragemDispensaLicenca.associar);
+		container.delegate('.btnDesassociar', 'click', BarragemDispensaLicenca.desassociar);
+		container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
+		container.delegate('.btnEditar', 'click', BarragemDispensaLicenca.editar);
 
 		container.delegate('.rbDemarcaoAPP', 'change', BarragemDispensaLicenca.onChangeFaixaDemarcada);
 		container.delegate('.rbBarramentoNormas', 'change', BarragemDispensaLicenca.onChangeBarramento);
@@ -307,7 +313,7 @@ BarragemDispensaLicenca = {
             BarragemTipo: $('.rbBarragemTipo:checked', BarragemDispensaLicenca.container).val(),
 			fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),
             //FinalidadeAtividade: 0,
-			barragemContiguaMesmoNivel: $('.rbBarragemTipo:checked').val(), 
+			barragemContiguaMesmoNivel: ($('.rbBarragemTipo:checked').val() == 1) , 
 			areaAlagada: $('.txtAreaAlagada').val(),
 			volumeArmazanado: $('.txtVolumeArmazenamento').val(),
 			alturaBarramento: $('.txtAlturaBarramento').val(),
@@ -319,7 +325,7 @@ BarragemDispensaLicenca = {
 			responsaveisTecnicos: [],
 			cursoHidrico: $('.txtCursoHidrico').val(),
 			areaBaciaContribuicao: $('.txtAreaBacia').val(),
-			intensidadeMaxPrecipitacao: $('.txtIntensidadeMaxPrecipitacao').val(),
+			precipitacao: $('.txtIntensidadeMaxPrecipitacao').val(),
 			fonteDadosPrecipitacao: $('.txtFonteDadosIntensidade').val(),
 			periodoRetorno: $('.txtPeriodoRetorno').val(),
 			coeficienteEscoamento: $('.txtCoeficienteEscoamento').val(),
@@ -333,61 +339,35 @@ BarragemDispensaLicenca = {
 				isSupressaoAPP: $('.rbSupressaoAPP:checked').val(), 
 				isDemarcacaoAPP: $('.txtFonteDadosVazao').val(),
 				larguraDemarcada: $('.txtLarguraDemarcada').val(),
-				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val(),
+				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true : false,
 				faixaCercada: $('.rbFaixaCercada:checked').val(),
 				descricacaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
-				barramentoNormas: $('.rbBarramentoNormas:checked').val(),
+				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
 				barramentoAdequacoes: $('.txtAdequacoesDimensionamentoBarramento').val(),
 				vazaoMinTipo: ($('.rbFase:checked')).val() == 1 ?
 					$('.ddlTipoDispositivoVazaoMin:visible').val() : $('.ddlTipoDispositivoVazaoMinAConstruir:visible').val(),
 				vazaoMinDiametro: ($('.rbFase:checked')).val() == 1 ?
 					$('.txtDiametroTubulacaoVazaoMin').val() : $('.txtDiametroTubulacaoVazaoMinAConstruir').val(),
-				vazaoMinInstalado: $('.rbVazaoMinInstalado:checked').val(),
-				vazaoMinNormas: $('.rbVazaoMinNormas:checked').val(),
+				vazaoMinInstalado: $('.rbVazaoMinInstalado:checked').val() == 1 ? true : false,
+				vazaoMinNormas: $('.rbVazaoMinNormas:checked').val() == 1 ? true : false,
 				vazaoMinAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMin').val(),
 				vazaoMaxTipo: ($('.rbFase:checked')).val() == 1 ?
 					$('.ddlTipoDispositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
 				vazaoMaxDiametro: ($('.rbFase:checked')).val() == 1 ?
 					$('.txtDiametroTubulacaoVazaoMax').val() : $('.txtDiametroTubulacaoVazaoMaxAConstruir').val(),
-				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val(),
-				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val(),
+				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true : false,
+				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val() == 1 ? true : false,
 				vazaoMaxAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMax').val(),
 				mesInicioObra: $('.txtAdequacoesDimensionamentoVazaoMax').val(),
 				anoInicioObra: $('.txtAdequacoesDimensionamentoVazaoMax').val()
 				
 			},
+		};
+		objeto.construidaConstruir.isSupressaoAPP = objeto.construidaConstruir.isSupressaoAPP ?
+			objeto.construidaConstruir.isSupressaoAPP : $('.rbPerguntaSupressaoAContruir:checked').val();
 
-			//CursoHidrico: $('.txtCursoHidrico', BarragemDispensaLicenca.container).val(),
-   //         VazaoEnchente: $('.txtVazaoEnchente', BarragemDispensaLicenca.container).val(),
-   //         AreaBaciaContribuicao: $('.txtAreaBaciaContribuicao', BarragemDispensaLicenca.container).val(),
-   //         Precipitacao: $('.txtPrecipitacao', BarragemDispensaLicenca.container).val(),
-   //         PeriodoRetorno: $('.txtPeriodoRetorno', BarragemDispensaLicenca.container).val(),
-   //         CoeficienteEscoamento: $('.txtCoeficienteEscoamento', BarragemDispensaLicenca.container).val(),
-   //         TempoConcentracao: $('.txtTempoConcentracao', BarragemDispensaLicenca.container).val(),
-   //         EquacaoCalculo: $('.txtEquacaoCalculo', BarragemDispensaLicenca.container).val(),
-   //         AreaAlagada: $('.txtAreaAlagada', BarragemDispensaLicenca.container).val(),
-   //         VolumeArmazanado: $('.txtVolumeArmazenado', BarragemDispensaLicenca.container).val(),
-   //         Fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),
-   //         PossuiMonge: $('.rbPossuiMonge:visible:checked', BarragemDispensaLicenca.container).val(),
-   //         MongeTipo: $('.ddlMongeTipo:visible', BarragemDispensaLicenca.container).val(),
-   //         EspecificacaoMonge: $('.txtEspecificacaoMonge:visible', BarragemDispensaLicenca.container).val(),
-   //         PossuiVertedouro: $('.rbPossuiVertedouro:visible:checked', BarragemDispensaLicenca.container).val(),
-   //         VertedouroTipo: $('.ddlVertedouroTipo:visible', BarragemDispensaLicenca.container).val(),
-   //         EspecificacaoVertedouro: $('.txtEspecificacaoVertedouro:visible', BarragemDispensaLicenca.container).val(),
-   //         PossuiEstruturaHidraulica: $('.rbPossuiEstruturaHidraulica:visible:checked', BarragemDispensaLicenca.container).val(),
-   //         AdequacoesRealizada: $('.txtAdequacoesRealizada:visible', BarragemDispensaLicenca.container).val(),
-   //         DataInicioObra: $('.txtDataInicioObra:visible', BarragemDispensaLicenca.container).val(),
-   //         DataPrevisaoTerminoObra: $('.txtDataPrevisaoTerminoObra:visible', BarragemDispensaLicenca.container).val(),
-            //Coordenada: {
-            //    EastingUtmTexto: $('.txtEasting', BarragemDispensaLicenca.container).val(),
-            //    NorthingUtmTexto: $('.txtNorthing', BarragemDispensaLicenca.container).val()
-            //},
-            //FormacaoRT: 0,
-            //EspecificacaoRT: $('.txtEspecificacaoRT:visible', BarragemDispensaLicenca.container).val(),
-            //NumeroARTElaboracao: $('.txtNumeroARTElaboracao', BarragemDispensaLicenca.container).val(),
-            //NumeroARTExecucao: $('.txtNumeroARTExecucao', BarragemDispensaLicenca.container).val(),
-            //Autorizacao: $.parseJSON($('.hdnArquivo', BarragemDispensaLicenca.container).val())
-        };
+		objeto.construidaConstruir.isSupressaoAPP = (objeto.construidaConstruir.isSupressaoAPP == 1) ? true : false;
+		objeto.construidaConstruir.isDemarcacaoAPP = (objeto.construidaConstruir.isDemarcacaoAPP == 1) ? true : false;
 
         $('.cbFinalidadeAtividade').each(function (index, item) {
 			if ($(item).is(':checked')) {
@@ -619,9 +599,12 @@ BarragemDispensaLicenca = {
 	},
 
 	visualizar: function () {
-		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' +
+		debugger;
+		var id = $(this).closest('tr').find('.hdnId').val();
+
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' + id + '?empreendimentoId='+
 			BarragemDispensaLicenca.settings.empreendimentoId +
-			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
+			'&projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
 			'&retornarVisualizar=' + ($('.btnFinalizarPasso', BarragemDispensaLicenca.container).length <= 0));
 	},
 

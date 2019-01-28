@@ -25,9 +25,9 @@
 						{%>
 					<tr>
 						
-						<td title="<%=Html.Encode(item.FinalidadeAtividade)%>"><%=Html.Encode(item.FinalidadeAtividade)%></td>
-						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
-						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
+						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
+						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
+						<td title="<%=Html.Encode(item.volumeArmazanado)%>"><%=Html.Encode(item.volumeArmazanado)%></td>
 						<td title="Cadastrada">Cadastrada</td>
 
 						<td>

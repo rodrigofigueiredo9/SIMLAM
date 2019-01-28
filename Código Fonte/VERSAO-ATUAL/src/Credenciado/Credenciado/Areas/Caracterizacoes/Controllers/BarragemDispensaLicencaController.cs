@@ -147,19 +147,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         #region Visualizar
 
         [Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaVisualizar })]
-        public ActionResult Visualizar(int id, int projetoDigitalId)
+        public ActionResult Visualizar(int id, int empreendimentoId, int projetoDigitalId)
         {
-            if (!_validar.Acessar(id, projetoDigitalId))
-            {
-                return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
-            }
+			if (!_validar.Acessar(empreendimentoId, projetoDigitalId))
+			{
+				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+			}
 
-            if (!_validar.Acessar(id, projetoDigitalId))
-            {
-                return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
-            }
+			if (!_validar.Acessar(empreendimentoId, projetoDigitalId))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+			}
 
-            BarragemDispensaLicenca caracterizacao = _bus.ObterPorEmpreendimento(id, projetoDigitalId);
+			BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
             AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
 
             BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
@@ -240,7 +240,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				ListaCredenciadoBus.BarragemDispensaLicencaBarragemTipo,
 				ListaCredenciadoBus.BarragemDispensaLicencaFase,
 				ListaCredenciadoBus.BarragemDispensaLicencaMongeTipo,
-				ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo
+				ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
+				ListaCredenciadoBus.Profissoes
 			);
 
 			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();

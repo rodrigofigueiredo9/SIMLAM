@@ -46,11 +46,11 @@
 		
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Dia *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskInteger txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
 		</div>
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Mês *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskInteger txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "14" })) %>
 		</div>
 	</div>
 	
