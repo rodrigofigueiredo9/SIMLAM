@@ -120,7 +120,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
 						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
-						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int32);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
 						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
 						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
@@ -391,7 +391,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
 						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
-						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int32);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
 						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
 						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);

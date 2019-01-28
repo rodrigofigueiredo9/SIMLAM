@@ -17,7 +17,7 @@
 				<input type="hidden" class="hdnIdentificacao" value='<%=Model.Caracterizacao.Posse.Identificacao%>' />
 			</div>
 
-			<div class="coluna21 append12">
+			<div class="coluna21 append6">
 				<label for="ZonaLocalizacao">Zona de localização</label>
 				<%= Html.TextBox("ZonaLocalizacao", ((eZonaLocalizacao)Model.Caracterizacao.Posse.Zona).ToString(), new { @class = "text txtZonaLocalizacao disabled", @disabled = "disabled" })%>
 			</div>
@@ -40,33 +40,33 @@
 				<%= Html.TextBox("Caracterizacao.Posse.AreaRequerida_", ((Model.Caracterizacao.Posse.AreaRequerida > 0)? Model.Caracterizacao.Posse.AreaRequerida.ToStringTrunc(format:true): null), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaRequerida maskDecimalPonto", @maxlength = "12" }))%>
 			</div>
 
-			<div class="coluna21">
+			<div class="coluna21 append6">
 				<label for="AreaTotalPosse">Área total da posse (m²)</label>
 				<%= Html.TextBox("AreaTotalPosse", Model.Caracterizacao.Posse.AreaCroqui.ToStringTrunc(2), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaTotalPosse maskDecimalPonto", @maxlength = "24" }))%>
 			</div>
 
-			<% if (!Model.IsVisualizar)
+			<%--<% if (!Model.IsVisualizar)
 				{ %>
 			<div class="coluna11">
 				<button type="button" class="inlineBotao btnCarregarCroqui">Carregar</button>
 			</div>
-			<% } %>
+			<% } %>--%>
 
 			<div class="coluna21">
 				<label for="Perimetro">Perímetro (m)</label>
 				<%= Html.TextBox("Perimetro", Model.Caracterizacao.Posse.Perimetro.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtPerimetro maskDecimalPonto3", @maxlength = "25" }))%>
 			</div>
 
-			<% if (!Model.IsVisualizar)
+			<%--<% if (!Model.IsVisualizar)
 				{ %>
 			<div class="coluna11">
 				<button type="button" class="inlineBotao btnCarregarPerimetro">Carregar</button>
 			</div>
-			<% } %>
+			<% } %>--%>
 		</div>
 
 		<div class="block" >
-			<div class="coluna43 append2">
+			<div class="coluna43 append7">
 				<label for="AreaPosseDocumento">Área posse Documento(m²) *</label>
 				<%= Html.TextBox("AreaPosseDocumento", Model.Caracterizacao.Posse.AreaPosseDocumento.ToStringTrunc(3), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaPosse maskDecimalPonto", @maxlength = "25" })) %>
 			</div>
