@@ -63,12 +63,12 @@
 		<b>Barramento</b>
 		<div class="block">
 			<div class="coluna20">
-				<label for="areaAlagada">Easting *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingBarramento", maxlength = "14" })) %>
+				<label for="">Easting *</label>
+				<%= Html.TextBox("eastingBarramento", Model.Caracterizacao.coordenadas[0].easting, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingBarramento", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
-				<label for="areaAlagada">Northing *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingBarramento", maxlength = "14" })) %>
+				<label for="">Northing *</label>
+				<%= Html.TextBox("northingBarramento", Model.Caracterizacao.coordenadas[0].northing, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingBarramento", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">
@@ -79,12 +79,12 @@
 		<b>Área de bota-fora</b>
 		<div class="block">
 			<div class="coluna20">
-				<label for="areaAlagada">Easting *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingBotaFora", maxlength = "14" })) %>
+				<label for="">Easting *</label>
+				<%= Html.TextBox("eastingBoraFOra", Model.Caracterizacao.coordenadas[1].easting, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingBotaFora", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
-				<label for="areaAlagada">Northing *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingBotaFora", maxlength = "14" })) %>
+				<label for="">Northing *</label>
+				<%= Html.TextBox("northingBoraFOra", Model.Caracterizacao.coordenadas[1].northing, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingBotaFora", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">
@@ -95,12 +95,12 @@
 		<b>Área de empréstimo</b>
 		<div class="block">
 			<div class="coluna20">
-				<label for="areaAlagada">Easting *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingEmprestimo", maxlength = "14" })) %>
+				<label for="">Easting *</label>
+				<%= Html.TextBox("eastingEmprestimo", Model.Caracterizacao.coordenadas[2].easting, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingEmprestimo", maxlength = "14" })) %>
 			</div>
 			<div class="coluna20">
-				<label for="areaAlagada">Northing *</label>
-				<%= Html.TextBox("areaAlagada", Model.Caracterizacao.areaAlagada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEasting txtEastingEmprestimo", maxlength = "14" })) %>
+				<label for="">Northing *</label>
+				<%= Html.TextBox("northingEmprestimo", Model.Caracterizacao.coordenadas[2].northing, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtNorthing txtNorthingEmprestimo", maxlength = "14" })) %>
 			</div>
 			<%if (!Model.IsVisualizar) { %>
 				<div class="coluna20">

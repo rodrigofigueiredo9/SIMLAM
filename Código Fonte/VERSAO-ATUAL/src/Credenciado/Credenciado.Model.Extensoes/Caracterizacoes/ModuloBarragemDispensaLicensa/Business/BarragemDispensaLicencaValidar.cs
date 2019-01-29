@@ -26,13 +26,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                 return false;
             }
 
-			BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
+			//BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
 
-			if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
-			{
-				Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
-				return false;
-			}
+			//if (caracterizacao.Id <= 0 && auxiliar.Id > 0)
+			//{
+			//	Validacao.Add(Mensagem.Caracterizacao.EmpreendimentoCaracterizacaoJaCriada);
+			//	return false;
+			//}
 
 			if (!Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
 			{
@@ -114,9 +114,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if(x.easting <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
-			if (caracterizacao.coordenadas.Any(x => x.northing <= 0))
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
-
+			
 			if (caracterizacao.Fase == (int)eFase.Construida)
 			{
 				if (caracterizacao.construidaConstruir.isDemarcacaoAPP == 1)
@@ -217,6 +215,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 
 			if (!Validacao.EhValido) return false;
+			var profissoesSemAutorizacao = new List<int>() { 15, 37, 38};
 
 			caracterizacao.responsaveisTecnicos.ForEach(x =>
 			{
@@ -231,8 +230,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (String.IsNullOrWhiteSpace(x.numeroART))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.Description()));
 				}
-				if(x.tipo == eTipoRT.ElaboracaoProjeto && x.autorizacaoCREA.Id <= 0)
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.Description()));
+				if (x.tipo == eTipoRT.ElaboracaoProjeto &&
+					!profissoesSemAutorizacao.Contains(x.profissao.Id) &&
+					x.autorizacaoCREA.Id <= 0)
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.Description()));
 			});
 
 			return Validacao.EhValido;
@@ -254,7 +255,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
         }
 
 		internal bool AreaAlagadaValida(decimal area) => 
-			area < Convert.ToDecimal(0.01) && area > _da.AreaAlagadaConfiguracao(area);
+			area < Convert.ToDecimal(0.01) || area > _da.AreaAlagadaConfiguracao(area);
 
 		internal bool VolumeArmazenadoValida(decimal area) => 
 			area < Convert.ToDecimal(0.01) && area > _da.VolumeArmazenadoConfiguracao(area);

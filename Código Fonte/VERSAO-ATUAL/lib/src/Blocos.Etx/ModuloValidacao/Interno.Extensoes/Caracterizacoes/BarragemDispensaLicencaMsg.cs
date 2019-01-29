@@ -30,7 +30,7 @@
         public Mensagem InformeCoeficienteEscoamentoZeroFonteDados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "CoeficienteEscoamento", Texto = "Informe a fonte de dados do coeficiente de escoamento (C)." }; } }
         public Mensagem InformeTempoConcentracao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TempoConcentracao", Texto = "Informe o tempo de concentração (tc) (min)." }; } }
         public Mensagem InformeEquacaoCalculo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "EquacaoCalculo", Texto = "Informe a equação utilizada no cálculo do tc." }; } }
-        public Mensagem InformeAreaAlagadaZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AreaAlagada", Texto = "Informe a área alagada (ha) maior que zero." }; } }
+        public Mensagem InformeAreaAlagadaZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AreaAlagada", Texto = "Informe a área alagada (ha) válida." }; } }
         public Mensagem InformeVolumeArmazenadoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "VolumeArmazanado", Texto = "Informe o volume armazenado (m³) maior que zero." }; } }
         public Mensagem InformeFase { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Fase", Texto = "Informe a fase da barragem a ser feita a dispensa de licença." }; } }
         public Mensagem InformePossuiMonge { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PossuiMonge", Texto = "Informe se a barragem possui Monge." }; } }

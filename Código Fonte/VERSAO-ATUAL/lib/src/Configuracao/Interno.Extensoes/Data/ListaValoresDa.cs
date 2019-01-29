@@ -916,7 +916,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 				{
 					Id = item["id"].ToString(),
 					Texto = Convert.ToString(item["texto"]),
-					IsAtivo = true
+					IsAtivo = false
 				});
 			}
 			return lst;

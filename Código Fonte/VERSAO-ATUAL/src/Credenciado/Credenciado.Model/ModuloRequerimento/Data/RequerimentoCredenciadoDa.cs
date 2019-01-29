@@ -103,6 +103,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 
 				#endregion
 
+				#region Barragem
+				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
+						insert into tab_requerimento_barragem 
+							(id, requerimento, rt_elaboracao, possui_barragem_contigua)      
+							values(seq_requerimento_barragem.nextval, :requerimento, :rt_elaboracao, :possui_barragem_contigua)", UsuarioCredenciado);
+
+					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+					#endregion
+
+				}
+
 				#region Atividades
 				if (requerimento.Atividades != null && requerimento.Atividades.Count > 0)
 				{
@@ -205,6 +222,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				#endregion
+
+				#region Barragem
+				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
+					update tab_requerimento_barragem
+						set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
+					where requerimento = :requerimento", UsuarioCredenciado);
+
+					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
 				#endregion
 
 				#region Limpar os dados do banco
@@ -398,6 +431,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				lista.Add(@"delete from {0}tab_requerimento_ativ_finalida a where a.requerimento_ativ in (select b.id from {0}tab_requerimento_atividade b where b.requerimento = :requerimento);");
 				lista.Add("delete from {0}tab_requerimento_atividade b where b.requerimento = :requerimento;");
 				lista.Add("delete from {0}tab_requerimento_responsavel c where c.requerimento = :requerimento;");
+				lista.Add("delete from {0}tab_requerimento_barragem c where c.requerimento = :requerimento;");
 				lista.Add("delete from {0}tab_requerimento e where e.id = :requerimento;");
 
 				comando = bancoDeDados.CriarComando(@" begin " + string.Join(" ", lista) + " end;", UsuarioCredenciado);

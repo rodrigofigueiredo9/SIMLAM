@@ -162,21 +162,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Responsaveis Técnicos
 				caracterizacao.responsaveisTecnicos.ForEach(x => {
-					comando = bancoDeDados.CriarComando(@"
-					insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
-						numero_art, autorizacao_crea)
-					values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
-						:numero_art, :autorizacao_crea) ", EsquemaCredenciadoBanco);
-					var arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
-					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
-					comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
-					comando.AdicionarParametroEntrada("profissao", x.profissao.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
-					comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
-					comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
+					if (!String.IsNullOrWhiteSpace(x.nome))
+					{
+						comando = bancoDeDados.CriarComando(@"
+						insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
+							numero_art, autorizacao_crea, proprio_declarante)
+						values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
+							:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
+						var arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
+						comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
+						comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
+						comando.AdicionarParametroEntrada("profissao", x.profissao.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
+						comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
+						comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
+						comando.AdicionarParametroEntrada("autorizacao_crea", x.proprioDeclarante, DbType.String);
 
-					bancoDeDados.ExecutarNonQuery(comando);
+						bancoDeDados.ExecutarNonQuery(comando);
+					}
 				});
 				#endregion
 
@@ -208,7 +212,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				bancoDeDados.IniciarTransacao();
 
 				#region Barragem
-				Comando comando = bancoDeDados.CriarComando(@"update into crt_barragem_dispensa_lic set
+				Comando comando = bancoDeDados.CriarComando(@"update crt_barragem_dispensa_lic set
 					tipo_barragem = :tipo_barragem, curso_hidrico = :curso_hidrico, vazao_enchente = :vazao_enchente, 
 					area_bacia_contribuicao = :area_bacia_contribuicao, precipitacao = :precipitacao, periodo_retorno = :periodo_retorno, 
 					coeficiente_escoamento = :coeficiente_escoamento, tempo_concentracao = :tempo_concentracao, equacao_calculo = :equacao_calculo, 
@@ -282,11 +286,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#endregion
 
+				#region Finalidade Atividade
+				comando = bancoDeDados.CriarComando(@" delete crt_barragem_finaldiade_ativ where barragem = :barragem", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				caracterizacao.finalidade.ForEach(x => {
+					comando = bancoDeDados.CriarComando(@"
+					insert into crt_barragem_finaldiade_ativ(id, barragem, atividade)
+						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
+
+					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("atividade", x, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				});
+				#endregion
+				
 				#region Coordenadas
 				caracterizacao.coordenadas.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
-					update crt_barragem_coordenada set
-						tipo = :tipo, northing = :northing, easting = :easting where barragem = :barragem", EsquemaCredenciadoBanco);
+					update crt_barragem_coordenada set northing = :northing, easting = :easting where barragem = :barragem and tipo = :tipo", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
@@ -298,42 +318,49 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#endregion
 
 				#region Responsaveis Técnicos
-				var listId = String.Join(", ", caracterizacao.responsaveisTecnicos.Select(x => x.id).ToList());
-				
-				comando = bancoDeDados.CriarComando($@" delete crt_barragem_responsavel where id not in ({listId}) ", EsquemaCredenciadoBanco);
-				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+				var listId = String.Join(", ", caracterizacao.responsaveisTecnicos.Select(x => x.id).Where(x => x > 0).ToList());
+
+				if (!String.IsNullOrWhiteSpace(listId))
+				{
+					comando = bancoDeDados.CriarComando($@" delete crt_barragem_responsavel where id not in ({listId}) and barragem = :barragem", EsquemaCredenciadoBanco);
+					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
 
 				caracterizacao.responsaveisTecnicos.ForEach(x => {
 					int ?arquivo = null;
-
-					if (x.id > 0)
+					if (!String.IsNullOrWhiteSpace(x.nome))
 					{
-						comando = bancoDeDados.CriarComando(@"
+						if (x.id > 0)
+						{
+							comando = bancoDeDados.CriarComando(@"
 						update crt_barragem_responsavel set
  							nome = :nome, profissao = :profissao, registro_crea = :registro_crea,
-							numero_art = :numero_art, autorizacao_crea = :autorizacao_crea
+							numero_art = :numero_art, autorizacao_crea = :autorizacao_crea, proprio_declarante = :proprio_declarante
 						where barragem = :barragem  ", EsquemaCredenciadoBanco);
-						comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
-					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"
+							comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+						}
+						else
+						{
+							comando = bancoDeDados.CriarComando(@"
 						insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
-							numero_art, autorizacao_crea)
+							numero_art, autorizacao_crea, proprio_declarante)
 						values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
-							:numero_art, :autorizacao_crea) ", EsquemaCredenciadoBanco);
-						comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
+							:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
+							comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
+						}
+
+						arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
+						comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
+						comando.AdicionarParametroEntrada("profissao", x.profissao.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
+						comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
+						comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
+						comando.AdicionarParametroEntrada("proprio_declarante", x.proprioDeclarante, DbType.Int32);
+
+						bancoDeDados.ExecutarNonQuery(comando);
 					}
-
-					arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
-					comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
-					comando.AdicionarParametroEntrada("profissao", x.profissao.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
-					comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
-					comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
-
-					bancoDeDados.ExecutarNonQuery(comando);
 				});
 				#endregion
 				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.atualizar, bancoDeDados);
@@ -774,7 +801,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Responsaveis Tecnicos
 				comando = bancoDeDados.CriarComando(@"
-					select r.id, r.tipo, r.nome, r.profissao, r.registro_crea, r.numero_art, r.autorizacao_crea
+					select r.id, r.tipo, r.nome, r.profissao, r.registro_crea, r.numero_art, r.autorizacao_crea, r.proprio_declarante
 						from crt_barragem_responsavel r where r.barragem = :barragem", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
@@ -792,6 +819,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						obj.numeroART = reader.GetValue<string>("numero_art");
 						if(obj.tipo == eTipoRT.ElaboracaoProjeto)
 							obj.autorizacaoCREA.Id = reader.GetValue<int>("autorizacao_crea");
+						obj.proprioDeclarante = reader.GetValue<bool>("proprio_declarante");
 					}
 				}
 				#endregion
@@ -1003,6 +1031,55 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+		internal BarragemRT ObterResponsavelTecnicoRequerimento(int projetoDigital, BancoDeDados banco = null)
+		{
+
+			BarragemRT rt = new BarragemRT();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select pe.nome, pp.id profissao, pp.registro, rr.numero_art 
+					from tab_projeto_digital pd
+						inner join tab_requerimento_responsavel rr on rr.requerimento = pd.requerimento
+						inner join tab_pessoa pe on pe.id = rr.responsavel
+						inner join tab_pessoa_profissao pp on pe.id = pp.pessoa
+					where pd.id = :projetoDigital", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						rt.nome = reader.GetValue<string>("nome");
+						rt.profissao.Id = reader.GetValue<int>("profissao");
+						rt.registroCREA = reader.GetValue<string>("registro");
+						rt.numeroART = reader.GetValue<string>("numero_art");
+					}
+
+					reader.Close();
+				}
+
+			}
+			return rt;
+		}
+
+		internal bool ObterBarragemContiguaMesmoNivel(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select possui_barragem_contigua from tab_projeto_digital p 
+						inner join tab_requerimento_barragem r on p.requerimento = r.requerimento
+					where p.id = :projetoDigital", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
 		#endregion
 
 		#region Validações
@@ -1010,9 +1087,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		internal decimal AreaAlagadaConfiguracao(decimal area, BancoDeDados banco = null)
 		{
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select area_alagada from tab_titulo_configuracao)", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select area_alagada from tab_titulo_configuracao", EsquemaCredenciadoBanco);
 
 				return bancoDeDados.ExecutarScalar<decimal>(comando);
 			}
@@ -1021,11 +1098,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		internal decimal VolumeArmazenadoConfiguracao(decimal area, BancoDeDados banco = null)
 		{
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select volume_armazenado from tab_titulo_configuracao)", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select volume_armazenado from tab_titulo_configuracao", EsquemaCredenciadoBanco);
 
 				return bancoDeDados.ExecutarScalar<decimal>(comando);
+			}
+		}
+
+		internal bool VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select 1 from tab_projeto_digital pd
+						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
+					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
 		}
 		#endregion

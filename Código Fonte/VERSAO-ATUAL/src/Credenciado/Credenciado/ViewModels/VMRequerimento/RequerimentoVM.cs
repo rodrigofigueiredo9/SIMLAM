@@ -35,6 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMRequerimento
 		public int? UnidadeConservacao { get; set; }
 		public int? SupressaoVegetacao { get; set; }
 		public int? Realocacao { get; set; }
+		public int? BarragensContiguas { get; set; }
 
 		public bool contemBarragemDeclaratoria
 		{

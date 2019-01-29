@@ -18,17 +18,17 @@ namespace Exiges.Negocios.Library
         /// <returns>
         /// Retorna Enumerador que está sendo Analisado <c>(Nome, Valor e Descrição)</c>
         /// </returns>
-        public static EnumModel<TValue> GetEnumModel<TEnum, TValue>(TEnum pEnumValue)
-        {
-            var model = new EnumModel<TValue>
-            {
-                Nome = pEnumValue.ToString(),
-                Valor = (TValue)Convert.ChangeType(pEnumValue.ValueToString(), typeof(TValue)),
-                Descricao = pEnumValue.Description()
-            };
+        //public static EnumModel<TValue> GetEnumModel<TEnum, TValue>(TEnum pEnumValue)
+        //{
+        //    var model = new EnumModel<TValue>
+        //    {
+        //        Nome = pEnumValue.ToString(),
+        //        Valor = (TValue)Convert.ChangeType(pEnumValue.ValueToString(), typeof(TValue)),
+        //        Descricao = pEnumValue.Description()
+        //    };
 
-            return model;
-        }
+        //    return model;
+        //}
 
         /// <summary>
         /// Retorna Lista De Enumeradores com seus valore: Nome, Valor e Descrição
@@ -38,23 +38,23 @@ namespace Exiges.Negocios.Library
         /// <returns>
         /// Retorna uma lista com os valores do Enumerador que está sendo Analisado <c>(Nome, Valor e Descrição)</c>
         /// </returns>
-        public static IEnumerable<EnumModel<TypeValueEnum>> ToList<EnumType, TypeValueEnum>()
-        {
-            var typeEnums = typeof(EnumType);
-            var fieldsArray = typeEnums.GetFields(BindingFlags.Public | BindingFlags.Static);
-            var model = (from fInfo in fieldsArray
-                         let valor = Convert.ChangeType(fInfo.GetValue(null), typeof(TypeValueEnum)).ToString()
-                         let descricao = ((DescriptionAttribute)fInfo.GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault())?.Description
-                         let nome = fInfo.Name
-                         orderby valor
-                         select new EnumModel<TypeValueEnum>
-                         {
-                             Valor = (TypeValueEnum)Convert.ChangeType(valor, typeof(TypeValueEnum)),
-                             Descricao = descricao,
-                             Nome = nome
-                         }).ToList();
-            return model.ToList();
-        }
+        //public static IEnumerable<EnumModel<TypeValueEnum>> ToList<EnumType, TypeValueEnum>()
+        //{
+        //    var typeEnums = typeof(EnumType);
+        //    var fieldsArray = typeEnums.GetFields(BindingFlags.Public | BindingFlags.Static);
+        //    var model = (from fInfo in fieldsArray
+        //                 let valor = Convert.ChangeType(fInfo.GetValue(null), typeof(TypeValueEnum)).ToString()
+        //                 let descricao = ((DescriptionAttribute)fInfo.GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault())?.Description
+        //                 let nome = fInfo.Name
+        //                 orderby valor
+        //                 select new EnumModel<TypeValueEnum>
+        //                 {
+        //                     Valor = (TypeValueEnum)Convert.ChangeType(valor, typeof(TypeValueEnum)),
+        //                     Descricao = descricao,
+        //                     Nome = nome
+        //                 }).ToList();
+        //    return model.ToList();
+        //}
 
         #region Extension para Enumeradores
 

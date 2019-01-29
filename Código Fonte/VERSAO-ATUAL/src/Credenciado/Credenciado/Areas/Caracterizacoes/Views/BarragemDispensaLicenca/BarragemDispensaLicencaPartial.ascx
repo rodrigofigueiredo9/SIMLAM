@@ -42,8 +42,8 @@
 		</div>
 		<div>
 			<label>Esta declaração de dispensa está sendo elaborada para barragens contíguas num mesmo imóvel?</label><br />
-			<%= Html.RadioButton("PerguntaAtividade", "", false, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Sim
-			<%= Html.RadioButton("PerguntaAtividade", "", true, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbPerguntaAtiv" })) %> Não
+			<%= Html.RadioButton("PerguntaAtividade", ConfiguracaoSistema.SIM, Model.Caracterizacao.barragemContiguaMesmoNivel, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemContiguaMesmoNivel" })) %> Sim
+			<%= Html.RadioButton("PerguntaAtividade", ConfiguracaoSistema.NAO, !Model.Caracterizacao.barragemContiguaMesmoNivel, ViewModelHelper.SetaDisabled(true, new { @class = "radio rbBarragemContiguaMesmoNivel" })) %> Não
 		</div>
 	</div>
 

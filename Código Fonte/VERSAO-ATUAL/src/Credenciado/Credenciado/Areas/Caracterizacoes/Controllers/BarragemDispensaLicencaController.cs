@@ -40,14 +40,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
             }
 
             BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
-            caracterizacao.EmpreendimentoID = id;
+			caracterizacao.EmpreendimentoID = id;
+			caracterizacao.responsaveisTecnicos = _bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, projetoDigitalId);
+			caracterizacao.barragemContiguaMesmoNivel = _bus.ObterBarragemContiguaMesmoNivel(projetoDigitalId);
 
-            if (!_validar.Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
+			if (!_validar.Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
             {
-                return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+                return RedirectToAction("Listar", "BarragemDispensaLicenca", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
             }
-
-            AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
+			AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
 
             BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
                 caracterizacao,
@@ -60,8 +61,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
 				ListaCredenciadoBus.Profissoes
             );
-
-            return View(vm);
+			vm.rtElaborador = (!String.IsNullOrWhiteSpace(caracterizacao.responsaveisTecnicos[1].nome)) ? true : false;
+		
+			return View(vm);
         }
 
         [HttpPost]
@@ -98,19 +100,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Editar
 
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaEditar })]
-        public ActionResult Editar(int id, int projetoDigitalId)
+        public ActionResult Editar(int id, int empreendimentoId, int projetoDigitalId)
         {
-            if (!_caracterizacaoValidar.Basicas(id))
+            if (!_caracterizacaoValidar.Basicas(empreendimentoId))
             {
-                return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+                return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { empreendimentoId = projetoDigitalId, area = "" }));
             }
 
             if (!_validar.Acessar(id, projetoDigitalId))
             {
-                return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+                return RedirectToAction("", "Caracterizacao", new { id = empreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
             }
 
-            BarragemDispensaLicenca caracterizacao = _bus.ObterPorEmpreendimento(id);
+            BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
+
+			var rtElaborador = !String.IsNullOrWhiteSpace(_bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, projetoDigitalId)[1].nome);
             AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
 
             BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
@@ -124,8 +128,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 ListaCredenciadoBus.BarragemDispensaLicencaVertedouroTipo,
 				ListaCredenciadoBus.Profissoes
             );
+			vm.rtElaborador = rtElaborador;
 
-            return View(vm);
+
+			return View(vm);
         }
 
         [HttpPost]
