@@ -74,7 +74,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				if (titulo.Id <= 0)
 				{
-					titulo.Situacao.Id = (int)eTituloSituacao.EmCadastro;
+					titulo.Situacao.Id = (titulo.Modelo.Id == 92) ? /*Infomação de Corte*/
+						(int)eTituloSituacao.AguardandoPagamento : (int)eTituloSituacao.EmCadastro;
 					titulo.DataCriacao.Data = DateTime.Now;
 				}
 

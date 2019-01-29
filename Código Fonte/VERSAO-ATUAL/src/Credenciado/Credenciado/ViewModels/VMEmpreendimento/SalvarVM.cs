@@ -26,6 +26,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMEmpreendimento
 		public String EmpreendimentoHTMLCopiar { get; set; }
 		public Int32 EstadoDefault { get; set; }
 		public String EstadoDefaultSigla { get; set; }
+		public int requerimentoId { get; set; }
 		public bool IsCopiado { get; set; }
 		private bool _isEditar = false;
 		public bool IsEditar

@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
@@ -28,6 +29,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		TituloInternoDa _da = new TituloInternoDa();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 		GerenciadorConfiguracao<ConfiguracaoTitulo> _configTitulo = new GerenciadorConfiguracao<ConfiguracaoTitulo>(new ConfiguracaoTitulo());
+		public List<int> listaSituacoesAceitas = new List<int>() { (int)eTituloSituacao.EmCadastro, (int)eTituloSituacao.AguardandoPagamento };
 
 		public List<int> ModeloCodigosPendencia
 		{
@@ -122,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					return;
 				}
 
-				if (!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
+				if (!String.IsNullOrWhiteSpace(titulo.Numero.Texto) &&!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
 				{
 					Validacao.Add(Mensagem.Titulo.NumeroInvalido);
 				}
@@ -141,7 +143,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		{
 			Titulo(titulo);
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				if (String.IsNullOrEmpty(titulo.Situacao.Texto) && titulo.Situacao.Id > 0)
 				{
@@ -192,7 +194,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				return false;
 			}
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				Validacao.Add(Mensagem.Titulo.SituacaoEditar(titulo.Situacao.Texto));
 				return false;
@@ -202,6 +205,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			if (titulo.Modelo.SituacaoId != (int)eTituloModeloSituacao.Ativo)
 			{
 				Validacao.Add(Mensagem.Titulo.ModeloDesativado);
+			}
+
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+			{
+				DuaValidar _dua = new DuaValidar();
+				_dua.ExisteDuaTituloCorte(titulo.Id);
 			}
 
 			return Validacao.EhValido;

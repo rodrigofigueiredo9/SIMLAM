@@ -850,7 +850,17 @@ input[type=button].icone, .icone {
 		input[type=button].icone.excluir.desativado, .icone.excluir.desativado {
 			background-position: -46px bottom;
 		}
+	input[type=button].icone.dolar, .icone.dolar {
+		background-position: -1219px top;
+	}
 
+		input[type=button].icone.dolar:hover, .icone.dolar:hover {
+			background-position: -1219px center;
+		}
+
+		input[type=button].icone.dolar.desativado, .icone.dolar.desativado {
+			background-position: -1219px bottom;
+		}
 	input[type=button].icone.promover_sistema, .icone.promover_sistema {
 		background-position: -276px top;
 	}

@@ -15,6 +15,8 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOutros.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data;
 
@@ -28,6 +30,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		FuncionarioBus _funcionarioBus = new FuncionarioBus();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 		GerenciadorConfiguracao<ConfiguracaoTitulo> _configTitulo = new GerenciadorConfiguracao<ConfiguracaoTitulo>(new ConfiguracaoTitulo());
+		private List<int>  listaSituacoesAceitas = new List<int>() { (int)eTituloSituacao.EmCadastro, (int)eTituloSituacao.AguardandoPagamento };
 
 		public List<int> ModeloCodigosPendencia
 		{
@@ -144,7 +147,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					return;
 				}
 
-				if (!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
+				if (!String.IsNullOrEmpty(titulo.Numero.Texto) && !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
 				{
 					Validacao.Add(Mensagem.Titulo.NumeroInvalido);
 				}
@@ -180,27 +183,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 
 			//Obrigatoriedade de assinante conforme configuração
-			if (titulo.Modelo.Assinantes != null && titulo.Modelo.Assinantes.Count > 0)
-			{
-				// valida se título deve ter ao menos um assinante Dominio
-				if (titulo.Assinantes != null && titulo.Assinantes.Count() <= 0)
-				{
-					Validacao.Add(Mensagem.Titulo.AssinanteObrigatorio);
-					return false;
-				}
-			}
-			else
-			{
-				// valida se título deve ter ao menos um assinante Dominio
-				if (titulo.Assinantes != null && titulo.Assinantes.Count() > 0)
-				{
-					Validacao.Add(Mensagem.Titulo.AssinanteDesmarcar);
-					return false;
-				}
+			//if (titulo.Modelo.Assinantes != null && titulo.Modelo.Assinantes.Count > 0)
+			//{
+			//	// valida se título deve ter ao menos um assinante Dominio
+			//	if (titulo.Assinantes != null && titulo.Assinantes.Count() <= 0)
+			//	{
+			//		Validacao.Add(Mensagem.Titulo.AssinanteObrigatorio);
+			//		return false;
+			//	}
+			//}
+			//else
+			//{
+			//	// valida se título deve ter ao menos um assinante Dominio
+			//	if (titulo.Assinantes != null && titulo.Assinantes.Count() > 0)
+			//	{
+			//		Validacao.Add(Mensagem.Titulo.AssinanteDesmarcar);
+			//		return false;
+			//	}
 
-				//Não há mais validações de assinantes
-				return true;
-			}
+			//	//Não há mais validações de assinantes
+			//	return true;
+			//}
 
 			List<FuncionarioLst> lstCnfFuncRespSetor = new List<FuncionarioLst>();
 			FuncionarioLst respSetor = null;
@@ -270,7 +273,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			Titulo(titulo);
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				if (String.IsNullOrEmpty(titulo.Situacao.Texto) && titulo.Situacao.Id > 0)
 				{
@@ -309,7 +312,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				}
 			}
 
-			Assinantes(titulo);
+			//Assinantes(titulo);
 
 			return Validacao.EhValido;
 		}
@@ -322,7 +325,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				return false;
 			}
 
-			if (titulo.Id > 0 && titulo.Situacao.Id != (int)eTituloSituacao.EmCadastro)
+			if (titulo.Id > 0 && !listaSituacoesAceitas.Contains(titulo.Situacao.Id))
 			{
 				Validacao.Add(Mensagem.Titulo.SituacaoEditar(titulo.Situacao.Texto));
 				return false;
@@ -332,6 +335,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			if (titulo.Modelo.SituacaoId != (int)eTituloModeloSituacao.Ativo)
 			{
 				Validacao.Add(Mensagem.Titulo.ModeloDesativado);
+			}
+
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+			{
+				DuaValidar _dua = new DuaValidar();
+				_dua.ExisteDuaTituloCorte(titulo.Id);
 			}
 
 			return Validacao.EhValido;

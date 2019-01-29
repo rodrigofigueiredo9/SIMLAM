@@ -7,6 +7,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 {
 	public class InformacaoCorteInfoPDF
 	{
+		public String TipoCorte { get; set; }
+		public String Especie { get; set; }
+		public Decimal AreaCorte { get; set; }
+		public Int32 IdadePlantio { get; set; }
+		public String DestMaterial { get; set; }
+		public String Produto { get; set; }
+		public Decimal Quantidade { get; set; }
+
+		public InformacaoCorteInfoPDF() { }
+
+
 		public String ArvoresRestantes { get; set; }
 		public String AreaRestantes { get; set; }
 

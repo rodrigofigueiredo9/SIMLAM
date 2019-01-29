@@ -25,6 +25,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		PessoaCredenciadoBus _bus;
 		PessoaInternoBus _busInterno;
 		PessoaCredenciadoValidar _validar;
+		RequerimentoCredenciadoBus _requerimentoBus;
 
 		#endregion
 
@@ -33,6 +34,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			_bus = new PessoaCredenciadoBus();
 			_busInterno = new PessoaInternoBus();
 			_validar = new PessoaCredenciadoValidar();
+			_requerimentoBus = new RequerimentoCredenciadoBus();
 		}
 
 		#region Listar
@@ -83,10 +85,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaCriar })]
 		public ActionResult CriarVerificarCpfCnpj(PessoaVM vmVerificar)
 		{
-			var requerimentoId = Request.UrlReferrer.AbsolutePath.Substring(Request.UrlReferrer.AbsolutePath.LastIndexOf(Convert.ToChar("/")) + 1);
+			//var requerimentoId = Request.UrlReferrer.AbsolutePath.Substring(Request.UrlReferrer.AbsolutePath.LastIndexOf(Convert.ToChar("/")) + 1);
 
 			var _busRequerimento = new RequerimentoCredenciadoBus(new RequerimentoCredenciadoValidar());
-			var  isAtividadeCorteAssociada = _busRequerimento.IsRequerimentoAtividadeCorte(Convert.ToInt32(requerimentoId));
+			var  isAtividadeCorteAssociada = _busRequerimento.IsRequerimentoAtividadeCorte(Convert.ToInt32(vmVerificar.requerimentoId));
 
 			PessoaVM vm = null;
 			Pessoa pessoa = new Pessoa();
@@ -100,14 +102,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				isCpfCnpjValido = _bus.VerificarCriarCpfCnpj(vmVerificar.Pessoa);
 				if (isCpfCnpjValido)
 				{
-					pessoa = _bus.Obter(vmVerificar.Pessoa.CPFCNPJ, simplificado: true, credenciadoId: _bus.User.FuncionarioId);
+					if(!vm.IsAtividadeCorteAssociada)
+						pessoa = _bus.Obter(vmVerificar.Pessoa.CPFCNPJ, simplificado: true, credenciadoId: _bus.User.FuncionarioId);
 					pessoa.InternoId = _busInterno.ObterId(vmVerificar.Pessoa.CPFCNPJ);
 
 					if (pessoa.InternoId > 0 && pessoa.Id <= 0)
 					{
 						urlAcao = Url.Action("Visualizar", "Pessoa");
-						Validacao.Add(Mensagem.Credenciado.PessoaExistenteInterno(pessoa.IsFisica ? "CPF" : "CNPJ"));
 						vm.Pessoa.IsCopiado = true;
+						if (!vm.IsAtividadeCorteAssociada)
+							Validacao.Add(Mensagem.Credenciado.PessoaExistenteInterno(pessoa.IsFisica ? "CPF" : "CNPJ"));
 					}
 					else
 					{
@@ -204,7 +208,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				vm.Pessoa.IsValidarConjuge = !vm.IsConjuge;
 			}
 
-			if (_bus.Salvar(vm.Pessoa))
+			bool isAtividadeDeCorte = _requerimentoBus.IsRequerimentoAtividadeCorte(vm.requerimentoId);
+
+			if (_bus.Salvar(vm.Pessoa, isAtividadeDeCorte: isAtividadeDeCorte))
 			{
 				Validacao.Add(Mensagem.Pessoa.Salvar);
 				urlRedireciona += "?Msg=" + Validacao.QueryParam();

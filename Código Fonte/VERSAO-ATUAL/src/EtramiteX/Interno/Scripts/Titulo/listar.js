@@ -144,7 +144,6 @@ TituloListar = {
 	},
 
 	baixarDemonstrativoCar: function () {
-		debugger;
 		var objeto = $.parseJSON($(this).closest('tr').find('.itemJson').val());
 		
 

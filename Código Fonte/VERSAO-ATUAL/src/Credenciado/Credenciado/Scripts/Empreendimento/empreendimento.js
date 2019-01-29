@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -243,7 +243,7 @@ Empreendimento = {
 		MasterPage.carregando(false);
 	},
 
-	salvar: function (isRedirecionar) {
+	salvar: function (isRedirecionar, requerimento = 0) {
 		var pai = MasterPage.getContent(Empreendimento.settings.container);
 		var content = $('.modalSalvarEmpreendimento', pai);
 		var empJson = null;
@@ -257,6 +257,10 @@ Empreendimento = {
 
 		$('*', content).removeAttr('disabled');
 		var contentJson = EmpreendimentoSalvar.criarObjetoEmpreendimento(content);
+
+		if (typeof (requerimento) === "number" && requerimento > 0)
+			contentJson.requerimentoId = requerimento;
+
 		$('.disabled', content).attr('disabled', 'disabled');
 
 		if (parseInt($('.hdnEmpId', Empreendimento.settings.container).val()) > 0) {

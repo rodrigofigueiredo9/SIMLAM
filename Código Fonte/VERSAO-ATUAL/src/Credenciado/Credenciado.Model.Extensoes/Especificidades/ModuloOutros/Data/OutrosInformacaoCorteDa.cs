@@ -5,11 +5,14 @@ using System.Linq;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertidao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOutros;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloOutros.Data
@@ -58,13 +61,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				bancoDeDados.IniciarTransacao();
 				//Verifica a existencia da especificidade
-				Comando comando = bancoDeDados.CriarComando(@"select e.id from {0}esp_cert_disp_amb e where e.titulo = :titulo", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select e.id from {0}esp_out_informacao_corte e where e.titulo = :titulo", EsquemaBanco);
 				comando.AdicionarParametroEntrada("titulo", certidao.Titulo.Id, DbType.Int32);
 				id = bancoDeDados.ExecutarScalar(comando);
 
 				if (id != null && !Convert.IsDBNull(id))
 				{
-					comando = bancoDeDados.CriarComando(@"update esp_cert_disp_amb t set t.vinculo_propriedade = :vinculo_propriedade, t.vinculo_propriedade_outro = :vinculo_propriedade_outro, t.tid = :tid where t.titulo = :titulo", EsquemaBanco);
+					comando = bancoDeDados.CriarComando(@"update esp_out_informacao_corte t set
+					t.crt_informacao_corte = :informacao_corte,
+					t.validade = :validade,
+					t.tid = :tid where t.titulo = :titulo", EsquemaBanco);
 
 					acao = eHistoricoAcao.atualizar;
 					certidao.Id = Convert.ToInt32(id);
@@ -72,8 +78,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				else
 				{
 					comando = bancoDeDados.CriarComando(@"
-					insert into esp_cert_disp_amb (id, tid, titulo, vinculo_propriedade, vinculo_propriedade_outro)
-					values (seq_esp_cert_disp_amb.nextval, :tid, :titulo, :vinculo_propriedade, :vinculo_propriedade_outro) returning id into :id", EsquemaBanco);
+					insert into esp_out_informacao_corte (id, tid, titulo, crt_informacao_corte, validade, informacao_corte)
+					values (seq_esp_out_informacao_corte.nextval, :tid, :titulo, :informacao_corte, :validade, 0) returning id into :id", EsquemaBanco);
 
 					acao = eHistoricoAcao.criar;
 					comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -81,8 +87,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("titulo", certidao.Titulo.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("vinculo_propriedade", certidao.VinculoPropriedade, DbType.Int32);
-				//comando.AdicionarParametroEntrada("vinculo_propriedade_outro", DbType.String, 50, certidao.VinculoPropriedadeOutro);
+				comando.AdicionarParametroEntrada("informacao_corte", certidao.InformacaoCorte, DbType.Int32);
+				comando.AdicionarParametroEntrada("validade", certidao.Validade, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -94,7 +100,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#endregion
 
-				Historico.Gerar(Convert.ToInt32(certidao.Titulo.Id), eHistoricoArtefatoEspecificidade.certdisplicenamb, acao, bancoDeDados);
+				Historico.Gerar(Convert.ToInt32(certidao.Titulo.Id), eHistoricoArtefatoEspecificidade.outrosinformacaocorte, acao, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -108,18 +114,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#region Atualizar o tid para a nova ação
 
-				Comando comando = bancoDeDados.CriarComando(@"update {0}esp_cert_disp_amb c set c.tid = :tid where c.titulo = :titulo", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}esp_out_informacao_corte c set c.tid = :tid where c.titulo = :titulo", EsquemaBanco);
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				#endregion
 
-				Historico.Gerar(titulo, eHistoricoArtefatoEspecificidade.certdisplicenamb, eHistoricoAcao.excluir, bancoDeDados);
+				Historico.Gerar(titulo, eHistoricoArtefatoEspecificidade.outrosinformacaocorte, eHistoricoAcao.excluir, bancoDeDados);
 
 				#region Apaga os dados da especificidade
 
-				comando = bancoDeDados.CriarComando(@"delete from {0}esp_cert_disp_amb e where e.titulo = :titulo", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"delete from {0}esp_out_informacao_corte e where e.titulo = :titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
@@ -135,9 +141,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 		#region Obter
 
-		internal CertidaoDispensaLicenciamentoAmbiental Obter(int titulo, BancoDeDados banco = null)
+		internal OutrosInformacaoCorte Obter(int titulo, BancoDeDados banco = null)
 		{
-			CertidaoDispensaLicenciamentoAmbiental especificidade = new CertidaoDispensaLicenciamentoAmbiental();
+			OutrosInformacaoCorte especificidade = new OutrosInformacaoCorte();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -148,13 +154,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					e.id Id,
 					e.tid Tid,
 					tta.atividade Atividade,
-					e.vinculo_propriedade VinculoPropriedade,
-					e.vinculo_propriedade_outro VinculoPropriedadeOutro,
+					e.crt_informacao_corte InformacaoCorte,
+					e.validade Validade,
 					tt.requerimento RequerimentoId,
 					(case when tt.credenciado is null then (select nvl(p.nome, p.razao_social) from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = tt.requerimento) else 
 					(select nvl(p.nome, p.razao_social) from cre_requerimento r, cre_pessoa p where p.id = r.interessado and r.id = tt.requerimento) end) Interessado
 				from
-					esp_cert_disp_amb     e,
+					esp_out_informacao_corte     e,
 					tab_titulo            tt,
 					tab_titulo_atividades tta
 				where
@@ -166,108 +172,171 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
-				especificidade = bancoDeDados.ObterEntity<CertidaoDispensaLicenciamentoAmbiental>(comando);
-
+				especificidade = bancoDeDados.ObterEntity<OutrosInformacaoCorte>(comando);
+				
 				#endregion
 			}
 
 			return especificidade;
 		}
 
-		internal CertidaoDispensaLicenciamentoAmbientalPDF ObterDadosPDF(int titulo, BancoDeDados banco = null)
+		internal Outros ObterDadosPDF(int titulo, BancoDeDados banco = null)
 		{
-			CertidaoDispensaLicenciamentoAmbientalPDF certidao = new CertidaoDispensaLicenciamentoAmbientalPDF();
+			Outros outros = new Outros();
+			InformacaoCorteBus infoCorteBus = new InformacaoCorteBus();
+			List<InformacaoCorte> infoCorte = null;
+			InformacaoCorte infoCorteInfo = null;
+			int infoCorteInfoId = 0;
+			int empreendimentoId = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Dados do Titulo
 
-				DadosPDF dados = DaEsp.ObterDadosTitulo(titulo, bancoDeDados);
-				certidao.Titulo = dados.Titulo;
-				certidao.Empreendimento = dados.Empreendimento;
+				DadosPDF dados = DaEsp.ObterDadosTitulo(151048, bancoDeDados);
+
+				outros.Titulo = dados.Titulo;
+				outros.Titulo.SetorEndereco = DaEsp.ObterEndSetor(outros.Titulo.SetorId);
+				outros.Protocolo = dados.Protocolo;
+				outros.Empreendimento = dados.Empreendimento;
 
 				#endregion
 
-				#region Dados da Especificidade
+				#region Interessado
+				Comando comando = bancoDeDados.CriarComando(@"
+					select tt.requerimento, r.empreendimento, r.interessado, 
+					nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, 
+					nvl(lv.texto, ' -- ') vinculoPropriedade, nvl(p.rg, ' -- ') rg
+					from tab_titulo                             tt 
+					  inner join {0}tab_requerimento               r   on tt.requerimento = r.id
+					  inner join {0}tab_pessoa                     p   on r.interessado = p.id
+					  inner join {0}tab_empreendimento_responsavel er  on p.id = er.responsavel
+					  inner join lov_empreendimento_tipo_resp   lv  on er.tipo = lv.id
+					where tt.id = :id", UsuarioCredenciado);
 
-				Comando comando = bancoDeDados.CriarComando(@"select l.texto vinculo_propriedade, vinculo_propriedade_outro 
-				from esp_cert_disp_amb e, tab_titulo t, lov_esp_cert_disp_amb l where t.id = e.titulo and l.id  = e.vinculo_propriedade and e.titulo = :id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", 151048, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						certidao.VinculoPropriedade = reader.GetValue<string>("vinculo_propriedade");
-						certidao.VinculoPropriedadeOutro = reader.GetValue<string>("vinculo_propriedade_outro");
+						outros.Interessado.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
+						outros.Interessado.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
+						outros.Interessado.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
+						outros.Interessado.RGIE = reader.GetValue<string>("rg");
+						empreendimentoId = reader.GetValue<int>("empreendimento");
+
+						//_daEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), outros.Empreendimento.Id, bancoDeDados);
 					}
 
 					reader.Close();
+
 				}
 
 				#endregion
-			}
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
-			{
-				#region Dados da Especificidade
+				#region Empreendimento
 
-				Comando comando = bancoDeDados.CriarComando(@"select nvl(p.nome, p.razao_social) nome, nvl(p.cpf, p.cnpj) cpf 
-				from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = :requerimento", UsuarioCredenciado);
 
-				comando.AdicionarParametroEntrada("requerimento", certidao.Titulo.Requerimento.Numero, DbType.Int32);
+				comando = bancoDeDados.CriarComando(@"
+					select e.codigo, lv.texto segmento, e.denominador, e.cnpj, ee.bairro, ee.distrito, lvm.texto municipio, ee.complemento,
+
+						nvl((select cs.codigo_imovel from tab_controle_sicar cs
+								where cs.empreendimento = e.id and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
+							'') codigo_imovel,
+						(select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
+							where exists (select 1 from {0}crt_dominialidade d
+								where d.id = dd.dominialidade and d.empreendimento = e.id)) area_croqui,
+						(case ee.zona when 1 then 'Zona Urbana' when 2 then 'Zona Rural' end) zona,
+						(select max(c.area_flor_plantada) from {0}crt_informacao_corte c inner join esp_out_informacao_corte es 
+						  on c.id = es.crt_informacao_corte where es.titulo = :titulo) area_plantada
+						
+					from {0}tab_empreendimento e
+					inner join {0}tab_empreendimento_endereco ee on e.id = ee.empreendimento
+					inner join lov_empreendimento_segmento lv on lv.id = e.segmento
+					inner join lov_municipio              lvm on lvm.id = ee.municipio
+
+					where ee.correspondencia = 0 and e.id = :empreendimento", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						certidao.Interessado.NomeRazaoSocial = reader.GetValue<string>("nome");
-						certidao.Interessado.CPFCNPJ = reader.GetValue<string>("cpf");
+						outros.Empreendimento.Codigo = reader.GetValue<string>("codigo");
+						outros.Empreendimento.CodigoImovel = reader.GetValue<string>("codigo_imovel");
+						outros.Empreendimento.EndZona = reader.GetValue<string>("zona");
+						outros.Empreendimento.Segmento = reader.GetValue<string>("segmento");
+						outros.Empreendimento.Nome = reader.GetValue<string>("denominador");
+						outros.Empreendimento.CNPJ = reader.GetValue<string>("cnpj");
+						outros.Empreendimento.EndBairro = reader.GetValue<string>("bairro");
+						outros.Empreendimento.EndDistrito = reader.GetValue<string>("distrito");
+						outros.Empreendimento.EndMunicipio = reader.GetValue<string>("municipio");
+						outros.Empreendimento.EndComplemento = reader.GetValue<string>("complemento");
+						outros.Empreendimento.ATPCroquiDecimal = reader.GetValue<decimal>("area_croqui");
+						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_plantada");
 					}
 
 					reader.Close();
+
 				}
 
 				#endregion
 
-				#region Pesssoas
+				#region Informação de corte
 
-				List<PessoaPDF> pessoas = new List<PessoaPDF>();
+				comando = bancoDeDados.CriarComando(@"
+					select  oic.titulo, ict.tipo_corte, ict.especie, ict.area_corte, ict.idade_plantio, icd.dest_material,
+					lvd.texto dest_mat, lvp.texto produto, icd.quantidade
+						from {0}crt_informacao_corte ic
+							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte
+							inner join {0}crt_inf_corte_tipo             ict on ic.id = ict.corte_id
+							inner join {0}crt_inf_corte_dest_material    icd on ict.id = icd.tipo_corte_id
+							inner join lov_crt_inf_corte_inf_dest_mat lvd on lvd.id = icd.dest_material
+							inner join lov_crt_produto                lvp on lvp.id = icd.produto
+						where oic.titulo = :titulo", UsuarioCredenciado);
 
-				comando = bancoDeDados.CriarComando(@"select nvl(p.nome, p.razao_social) nome_razao, 'Interessado' vinculo_tipo 
-				from tab_requerimento r, tab_pessoa p where p.id = r.interessado and r.id = :requerimento
-				union all 
-				select nvl(p.nome, p.razao_social) nome_razao, 'Responsável Técnico' vinculo_tipo 
-				from tab_requerimento_responsavel r, tab_pessoa p where p.id = r.responsavel and r.requerimento = :requerimento", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("requerimento", certidao.Titulo.Requerimento.Numero, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					PessoaPDF pessoa = null;
-
 					while (reader.Read())
 					{
-						pessoa = new PessoaPDF();
-						pessoa.VinculoTipoTexto = reader.GetValue<string>("vinculo_tipo");
-						pessoa.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
-						pessoas.Add(pessoa);
+						InformacaoCorteInfoPDF ic = new InformacaoCorteInfoPDF();
+						ic.TipoCorte = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription();
+						ic.Especie = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription();
+						ic.AreaCorte = reader.GetValue<decimal>("area_corte");
+						ic.IdadePlantio = reader.GetValue<int>("idade_plantio");
+						ic.DestMaterial = reader.GetValue<string>("dest_mat");
+						ic.Produto = reader.GetValue<string>("produto");
+						ic.Quantidade = reader.GetValue<decimal>("quantidade");
+
+						outros.InformacaoCorte.InformacoesDeCorte.Add(ic);
 					}
 
 					reader.Close();
+
 				}
 
-				pessoas.ForEach(item =>
-				{
-					certidao.Titulo.AssinanteSource.Add(new AssinanteDefault { Cargo = item.VinculoTipoTexto, Nome = item.NomeRazaoSocial });
-				});
+				//infoCorte = infoCorteBus.ObterPorEmpreendimento(outros.Empreendimento.Id.GetValueOrDefault(), banco: bancoDeDados);
 
-				#endregion Pesssoas
+				//if (infoCorte != null)
+				//{
+				//	infoCorteInfo = infoCorte.SingleOrDefault(x => x.Id == infoCorteInfoId);
+
+				//	if (infoCorteInfo != null)
+				//	{
+				//		outros.InformacaoCorteInfo = new InformacaoCorteInfoPDF(infoCorteInfo);
+				//	}
+				//}
+
+				#endregion
 			}
 
-			return certidao;
+			return outros;
 		}
+
 
 		#endregion
 	}

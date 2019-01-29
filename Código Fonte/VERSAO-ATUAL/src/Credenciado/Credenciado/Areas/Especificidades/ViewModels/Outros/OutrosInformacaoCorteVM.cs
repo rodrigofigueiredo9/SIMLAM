@@ -24,21 +24,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Especificidades.ViewModels.Outr
 			set { _atividade = value; }
 		}
 
-		private List<SelectListItem> _vinculoPropriedade = new List<SelectListItem>();
-		public List<SelectListItem> VinculoPropriedade
+		private List<SelectListItem> _infCorte = new List<SelectListItem>();
+		public List<SelectListItem> InformacaoCorte
 		{
-			get { return _vinculoPropriedade; }
-			set { _vinculoPropriedade = value; }
+			get { return _infCorte; }
+			set { _infCorte = value; }
 		}
 
 		public OutrosInformacaoCorteVM() { }
 
-		public OutrosInformacaoCorteVM(OutrosInformacaoCorte outros, List<AtividadeSolicitada> atividades, List<Lista> vincPropriedade, bool isVisualizar = false)
+		public OutrosInformacaoCorteVM(OutrosInformacaoCorte outros, List<AtividadeSolicitada> atividades, List<Lista> infCorte, bool isVisualizar = false)
 		{
 			IsVisualizar = isVisualizar;
 			Outros = outros;
-			//Atividade = ViewModelHelper.CriarSelectList(atividades, true, true, outros.Atividade.ToString());
-			//VinculoPropriedade = ViewModelHelper.CriarSelectList(vincPropriedade, true, true, outros.VinculoPropriedade.ToString());
+			Atividade = ViewModelHelper.CriarSelectList(atividades, true, true, outros.Atividade.ToString());
+			InformacaoCorte = ViewModelHelper.CriarSelectList(infCorte, true, true, outros.InformacaoCorte.ToString());
 		}
 	}
 }
