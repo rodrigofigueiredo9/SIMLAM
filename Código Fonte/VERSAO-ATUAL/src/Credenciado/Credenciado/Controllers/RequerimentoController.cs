@@ -277,6 +277,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			requerimento.Interessado.Id = interessadoId;
 
 			_busRequerimento.AssociarInteressado(requerimento);
+			//_busRequerimento.DesassociarEmpreendimento(requerimentoId);
 
 			return Json(new
 			{

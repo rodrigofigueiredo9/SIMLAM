@@ -401,6 +401,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 			}
 		}
 
+		internal void DesassociarEmpreendimento(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_requerimento r set r.empreendimento = null where r.id = :id", UsuarioCredenciado);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion
 
 		#region Obter / Filtrar

@@ -359,6 +359,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			return false;
 		}
 
+		public void DesassociarEmpreendimento(int requerimentoId) => _da.DesassociarEmpreendimento(requerimentoId);
+
 		public void Finalizar(Requerimento requerimento)
 		{
 			try
