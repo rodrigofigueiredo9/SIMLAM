@@ -235,9 +235,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				(select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
 				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid,
-				(select sum(dd.area_croqui) from crt_dominialidade_dominio dd
+				(select sum(dd.area_croqui) from idaf.crt_dominialidade_dominio dd
 					where exists
-					(select 1 from crt_dominialidade d
+					(select 1 from idaf.crt_dominialidade d
 					where d.id = dd.dominialidade
 					and d.empreendimento = e.interno)) area_croqui
 				from {0}tab_empreendimento e,

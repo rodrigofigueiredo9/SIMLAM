@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Antigo;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
@@ -104,6 +105,29 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			};
 
 			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorte)]
+		public ActionResult VisualizarAntigo(int id)
+		{
+			InformacaoCorteAntigo caracterizacao = _informacaoCorteBus.ObterAntigo(id);
+			InformacaoCorteAntigoVM vm = new InformacaoCorteAntigoVM(caracterizacao, true);
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorteinformacao)]
+		public ActionResult InformacaoCorteInformacaoVisualizar(int id)
+		{
+			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(_informacaoCorteBus.ObterInformacaoItem(id), _listaBus.SilviculturaCulturasFlorestais, _listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial, true);
+			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
+
+			return Json(new
+			{
+				@Html = html,
+				@Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion

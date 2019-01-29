@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Entities.Credenciado.Security;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Antigo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloProjetoGeografico;
 using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
@@ -30,6 +31,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		InformacaoCorteBus _informacaoCorteBus = new InformacaoCorteBus();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		InformacaoCorteValidar _validar = new InformacaoCorteValidar();
+		InformacaoCorteInternoBus _informacaoCorteInternoBus = new InformacaoCorteInternoBus();
 
 		#region Criar
 
@@ -100,9 +102,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Visualizar
 
 		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
-		public ActionResult Visualizar(int id, int projetoDigitalId)
+		public ActionResult Visualizar(int id, int projetoDigitalId, int? empreendimentoId = null)
 		{
-			var caracterizacao = _informacaoCorteBus.Obter(id);
+			var caracterizacao = empreendimentoId > 0 ? _informacaoCorteInternoBus.Obter(id) : _informacaoCorteBus.Obter(id);
+			if (empreendimentoId > 0)
+			{
+				caracterizacao.EmpreendimentoId = empreendimentoId.GetValueOrDefault(0);
+				caracterizacao.Empreendimento.Id = caracterizacao.EmpreendimentoId;
+			}
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(caracterizacao.EmpreendimentoId);
 
 			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
@@ -118,6 +125,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return View(vm);
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		public ActionResult VisualizarAntigo(int id, int empreendimento, int projetoDigitalId)
+		{
+			InformacaoCorteAntigo caracterizacao = _informacaoCorteBus.ObterAntigo(id);
+			caracterizacao.EmpreendimentoId = empreendimento;
+			InformacaoCorteAntigoVM vm = new InformacaoCorteAntigoVM(caracterizacao, true) { ProjetoDigitalId = projetoDigitalId };
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		public ActionResult InformacaoCorteInformacaoVisualizar(int id)
+		{
+			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(_informacaoCorteBus.ObterInformacaoItem(id), ListaCredenciadoBus.SilviculturaCulturasFlorestais, ListaCredenciadoBus.CaracterizacaoProdutosExploracao, ListaCredenciadoBus.DestinacaoMaterial, true);
+			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
+
+			return Json(new
+			{
+				@Html = html,
+				@Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
+		}
 		#endregion
 
 		#region Excluir

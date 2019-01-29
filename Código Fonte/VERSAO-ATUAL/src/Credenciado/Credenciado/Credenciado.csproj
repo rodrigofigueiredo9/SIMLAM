@@ -100,6 +100,8 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\EmpreendimentoCaracterizacaoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteAntigoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteInformacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMDominialidade\ReservaLegalVM.cs" />
@@ -256,11 +258,16 @@
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorte.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorteInformacao.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Produto.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\ListarPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\VisualizarAntigo.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\BaseReferenciaPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ImportadorShapePartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\DesenhadorPartial.ascx" />
@@ -949,6 +956,7 @@
     <None Include="leiame.txt" />
     <Content Include="Scripts\Agrotoxicos\listar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteAntigo.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\unidadeConsolidacao.js" />

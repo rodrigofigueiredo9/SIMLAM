@@ -25,6 +25,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#endregion
 
+		public InformacaoCorte Obter(int id, bool simplificado = false)
+		{
+			InformacaoCorte caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.Obter(id, simplificado: simplificado);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
 		public InformacaoCorte ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false)
 		{
 			InformacaoCorte caracterizacao = null;

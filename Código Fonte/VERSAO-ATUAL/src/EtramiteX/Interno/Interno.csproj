@@ -161,6 +161,8 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CoordenadaAtividadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ConsumoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ExploracaoFlorestalListVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteAntigoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\InformacaoCorteInformacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\SharedVM\EmpreendimentoCaracterizacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
@@ -383,6 +385,11 @@
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarFiltros.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorte.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCorteInformacao.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Produto.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\VisualizarAntigo.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\InformacaoCortePartial.ascx" />
@@ -486,6 +493,7 @@
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Outros\OutrosInformacaoCorteDeclaratorio.ascx" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorte.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteAntigo.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\informacaoCorteListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorteDeclaratorio.js" />
