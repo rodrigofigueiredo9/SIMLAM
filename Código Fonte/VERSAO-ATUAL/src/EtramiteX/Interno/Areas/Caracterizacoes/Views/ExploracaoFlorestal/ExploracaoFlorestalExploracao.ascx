@@ -6,7 +6,8 @@
 
 <script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
-	ExploracaoFlorestalExploracao.settings.getEspecie = '<%= System.Configuration.ConfigurationManager.AppSettings["getEspecie"].ToString() %>';
+	ExploracaoFlorestalExploracao.settings.apiInstitucional = '<%= System.Configuration.ConfigurationManager.AppSettings["apiInstitucional"].ToString() %>';
+	ExploracaoFlorestalExploracao.settings.token = '<%= System.Configuration.ConfigurationManager.AppSettings["tokenApiInstitucional"].ToString() %>';
 </script>
 
 <div class="block filtroCorpo divExploracaoFlorestalExploracao">
