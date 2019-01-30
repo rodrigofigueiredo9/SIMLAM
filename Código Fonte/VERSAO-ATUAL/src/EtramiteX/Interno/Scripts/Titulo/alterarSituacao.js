@@ -10,7 +10,8 @@ TituloAlterarSituacao = {
 			validarAlterarSituacao: '',
 			salvar: '',
 			redirecionar: '',
-			integracaoSinaflor: null
+			apiInstitucional: null,
+			token: null
 		},
 		gerouPdf: false
 	},
@@ -159,9 +160,10 @@ TituloAlterarSituacao = {
 							prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
 
 						$.ajax({
-							type: "POST",
-							url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
+							url: TituloAlterarSituacao.settings.urls.apiInstitucional + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
 								'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+							headers: { 'Authorization': 'Bearer ' + TituloAlterarSituacao.settings.token },
+							type: "POST",
 							success: function (msg) {
 								console.info(msg);
 								$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";

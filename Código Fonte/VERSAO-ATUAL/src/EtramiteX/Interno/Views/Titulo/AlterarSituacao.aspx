@@ -14,7 +14,8 @@
 					validarAlterarSituacao: '<%= Url.Action("ValidarAlterarSituacaoTela", "Titulo") %>',
 					salvar: '<%= Url.Action("AlterarSituacao", "Titulo") %>',
 					redirecionar: '<%= Url.Action("Index", "Titulo") %>',
-					integracaoSinaflor: '<%= System.Configuration.ConfigurationManager.AppSettings["integracaoSinaflor"].ToString() %>'
+					apiInstitucional: '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString(), "IntegracaoSinaflor") %>',
+					token: '<%= System.Configuration.ConfigurationManager.AppSettings["token"].ToString() %>';
 			}
 		});
 	});
