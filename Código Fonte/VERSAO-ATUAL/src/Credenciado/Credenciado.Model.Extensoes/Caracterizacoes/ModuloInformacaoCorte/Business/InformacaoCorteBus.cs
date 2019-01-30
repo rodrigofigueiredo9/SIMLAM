@@ -266,6 +266,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return item;
 		}
 
+		public List<InformacaoCorteLicenca> ObterLicencas(int empreendimento, BancoDeDados banco = null) => _da.ObterLicencas(empreendimento, banco);
+
 		#endregion
 
 		#region Caracterizacao

@@ -48,7 +48,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, ListaCredenciadoBus.DestinacaoMaterial, ListaCredenciadoBus.Produto,
 				ListaCredenciadoBus.ListaEnumerado<eTipoCorte>(), ListaCredenciadoBus.ListaEnumerado<eEspecieInformada>())
 			{
-				ProjetoDigitalId = projetoDigitalId
+				ProjetoDigitalId = projetoDigitalId,
+				InformacaoCorteLicencaList = _informacaoCorteBus.ObterLicencas(empreendimento.InternoID)
 			};
 
 			return View(informacaoCorteVM);

@@ -37,7 +37,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
-				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>());
+				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>())
+			{
+				InformacaoCorteLicencaList = _informacaoCorteBus.ObterLicencas(id)
+			};
 
 			return View(informacaoCorteVM);
 		}

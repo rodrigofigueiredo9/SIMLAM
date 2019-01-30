@@ -1135,6 +1135,49 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return informacaoCorte;
 		}
 
+		internal List<InformacaoCorteLicenca> ObterLicencas(int empreendimento, BancoDeDados banco = null)
+		{
+			var lista = new List<InformacaoCorteLicenca>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select t.id, t.data_vencimento, t.modelo,
+					(select a.atividade from tab_atividade a where rownum = 1
+					and exists (select 1 from tab_titulo_atividades ta where ta.titulo = t.id and ta.atividade = a.id)) atividade,
+					concat(concat(numero, '/'), ano) numero
+				from tab_titulo t
+				left join tab_titulo_numero n
+				on (n.titulo = t.id)
+				where t.empreendimento = :empreendimento", EsquemaBanco);
+
+				comando.DbCommand.CommandText += String.Format(@" and exists (select 1 from tab_titulo_modelo m where m.id = t.modelo {0})",
+					comando.AdicionarIn("and", "m.codigo", DbType.Int32,
+					new List<int>() { (int)eEspecificidade.LicencaAmbientalRegularizacao, (int)eEspecificidade.LicencaOperacao }));
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				comando.DbCommand.CommandText += comando.AdicionarIn("and", "t.situacao", DbType.Int32, new List<int>() { (int)eTituloSituacao.Valido, (int)eTituloSituacao.Concluido });
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						lista.Add(new InformacaoCorteLicenca()
+						{
+							Licenca = reader.GetValue<int>("id"),
+							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") },
+							TipoLicenca = reader.GetValue<int>("modelo") == (int)eEspecificidade.LicencaOperacao ? "LO" : "LAR",
+							Atividade = reader.GetValue<string>("atividade"),
+							NumeroLicenca = reader.GetValue<string>("numero")
+						});
+					}
+
+					reader.Close();
+				}
+
+				return lista;
+			}
+		}
+
 		#endregion
 
 		internal bool PossuiCaracterizacaoEmAberto(int empreendimentoId)

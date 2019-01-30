@@ -290,6 +290,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			return item;
 		}
 
+		public List<InformacaoCorteLicenca> ObterLicencas(int empreendimento, BancoDeDados banco = null) => _da.ObterLicencas(empreendimento, banco);
+
 		#endregion
 
 		public bool ValidarCriar(int empreendimentoId)
