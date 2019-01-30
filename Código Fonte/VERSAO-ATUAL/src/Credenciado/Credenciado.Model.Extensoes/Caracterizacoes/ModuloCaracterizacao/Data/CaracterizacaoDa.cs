@@ -1179,7 +1179,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 							break;
 						default:
-							query = query.Remove(query.Length - 11);
+							if(query.Length > 0) query = query.Remove(query.Length - 11);
 							break;
 					}
 
@@ -1189,7 +1189,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 
 				comando.DbCommand.CommandText = query.Remove(query.Length - 11);
-
+				if (string.IsNullOrWhiteSpace(comando.DbCommand.CommandText))
+					return new List<int>();
 				return bancoDeDados.ExecutarList<Int32>(comando);
 			}
 		}
