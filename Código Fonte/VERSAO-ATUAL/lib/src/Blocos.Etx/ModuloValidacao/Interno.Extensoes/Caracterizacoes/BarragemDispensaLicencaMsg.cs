@@ -73,8 +73,8 @@
 		public Mensagem InformeSupressaoApp { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe as adequações do barramento." }; } }
 		public Mensagem InformeMesInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Informe o mês de início." }; } }
 		public Mensagem MesInicioInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Mês de início inválido." }; } }
-		public Mensagem InformeAnoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Informe o ano de início." }; } }
-		public Mensagem AnoInicioInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Ano de início inválido." }; } }
+		public Mensagem InformeAnoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AnoInicio", Texto = "Informe o ano de início." }; } }
+		public Mensagem AnoInicioInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AnoInicio", Texto = "Ano de início inválido." }; } }
 
 		public Mensagem InformeVazaoMinTipo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinTipo", Texto = "Informe o tipo de dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMinDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinDiametro", Texto = "Informe o diâmetro do dispositivo de vazão mínima." }; } }
@@ -93,5 +93,6 @@
 		public Mensagem InformeNumeroART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o número do ART do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeAutorizacaoCREA(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A autorização do CREA do responsável técnico {0} é obrigatória.", tipo) }; }
 
+		public Mensagem InformeRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Se alguma informação do Responsável técnico for preenchida, todas as outras precisam ser preenchidas." }; } }
 	}
 }

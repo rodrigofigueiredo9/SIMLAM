@@ -28,19 +28,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		public ProjetoDigital projetoDigital { get; set; } = new ProjetoDigital();
 		public bool rtElaborador { get; set; }
 
-		public string Mensagens
-        {
-            get
-            {
-                return ViewModelHelper.Json(new
-                {
-                    FormacaoRTOutros = Mensagem.BarragemDispensaLicenca.FormacaoRTOutros,
-                    ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio
-                });
-            }
-        }
+		public string Mensagens => ViewModelHelper.Json(new
+		{
+			FormacaoRTOutros = Mensagem.BarragemDispensaLicenca.FormacaoRTOutros,
+			ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
+			RtRequired = Mensagem.BarragemDispensaLicenca.InformeRT
+		});
 
-        public string IdsTela
+		public string IdsTela
         {
             get
             {

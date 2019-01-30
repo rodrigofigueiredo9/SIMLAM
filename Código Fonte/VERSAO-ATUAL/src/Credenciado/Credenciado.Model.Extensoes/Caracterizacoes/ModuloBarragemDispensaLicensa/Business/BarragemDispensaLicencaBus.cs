@@ -122,7 +122,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public bool Excluir(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
+		{
+			try
+			{
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.Excluir(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
+
+					bancoDeDados.Commit();
+				}
+
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool ExcluirCarac(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
@@ -144,10 +170,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
 					caracterizacaoBus.ConfigurarEtapaExcluirCaracterizacao(empreendimento, bancoDeDados);
-
-					_da.Excluir(empreendimento, bancoDeDados);
-
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
 
 					bancoDeDados.Commit();
 				}

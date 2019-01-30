@@ -372,8 +372,10 @@ BarragemDispensaLicenca = {
             }
 		});
 
-		objeto.responsaveisTecnicos = BarragemDispensaLicenca.obterRT();
 		objeto.coordenadas = BarragemDispensaLicenca.obterCoordenadas();
+		objeto.responsaveisTecnicos = BarragemDispensaLicenca.obterRT();
+		if (!objeto.responsaveisTecnicos)
+			return false;
 
         return objeto;
 	},
@@ -390,6 +392,7 @@ BarragemDispensaLicenca = {
 			{ codigo: '6', nome: 'ExecucaoPlanoRecuperacao' }
 		];
 
+
 		for (var i = 0; i < 6; i++) {
 			var rt = {
 				id: $('.hdnRT' + tipo[i].nome + 'Id').val(),
@@ -401,6 +404,13 @@ BarragemDispensaLicenca = {
 				autorizacaoCREA: tipo[i].codigo == 2 ? $.parseJSON($('.hdnArquivo').val()) : null,
 				proprioDeclarante: $('.cb' + tipo[i].nome + 'CopiaDeclarante:checked').val()
 			};
+			//Se tiver algum campo preenchido, todos são requeridos
+			if ((rt.nome.isNullOrWhitespace() || rt.profissao.Id == 0 || rt.registroCREA.isNullOrWhitespace() || rt.numeroART.isNullOrWhitespace()) &&
+				(!rt.nome.isNullOrWhitespace() || rt.profissao.Id > 0 || !rt.registroCREA.isNullOrWhitespace() || !rt.numeroART.isNullOrWhitespace())) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.RtRequired]);
+				return false;
+			}
+			if (rt.nome.isNullOrWhitespace()) rt.id = 0;
 			retorno.push(rt);
 		}
 
@@ -431,12 +441,15 @@ BarragemDispensaLicenca = {
 	},
 
 	salvarConfirm: function () {
+		var carac = BarragemDispensaLicenca.obter();
+		if (!carac) return;
+
 		Mensagem.limpar(BarragemDispensaLicenca.container);
 		MasterPage.carregando(true);
 
 		$.ajax({
 			url: BarragemDispensaLicenca.settings.urls.salvarConfirm,
-			data: JSON.stringify({ caracterizacao: BarragemDispensaLicenca.obter(), projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			data: JSON.stringify({ caracterizacao: carac, projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -467,12 +480,15 @@ BarragemDispensaLicenca = {
 	},
 
     salvar: function () {
+		var carac = BarragemDispensaLicenca.obter();
+		if (!carac) return;
+
         Mensagem.limpar(BarragemDispensaLicenca.container);
-        MasterPage.carregando(true);
+		MasterPage.carregando(true);
 
         $.ajax({
             url: BarragemDispensaLicenca.settings.urls.salvar,
-            data: JSON.stringify({ caracterizacao: BarragemDispensaLicenca.obter(), projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			data: JSON.stringify({ caracterizacao: carac, projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
             cache: false,
             async: false,
             type: 'POST',
@@ -675,6 +691,44 @@ BarragemDispensaLicenca = {
 		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
 	},
 
+	limparConstruidaAConstruir: function () {
+		$('.rbSupressaoAPP:checked').prop('checked', false);
+		$('.rbDemarcaoAPP:checked').prop('checked', false);
+		$('.txtLarguraDemarcada').val('');
+		$('.rbLarguraDemarcadaLegislacao:checked').prop('checked', false);
+		$('.rbFaixaCercada:checked').prop('checked', false);
+		$('.txtDescricaoDesenvolvimento').val('');
+		$('.rbBarramentoNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoBarramento').val('');
+
+		$('.ddlTipoDispositivoVazaoMin').val(0);
+		$('.txtDiametroTubulacaoVazaoMin').val('');
+		$('.rbVazaoMinInstalado:checked').prop('checked', false);
+		$('.rbVazaoMinNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
+
+		$('.ddlTipoDispositivoVazaoMax').val(0);
+		$('.txtDiametroTubulacaoVazaoMax').val('');
+		$('.rbVazaoMaxInstalado:checked').prop('checked', false);
+		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
+
+		/*A Construir*/
+		$('.rbPerguntaSupressaoAContruir:checked').prop('checked', false);
+		$('.ddlTipoDispositivoVazaoMinAConstruir').val(0);
+		$('.txtDiametroTubulacaoVazaoMinAConstruir').val('');
+		$('.ddlTipoDispositivoVazaoMaxAConstruir').val(0);
+		$('.txtDiametroTubulacaoVazaoMaxAConstruir').val('');
+		$('.txtMesInicio').val('');
+		$('.txtAnoInicio').val('');
+
+		$('.boxApp').addClass('hide');
+		$('.vazaoMinNormas').addClass('hide');
+		$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+		$('.vazaoMaxNormas').addClass('hide');
+		$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		//$('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
+	},
 	//-------------------------  --------------------//
 
 	
@@ -706,39 +760,6 @@ BarragemDispensaLicenca = {
 		} else {
 			$('.arquivoRT', container).addClass('hide');
 		}
-	},
-
-	limparConstruidaAConstruir: function () {
-		$('.rbSupressaoAPP:checked').prop('checked', false);
-		$('.rbDemarcaoAPP:checked').prop('checked', false);
-		$('.txtLarguraDemarcada').val('');
-		$('.rbLarguraDemarcadaLegislacao:checked').prop('checked', false);
-		$('.rbFaixaCercada:checked').prop('checked', false);
-		$('.txtDescricaoDesenvolvimento').val('');
-		$('.rbBarramentoNormas:checked').prop('checked', false);
-		$('.txtAdequacoesDimensionamentoBarramento').val('');
-
-		$('.ddlTipoDispositivoVazaoMin').val(0);
-		$('.txtDiametroTubulacaoVazaoMin').val('');
-		$('.rbVazaoMinInstalado:checked').prop('checked', false);
-		$('.rbVazaoMinNormas:checked').prop('checked', false);
-		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
-
-		$('.ddlTipoDispositivoVazaoMax').val(0);
-		$('.txtDiametroTubulacaoVazaoMax').val('');
-		$('.rbVazaoMaxInstalado:checked').prop('checked', false);
-		$('.rbVazaoMaxNormas:checked').prop('checked', false);
-		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
-
-		/*A Construir*/
-		$('.rbPerguntaSupressaoAContruir:checked').prop('checked', false);
-		$('.ddlTipoDispositivoVazaoMinAConstruir').val(0);
-		$('.txtDiametroTubulacaoVazaoMinAConstruir').val('');
-		$('.ddlVertedouroTipo').val(0);
-		$('.txtDiametroTubulacaoVazaoMaxAConstruir').val('');
-		$('.txtMesInicio').val('');
-		$('.txtAnoInicio').val('');
-
-		//$('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
 	}
+
 }

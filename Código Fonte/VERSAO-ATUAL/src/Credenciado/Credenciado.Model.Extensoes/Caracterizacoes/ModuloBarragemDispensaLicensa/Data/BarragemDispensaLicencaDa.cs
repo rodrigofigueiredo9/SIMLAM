@@ -369,31 +369,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public void Excluir(int empreendimento, BancoDeDados banco = null)
+		public void Excluir(int id, BancoDeDados banco = null)
 		{
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				bancoDeDados.IniciarTransacao(); 
 
-				#region Obter id da caracterização
-
-                Comando comando = bancoDeDados.CriarComando(@"select c.id from {0}crt_barragem_dispensa_lic c where c.empreendimento = :empreendimento", EsquemaCredenciadoBanco);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
-
-				int id = 0;
-				object retorno = bancoDeDados.ExecutarScalar(comando);
-
-				if (retorno != null && !Convert.IsDBNull(retorno))
-				{
-					id = Convert.ToInt32(retorno);
-				}
-
-				#endregion
-
 				#region Histórico
 
 				//Atualizar o tid para a nova ação
-                comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
+                Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -405,7 +390,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Apaga os dados da caracterização
 
 				comando = bancoDeDados.CriarComandoPlSql(
-				@"begin 
+				@"begin
+					delete from crt_barragem_finaldiade_ativ where barragem = :id;
+					delete from crt_barragem_finaldiade_ativ where barragem = :id;
+					delete from crt_barragem_coordenada where barragem = :id;
+					delete from crt_barragem_responsavel where barragem = :id;
+					delete from crt_barragem_construida_con where barragem = :id;
 					delete from crt_barragem_dispensa_lic where id = :id;
 				end;", EsquemaCredenciadoBanco);
 

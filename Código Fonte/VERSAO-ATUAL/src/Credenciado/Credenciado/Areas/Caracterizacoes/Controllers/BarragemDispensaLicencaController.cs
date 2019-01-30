@@ -204,12 +204,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
         [HttpPost]
         [Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-        public ActionResult Excluir(int id, int projetoDigitalId)
+        public ActionResult Excluir(int id, int empreendimento, int projetoDigitalId)
         {
             string urlRedireciona = string.Empty;
-            if (_bus.Excluir(id))
+            if (_bus.ExcluirCarac(empreendimento) && _bus.Excluir(id))
             {
-                urlRedireciona = Url.Action("Index", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+                urlRedireciona = Url.Action("Index", "Caracterizacao", new { id = empreendimento, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
             }
 
             return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
