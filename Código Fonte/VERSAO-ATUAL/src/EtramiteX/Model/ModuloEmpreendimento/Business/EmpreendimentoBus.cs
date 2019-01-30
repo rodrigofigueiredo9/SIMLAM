@@ -586,9 +586,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 				}
 
 				var objJson = resposta.Data;
-				if (objJson["EstaNoEstado"] && (objJson["Municipio"] == null || Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0) == 0))
+				if (objJson != null)
 				{
-					Validacao.Add(Mensagem.Mapas.MunicipioSemRetorno);
+					if (objJson["EstaNoEstado"] && (objJson["Municipio"] == null || Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0) == 0))
+					{
+						Validacao.Add(Mensagem.Mapas.MunicipioSemRetorno);
+					}
 				}
 			}
 			catch (Exception exc)

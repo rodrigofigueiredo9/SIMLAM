@@ -34,8 +34,8 @@ namespace Tecnomapas.Geobases.WebServices.Models.Business
 			WebRequest request = HttpWebRequest.Create(url);
 			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-			if (response.StatusCode != HttpStatusCode.OK)
-				return null;
+			if (response.StatusCode == HttpStatusCode.OK)
+				throw new Exception("Não foi possível se conectar ao servidor do Geobases, favor entrar em contato com o administrador do sistema");
 
 			StreamReader responseReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
 			string json = responseReader.ReadToEnd();
