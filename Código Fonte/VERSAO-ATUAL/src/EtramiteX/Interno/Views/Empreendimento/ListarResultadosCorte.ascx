@@ -39,4 +39,5 @@
 		<% } %>
 		</tbody>
 	</table>
+	<br /><span><b>* Acima estão listados todos os empreendimentos aos quais o interessado está associado.</b></span>
 </div>

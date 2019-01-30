@@ -100,7 +100,7 @@ Requerimento = {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 					MasterPage.grid();
-					Requerimento.botoes({ btnEmpAvancar:true, btnEmpAssNovo: true });
+					Requerimento.botoes({ btnEmpAvancar:true });
 					$(".btnEmpAssNovo", Requerimento.container).unbind('click');
 					$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
 				}
@@ -1258,7 +1258,7 @@ RequerimentoEmpreendimento = {
 		if(empreendimento !== "0" )
 			Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true, btnSalvar: true });
 		else
-			Requerimento.botoes({ btnEmpAvancar: true, btnEmpAssNovo: true });
+			Requerimento.botoes({ btnEmpAvancar: true });
 
 		MasterPage.grid();
 	},

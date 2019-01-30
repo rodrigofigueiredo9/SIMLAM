@@ -36,7 +36,7 @@
                 <%= Html.DropDownList("SelecionarPrimeiroItem", Model.Empreendimento.EmpreendimentoMunicipio, new { disabled = "disabled", @class = "text disabled" })%>
             </div>
             <div class="coluna20 ">
-                <label>Área de Floresta Plantada *</label>
+                <label>Área de Floresta Plantada (ha) *</label>
                 <%= Html.TextBox("InformacaoCorte_AreaPlantada", Model.AreaPlantada.ToStringTrunc(), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaPlantada", @maxlength = "12" }))%>
             </div>
         </div>

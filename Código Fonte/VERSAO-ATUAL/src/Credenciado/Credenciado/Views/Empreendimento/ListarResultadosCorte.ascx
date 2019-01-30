@@ -4,7 +4,8 @@
 
 <fieldset class="block box">
 	<div class="divCod box">
-		<div class="block">
+		<span><b>Abaixo estão listados todos os empreendimentos aos quais o interessado está associado. Caso o empreendimento para o qual deseja emitir a Informação de Corte não tenha sido encontrado, favor procurar a unidade do IDAF no município do empreendimento para fazer/atualizar o cadastro.</b></span>
+		<div class="block hide">
 			<div class="coluna37">
 				<label>Empreendimento com código identificador?</label><br />
 				<label><%= Html.RadioButton("Filtros.PossuiCodigo", true, Model.Filtros.PossuiCodigo, new { @class = "radio RadioEmpreendimentoCodigo rbCodigoSim disabled", disabled=true })%>Sim</label>
