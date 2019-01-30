@@ -23,15 +23,15 @@
 					<% foreach (var item in Model.CaracterizacoesCadastradas)
 						{%>
 					<tr>
-						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
-						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
-						<td title="<%=Html.Encode(item.volumeArmazanado)%>"><%=Html.Encode(item.volumeArmazanado)%></td>
+						<td title="<%=Html.Encode(item.FinalidadeTexto)%>"><%=Html.Encode(item.FinalidadeTexto)%></td>
+						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
+						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
 						<td title="Valido">Válido</td>
 
 						<td>
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />
 							<input type="hidden" class="hdnTid" value="<%= item.Tid %>" />
-							<input title="Associar ao projeto digital" class="icone associar btnAssociar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
+							<input title="Associar ao projeto digital" class="icone associar btnAssociar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button"/>
 						</td>
 					</tr>
 					<%	} %>

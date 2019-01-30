@@ -48,7 +48,7 @@ BarragemDispensaLicenca = {
 		container.delegate('.cbCopiaDeclarante', 'change', BarragemDispensaLicenca.onCheckCopiaDeclarante);
 		container.delegate('.ddlRTElaboracaoProjetoProfissao', 'change', BarragemDispensaLicenca.onChangeProfissaoRT);
 
-		//BarragemDispensaLicenca.bloquearCriar();
+		BarragemDispensaLicenca.bloquearCriar();
         //BarragemDispensaLicenca.changeBarragemTipo();
         //BarragemDispensaLicenca.changeFase();
         //BarragemDispensaLicenca.changeMongeVertedouroTipo();
@@ -509,20 +509,20 @@ BarragemDispensaLicenca = {
         MasterPage.carregando(false);
 	},
 
-	//bloquearCriar: function(){
-	//	var preenchido = $('.dependencias', BarragemDispensaLicenca.container).val()
-	//	if (preenchido = true)
-	//	{
-	//		$('.btnAdicionar').prop('disabled', true);
-	//		$('.btnAdicionar').addClass('disabled'); //lembrar de adicionar o css
-	//	}
-	//	if (preenchido = true)
-	//	{
-	//		$('.btnAssociar').prop('disabled', true);
-	//		$('.btnAssociar').addClass('disabled');
-	//	}
+	bloquearCriar: function () {
+		var count = $('.associadoAoProjeto', BarragemDispensaLicenca.container).val()
+		if (count > 0)
+		{
+			$('.btnAdicionar').prop('disabled', true);
+			$('.btnAdicionar').addClass('disabled');
+		}
+		if (count > 0)
+		{
+			$('.btnAssociar').prop('disabled', true);
+			$('.btnAssociar').addClass('desativado');
+		}
 
-	//},
+	},
 
 	criar: function () {
 		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
@@ -547,17 +547,16 @@ BarragemDispensaLicenca = {
 	},
 	
 	desassociar: function () {
-		debugger;
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
 		//dependenciaTipos.TipoCaracterizacao
-		var dependencias = $(this).closest('tr').find('.dependencias').val();
+		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();
 
-		if (dependencias == "True")
+		if (possuiAssociacaoExterna == "True")
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',
-				titulo: 'Desassociar Barragem',
-				conteudo: 'Deseja realmente desassociar?',
+				titulo: 'Cancelar associação da barragem',
+				conteudo: 'Essa ação irá desfazer a associação com o projeto digital. Deseja continuar?',
 				btnOkCallback: function (conteudoModal) {
 					Modal.fechar(conteudoModal);
 
@@ -580,8 +579,8 @@ BarragemDispensaLicenca = {
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',
-				titulo: 'Desassociar Barragem e EXCLUIR',
-				conteudo: 'Deseja realmente desassociar e excluir a barragem criada?',
+				titulo: 'Cancelar associação da barragem',
+				conteudo: 'Essa ação deletará a caracterização de barragem. Deseja continuar?',
 				btnOkCallback: function (conteudoModal) {
 					Modal.fechar(conteudoModal);
 

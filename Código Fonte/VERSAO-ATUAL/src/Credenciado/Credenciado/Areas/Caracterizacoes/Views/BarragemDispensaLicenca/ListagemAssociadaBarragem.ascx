@@ -8,7 +8,8 @@
 	<legend class="titFiltros">Barragem Associada</legend>
 
 	<div class="dataGrid">
-		<button title="Cadastrar" class="btnAdicionar floatRight" role="button" style="margin:0.5%"><strong>+ Barragem</strong></button>		
+		<input type="hidden" class="associadoAoProjeto" value="<%= Model.CaracterizacoesAssociadas.Count%>" />
+		<input title="Cadastrar" class="btnAdicionar floatRight ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" style="margin:0.5%" value="+ Barragem">
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>
 					<tr>
@@ -25,9 +26,9 @@
 						{%>
 					<tr>
 						
-						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
-						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
-						<td title="<%=Html.Encode(item.volumeArmazanado)%>"><%=Html.Encode(item.volumeArmazanado)%></td>
+						<td title="<%=Html.Encode(item.FinalidadeTexto)%>"><%=Html.Encode(item.FinalidadeTexto)%></td>
+						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
+						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
 						<td title="Cadastrada">Cadastrada</td>
 
 						<td>

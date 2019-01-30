@@ -230,14 +230,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
 			caracterizacao.EmpreendimentoID = id;
-
+			
 			if (!_validar.Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
 			}
 
 			AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
-
+			
 			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
 				caracterizacao,
 				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
@@ -251,6 +251,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			);
 
 			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
+			vm.Caracterizacao.PossuiAssociacaoExterna = _bus.PossuiAssociacaoExterna(id, projetoDigitalId);
 			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, projetoDigitalId);
 			int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
 			if (result != 0)
@@ -288,7 +289,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			var projetoDigital = projetoDigitalBus.Obter(projetoDigitalId);
 			projetoDigitalBus.DesassociarDependencias(projetoDigital);
-			if (_bus.PossuiAssociacaoExterna(projetoDigital.EmpreendimentoId.GetValueOrDefault(0)))
+			if (!_bus.PossuiAssociacaoExterna(projetoDigital.EmpreendimentoId.GetValueOrDefault(0), projetoDigital.Id))
 					_bus.ExcluirPorId(caracterizacao);
 
 			return Json(new
