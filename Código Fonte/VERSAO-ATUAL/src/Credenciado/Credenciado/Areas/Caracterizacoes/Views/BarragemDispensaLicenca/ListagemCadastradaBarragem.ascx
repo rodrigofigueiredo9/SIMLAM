@@ -23,9 +23,9 @@
 					<% foreach (var item in Model.CaracterizacoesCadastradas)
 						{%>
 					<tr>
-						<td title="<%=Html.Encode(item.FinalidadeTexto)%>"><%=Html.Encode(item.FinalidadeTexto)%></td>
-						<td title="<%=Html.Encode(item.AreaAlagada)%>"><%=Html.Encode(item.AreaAlagada)%></td>
-						<td title="<%=Html.Encode(item.VolumeArmazanado)%>"><%=Html.Encode(item.VolumeArmazanado)%></td>
+						<td title="<%=Html.Encode(item.Atividade)%>"><%=Html.Encode(item.Atividade)%></td>
+						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
+						<td title="<%=Html.Encode(item.volumeArmazanado)%>"><%=Html.Encode(item.volumeArmazanado)%></td>
 						<td title="Valido">Válido</td>
 
 						<td>
