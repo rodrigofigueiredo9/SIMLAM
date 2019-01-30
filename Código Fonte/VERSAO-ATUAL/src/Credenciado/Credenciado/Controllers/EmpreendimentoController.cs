@@ -136,12 +136,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			ResponseJsonData<dynamic> resposta = new ResponseJsonData<dynamic>();
 			resposta = _bus.ObterEstadosMunicipiosPorCoordenada(localizarVm.Filtros.Coordenada.EastingUtmTexto, localizarVm.Filtros.Coordenada.NorthingUtmTexto);
 
+			if (resposta.Erros.Count > 0)
+			{
+				return Json(new { IsEmpreendimentoSalvo = false, Msg = Validacao.Erros });
+			}
+
 			var objJson = resposta.Data;
 			int codigoIbge = 0;
-			if (objJson["Municipio"] != null)
-			{
-				codigoIbge = Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0);
-			}
+
+			codigoIbge = Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0);
 
 			ListaValoresDa _da = new ListaValoresDa();
 			municipio = _da.ObterMunicipio(codigoIbge);
