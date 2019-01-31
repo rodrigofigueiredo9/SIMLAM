@@ -10,7 +10,7 @@ TituloAlterarSituacao = {
 			validarAlterarSituacao: '',
 			salvar: '',
 			redirecionar: '',
-			apiInstitucional: null,
+			api: null,
 			token: null
 		},
 		gerouPdf: false
@@ -160,7 +160,7 @@ TituloAlterarSituacao = {
 							prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
 
 						$.ajax({
-							url: TituloAlterarSituacao.settings.urls.apiInstitucional + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
+							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
 								'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
 							headers: { 'Authorization': 'Bearer ' + TituloAlterarSituacao.settings.token },
 							type: "POST",
