@@ -7,9 +7,12 @@ BarragemDispensaLicenca = {
     settings: {
         urls: {
             coordenadaGeo: null
-        },
+		},
+		containerCoordenada: null,
         mensagens: null,
-        idsTela: null
+		idsTela: null,
+		projetoDigitalId: null,
+		empreendimentoId: null
     },
     container: null,
 
@@ -17,18 +20,39 @@ BarragemDispensaLicenca = {
         if (options) { $.extend(BarragemDispensaLicenca.settings, options); }
         BarragemDispensaLicenca.container = MasterPage.getContent(container);
 
-        BarragemDispensaLicenca.container.delegate('.rbBarragemTipo', 'change', BarragemDispensaLicenca.changeBarragemTipo);
-        BarragemDispensaLicenca.container.delegate('.rbFase', 'change', BarragemDispensaLicenca.changeFase);
-        BarragemDispensaLicenca.container.delegate('.ddlMongeTipo', 'change', BarragemDispensaLicenca.changeMongeTipo);
-        BarragemDispensaLicenca.container.delegate('.ddlVertedouroTipo', 'change', BarragemDispensaLicenca.changeVertedouroTipo);
+        container.delegate('.rbBarragemTipo', 'change', BarragemDispensaLicenca.changeBarragemTipo);
+        container.delegate('.rbFase', 'change', BarragemDispensaLicenca.changeFase);
+        container.delegate('.ddlMongeTipo', 'change', BarragemDispensaLicenca.changeMongeTipo);
+        container.delegate('.ddlVertedouroTipo', 'change', BarragemDispensaLicenca.changeVertedouroTipo);
 
-        BarragemDispensaLicenca.container.delegate('.rbPossuiMonge', 'change', BarragemDispensaLicenca.changeEstrutura);
-        BarragemDispensaLicenca.container.delegate('.rbPossuiVertedouro', 'change', BarragemDispensaLicenca.changeEstrutura);
+        container.delegate('.rbPossuiMonge', 'change', BarragemDispensaLicenca.changeEstrutura);
+        container.delegate('.rbPossuiVertedouro', 'change', BarragemDispensaLicenca.changeEstrutura);
 
-        BarragemDispensaLicenca.container.delegate('.cbFormacaoRT', 'change', function () { BarragemDispensaLicenca.changeFormacaoRT(); });
-        BarragemDispensaLicenca.container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
-        BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
-		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvarConfirm);
+        container.delegate('.cbFormacaoRT', 'change', function () { BarragemDispensaLicenca.changeFormacaoRT(); });
+        container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
+        container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
+		container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvarConfirm);
+		container.delegate('.btnAdicionar', 'click', BarragemDispensaLicenca.criar);
+
+		container.delegate('.btnAssociar', 'click', BarragemDispensaLicenca.associar);
+		container.delegate('.btnDesassociar', 'click', BarragemDispensaLicenca.desassociar);
+		container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
+		container.delegate('.btnEditar', 'click', BarragemDispensaLicenca.editar);
+
+		container.delegate('.rbDemarcaoAPP', 'change', BarragemDispensaLicenca.onChangeFaixaDemarcada);
+		container.delegate('.rbBarramentoNormas', 'change', BarragemDispensaLicenca.onChangeBarramento);
+		container.delegate('.rbVazaoMinInstalado', 'change', BarragemDispensaLicenca.onChangeVazaoMinInstalado);
+		container.delegate('.rbVazaoMinNormas', 'change', BarragemDispensaLicenca.onChangeVazaoMinNormas);
+		container.delegate('.rbVazaoMaxInstalado', 'change', BarragemDispensaLicenca.onChangeVazaoMaxInstalado);
+		container.delegate('.rbVazaoMaxNormas', 'change', BarragemDispensaLicenca.onChangeVazaoMaxNormas);
+		container.delegate('.cbCopiaDeclarante', 'change', BarragemDispensaLicenca.onCheckCopiaDeclarante);
+		container.delegate('.ddlRTElaboracaoProjetoProfissao', 'change', BarragemDispensaLicenca.onChangeProfissaoRT);
+
+		BarragemDispensaLicenca.bloquearCriar();
+        //BarragemDispensaLicenca.changeBarragemTipo();
+        //BarragemDispensaLicenca.changeFase();
+        //BarragemDispensaLicenca.changeMongeVertedouroTipo();
+        //BarragemDispensaLicenca.changeFormacaoRT($('.cbFormacaoRT', BarragemDispensaLicenca.container));
 
         BarragemDispensaLicenca.configurarTela();
     },
@@ -115,22 +139,14 @@ BarragemDispensaLicenca = {
 
     changeFase: function () {
         if ($('.rbFase:checked', BarragemDispensaLicenca.container).val() == BarragemDispensaLicenca.settings.idsTela.FaseConstruida) {
-            $('.faseAConstruir', BarragemDispensaLicenca.container).addClass('hide');
-            $('.faseConstruida', BarragemDispensaLicenca.container).removeClass('hide');
+			$('.divBarragemAContruir', BarragemDispensaLicenca.container).addClass('hide');
+			$('.divBarragemContruida', BarragemDispensaLicenca.container).removeClass('hide');
         } else {
-            $('.faseConstruida', BarragemDispensaLicenca.container).addClass('hide');
-            $('.faseAConstruir', BarragemDispensaLicenca.container).removeClass('hide');
+			$('.divBarragemContruida', BarragemDispensaLicenca.container).addClass('hide');
+			$('.divBarragemAContruir', BarragemDispensaLicenca.container).removeClass('hide');
         }
 
-        $('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
-        $('.divRadioEsconder, .divRadioEsconderOutro', BarragemDispensaLicenca.container).addClass('hide');
-        $('.txtEspecificacaoVertedouro, .txtEspecificacaoMonge, .txtAdequacoesRealizada, .txtDataInicioObra, .txtDataPrevisaoTerminoObra', BarragemDispensaLicenca.container).val('');
-        $('.rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).addClass('disabled').attr('disabled', 'disabled');
-
-        $('.ddlMongeTipo, .ddlVertedouroTipo', BarragemDispensaLicenca.container).ddlFirst();
-        var containerTxt = $('.ddlMongeTipo, .ddlVertedouroTipo', BarragemDispensaLicenca.container).closest('fieldset');
-        $('.txtEspecificacaoVertedouro, .txtEspecificacaoMonge', containerTxt).closest('div').addClass('hide');
-
+		BarragemDispensaLicenca.limparConstruidaAConstruir()
     },
 
     changeMongeTipo: function () {
@@ -192,11 +208,13 @@ BarragemDispensaLicenca = {
     },
 
     //---------------------------COORDENADA---------------------------//
-    buscarCoordenada: function () {
+	buscarCoordenada: function () {
+		BarragemDispensaLicenca.settings.containerCoordenada = this.parentElement.parentElement;
+		
         Modal.abrir(BarragemDispensaLicenca.settings.urls.coordenadaGeo, null, function (container) {
             Coordenada.load(container, {
-                northing: $('.txtNorthing', BarragemDispensaLicenca.settings.container).val(),
-                easting: $('.txtEasting', BarragemDispensaLicenca.settings.container).val(),
+				northing: $('.txtNorthing', BarragemDispensaLicenca.settings.containerCoordenada).val(),
+				easting: $('.txtEasting', BarragemDispensaLicenca.settings.containerCoordenada).val(),
                 pagemode: 'editMode',
                 callBackSalvarCoordenada: BarragemDispensaLicenca.setarCoordenada
             });
@@ -205,12 +223,12 @@ BarragemDispensaLicenca = {
 		Modal.tamanhoModalGrande);
     },
 
-    setarCoordenada: function (retorno) {
+	setarCoordenada: function (retorno) {
         retorno = JSON.parse(retorno);
 
-        $('.txtNorthing', BarragemDispensaLicenca.settings.container).val(retorno.northing);
-        $('.txtEasting', BarragemDispensaLicenca.settings.container).val(retorno.easting);
-        $('.btnBuscarCoordenada', BarragemDispensaLicenca.settings.container).focus();
+		$('.txtNorthing', BarragemDispensaLicenca.settings.containerCoordenada).val(retorno.northing);
+		$('.txtEasting', BarragemDispensaLicenca.settings.containerCoordenada).val(retorno.easting);
+		$('.btnBuscarCoordenada', BarragemDispensaLicenca.settings.containerCoordenada).focus();
     },
     //---------------------------COORDENADA---------------------------//
 
@@ -286,42 +304,65 @@ BarragemDispensaLicenca = {
             EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
             AtividadeID: $('.ddlAtividade', BarragemDispensaLicenca.container).val(),
             BarragemTipo: $('.rbBarragemTipo:checked', BarragemDispensaLicenca.container).val(),
-            FinalidadeAtividade: 0,
-            CursoHidrico: $('.txtCursoHidrico', BarragemDispensaLicenca.container).val(),
-            VazaoEnchente: $('.txtVazaoEnchente', BarragemDispensaLicenca.container).val(),
-            AreaBaciaContribuicao: $('.txtAreaBaciaContribuicao', BarragemDispensaLicenca.container).val(),
-            Precipitacao: $('.txtPrecipitacao', BarragemDispensaLicenca.container).val(),
-            PeriodoRetorno: $('.txtPeriodoRetorno', BarragemDispensaLicenca.container).val(),
-            CoeficienteEscoamento: $('.txtCoeficienteEscoamento', BarragemDispensaLicenca.container).val(),
-            TempoConcentracao: $('.txtTempoConcentracao', BarragemDispensaLicenca.container).val(),
-            EquacaoCalculo: $('.txtEquacaoCalculo', BarragemDispensaLicenca.container).val(),
-            AreaAlagada: $('.txtAreaAlagada', BarragemDispensaLicenca.container).val(),
-            VolumeArmazanado: $('.txtVolumeArmazenado', BarragemDispensaLicenca.container).val(),
-            Fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),
-            PossuiMonge: $('.rbPossuiMonge:visible:checked', BarragemDispensaLicenca.container).val(),
-            MongeTipo: $('.ddlMongeTipo:visible', BarragemDispensaLicenca.container).val(),
-            EspecificacaoMonge: $('.txtEspecificacaoMonge:visible', BarragemDispensaLicenca.container).val(),
-            PossuiVertedouro: $('.rbPossuiVertedouro:visible:checked', BarragemDispensaLicenca.container).val(),
-            VertedouroTipo: $('.ddlVertedouroTipo:visible', BarragemDispensaLicenca.container).val(),
-            EspecificacaoVertedouro: $('.txtEspecificacaoVertedouro:visible', BarragemDispensaLicenca.container).val(),
-            PossuiEstruturaHidraulica: $('.rbPossuiEstruturaHidraulica:visible:checked', BarragemDispensaLicenca.container).val(),
-            AdequacoesRealizada: $('.txtAdequacoesRealizada:visible', BarragemDispensaLicenca.container).val(),
-            DataInicioObra: $('.txtDataInicioObra:visible', BarragemDispensaLicenca.container).val(),
-            DataPrevisaoTerminoObra: $('.txtDataPrevisaoTerminoObra:visible', BarragemDispensaLicenca.container).val(),
-            Coordenada: {
-                EastingUtmTexto: $('.txtEasting', BarragemDispensaLicenca.container).val(),
-                NorthingUtmTexto: $('.txtNorthing', BarragemDispensaLicenca.container).val()
-            },
-            FormacaoRT: 0,
-            EspecificacaoRT: $('.txtEspecificacaoRT:visible', BarragemDispensaLicenca.container).val(),
-            NumeroARTElaboracao: $('.txtNumeroARTElaboracao', BarragemDispensaLicenca.container).val(),
-            NumeroARTExecucao: $('.txtNumeroARTExecucao', BarragemDispensaLicenca.container).val(),
-            Autorizacao: $.parseJSON($('.hdnArquivo', BarragemDispensaLicenca.container).val())
-        };
+			fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),
+            //FinalidadeAtividade: 0,
+			barragemContiguaMesmoNivel: ($('.rbBarragemContiguaMesmoNivel:checked').val() == 1) , 
+			areaAlagada: $('.txtAreaAlagada').val(),
+			volumeArmazanado: $('.txtVolumeArmazenamento').val(),
+			alturaBarramento: $('.txtAlturaBarramento').val(),
+			comprimentoBarramento: $('.txtComprimentoBarramento').val(),
+			larguraBaseBarramento: $('.txtLarguraBaseBarramento').val(),
+			larguraCristaBarramento: $('.txtLarguraCristaBarramento').val(),
+			coordenadas: [],
+			finalidade: [], 
+			responsaveisTecnicos: [],
+			cursoHidrico: $('.txtCursoHidrico').val(),
+			areaBaciaContribuicao: $('.txtAreaBacia').val(),
+			precipitacao: $('.txtIntensidadeMaxPrecipitacao').val(),
+			fonteDadosPrecipitacao: $('.txtFonteDadosIntensidade').val(),
+			periodoRetorno: $('.txtPeriodoRetorno').val(),
+			coeficienteEscoamento: $('.txtCoeficienteEscoamento').val(),
+			fonteDadosCoeficienteEscoamento: $('.txtFonteDadosCoeficiente').val(),
+			tempoConcentracao: $('.txtTempoConcentracao').val(),
+			tempoConcentracaoEquacaoUtilizada: $('.txtEquacaoTempoConcentracao').val(),
+			vazaoEnchente: $('.txtVazaoEnchente').val(),
+			fonteDadosVazaoEnchente: $('.txtFonteDadosVazao').val(),
+			construidaConstruir: {
+				id: 0,
+				isSupressaoAPP: $('.rbSupressaoAPP:checked').val(), 
+				isDemarcacaoAPP: $('.rbDemarcaoAPP:checked').val(),
+				larguraDemarcada: $('.txtLarguraDemarcada').val(),
+				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true : false,
+				faixaCercada: $('.rbFaixaCercada:checked').val(),
+				descricacaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
+				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
+				barramentoAdequacoes: $('.txtAdequacoesDimensionamentoBarramento').val(),
+				vazaoMinTipo: ($('.rbFase:checked')).val() == 1 ?
+					$('.ddlTipoDispositivoVazaoMin:visible').val() : $('.ddlTipoDispositivoVazaoMinAConstruir:visible').val(),
+				vazaoMinDiametro: ($('.rbFase:checked')).val() == 1 ?
+					$('.txtDiametroTubulacaoVazaoMin').val() : $('.txtDiametroTubulacaoVazaoMinAConstruir').val(),
+				vazaoMinInstalado: $('.rbVazaoMinInstalado:checked').val() == 1 ? true : false,
+				vazaoMinNormas: $('.rbVazaoMinNormas:checked').val() == 1 ? true : false,
+				vazaoMinAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMin').val(),
+				vazaoMaxTipo: ($('.rbFase:checked')).val() == 1 ?
+					$('.ddlTipoDispositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
+				vazaoMaxDiametro: ($('.rbFase:checked')).val() == 1 ?
+					$('.txtDiametroTubulacaoVazaoMax').val() : $('.txtDiametroTubulacaoVazaoMaxAConstruir').val(),
+				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true : false,
+				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val() == 1 ? true : false,
+				vazaoMaxAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMax').val(),
+				mesInicioObra: $('.txtMesInicio').val(),
+				anoInicioObra: $('.txtAnoInicio').val()
+				
+			},
+		};
+		objeto.construidaConstruir.isSupressaoAPP = objeto.construidaConstruir.isSupressaoAPP ?
+			objeto.construidaConstruir.isSupressaoAPP : $('.rbPerguntaSupressaoAContruir:checked').val();
+
 
         $('.cbFinalidadeAtividade').each(function (index, item) {
-            if ($(item).is(':checked')) {
-                objeto.FinalidadeAtividade += +$(item).val();
+			if ($(item).is(':checked')) {
+				objeto.finalidade.push($(item).val());
             }
         });
 
@@ -329,18 +370,86 @@ BarragemDispensaLicenca = {
             if ($(item).is(':checked')) {
                 objeto.FormacaoRT += +$(item).val();
             }
-        });
+		});
+
+		objeto.coordenadas = BarragemDispensaLicenca.obterCoordenadas();
+		objeto.responsaveisTecnicos = BarragemDispensaLicenca.obterRT();
+		if (!objeto.responsaveisTecnicos)
+			return false;
 
         return objeto;
 	},
 
+	obterRT: function () {
+
+		var retorno = [];
+		var tipo = [
+			{ codigo: '1', nome: 'ElaboracaoDeclaracao' },
+			{ codigo: '2', nome: 'ElaboracaoProjeto' },
+			{ codigo: '3', nome: 'ExecucaoBarragem' },
+			{ codigo: '4', nome: 'ElaboracaoEstudoAmbiental' },
+			{ codigo: '5', nome: 'ElaboracaoPlanoRecuperacao' },
+			{ codigo: '6', nome: 'ExecucaoPlanoRecuperacao' }
+		];
+
+
+		for (var i = 0; i < 6; i++) {
+			var rt = {
+				id: $('.hdnRT' + tipo[i].nome + 'Id').val(),
+				nome: $('.txtRT' + tipo[i].nome + 'Nome').val(),
+				tipo: tipo[i].codigo,
+				profissao: { Id: $('.ddlRT' + tipo[i].nome + 'Profissao').val() },
+				registroCREA: $('.txtRT' + tipo[i].nome + 'CREA').val(),
+				numeroART: $('.txtRT' + tipo[i].nome + 'Numero').val(),
+				autorizacaoCREA: tipo[i].codigo == 2 ? $.parseJSON($('.hdnArquivo').val()) : null,
+				proprioDeclarante: $('.cb' + tipo[i].nome + 'CopiaDeclarante:checked').val()
+			};
+			//Se tiver algum campo preenchido, todos são requeridos
+			if ((rt.nome.isNullOrWhitespace() || rt.profissao.Id == 0 || rt.registroCREA.isNullOrWhitespace() || rt.numeroART.isNullOrWhitespace()) &&
+				(!rt.nome.isNullOrWhitespace() || rt.profissao.Id > 0 || !rt.registroCREA.isNullOrWhitespace() || !rt.numeroART.isNullOrWhitespace())) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.RtRequired]);
+				return false;
+			}
+			if (rt.nome.isNullOrWhitespace()) rt.id = 0;
+			retorno.push(rt);
+		}
+
+		return retorno;
+	},
+
+	obterCoordenadas: function () {
+		return [
+			{
+				id: 8,
+				tipo: '1',
+				easting: $('.txtEastingBarramento').val(),
+				northing: $('.txtNorthingBarramento').val()
+			},
+			{
+				id: 0,
+				tipo: '2',
+				easting: $('.txtEastingBotaFora').val(),
+				northing: $('.txtNorthingBotaFora').val()
+			},
+			{
+				id: 0,
+				tipo: '3',
+				easting: $('.txtEastingEmprestimo').val(),
+				northing: $('.txtNorthingEmprestimo').val()
+			}
+		];
+	},
+
 	salvarConfirm: function () {
+		var carac = BarragemDispensaLicenca.obter();
+		if (!carac) return;
+
 		Mensagem.limpar(BarragemDispensaLicenca.container);
 		MasterPage.carregando(true);
 
 		$.ajax({
 			url: BarragemDispensaLicenca.settings.urls.salvarConfirm,
-			data: JSON.stringify({ caracterizacao: BarragemDispensaLicenca.obter(), projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			data: JSON.stringify({ caracterizacao: carac, projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -371,12 +480,15 @@ BarragemDispensaLicenca = {
 	},
 
     salvar: function () {
+		var carac = BarragemDispensaLicenca.obter();
+		if (!carac) return;
+
         Mensagem.limpar(BarragemDispensaLicenca.container);
-        MasterPage.carregando(true);
+		MasterPage.carregando(true);
 
         $.ajax({
             url: BarragemDispensaLicenca.settings.urls.salvar,
-            data: JSON.stringify({ caracterizacao: BarragemDispensaLicenca.obter(), projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			data: JSON.stringify({ caracterizacao: carac, projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
             cache: false,
             async: false,
             type: 'POST',
@@ -395,5 +507,258 @@ BarragemDispensaLicenca = {
         });
 
         MasterPage.carregando(false);
-    }
+	},
+
+	bloquearCriar: function () {
+		var count = $('.associadoAoProjeto', BarragemDispensaLicenca.container).val()
+		if (count > 0)
+		{
+			$('.btnAdicionar').prop('disabled', true);
+			$('.btnAdicionar').addClass('disabled');
+		}
+		if (count > 0)
+		{
+			$('.btnAssociar').prop('disabled', true);
+			$('.btnAssociar').addClass('desativado');
+		}
+
+	},
+
+	criar: function () {
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.salvar + '/' + BarragemDispensaLicenca.settings.empreendimentoId +
+			'?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+	},
+
+	associar: function () {
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		var tid = $(this).closest('tr').find('.hdnTid').val();		
+		$.get(BarragemDispensaLicenca.settings.urls.associar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao, tid: tid },
+			function (response) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+					return;
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		);
+	},
+	
+	desassociar: function () {
+		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
+		//dependenciaTipos.TipoCaracterizacao
+		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();
+
+		if (possuiAssociacaoExterna == "True")
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Cancelar associação da barragem',
+				conteudo: 'Essa ação irá desfazer a associação com o projeto digital. Deseja continuar?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
+
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
+				}
+			});
+		}
+		else
+		{
+			Modal.confirma({
+				btnOkLabel: 'Confirmar',
+				titulo: 'Cancelar associação da barragem',
+				conteudo: 'Essa ação deletará a caracterização de barragem. Deseja continuar?',
+				btnOkCallback: function (conteudoModal) {
+					Modal.fechar(conteudoModal);
+
+					$.get(BarragemDispensaLicenca.settings.urls.desassociar, { projetoDigitalId: BarragemDispensaLicenca.settings.projetoDigitalId, caracterizacao: caracterizacao },
+						function (response) {
+							if (response.EhValido) {
+								MasterPage.redireciona(response.UrlRedirecionar);
+								return;
+							}
+
+							if (response.Msg && response.Msg.length > 0) {
+								Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+							}
+						}
+					);
+				}
+			});
+		}
+	},
+
+	editar: function () {
+		//MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.editar + '/' + BarragemDispensaLicenca.settings.empreendimentoId + '?projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId);
+		var id = $(this).closest('tr').find('.hdnId').val();
+
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.editar + '/' + id + '?empreendimentoId=' +
+			BarragemDispensaLicenca.settings.empreendimentoId +
+			'&projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
+			'&retornarVisualizar=' + ($('.btnFinalizarPasso', BarragemDispensaLicenca.container).length <= 0));
+	},
+
+	visualizar: function () {
+		var id = $(this).closest('tr').find('.hdnId').val();
+
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' + id + '?empreendimentoId='+
+			BarragemDispensaLicenca.settings.empreendimentoId +
+			'&projetoDigitalId=' + BarragemDispensaLicenca.settings.projetoDigitalId +
+			'&retornarVisualizar=' + ($('.btnFinalizarPasso', BarragemDispensaLicenca.container).length <= 0));
+	},
+
+	//-------------------------BARRGGEM CONSTRUIDA--------------------//
+
+	onChangeFaixaDemarcada: function () {
+		if ($('.rbDemarcaoAPP:checked').val() == 1) {
+			console.log('remove')
+			$('.boxApp').removeClass('hide');
+		} else {
+			$('.boxApp').addClass('hide');
+		}
+
+		BarragemDispensaLicenca.onLimparFaixaDemarcada();
+	},
+
+	onLimparFaixaDemarcada: function () {
+		$('.txtLarguraDemarcada').val('');
+		$('.rbLarguraDemarcadaLegislacao:checked').prop('checked', false);
+		$('.rbFaixaCercada:checked').prop('checked', false);
+		$('.txtDescricaoDesenvolvimento').val('');
+	},
+
+	onChangeBarramento: function () {
+		if ($('.rbBarramentoNormas:checked').val() == 1) {
+			$('.AdequacoesDimensionamentoBarramento').removeClass('hide');
+
+		} else {
+			$('.AdequacoesDimensionamentoBarramento').addClass('hide');
+		}
+		$('.txtAdequacoesDimensionamentoBarramento').val('');
+	},
+
+	onChangeVazaoMinInstalado: function () {
+		if ($('.rbVazaoMinInstalado:checked').val() == 1) {
+			$('.vazaoMinNormas').removeClass('hide');
+		} else {
+			$('.vazaoMinNormas').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+		}
+		$('.rbVazaoMinNormas:checked').prop('checked', false);
+	},
+
+	onChangeVazaoMinNormas: function () {
+		if ($('.rbVazaoMinNormas:checked').val() == 1) {
+			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
+
+		} else {
+			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+		}
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
+	},
+
+	onChangeVazaoMaxInstalado: function () {
+		if ($('.rbVazaoMaxInstalado:checked').val() == 1) {
+			$('.vazaoMaxNormas').removeClass('hide');
+		} else {
+			$('.vazaoMaxNormas').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		}
+		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+	},
+
+	onChangeVazaoMaxNormas: function () {
+		if ($('.rbVazaoMaxNormas:checked').val() == 1) {
+			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
+
+		} else {
+			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		}
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
+	},
+
+	limparConstruidaAConstruir: function () {
+		$('.rbSupressaoAPP:checked').prop('checked', false);
+		$('.rbDemarcaoAPP:checked').prop('checked', false);
+		$('.txtLarguraDemarcada').val('');
+		$('.rbLarguraDemarcadaLegislacao:checked').prop('checked', false);
+		$('.rbFaixaCercada:checked').prop('checked', false);
+		$('.txtDescricaoDesenvolvimento').val('');
+		$('.rbBarramentoNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoBarramento').val('');
+
+		$('.ddlTipoDispositivoVazaoMin').val(0);
+		$('.txtDiametroTubulacaoVazaoMin').val('');
+		$('.rbVazaoMinInstalado:checked').prop('checked', false);
+		$('.rbVazaoMinNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
+
+		$('.ddlTipoDispositivoVazaoMax').val(0);
+		$('.txtDiametroTubulacaoVazaoMax').val('');
+		$('.rbVazaoMaxInstalado:checked').prop('checked', false);
+		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
+
+		/*A Construir*/
+		$('.rbPerguntaSupressaoAContruir:checked').prop('checked', false);
+		$('.ddlTipoDispositivoVazaoMinAConstruir').val(0);
+		$('.txtDiametroTubulacaoVazaoMinAConstruir').val('');
+		$('.ddlTipoDispositivoVazaoMaxAConstruir').val(0);
+		$('.txtDiametroTubulacaoVazaoMaxAConstruir').val('');
+		$('.txtMesInicio').val('');
+		$('.txtAnoInicio').val('');
+
+		$('.boxApp').addClass('hide');
+		$('.vazaoMinNormas').addClass('hide');
+		$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+		$('.vazaoMaxNormas').addClass('hide');
+		$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		//$('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
+	},
+	//-------------------------  --------------------//
+
+	
+	onCheckCopiaDeclarante: function () {
+		var container = this.parentElement.parentElement.parentElement;
+		if ($('.cbCopiaDeclarante:checked', container).val()) {
+			nomeDeclarante = $('.txtRTElaboracaoDeclaracaoNome').val();
+			profissaoDeclarante = $('.ddlRTElaboracaoDeclaracaoProfissao:visible').val();
+			creaDeclarante = $('.txtRTElaboracaoDeclaracaoCREA').val();
+			numeroDeclarante = $('.txtRTElaboracaoDeclaracaoNumero').val();
+
+			$('.rtNome', container).val(nomeDeclarante).prop('disabled', true).addClass('disabled');
+			$('.rtProfissao', container).val(profissaoDeclarante).prop('disabled', true).addClass('disabled');
+			$('.rtCREA', container).val(creaDeclarante).prop('disabled', true).addClass('disabled');
+			$('.rtNumero', container).val(numeroDeclarante).prop('disabled', true).addClass('disabled');
+		} else {
+			$('.rtNome', container).val('').prop('disabled', false).removeClass('disabled');
+			$('.rtProfissao', container).val(' ').prop('disabled', false).removeClass('disabled');
+			$('.rtCREA', container).val(' ').prop('disabled', false).removeClass('disabled');
+			$('.rtNumero', container).val(' ').prop('disabled', false).removeClass('disabled');
+		}
+	},
+
+	onChangeProfissaoRT: function () {
+		var profissoesSemAutorizacao = [15, 37, 38]; /*Eng. Civil, Eng. Agricola, Eng. Agronomo*/
+
+		if (!profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:checked').val())) {
+			$('.arquivoRT', container).removeClass('hide');
+		} else {
+			$('.arquivoRT', container).addClass('hide');
+		}
+	}
+
 }

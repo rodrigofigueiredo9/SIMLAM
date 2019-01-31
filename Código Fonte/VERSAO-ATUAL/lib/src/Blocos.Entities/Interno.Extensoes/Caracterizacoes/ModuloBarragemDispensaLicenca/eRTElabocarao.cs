@@ -6,12 +6,14 @@ using System.Text;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca
 {
-	public enum eFase
+	public enum eRTElabocarao
 	{
 		Nulo = 0,
-		[Description("Contruída")]
-		Construida = 1,
-		[Description("A construir")]
-		AConstruir = 2
+		[Description("Projeto técnico / laudo de barragem contruída")]
+		projetoTecnicoLaudoBarragemConstruida,
+		[Description("Estudo ambiental")]
+		estudoAmbiental,
+		[Description("Ambos")]
+		ambos
 	}
 }

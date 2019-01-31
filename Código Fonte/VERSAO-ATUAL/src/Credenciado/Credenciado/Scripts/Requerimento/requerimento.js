@@ -750,7 +750,7 @@ RequerimentoObjetivoPedido = {
 					Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
 					return;
 				}
-
+				
 				RequerimentoObjetivoPedido.objetivoPedido = objeto;
 
 				Modal.fechar(container[0]);

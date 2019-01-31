@@ -508,6 +508,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 								   && vm.UnidadeConservacao.HasValue && vm.UnidadeConservacao == 0
 								   && vm.SupressaoVegetacao.HasValue && vm.SupressaoVegetacao == 0
 								   && vm.Realocacao.HasValue && vm.Realocacao == 0);
+			req.BarragensContiguas = vm.BarragensContiguas;
+			req.ResponsabilidadeRT = vm.ResponsabilidadeRT;
 
 			return req;
 		}

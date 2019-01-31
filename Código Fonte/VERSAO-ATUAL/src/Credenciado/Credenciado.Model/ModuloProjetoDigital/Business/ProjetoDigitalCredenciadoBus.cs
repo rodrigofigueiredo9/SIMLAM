@@ -297,7 +297,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 			return false;
 		}
 
-		public void AssociarDependencias(ProjetoDigital projetoDigital, BancoDeDados banco = null)
+		public void AssociarDependencias(ProjetoDigital projetoDigital, int caracterizacao = 0, BancoDeDados banco = null)
 		{
 			try
 			{
@@ -310,6 +310,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 				lista = caracterizacaoBus.ObterCaracterizacoesAtuais(projetoDigital.EmpreendimentoId.GetValueOrDefault(), lista);
 
 				Caracterizacao aux = lista.First();
+				if (caracterizacao > 0)
+					aux = lista.First(x => x.Id == caracterizacao);
 				projetoDigital.Dependencias.Clear();
 
 				projetoDigital.Dependencias.Add(new Dependencia()

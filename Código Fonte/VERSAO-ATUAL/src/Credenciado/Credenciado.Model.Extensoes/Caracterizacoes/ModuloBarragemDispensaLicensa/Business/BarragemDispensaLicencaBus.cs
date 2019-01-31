@@ -63,22 +63,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			try
 			{
-				#region Configurar
-
-				if (caracterizacao.PossuiMonge.HasValue && !Convert.ToBoolean(caracterizacao.PossuiMonge))
-				{
-					caracterizacao.MongeTipo = null;
-					caracterizacao.EspecificacaoMonge = string.Empty;
-				}
-
-				if (caracterizacao.PossuiVertedouro.HasValue && !Convert.ToBoolean(caracterizacao.PossuiVertedouro))
-				{
-					caracterizacao.VertedouroTipo = null;
-					caracterizacao.EspecificacaoVertedouro = string.Empty;
-				}
-
-				#endregion
-
 				if (_validar.Salvar(caracterizacao, projetoDigitalId))
 				{
 					GerenciadorTransacao.ObterIDAtual();
@@ -88,32 +72,39 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						bancoDeDados.IniciarTransacao();
 
 						#region Arquivo
+						var rt = caracterizacao.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+						var profissoesSemAutorizacao = new List<int>() { 15, 37, 38 };
 
-						if (caracterizacao.Autorizacao != null)
+						if (!profissoesSemAutorizacao.Contains(rt.profissao.Id))
 						{
-							if (!string.IsNullOrWhiteSpace(caracterizacao.Autorizacao.Nome))
+							if (rt.autorizacaoCREA != null)
 							{
-								if (caracterizacao.Autorizacao.Id != null && caracterizacao.Autorizacao.Id == 0)
+								if (!string.IsNullOrWhiteSpace(rt.autorizacaoCREA.Nome))
 								{
-									ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
-									caracterizacao.Autorizacao = _busArquivo.Copiar(caracterizacao.Autorizacao);
-								}
+									if (rt.autorizacaoCREA.Id != null &&
+										rt.autorizacaoCREA.Id == 0)
+									{
+										ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
+										rt.autorizacaoCREA = _busArquivo.Copiar(rt.autorizacaoCREA);
+									}
 
-								if (caracterizacao.Autorizacao.Id == 0)
+									if (rt.autorizacaoCREA.Id == 0)
+									{
+										ArquivoDa _arquivoDa = new ArquivoDa();
+										_arquivoDa.Salvar(rt.autorizacaoCREA, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
+									}
+								}
+								else
 								{
-									ArquivoDa _arquivoDa = new ArquivoDa();
-									_arquivoDa.Salvar(caracterizacao.Autorizacao, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Credenciado, User.FuncionarioTid, bancoDeDados);
+									rt.autorizacaoCREA.Id = null;
 								}
 							}
 							else
 							{
-								caracterizacao.Autorizacao.Id = null;
+								rt.autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 							}
 						}
-						else
-						{
-							caracterizacao.Autorizacao = new Blocos.Arquivo.Arquivo();
-						}
+						
 
 						#endregion
 
@@ -131,7 +122,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public bool Excluir(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
+		{
+			try
+			{
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.Excluir(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
+
+					bancoDeDados.Commit();
+				}
+
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool ExcluirCarac(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
@@ -154,7 +171,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
 					caracterizacaoBus.ConfigurarEtapaExcluirCaracterizacao(empreendimento, bancoDeDados);
 
-					_da.Excluir(empreendimento, bancoDeDados);
+					bancoDeDados.Commit();
+				}
+
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool ExcluirPorId(int projetoDigitalId, BancoDeDados banco = null, bool validarDependencias = true)
+		{
+			try
+			{
+				
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ExcluirPorId(projetoDigitalId, bancoDeDados);
 
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
 
@@ -253,6 +291,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Obter
 
+		public BarragemDispensaLicenca Obter(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+			BarragemDispensaLicenca barragem = null;
+			try
+			{
+				barragem = _da.Obter(id, simplificado: simplificado);
+				var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+				if (rt.autorizacaoCREA.Id > 0)
+				{
+					rt.autorizacaoCREA = _busArquivo.Obter(rt.autorizacaoCREA.Id.GetValueOrDefault());
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return barragem;
+		}
+
 		public BarragemDispensaLicenca ObterPorEmpreendimento(int empreendimentoId, int projetoDigitalId = 0, bool simplificado = false, BancoDeDados banco = null)
 		{
 			BarragemDispensaLicenca barragem = null;
@@ -262,7 +320,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				if (caracterizacoesAssociadas != null && caracterizacoesAssociadas.Count > 0)
 				{
-					barragem = ObterHistorico(caracterizacoesAssociadas.FirstOrDefault().Id, caracterizacoesAssociadas.FirstOrDefault().Tid);
+					barragem = _da.Obter(caracterizacoesAssociadas.FirstOrDefault().Id, simplificado: simplificado);
+					//barragem = ObterHistorico(caracterizacoesAssociadas.FirstOrDefault().Id, caracterizacoesAssociadas.FirstOrDefault().Tid);
+					var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+					if (rt.autorizacaoCREA.Id > 0)
+					{
+						rt.autorizacaoCREA = _busArquivo.Obter(rt.autorizacaoCREA.Id.GetValueOrDefault());
+					}
 				}
 				else
 				{
@@ -280,6 +344,38 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 
 			return barragem;
+		}
+
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragens = _da.ObterLista(empreendimentoId, projetoDigitalId, simplificado, banco); 
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragens;
+		}
+
+		public List<BarragemDispensaLicenca> ObterBarragemAssociada(int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragem = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragem = _da.ObterBarragemAssociada(projetoDigitalId, simplificado, banco);
+			}
+			catch(Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragem;
 		}
 
 		public BarragemDispensaLicenca ObterHistorico(int barragemID, string BarragemTID, bool simplificado = false)
@@ -315,6 +411,48 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
 
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
+		public List<BarragemRT> ObterResponsavelTecnicoRequerimento(List<BarragemRT> rtLst, int projetoDigital, BancoDeDados banco = null)
+		{
+			BarragemRT rt = new BarragemRT();
+			try
+			{
+				rt = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+				var id1 = rtLst[0].id;
+
+				rtLst[0] = rt;
+				rtLst[0].id = id1;
+				if (VerificarElaboracaoRT(projetoDigital))
+				{
+					var id2 = rtLst[1].id;
+					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
+					rtLst[1].id = id2;
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return rtLst;
+		}
+
+		public bool ObterBarragemContiguaMesmoNivel(int projetoDigital)
+		{
+			try
+			{
+				return _da.ObterBarragemContiguaMesmoNivel(projetoDigital);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return false;
+		}
 		#endregion
 
 		#region Auxilizares
@@ -352,6 +490,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				Validacao.AddErro(e);
 			}
+		}
+
+		public bool VerificarElaboracaoRT(int projetoDigital)
+		{
+			try
+			{
+				return _da.VerificarElaboracaoRT(projetoDigital);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return false;
 		}
 
 		#endregion

@@ -25,6 +25,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento
 		public int AgendamentoVistoria { get; set; }
 		public int SetorId { get; set; }
 
+		public int? BarragensContiguas { get; set; }
+		public int? ResponsabilidadeRT { get; set; }
+
 		//utilizado somente para requerimentos que possuam título declaratório de barragem
 		#region Barragem
 

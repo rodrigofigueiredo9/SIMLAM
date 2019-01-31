@@ -916,7 +916,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 				{
 					Id = item["id"].ToString(),
 					Texto = Convert.ToString(item["texto"]),
-					IsAtivo = true
+					IsAtivo = false
 				});
 			}
 			return lst;
@@ -933,7 +933,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 					Id = item["id"].ToString(),
 					Texto = Convert.ToString(item["texto"]),
 					Codigo = item["codigo"].ToString(),
-					IsAtivo = true
+					IsAtivo = false
 				});
 			}
 			return lst;
@@ -958,7 +958,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes.Data
 		internal List<Lista> ObterBarragemDispensaLicencaMongeTipo()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_crt_bdla_monge_tipo t order by t.texto");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_crt_bdla_monge_tipo t where t.id != 3 order by t.texto");
 			foreach (var item in daReader)
 			{
 				lst.Add(new Lista()
