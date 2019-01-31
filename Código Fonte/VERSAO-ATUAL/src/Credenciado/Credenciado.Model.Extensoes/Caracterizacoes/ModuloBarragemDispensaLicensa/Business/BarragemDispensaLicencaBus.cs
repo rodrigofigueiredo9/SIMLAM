@@ -430,6 +430,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
 					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 					rtLst[1].id = id2;
+					rtLst[1].proprioDeclarante = true;
 				}
 			}
 			catch (Exception exc)

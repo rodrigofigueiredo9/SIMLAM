@@ -57,7 +57,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="block arquivoRT hide">
+			<div class="block arquivoRT <%=Model.Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id.GetValueOrDefault() > 0 ? "" : "hide" %> ">
 				<div class="coluna80 inputFileDiv">
 					<label for="ArquivoTexto">Autorização do conselho de classe *</label>
 					<% if(Model.Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id.GetValueOrDefault() > 0) { %>

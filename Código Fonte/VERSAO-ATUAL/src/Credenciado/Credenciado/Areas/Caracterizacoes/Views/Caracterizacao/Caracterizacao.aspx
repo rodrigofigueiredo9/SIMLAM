@@ -89,7 +89,7 @@
 								<input type="hidden" class="hdnUrlVisualizar" value="<%= Html.Encode(item.UrlVisualizar) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
-								<% if (!Model.IsVisualizar && Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
+								<% if (!Model.IsVisualizar && Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><%} %>
 								<% else { %> <% if (!Model.IsVisualizar) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
 								<%		} %>
 								<% if (Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) {%><input title="Operar" class="icone opcoes btnVisualizar" type="button"/><% } %>
