@@ -63,8 +63,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem CpfCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CPF já está associado a uma pessoa." }; } }
 		public Mensagem CnpjCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CNPJ já está associado a uma pessoa." }; } }
-		public Mensagem CpfNaoCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CPF não está associado a uma pessoa." }; } }
-		public Mensagem CnpjNaoCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CNPJ não está associado a uma pessoa." }; } }
+		public Mensagem CpfNaoCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CPF não está associado a uma pessoa. \nPara o requerimento de Informação de Corte é necessário que o CPF / CNPJ do interessado esteja previamente cadastrados no IDAF e vinculado a um empreendimento. Favor procurar a unidade do IDAF no município do empreendimento para fazer/atualizar o cadastro." }; } }
+		public Mensagem CnpjNaoCadastrado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O CNPJ não está associado a uma pessoa. \nPara o requerimento de Informação de Corte é necessário que o CPF / CNPJ do interessado esteja previamente cadastrados no IDAF e vinculado a um empreendimento. Favor procurar a unidade do IDAF no município do empreendimento para fazer/atualizar o cadastro." }; } }
 
 		public Mensagem EnderecoCepInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Pessoa_Endereco_Cep", Texto = "CEP é inválido." }; } }
 		public Mensagem EnderecoCepInvalidoConjuge { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "CEP do cônjuge é inválido." }; } }

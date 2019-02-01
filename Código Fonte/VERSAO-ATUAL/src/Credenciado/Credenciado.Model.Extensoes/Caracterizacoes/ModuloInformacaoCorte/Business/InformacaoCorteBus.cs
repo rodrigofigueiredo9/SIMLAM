@@ -117,6 +117,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 					return Validacao.EhValido;
 
+				if (!_validar.Excluir(id))
+					return Validacao.EhValido;
+
 				GerenciadorTransacao.ObterIDAtual();
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -323,5 +326,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return Validacao.EhValido;
 		}
+
+		public bool CaracterizacaoEmAberto(int id) => _da.CaracterizacaoEmAberto(id);
 	}
 }
