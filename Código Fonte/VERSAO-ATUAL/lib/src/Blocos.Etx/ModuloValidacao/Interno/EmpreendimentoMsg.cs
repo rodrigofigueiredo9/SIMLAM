@@ -59,6 +59,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem Inexistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento inexistente." }; } }
 
+		public Mensagem ErroConexaoMunicipioGeobases {  get {  return new Mensagem() {  Tipo = eTipoMensagem.Advertencia, Texto = "Falha na conexão com o Geobases, favor entrar em contato com o administrador do sistema." }; } }
+
 		public Mensagem AssociadoDocumento(String doc)
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("O empreendimento não pode ser excluído, pois está associado ao documento: {0}.", doc) };
