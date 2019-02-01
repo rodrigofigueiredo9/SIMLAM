@@ -96,11 +96,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				update {0}tab_titulo_configuracao t
-					set t.area_alagada       = :area_alagada,
-						t.volume_armazenado  = :volume_armazenado,
-						t.arquivo_sem_app	 = :arquivo_sem_app,
+					set t.arquivo_sem_app	 = :arquivo_sem_app,
 						t.arquivo_com_app	 = :arquivo_com_app,
-						t.tid				 = :tid
+						t.tid				 = :tid, 
+						t.area_alagada		 = (case when :area_alagada > 0 then :area_alagada else t.area_alagada end),
+						t.volume_armazenado  = (case when :volume_armazenado > 0 then :volume_armazenado else t.volume_armazenado end)
 					where t.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", configuracao.Id, DbType.Int32);
