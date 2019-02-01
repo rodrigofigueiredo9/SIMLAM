@@ -2245,8 +2245,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				var comando = bancoDeDados.CriarComando(@"select s.id, s.associado_id, s.associado_tid, s.tid, ttn.numero || '/' || ttn.ano numeroAno, ttm.nome modelo_nome,
-				ttm.id modelo_id, ttm.sigla from {0}tab_titulo_associados s, {0}tab_titulo_numero ttn, {0}tab_titulo_modelo ttm where s.associado_id = ttn.titulo 
-				and ttn.modelo = ttm.id and s.titulo = :titulo", EsquemaBanco);
+				ttm.id modelo_id, ttm.sigla, t.data_vencimento from {0}tab_titulo t, {0}tab_titulo_associados s, {0}tab_titulo_numero ttn, {0}tab_titulo_modelo ttm where s.associado_id = ttn.titulo 
+				and ttn.modelo = ttm.id and t.id = s.associado_id and s.titulo = :titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", id, DbType.Int32);
 
@@ -2273,6 +2273,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						}
 
 						item.Tid = reader["associado_tid"].ToString();
+
+						item.DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") };
 
 						lst.Add(item);
 					}
