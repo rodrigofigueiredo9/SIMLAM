@@ -735,6 +735,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 
 			resposta = requestJson.Executar<dynamic>(_configCoordenada.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada) + "?easting=" + easting + "&northing=" + northing);
 
+			if (resposta.Data == null)
+				throw new Exception(Mensagem.Empreendimento.ErroConexaoMunicipioGeobases.ToString());
+
 			if (estadoID != 8 && !Convert.ToBoolean(resposta.Data["EstaNoEstado"]))
 			{
 				return new Mensagem();
