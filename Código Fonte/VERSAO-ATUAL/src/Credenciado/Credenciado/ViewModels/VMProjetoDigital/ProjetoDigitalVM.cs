@@ -13,6 +13,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMProjetoDigital
 		public string UrlEnviarVisualizar { get; set; }
 		public bool ModoVisualizar { get; set; }
 		public bool PossuiAtividadeCAR { get; set; }
+		public bool? PossuiAtividadeBarragem { get; set; }
 		public bool DesativarPasso4 { get; set; }
 
 		private ProjetoDigital _projetoDigital = new ProjetoDigital();

@@ -22,6 +22,8 @@
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/atividadeSolicitadaAssociar.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Requerimento/requerimento.js") %>"></script>
 
+	<script type="text/javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+
 	<script type="text/javascript">
 		Requerimento.urlIndex = '<%= Url.Action("Operar", "ProjetoDigital", (Model.ProjetoDigitalId > 0) ? new { id = Model.ProjetoDigitalId } : null) %>';
 		Requerimento.urlAvancar = '<%= Url.Action("Salvar", "Requerimento") %>';
@@ -44,6 +46,10 @@
 		RequerimentoObjetivoPedido.urlObterRoteirosAtividade = '<%= Url.Action("ObterRoteirosAtividade", "Requerimento") %>';
 		RequerimentoObjetivoPedido.urlBaixarPdf = '<%= Url.Action("RelatorioRoteiro", "Roteiro") %>';
 		RequerimentoObjetivoPedido.urlVerificarPassoDois = '<%= Url.Action("VerificarPassoDois", "Requerimento") %>';
+		//começa aqui
+		RequerimentoObjetivoPedido.urlAlterarDadosCredenciado = '<%= Url.Action("AlterarDados", "Credenciado") %>';
+		RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem = '<%= Url.Action("ResponsabilidadeRTBarragem", "Requerimento") %>';
+		RequerimentoObjetivoPedido.urlInformacoesBarragem = '<%= Url.Action("InformacoesBarragem", "Requerimento") %>';
 
 		RequerimentoInteressado.urlObterInteressado = '<%= Url.Action("PessoaInline", "Pessoa") %>';
 		RequerimentoInteressado.urlAssociarInteressado = '<%= Url.Action("AssociarInteressado", "Requerimento") %>';

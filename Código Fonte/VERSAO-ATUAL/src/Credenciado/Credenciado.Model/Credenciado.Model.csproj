@@ -175,11 +175,13 @@
     <Compile Include="ModuloRoteiro\Data\RoteiroInternoDa.cs" />
     <Compile Include="ModuloTitulo\Business\TituloCredenciadoBus.cs" />
     <Compile Include="ModuloTitulo\Business\TituloDeclaratorioBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloDeclaratorioConfiguracaoBus.cs" />
     <Compile Include="ModuloTitulo\Business\TituloDeclaratorioValidar.cs" />
     <Compile Include="ModuloTitulo\Business\TituloExtencoes.cs" />
     <Compile Include="ModuloTitulo\Business\TituloInternoBus.cs" />
     <Compile Include="ModuloTitulo\Business\TituloModeloInternoBus.cs" />
     <Compile Include="ModuloTitulo\Data\CondicionanteDa.cs" />
+    <Compile Include="ModuloTitulo\Data\TituloDeclaratorioConfiguracaoDa.cs" />
     <Compile Include="ModuloTitulo\Data\TituloInternoDa.cs" />
     <Compile Include="ModuloTitulo\Data\TituloModeloInternoDa.cs" />
     <Compile Include="ModuloTramitacao\Business\ArquivarInternoBus.cs" />

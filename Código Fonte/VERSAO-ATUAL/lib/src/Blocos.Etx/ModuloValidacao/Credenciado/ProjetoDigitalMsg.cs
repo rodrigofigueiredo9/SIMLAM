@@ -16,6 +16,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	public class ProjetoDigitalMsg
 	{
 		public Mensagem Enviar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital concluído com sucesso. Continue com o Passo 4 – Imprimir Documentos." }; } }
+		public Mensagem EnviarBarragem { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital concluído com sucesso. Continue com o cadastro do Título Declaratório." }; } }
 		public Mensagem CancelarEnvio { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "O envio do projeto digital foi cancelado com sucesso." }; } }
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Projeto Digital foi excluído com sucesso." }; } }
 
@@ -137,5 +138,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem ImprimirDocumentosDesativado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível Imprimir Documentos." }; } }
 		public Mensagem ImprimirDocumentosConcluido { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Passo 4 – Imprimir Documentos concluído com sucesso." }; } }
+
+		public Mensagem BarragemAssociada { get { return new Mensagem() { Texto = "Já existe uma barragem associada ao projeto digital!", Tipo = eTipoMensagem.Advertencia }; } }
 	}
 }

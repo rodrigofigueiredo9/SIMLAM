@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -177,7 +178,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			requerimento.SituacaoId = (int)eRequerimentoSituacao.EmAndamento;
 			_busRequerimento.SalvarObjetivoPedido(requerimento);
 
-			return Json(new { id = requerimento.Id, projetoDigitalId = requerimento.ProjetoDigitalId, Msg = Validacao.Erros });
+			List<string> acoesErros = new List<string>();
+			bool temBarragemDispensada = false;
+
+			//327 == Barragem dispensada de licenciamento ambiental
+			if (requerimento.Atividades.Count(x => x.Id == 327) > 0)
+			{
+				temBarragemDispensada = true;
+				if (Validacao.Erros.Find(x => x.Texto == Mensagem.Requerimento.RTFaltandoInformacoesProfissao.Texto) != null)
+				{
+					acoesErros.Add("RTFaltandoInformacoesProfissao");
+				}
+			}
+				
+
+			return Json(new
+			{
+				id = requerimento.Id,
+				projetoDigitalId = requerimento.ProjetoDigitalId,
+				Msg = Validacao.Erros,
+				acoes = acoesErros,
+				temBarragemDeclaratoria  = temBarragemDispensada,
+				idUsuario = (User.Identity as EtramiteIdentity).FuncionarioId
+			});
 		}
 
 		[Permite(Tipo = ePermiteTipo.Logado)]
@@ -255,6 +278,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros });
 		}
 
+		[Permite(RoleArray = new Object[] { ePermissao.CFOAlterarSituacao })]
+		public ActionResult ResponsabilidadeRTBarragem(RequerimentoVM vm)
+		{
+			Requerimento requerimento = GerarRequerimento(vm);
+
+			return PartialView("RTBarragemPartial", requerimento);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.CFOAlterarSituacao })]
+		public ActionResult InformacoesBarragem(RequerimentoVM vm)
+		{
+			Requerimento requerimento = GerarRequerimento(vm);
+
+			return PartialView("InfoBarragemPartial", requerimento);
+		}
+
 		#region  Atividade Solicitada
 
 		[Permite(RoleArray = new Object[] { ePermissao.RequerimentoCriar, ePermissao.RequerimentoEditar })]
@@ -312,7 +351,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					vm.CarregarRequerimentoVM(requerimento);
 					vm.CarregarListas(ListaCredenciadoBus.ResponsavelFuncoes, ListaCredenciadoBus.AgendamentoVistoria);
 
-					view = (requerimento.Responsaveis.Count > 0) ? "ResponsavelTecnicoVisualizar" : "CriarRespTecnico";
+					if (requerimento.Atividades.FirstOrDefault(x => x.Id == 327) != null && requerimento.Responsaveis.FirstOrDefault()?.IdRelacionamento == 0)
+					{
+						view = "CriarRespTecnico";
+					}
+					else
+					{
+						view = (requerimento.Responsaveis.Count > 0) ? "ResponsavelTecnicoVisualizar" : "CriarRespTecnico";
+					}
 				}
 			}
 
@@ -477,6 +523,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			req.AgendamentoVistoria = vm.AgendamentoVistoriaId;
 			req.SetorId = vm.SetorId;
 			req.Informacoes = vm.InformacaoComplementar;
+			req.InfoPreenchidas = (vm.AbastecimentoPublico.HasValue && vm.AbastecimentoPublico == 0
+								   && vm.UnidadeConservacao.HasValue && vm.UnidadeConservacao == 0
+								   && vm.SupressaoVegetacao.HasValue && vm.SupressaoVegetacao == 0
+								   && vm.Realocacao.HasValue && vm.Realocacao == 0);
+			req.BarragensContiguas = vm.BarragensContiguas;
+			req.ResponsabilidadeRT = vm.ResponsabilidadeRT;
 
 			return req;
 		}

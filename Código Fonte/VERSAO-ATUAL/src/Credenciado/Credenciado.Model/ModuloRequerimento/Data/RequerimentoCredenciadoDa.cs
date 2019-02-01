@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Web;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Credenciado.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
@@ -14,6 +17,8 @@ using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
@@ -35,6 +40,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 		public String UsuarioCredenciado
 		{
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); }
+		}
+
+		private static EtramitePrincipal User
+		{
+			get { return (HttpContext.Current.User as EtramitePrincipal); }
 		}
 
 		#endregion
@@ -92,6 +102,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				requerimento.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 				#endregion
+
+				#region Barragem
+				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
+						insert into tab_requerimento_barragem 
+							(id, requerimento, rt_elaboracao, possui_barragem_contigua)      
+							values(seq_requerimento_barragem.nextval, :requerimento, :rt_elaboracao, :possui_barragem_contigua)", UsuarioCredenciado);
+
+					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+					#endregion
+
+				}
 
 				#region Atividades
 				if (requerimento.Atividades != null && requerimento.Atividades.Count > 0)
@@ -195,6 +222,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				#endregion
+
+				#region Barragem
+				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
+					update tab_requerimento_barragem
+						set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
+					where requerimento = :requerimento", UsuarioCredenciado);
+
+					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
 				#endregion
 
 				#region Limpar os dados do banco
@@ -388,6 +431,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				lista.Add(@"delete from {0}tab_requerimento_ativ_finalida a where a.requerimento_ativ in (select b.id from {0}tab_requerimento_atividade b where b.requerimento = :requerimento);");
 				lista.Add("delete from {0}tab_requerimento_atividade b where b.requerimento = :requerimento;");
 				lista.Add("delete from {0}tab_requerimento_responsavel c where c.requerimento = :requerimento;");
+				lista.Add("delete from {0}tab_requerimento_barragem c where c.requerimento = :requerimento;");
 				lista.Add("delete from {0}tab_requerimento e where e.id = :requerimento;");
 
 				comando = bancoDeDados.CriarComando(@" begin " + string.Join(" ", lista) + " end;", UsuarioCredenciado);
@@ -643,6 +687,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 					}
 					reader.Close();
 				}
+
+				/* Se a atividade associada ao requerimento for Barragem (id == 327), o responsável necessariamente
+				 * deverá ser o RT que está fazendo o cadastro do requerimento. Não poderá haver outros RTs associados
+				 * ao requerimento.
+				 */
+				#region Barragem
+
+				if (requerimento.Atividades.FirstOrDefault(x => x.Id == 327) != null)
+				{
+					CredenciadoBus _busCredenciado = new CredenciadoBus(new CredenciadoValidar());
+					CredenciadoPessoa usuarioLogado = _busCredenciado.Obter(User.EtramiteIdentity.FuncionarioId);
+					usuarioLogado.Pessoa = _busCredenciado.ObterPessoaCredenciado(usuarioLogado.Pessoa.Id);
+
+					if  (requerimento.Responsaveis.Count() > 1 || requerimento.Responsaveis.Count() == 0 || requerimento.Responsaveis.FirstOrDefault(x => x.Id == usuarioLogado.Pessoa.Id) == null)
+					{
+						requerimento.Responsaveis = new List<ResponsavelTecnico>();
+
+						ResponsavelTecnico rt = new ResponsavelTecnico();
+						rt.IdRelacionamento = 0;
+						rt.Id = usuarioLogado.Pessoa.Id;
+						rt.Funcao = 1;  //Elaborador
+						rt.CpfCnpj = usuarioLogado.Pessoa.CPFCNPJ;
+						rt.NomeRazao = usuarioLogado.Pessoa.NomeRazaoSocial;
+						rt.NumeroArt = string.Empty;
+
+						requerimento.Responsaveis.Add(rt);
+					}
+				}
+
+				#endregion Barragem
 
 				#endregion
 			}

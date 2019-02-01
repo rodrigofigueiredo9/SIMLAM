@@ -227,7 +227,6 @@ Requerimento = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
 					return;
@@ -306,6 +305,11 @@ RequerimentoObjetivoPedido = {
 	urlBaixarPdf: null,
 	urlObterRoteirosAtividade: null,
 	urlVerificarPassoDois: null,
+	BarragemPreenchida: false,
+	objetivoPedido: null,
+	urlAlterarDadosCredenciado: null,
+	urlResponsabilidadeRTBarragem: null,
+	urlInformacoesBarragem: null,
 
 	configurarBtnEditar: function () {
 		$(".btnEditar", Requerimento.container).unbind('click');
@@ -605,6 +609,12 @@ RequerimentoObjetivoPedido = {
 			objetivoPedido.Roteiros.push({ Id: $('.hdnRoteiroId', this).val(), Tid: $('.hdnTidRoteiro', this).val() });
 		});
 
+		if (RequerimentoObjetivoPedido.BarragemPreenchida == true) {
+			objetivoPedido = RequerimentoObjetivoPedido.objetivoPedido;
+		} else {
+			RequerimentoObjetivoPedido.objetivoPedido = objetivoPedido;
+		}
+
 		$.ajax({
 			url: RequerimentoObjetivoPedido.urlCriarObjetivoPedido,
 			type: "POST",
@@ -617,6 +627,10 @@ RequerimentoObjetivoPedido = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, Requerimento.container);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.temBarragemDeclaratoria && RequerimentoObjetivoPedido.BarragemPreenchida == false) {
+					RequerimentoObjetivoPedido.possuiBarragemDeclaratoria(response);
+					return;
+				}
 
 				if (response.Msg && response.Msg.length > 0) {
 					Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
@@ -651,8 +665,192 @@ RequerimentoObjetivoPedido = {
 			}
 		});
 
-		return isSalvo;
+		RequerimentoObjetivoPedido.BarragemPreenchida = false;
 
+		return isSalvo;
+	},
+
+	possuiBarragemDeclaratoria: function (response) {
+		var mensagem = "";
+		if (response.Msg && response.Msg.length > 0) {
+			if (response.acoes.contains('RTFaltandoInformacoesProfissao') == true) {
+				mensagem = '\
+						<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
+							<div class=\"textoMensagem \">\
+								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
+								<p> Mensagem do Sistema</p>\
+								<ul>';
+				var i = 0;
+				for (i = 0; i < response.Msg.length; i++) {
+					mensagem = mensagem + '<li>' + response.Msg[i].Texto + '</li>';
+				}
+				mensagem = mensagem + '\
+								</ul>\
+							</div>';
+
+				if (i > 1) {
+					mensagem = mensagem + '<a class="linkVejaMaisMensagens" title="Clique aqui para ver mais detalhes desta mensagem">Clique aqui para ver mais detalhes desta mensagem</a>';
+				}
+
+				mensagem = mensagem + '\
+							<br>\
+							<div class=\"redirecinamento block containerAcoes hide\">\
+								<h5> O que deseja fazer agora ?</h5>\
+								<p class=\"hide\">#DESCRICAO</p>\
+								<div class=\"coluna100 margem0 divAcoesContainer\">\
+									<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+									<div class=\"containerBotoes\"></div>\
+								</div>\
+							</div>\
+						</div>';
+				$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+
+				ContainerAcoes.load($(".containerAcoes"), {
+					botoes: [
+						{ label: 'Cancelar cadastro da declaração' },
+						{ label: 'Atualizar cadastro pessoal', url: RequerimentoObjetivoPedido.urlAlterarDadosCredenciado + '/' + response.idUsuario }]
+				});
+			} else {
+				Mensagem.gerar(Requerimento.containerMensagem, response.Msg);
+			}
+		} else {	//Não houve mensagens de  erro
+			mensagem = '\
+						<div class=\"mensagemSistema info ui-draggable\" style=\"position: relative;\">\
+							<div class=\"textoMensagem \">\
+								<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
+								<p> Mensagem do Sistema</p>\
+								<ul>\
+									<li>O cadastramento da Declaração de Dispensa de Licenciamento Ambiental de Barragem somente é autorizado ao profissional elaborador do estudo ambiental ou do projeto técnico ou laudo de barragem construída, conforme o caso.</li>\
+							    </ul>\
+							</div><br>\
+							<div class=\"redirecinamento block containerAcoes hide\">\
+								<h5> O que deseja fazer agora ?</h5>\
+								<p class=\"hide\">#DESCRICAO</p>\
+								<div class=\"coluna100 margem0 divAcoesContainer\">\
+									<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
+									<div class=\"containerBotoes\"></div>\
+								</div>\
+							</div>\
+						</div>';
+			$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
+
+			ContainerAcoes.load($(".containerAcoes"), {
+				botoes: [
+					{ label: 'Continuar', url: RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem, abrirModal: function () { RequerimentoObjetivoPedido.funcaoRTBarragem(); } },
+					{ label: 'Cancelar cadastro da declaração' }]
+			});
+		}
+	},
+
+	funcaoRTBarragem: function () {
+		Mensagem.limpar(RequerimentoObjetivoPedido.container);
+		
+
+		Modal.abrir(RequerimentoObjetivoPedido.urlResponsabilidadeRTBarragem, RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+			Modal.defaultButtons(container, function (container) {
+				var objeto = RequerimentoObjetivoPedido.objetivoPedido;
+				objeto.ResponsabilidadeRT = $('.rbFuncaoRT:checked').val() || 0;
+
+				if (objeto.ResponsabilidadeRT <= 0) {
+					var msgErro = {
+						Texto: 'É obrigatório escolher uma das opções.',
+						Tipo: 3
+					};
+
+					var arrayMsg = [msgErro];
+
+					Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+					return;
+				}
+				
+				RequerimentoObjetivoPedido.objetivoPedido = objeto;
+
+				Modal.fechar(container[0]);
+
+				Modal.abrir(RequerimentoObjetivoPedido.urlInformacoesBarragem, RequerimentoObjetivoPedido.objetivoPedido, function (container) {
+					$(".rbInfoBarragem").change(RequerimentoObjetivoPedido.infoBarragemChange);
+					$(".rbBarragensContiguas").change(RequerimentoObjetivoPedido.barragensContiguasChange);
+
+					//container.delegate('.btnSalvar', 'click', Requerimento.gerenciarWizard);
+
+					Modal.defaultButtons(container, function (container) {
+						var objeto = RequerimentoObjetivoPedido.objetivoPedido;
+
+						objeto.AbastecimentoPublico = $('.rbAbastecimentoPublico:checked').val() || -1;
+						objeto.UnidadeConservacao = $('.rbUnidadeConservacao:checked').val() || -1;
+						objeto.SupressaoVegetacao = $('.rbSupressaoVegetacao:checked').val() || -1;
+						objeto.Realocacao = $('.rbRealocacao:checked').val() || -1;
+						objeto.BarragensContiguas = $('.rbBarragensContiguas:checked').val() || -1;
+
+						var msgErro;
+						var arrayMsg;
+						
+						//Todas as perguntas devem estar respondidas
+						if (objeto.AbastecimentoPublico < 0 || objeto.UnidadeConservacao < 0
+							|| objeto.SupressaoVegetacao < 0 || objeto.Realocacao < 0
+							|| ($('.divBarragensContiguas').hasClass('hide') == false && objeto.BarragensContiguas < 0)) {
+							msgErro = {
+								Texto: 'A resposta a todas as perguntas é obrigatória.',
+								Tipo: 3
+							};
+							arrayMsg = [msgErro];
+
+							Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+							return;
+						}
+
+						//Se a resposta a pelo menos uma das quatro primeiras perguntas for Sim, não será possível cadastrar o requerimento
+						if (objeto.AbastecimentoPublico == 1 || objeto.UnidadeConservacao == 1
+							|| objeto.SupressaoVegetacao == 1 || objeto.Realocacao == 1) {
+							msgErro = {
+								Texto: 'A dispensa de licenciamento ambiental não se aplica a esta barragem, devendo, neste caso, ser instaurado procedimento regular de licenciamento ambiental junto ao IDAF.',
+								Tipo: 3
+							};
+							arrayMsg = [msgErro];
+
+							Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+							return;
+						}
+
+						RequerimentoObjetivoPedido.BarragemPreenchida = true;
+
+						RequerimentoObjetivoPedido.objetivoPedido = objeto;
+
+						Modal.fechar(container[0]);
+						
+						$('.btnSalvar').click();
+
+					}, 'Continuar');
+				});
+			}, 'Continuar');
+		});
+	},
+
+	infoBarragemChange: function () {
+		var pergunta01 = $('.rbAbastecimentoPublico:checked').val() || -1;
+		var pergunta02 = $('.rbUnidadeConservacao:checked').val() || -1;
+		var pergunta03 = $('.rbSupressaoVegetacao:checked').val() || -1;
+		var pergunta04 = $('.rbRealocacao:checked').val() || -1;
+		
+		if (pergunta01 == 0 && pergunta02 == 0 && pergunta03 == 0 && pergunta04 == 0) {
+			$('.divBarragensContiguas').removeClass('hide');
+		} else {
+			$('.divBarragensContiguas').addClass('hide');
+		}
+	},
+
+	barragensContiguasChange: function () {
+		if ($('.rbBarragensContiguas:checked').val() == 1) {
+			var msgAviso = {
+				Texto: 'Para barragens contíguas em um mesmo imóvel, as informações locacionais e de dimensionamento deverão se referir ao primeiro barramento de jusante, enquanto as demais informações, como área alagada e volume armazenado, deverão considerar o somatório de todos os reservatórios contíguos.',
+				Tipo: 0
+			};
+			var arrayMsg = [msgAviso];
+
+			Mensagem.gerar(Requerimento.containerMensagem, arrayMsg);
+		} else {
+			Mensagem.limpar(Requerimento.containerMensagem);
+		}
 	}
 }
 
@@ -915,7 +1113,6 @@ RequerimentoResponsavel = {
 	pessoaModalResp: null,
 
 	callBackObterResponsavelVisualizar: function () {
-
 		$('.btnSalvar', Requerimento.container).val('Salvar');
 		Requerimento.botoes({ btnEditar: true, spnCancelarCadastro: true });
 		Requerimento.stepAtual = 3;
@@ -933,6 +1130,15 @@ RequerimentoResponsavel = {
 		$(".btnEditar", Requerimento.container).click(RequerimentoResponsavel.onBtnEditar);
 
 		RequerimentoResponsavel.configurarAssociarMultiploResponsavel();
+
+		if ($('.hdnBarragemDeclataroria').val() == 'True') {
+			$('.btnAsmAssociar').addClass('hide');
+			$('.btnAsmLimpar').addClass('hide');
+			$('.btnAsmEditar').addClass('hide');
+			$('.funcao').addClass('disabled').attr('disabled', 'disabled');
+			$('.fsAssociarMultiplo').addClass('hide');
+		}
+
 		MasterPage.carregando(false);
 	},
 
@@ -948,6 +1154,15 @@ RequerimentoResponsavel = {
 		Requerimento.botoes({ btnSalvar: true, spnCancelarEdicao: true });
 
 		Requerimento.configurarBtnCancelarStep(3);
+
+		if ($('.hdnBarragemDeclataroria').val() == 'True') {
+			$('.btnAsmAssociar').addClass('hide');
+			$('.btnAsmLimpar').addClass('hide');
+			$('.btnAsmEditar').addClass('hide');
+			$('.funcao').addClass('disabled').attr('disabled', 'disabled');
+			$('.fsAssociarMultiplo').addClass('hide');
+		}
+
 		MasterPage.carregando(false);
 	},
 

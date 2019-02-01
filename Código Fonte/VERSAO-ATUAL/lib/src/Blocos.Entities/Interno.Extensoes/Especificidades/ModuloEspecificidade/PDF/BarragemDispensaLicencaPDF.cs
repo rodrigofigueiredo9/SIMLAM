@@ -26,12 +26,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Id = caracterizacao.Id;
 			NorthingLatitude = caracterizacao.Coordenada.NorthingUtmTexto;
 			EastingLongitude = caracterizacao.Coordenada.EastingUtmTexto;
-			BarragemTipo = caracterizacao.BarragemTipoTexto;
 			NumeroARTElaboracao = caracterizacao.NumeroARTElaboracao;
 			NumeroARTExecucao = caracterizacao.NumeroARTExecucao;
-			AreaAlagada = caracterizacao.AreaAlagada;
-			VolumeArmazanado = caracterizacao.VolumeArmazanado;
-			FinalidadeAtividade = caracterizacao.FinalidadeAtividade;
+			AreaAlagada = caracterizacao.areaAlagada;
+			VolumeArmazanado = caracterizacao.volumeArmazanado;
 		}
 	}
 }

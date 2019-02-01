@@ -254,9 +254,16 @@
     <Compile Include="ViewModels\VMValidacao\ValidacaoVM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemCadastradaBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemAssociadaBarragem.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\BarragemDispensaLicencaPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescAContruir.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescContruida.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ResponsabilidadeTecnica.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescricaoGeralBarragem.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Listar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Caracterizacao\Caracterizacao.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
@@ -1214,6 +1221,8 @@
     <Content Include="Views\PTV\ListarResultados.ascx" />
     <Content Include="Views\PTV\PTVPartial.ascx" />
     <Content Include="Views\PTV\Visualizar.aspx" />
+    <Content Include="Views\Requerimento\InfoBarragemPartial.ascx" />
+    <Content Include="Views\Requerimento\RTBarragemPartial.ascx" />
     <Content Include="Views\Requerimento\Criar.aspx" />
     <Content Include="Views\Requerimento\CriarRespTecnico.ascx" />
     <Content Include="Views\Requerimento\Editar.aspx" />

@@ -96,7 +96,13 @@
     <Compile Include="Etx\ModuloRelatorio\AsposeEtx\AsposeData.cs" />
     <Compile Include="Etx\ModuloRelatorio\IAnexoPdf.cs" />
     <Compile Include="Home\Log.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemConstruidaAConstruir.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemRT.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemCoordenada.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemDispensaLicenca.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eTipoRT.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eTipoCoordenadaBarragem.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eRTElabocarao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eFase.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eBarragemTipo.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\eFormacaoRTCodigo.cs" />
@@ -390,6 +396,7 @@
     <Compile Include="Interno\ModuloSetor\eCargo.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloModeloTipoDocumento.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloMotivoEncerramento.cs" />
+    <Compile Include="Interno\ModuloTitulo\TituloDeclaratorioConfiguracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestalExploracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestal.cs" />
     <Compile Include="Interno\ModuloVegetal\ConfiguracaoVegetalItem.cs" />

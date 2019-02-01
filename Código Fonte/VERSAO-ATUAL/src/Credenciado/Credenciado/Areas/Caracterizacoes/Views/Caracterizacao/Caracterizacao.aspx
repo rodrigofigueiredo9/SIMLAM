@@ -1,5 +1,6 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Credenciado.Master" Inherits="System.Web.Mvc.ViewPage<CaracterizacaoVM>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Caracterização do Empreendimento</asp:Content>
@@ -88,9 +89,11 @@
 								<input type="hidden" class="hdnUrlVisualizar" value="<%= Html.Encode(item.UrlVisualizar) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
-
-								<% if (!Model.IsVisualizar) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
-								<input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/>
+								<% if (!Model.IsVisualizar && Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><%} %>
+								<% else { %> <% if (!Model.IsVisualizar) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
+								<%		} %>
+								<% if (Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) {%><input title="Operar" class="icone opcoes btnVisualizar" type="button"/><% } %>
+								<% else{%><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/>  <%} %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>
 							</td>
 						</tr>
@@ -107,7 +110,7 @@
 			<% } %>
 		</fieldset>
 
-		<%if(!Model.IsVisualizar) {%>
+		<%if (!Model.IsVisualizar) {%>
 		<fieldset class="block box fsCadastradas">
 			<legend>Cadastradas</legend>
 			<% if (Model.CaracterizacoesCadastradas.Count > 0) { %>
@@ -127,13 +130,16 @@
 								<input type="hidden" class="hdnUrlExcluir" value="<%= Html.Encode(item.UrlExcluir) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
-
-								<% if (item.PodeAssociar) { %><input title="Associar ao projeto digital" class="icone associar btnAssociar" type="button" /><% } %>
+								<% if (item.PodeAssociar && !Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><input title="Associar ao projeto digital" class="icone associar btnAssociar" type="button" /><% } %>
 								<% if (item.PodeCopiar) { %><input title="Copiar do institucional" class="icone comparar btnCopiar" type="button" /><% } %>
-								<% if (item.PodeVisualizar) { %><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/><% } %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>
+								<% if (item.PodeVisualizar && item.PodeEditar && Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %> <input title = "Operar" class="icone opcoes btnVisualizar" type="button"/> <% } %>
+								<% else { %>
+								<% if (item.PodeVisualizar) { %><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/><% } %>
 								<% if (item.PodeEditar) { %><input title="Editar" class="icone editar btnEditar" type="button"/><% } %>
+								<% } %>
 								<% if (item.PodeExcluir) { %><input title="Excluir" class="icone excluir btnExcluir" type="button"/><% } %>
+								
 							</td>
 						</tr>
 						<% } %>

@@ -23,7 +23,17 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento
 		public int ProtocoloId { get; set; }
 		public int ProtocoloTipo { get; set; }
 		public int AgendamentoVistoria { get; set; }
-		public int SetorId { get; set; } 
+		public int SetorId { get; set; }
+
+		public int? BarragensContiguas { get; set; }
+		public int? ResponsabilidadeRT { get; set; }
+
+		//utilizado somente para requerimentos que possuam título declaratório de barragem
+		#region Barragem
+
+		public bool? InfoPreenchidas { get; set; }
+
+		#endregion Barragem
 
 		public string DataCadastroTexto { get { return DataCadastro.ToShortDateString(); } }
 

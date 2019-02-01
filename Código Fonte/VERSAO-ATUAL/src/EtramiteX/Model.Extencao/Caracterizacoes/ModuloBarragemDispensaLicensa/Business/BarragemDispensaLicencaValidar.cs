@@ -25,62 +25,62 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneAtividade);
 			}
 
-			if (!caracterizacao.BarragemTipo.HasValue)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneTipoBarragem);
-			}
+			//if (!caracterizacao.BarragemTipo.HasValue)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneTipoBarragem);
+			//}
 
-			if (caracterizacao.FinalidadeAtividade <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneFinalidade);
-			}
+			//if (caracterizacao.FinalidadeAtividade <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneFinalidade);
+			//}
 
-			if (string.IsNullOrWhiteSpace(caracterizacao.CursoHidrico))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
-			}
+			//if (string.IsNullOrWhiteSpace(caracterizacao.CursoHidrico))
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
+			//}
 
-			if (caracterizacao.VazaoEnchente.GetValueOrDefault() <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoInchenteZero);
-			}
+			//if (caracterizacao.VazaoEnchente.GetValueOrDefault() <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoInchenteZero);
+			//}
 
-			if (caracterizacao.AreaBaciaContribuicao.GetValueOrDefault() <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaBaciaContribuicaoZero);
-			}
+			//if (caracterizacao.AreaBaciaContribuicao.GetValueOrDefault() <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaBaciaContribuicaoZero);
+			//}
 
-			if (caracterizacao.Precipitacao.GetValueOrDefault() <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePrecipitacaoZero);
-			}
+			//if (caracterizacao.Precipitacao.GetValueOrDefault() <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePrecipitacaoZero);
+			//}
 
-			if (caracterizacao.PeriodoRetorno.GetValueOrDefault() <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePeriodoRetornoZero);
-			}
+			//if (caracterizacao.PeriodoRetorno.GetValueOrDefault() <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformePeriodoRetornoZero);
+			//}
 
-			if (string.IsNullOrWhiteSpace(caracterizacao.CoeficienteEscoamento))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoeficienteEscoamentoZero);
-			}
+			//if (string.IsNullOrWhiteSpace(caracterizacao.CoeficienteEscoamento))
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoeficienteEscoamentoZero);
+			//}
 
-			if (string.IsNullOrWhiteSpace(caracterizacao.TempoConcentracao))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTempoConcentracao);
-			}
+			//if (string.IsNullOrWhiteSpace(caracterizacao.TempoConcentracao))
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTempoConcentracao);
+			//}
 
 			if (string.IsNullOrWhiteSpace(caracterizacao.EquacaoCalculo))
 			{
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEquacaoCalculo);
 			}
 
-			if (caracterizacao.AreaAlagada.GetValueOrDefault() <= 0)
+			if (caracterizacao.areaAlagada <= 0)
 			{
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaAlagadaZero);
 			}
 
-			if (caracterizacao.VolumeArmazanado.GetValueOrDefault() <= 0)
+			if (caracterizacao.volumeArmazanado <= 0)
 			{
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVolumeArmazenadoZero);
 			}
@@ -208,15 +208,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				}
 			}
 
-			if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.EastingUtmTexto))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting);
-			}
+			//if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.EastingUtmTexto))
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting);
+			//}
 
-			if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.NorthingUtmTexto))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing);
-			}
+			//if (string.IsNullOrWhiteSpace(caracterizacao.Coordenada.NorthingUtmTexto))
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing);
+			//}
 
 			if (caracterizacao.FormacaoRT <= 0)
 			{

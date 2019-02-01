@@ -294,6 +294,7 @@
     <Compile Include="Controllers\PTVOutroController.cs" />
     <Compile Include="Controllers\PTVController.cs" />
     <Compile Include="Controllers\RelatorioEspecificoController.cs" />
+    <Compile Include="Controllers\TituloDeclaratorioConfiguracaoController.cs" />
     <Compile Include="Controllers\TituloDeclaratorioController.cs" />
     <Compile Include="Lib\Export\ExcelColumnDefinition.cs" />
     <Compile Include="Lib\Export\ExcelFileResult.cs" />
@@ -350,6 +351,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
     <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
     <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
+    <Compile Include="ViewModels\VMTItuloDeclaratorioConfiguracao\ConfigurarVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -500,11 +502,13 @@
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\Areas\Especificidades\Outros\outrosInformacaoCorteDeclaratorio.js" />
     <Content Include="Scripts\DUA\dua.js" />
+    <Content Include="Scripts\TituloDeclaratorioConfiguracao\configurar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\Configurar.aspx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />

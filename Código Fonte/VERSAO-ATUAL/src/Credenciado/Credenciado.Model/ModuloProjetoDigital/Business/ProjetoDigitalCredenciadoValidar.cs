@@ -61,7 +61,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 				Validacao.Add(Mensagem.ProjetoDigital.RequerimentoObrigatorio);
 				return false;
 			}
-
+			
 			return Validacao.EhValido;
 		}
 
@@ -252,7 +252,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 					caracterizacaoBus.ValidarAssociar(caracterizacao.DependenciaId, projetoDigital.Id);
 				}
 			}
-
+			
 			return Validacao.EhValido;
 		}
 
