@@ -37,11 +37,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-<<<<<<< HEAD
           <IISUrl>http://localhost:49829/</IISUrl>
-=======
-          <IISUrl>http://localhost:49376/</IISUrl>
->>>>>>> 0013_Barragem
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
