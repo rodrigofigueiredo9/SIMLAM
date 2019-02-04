@@ -585,9 +585,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 				}
 
 				var objJson = resposta.Data;
-				if (objJson["EstaNoEstado"] && (objJson["Municipio"] == null || Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0) == 0))
+				if (objJson != null)
 				{
-					Validacao.Add(Mensagem.Mapas.MunicipioSemRetorno);
+					if (objJson["EstaNoEstado"] && (objJson["Municipio"] == null || Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0) == 0))
+					{
+						Validacao.Add(Mensagem.Mapas.MunicipioSemRetorno);
+					}
 				}
 			}
 			catch (Exception exc)
@@ -752,6 +755,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business
 			Municipio municipioCoordenada = new Municipio();
 
 			resposta = requestJson.Executar<dynamic>(_configCoordenada.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada) + "?easting=" + easting + "&northing=" + northing);
+
+			if (resposta.Data == null)
+				throw new Exception(Mensagem.Empreendimento.ErroConexaoMunicipioGeobases.ToString());
 
 			if (estadoID != 8 && !Convert.ToBoolean(resposta.Data["EstaNoEstado"]))
 			{

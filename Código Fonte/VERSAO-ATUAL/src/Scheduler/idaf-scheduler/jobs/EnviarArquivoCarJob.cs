@@ -14,6 +14,8 @@ using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using System.Collections.Generic;
 using System.Threading;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -236,64 +238,74 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				};
 			}
 
-			Log.Info($"Entrou na função de envio - Solicitacao CAR :: {solicitacao}  --- {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff") }");
-			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff") }");
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now }");
 
 			//verifica se objeto já foi instanciado
 			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
 			if (_client == null)
 			{
-				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")} ");
-				_client = new HttpClient(_httpClientHandler);
-				_client.BaseAddress = new Uri(sicarUrl);
-				_client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now} ");
+				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
+				_client.DefaultRequestHeaders.Clear();
+
 				count++;
 			}
 
-			Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
+			try
 			{
-				try
+				Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now}");
+				using (var fs = File.OpenRead(localArquivoCar))
 				{
-					Log.Info($"Iniciando DataContent - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-					using (var content = new MultipartFormDataContent())
+					using (var streamContent = new StreamContent(fs))
 					{
-						Log.Info($"Obtendo nome do Arquivo - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff.fff")}");
-						var fileName = Path.GetFileName(localArquivoCar);
+						var imageContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
+						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
 
-						Log.Info($"Nome do Arquivo: {fileName} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-						var streamContent = new StreamContent(stream);
-						content.Add(streamContent, "car", fileName);
-
-						Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-						content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-
-						Log.Info($"Iniciando POST - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-						HttpResponseMessage response = await _client.PostAsync("/sincronia/quick", content, CancellationToken.None);
-
-						Log.Info($"STATUS RETORNO RESPONSE {response.IsSuccessStatusCode.ToString()} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-						if (response.IsSuccessStatusCode)
+						Log.Info($"Iniciando DataContent - {DateTime.Now}");
+						using (var form = new MultipartFormDataContent())
 						{
-							Log.Info($"LENDO O RESPONSE STRING ASYNC - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-							var responseContent = await response.Content.ReadAsStringAsync();
+							Log.Info($"Token: {ConfigurationManager.AppSettings["SicarToken"]} - {DateTime.Now}");
+							form.Headers.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
 
-							Log.Info($"RETORNANDO RESPONSE CONTENT (FINAL): {responseContent} - {DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff")}");
-							return responseContent;
+							Log.Info($"Nome do Arquivo: {localArquivoCar} - {DateTime.Now}");
+							form.Add(imageContent, "car", Path.GetFileName(localArquivoCar));
+
+							Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {dataCadastroEstadual}");
+							form.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
+
+							Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now}");
+							var response = await _client.PostAsync("/sincronia/quick", form);
+							Log.Info($"Concluído envio do Arquivo - {DateTime.Now}");
+
+
+							Log.Info($"Verificando se envio foi realizado com sucesso - {DateTime.Now}");
+							if (response.IsSuccessStatusCode)
+							{
+								var content = await response.Content.ReadAsStringAsync();
+								var jsonFormat = JToken.Parse(content).ToString();
+								Log.Info($"RETORNO ENVIO: {jsonFormat}");
+
+								return jsonFormat;
+							}
+
+							Log.Error("ERRO RESPONSE: " + response);
+							throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 						}
-
-						Log.Error("ERRO RESPONSE::::?? //  " + response);
-						throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 					}
 				}
-				catch (Exception ex)
-				{
-					Log.Error($@"	CATCH função EnviarArquivoCar: \n
-									Mensagem de erro:: {ex.Message}  + ---- + \n
-									Local do arquivo :: {localArquivoCar} \n
-									____ exx __ {ex}");
-					return ex.Message;
-				}
-
+			}
+			catch (Exception ex)
+			{
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now}");
+				Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
+				Log.Error($"Error Message: {ex.Message}");
+				Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
+				Log.Error($"ERROR FULL: {ex.ToString()}");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				return ex.Message;
 			}
 		}
 	}
