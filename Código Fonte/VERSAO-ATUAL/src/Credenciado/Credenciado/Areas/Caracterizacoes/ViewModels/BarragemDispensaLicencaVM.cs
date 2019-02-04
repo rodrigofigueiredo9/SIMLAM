@@ -35,6 +35,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 			RtRequired = Mensagem.BarragemDispensaLicenca.InformeRT
 		});
 
+		public List<int> ProfissoesAutorizacao { get; set; }
 		public string IdsTela
         {
             get
@@ -73,6 +74,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 			barragemTipos.ForEach(x => {
 				x.IsAtivo = (x.Id == ((int)Caracterizacao.BarragemTipo).ToString()) ? true : false;
 			});
+			ProfissoesAutorizacao = new List<int>() { 15, 37, 38 };
 
 			FasesLst = fases;
             FormacoesRTLst = formacoesRT;
