@@ -167,6 +167,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 
 					Validacao.Add(Mensagem.Titulo.Salvar);
+
+					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+						Validacao.Add(Mensagem.Titulo.SalvarCorte);
 				}
 			}
 			catch (Exception exc)

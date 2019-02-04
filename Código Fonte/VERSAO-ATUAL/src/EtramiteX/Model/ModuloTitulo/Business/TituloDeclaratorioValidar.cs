@@ -30,7 +30,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		FuncionarioBus _funcionarioBus = new FuncionarioBus();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
 		GerenciadorConfiguracao<ConfiguracaoTitulo> _configTitulo = new GerenciadorConfiguracao<ConfiguracaoTitulo>(new ConfiguracaoTitulo());
-		private List<int>  listaSituacoesAceitas = new List<int>() { (int)eTituloSituacao.EmCadastro, (int)eTituloSituacao.AguardandoPagamento };
+		private List<int>  listaSituacoesAceitas = new List<int>() { (int)eTituloSituacao.EmCadastro };
 
 		public List<int> ModeloCodigosPendencia
 		{
