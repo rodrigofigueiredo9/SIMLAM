@@ -13,7 +13,7 @@
 		<div class="block">
 
 			<div class="coluna30">
-,				<%=Html.Hidden("rtId", Model.Caracterizacao.responsaveisTecnicos[0].id, new { @class="hdnRTElaboracaoDeclaracaoId" })%>
+				<%=Html.Hidden("rtId", Model.Caracterizacao.responsaveisTecnicos[0].id, new { @class="hdnRTElaboracaoDeclaracaoId" })%>
 				<label for="RTNome">Nome *</label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[0].nome, ViewModelHelper.SetaDisabled(true, new { @class = "text txtRTElaboracaoDeclaracaoNome", maxlength = "80" })) %>
 			</div>
