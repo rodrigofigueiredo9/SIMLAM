@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 				else
 				{
-					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.barramentoAdequacoes))
+					if (caracterizacao.construidaConstruir.barramentoNormas == true && String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.barramentoAdequacoes))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeBarramentoAdequacoes);
 				}
 
@@ -232,8 +232,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 				if (x.tipo == eTipoRT.ElaboracaoProjeto &&
 					!profissoesSemAutorizacao.Contains(x.profissao.Id) &&
-					x.autorizacaoCREA.Id <= 0)
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.Description()));
+					String.IsNullOrWhiteSpace(x.autorizacaoCREA.Nome))
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
 
 			return Validacao.EhValido;

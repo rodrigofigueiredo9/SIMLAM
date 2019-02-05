@@ -177,7 +177,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						comando.AdicionarParametroEntrada("registro_crea", x.registroCREA, DbType.String);
 						comando.AdicionarParametroEntrada("numero_art", x.numeroART, DbType.String);
 						comando.AdicionarParametroEntrada("autorizacao_crea", arquivo, DbType.String);
-						comando.AdicionarParametroEntrada("autorizacao_crea", x.proprioDeclarante, DbType.String);
+						comando.AdicionarParametroEntrada("proprio_declarante", x.proprioDeclarante, DbType.Int32);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 					}
@@ -638,7 +638,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
-						caracterizacao.finalidade[0] = reader.GetValue<int>("finalidade");
 
 						caracterizacao.Atividade = String.Join(" / ", ObterListaFinalidadeAtividade(caracterizacao.Id));
 
@@ -969,7 +968,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select pe.nome, pp.id profissao, pp.registro, rr.numero_art 
+					select pe.nome, pp.profissao, pp.registro, rr.numero_art 
 					from tab_projeto_digital pd
 						inner join tab_requerimento_responsavel rr on rr.requerimento = pd.requerimento
 						inner join tab_pessoa pe on pe.id = rr.responsavel
@@ -1055,7 +1054,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select 1 from tab_projeto_digital pd
+					select count(1) from tab_projeto_digital pd
 						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
 					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)", EsquemaCredenciadoBanco);
 

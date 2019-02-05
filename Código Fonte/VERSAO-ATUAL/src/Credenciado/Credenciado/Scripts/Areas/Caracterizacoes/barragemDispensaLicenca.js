@@ -754,10 +754,10 @@ BarragemDispensaLicenca = {
 	onChangeProfissaoRT: function () {
 		var profissoesSemAutorizacao = [15, 37, 38]; /*Eng. Civil, Eng. Agricola, Eng. Agronomo*/
 
-		if (!profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:checked').val())) {
-			$('.arquivoRT', container).removeClass('hide');
+		if (!profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) {
+			$('.arquivoRT').removeClass('hide');
 		} else {
-			$('.arquivoRT', container).addClass('hide');
+			$('.arquivoRT').addClass('hide');
 		}
 	}
 

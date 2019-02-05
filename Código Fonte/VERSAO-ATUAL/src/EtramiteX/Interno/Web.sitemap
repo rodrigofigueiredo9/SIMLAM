@@ -493,6 +493,7 @@
 				<siteMapNode url="~/CFOC/Visualizar" title="Visualizar CFOC" description="linkMenu" roles="CFOCVisualizar"></siteMapNode>
 			</siteMapNode>
 		</siteMapNode>
-
+		
+		<siteMapNode url="~/TituloDeclaratorioConfiguracao/Configurar" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 	</siteMapNode>
 </siteMap>
