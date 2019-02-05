@@ -8,8 +8,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 {
 	public enum eTipoCoordenadaBarragem
 	{
+		[Description("Nulo")]
+		Nulo,
 		[Description("Barramento")]
-		barramento = 1,
+		barramento,
 		[Description("Área de bota-fora")]
 		areaBotaFora,
 		[Description("Área de empréstimo")]
