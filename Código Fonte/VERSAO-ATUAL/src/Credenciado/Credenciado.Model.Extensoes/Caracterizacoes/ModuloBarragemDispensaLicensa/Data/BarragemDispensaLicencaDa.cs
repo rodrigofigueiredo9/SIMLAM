@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
@@ -81,7 +81,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
 				comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("precipitacao", caracterizacao.precipitacao, DbType.Decimal);
-				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Int32);
+				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Decimal);
 				comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.tempoConcentracaoEquacaoUtilizada, DbType.String);
@@ -228,7 +228,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
 				comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("precipitacao", caracterizacao.precipitacao, DbType.Decimal);
-				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Int32);
+				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Decimal);
 				comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.Decimal);
 				comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.tempoConcentracaoEquacaoUtilizada, DbType.String);
@@ -337,8 +337,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						update crt_barragem_responsavel set
  							nome = :nome, profissao = :profissao, registro_crea = :registro_crea,
 							numero_art = :numero_art, autorizacao_crea = :autorizacao_crea, proprio_declarante = :proprio_declarante
-						where barragem = :barragem  ", EsquemaCredenciadoBanco);
-							comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+						where id = :id", EsquemaCredenciadoBanco);
+							comando.AdicionarParametroEntrada("id", x.id, DbType.Int32);
 						}
 						else
 						{
@@ -484,7 +484,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                 comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
                 comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
                 comando.AdicionarParametroEntrada("precipitacao", caracterizacao.precipitacao, DbType.Decimal);
-                comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Int32);
+                comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Decimal);
                 comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.String);
                 comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.String);
                 comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.EquacaoCalculo, DbType.String);
@@ -695,7 +695,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
 						caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
 						caracterizacao.precipitacao = reader.GetValue<decimal>("precipitacao");
-						caracterizacao.periodoRetorno = reader.GetValue<int>("periodo_retorno");
+						caracterizacao.periodoRetorno = reader.GetValue<decimal>("periodo_retorno");
 						caracterizacao.coeficienteEscoamento = reader.GetValue<decimal>("coeficiente_escoamento");
 						caracterizacao.tempoConcentracao = reader.GetValue<decimal>("tempo_concentracao");
 						caracterizacao.tempoConcentracaoEquacaoUtilizada = reader.GetValue<string>("equacao_calculo");
@@ -898,7 +898,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                         caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
                         caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
                         caracterizacao.precipitacao = reader.GetValue<decimal>("precipitacao");
-                        caracterizacao.periodoRetorno = reader.GetValue<int>("periodo_retorno");
+                        caracterizacao.periodoRetorno = reader.GetValue<decimal>("periodo_retorno");
                         caracterizacao.coeficienteEscoamento = reader.GetValue<decimal>("coeficiente_escoamento");
                         caracterizacao.tempoConcentracao = reader.GetValue<decimal>("tempo_concentracao");
                         caracterizacao.EquacaoCalculo = reader.GetValue<string>("equacao_calculo");

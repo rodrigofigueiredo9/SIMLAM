@@ -93,27 +93,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
         {
             get
             {
-                if (Caracterizacao.Autorizacao == null || Caracterizacao.Autorizacao.Id <= 0)
+                if (Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA == null || Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id <= 0)
                 {
                     return "";
                 }
 
                 return ViewModelHelper.Json(new
                 {
-                    @Id = Caracterizacao.Autorizacao.Id,
-                    @Raiz = Caracterizacao.Autorizacao.Raiz,
-                    @Nome = Caracterizacao.Autorizacao.Nome,
-                    @Extensao = Caracterizacao.Autorizacao.Extensao,
-                    @Caminho = Caracterizacao.Autorizacao.Caminho,
-                    @Diretorio = Caracterizacao.Autorizacao.Diretorio,
-                    @TemporarioPathNome = Caracterizacao.Autorizacao.TemporarioPathNome,
-                    @ContentType = Caracterizacao.Autorizacao.ContentType,
-                    @ContentLength = Caracterizacao.Autorizacao.ContentLength,
-                    @Tid = Caracterizacao.Autorizacao.Tid,
-                    @Apagar = Caracterizacao.Autorizacao.Apagar,
-                    @Conteudo = Caracterizacao.Autorizacao.Conteudo,
-                    @DiretorioConfiguracao = Caracterizacao.Autorizacao.DiretorioConfiguracao,
-                    @TemporarioNome = Caracterizacao.Autorizacao.TemporarioNome
+                    @Id = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Id,
+                    @Raiz = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Raiz,
+                    @Nome = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Nome,
+                    @Extensao = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Extensao,
+                    @Caminho = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Caminho,
+                    @Diretorio = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Diretorio,
+                    @TemporarioPathNome = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.TemporarioPathNome,
+                    @ContentType = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.ContentType,
+                    @ContentLength = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.ContentLength,
+                    @Tid = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Tid,
+                    @Apagar = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Apagar,
+                    @Conteudo = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.Conteudo,
+                    @DiretorioConfiguracao = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.DiretorioConfiguracao,
+                    @TemporarioNome = Caracterizacao.responsaveisTecnicos[1].autorizacaoCREA.TemporarioNome
                 });
             }
         }

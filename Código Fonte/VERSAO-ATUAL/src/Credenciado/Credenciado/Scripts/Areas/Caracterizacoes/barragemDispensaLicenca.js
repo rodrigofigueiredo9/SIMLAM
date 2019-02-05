@@ -12,7 +12,8 @@ BarragemDispensaLicenca = {
         mensagens: null,
 		idsTela: null,
 		projetoDigitalId: null,
-		empreendimentoId: null
+		empreendimentoId: null,
+		profissoesSemAutorizacao : [15, 37, 38], /*Eng. Civil, Eng. Agricola, Eng. Agronomo*/
     },
     container: null,
 
@@ -383,6 +384,7 @@ BarragemDispensaLicenca = {
 	obterRT: function () {
 
 		var retorno = [];
+		var arquivo = null;
 		var tipo = [
 			{ codigo: '1', nome: 'ElaboracaoDeclaracao' },
 			{ codigo: '2', nome: 'ElaboracaoProjeto' },
@@ -394,6 +396,15 @@ BarragemDispensaLicenca = {
 
 
 		for (var i = 0; i < 6; i++) {
+			if (tipo[i].codigo == 2 && !BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRT' + tipo[i].nome + 'Profissao').val())) {
+				arquivo = $('.hdnArquivo').val();
+				if (arquivo.isNullOrWhitespace()) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.ArquivoObrigatorio]);
+					return;
+				} else
+					arquivo = JSON.parse(arquivo);
+			}
+
 			var rt = {
 				id: $('.hdnRT' + tipo[i].nome + 'Id').val(),
 				nome: $('.txtRT' + tipo[i].nome + 'Nome').val(),
@@ -401,12 +412,12 @@ BarragemDispensaLicenca = {
 				profissao: { Id: $('.ddlRT' + tipo[i].nome + 'Profissao').val() },
 				registroCREA: $('.txtRT' + tipo[i].nome + 'CREA').val(),
 				numeroART: $('.txtRT' + tipo[i].nome + 'Numero').val(),
-				autorizacaoCREA: tipo[i].codigo == 2 ? $.parseJSON($('.hdnArquivo').val()) : null,
+				autorizacaoCREA: arquivo,
 				proprioDeclarante: $('.cb' + tipo[i].nome + 'CopiaDeclarante:checked').val()
 			};
 			//Se tiver algum campo preenchido, todos são requeridos
 			if ((rt.nome.isNullOrWhitespace() || rt.profissao.Id == 0 || rt.registroCREA.isNullOrWhitespace() || rt.numeroART.isNullOrWhitespace()) &&
-				(!rt.nome.isNullOrWhitespace() || rt.profissao.Id > 0 || !rt.registroCREA.isNullOrWhitespace() || !rt.numeroART.isNullOrWhitespace())) {
+				(!rt.nome.isNullOrWhitespace() || rt.profissao.Id > 0 || !rt.registroCREA.isNullOrWhitespace() || !rt.numeroART.isNullOrWhitespace() )) {
 					Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.RtRequired]);
 				return false;
 			}
@@ -752,9 +763,9 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeProfissaoRT: function () {
-		var profissoesSemAutorizacao = [15, 37, 38]; /*Eng. Civil, Eng. Agricola, Eng. Agronomo*/
+		
 
-		if (!profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) {
+		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) {
 			$('.arquivoRT').removeClass('hide');
 		} else {
 			$('.arquivoRT').addClass('hide');
