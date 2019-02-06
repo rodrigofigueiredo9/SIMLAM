@@ -35,6 +35,7 @@
 		<br />
 
 		<fieldset class="block box">
+			<input type="hidden" class="hdnIsVisualizar" value="<%= Model.IsVisualizar %>" />
 			<legend>Empreendimento</legend>
 			<div class="block">
 				<div class="coluna20 append1">
@@ -89,10 +90,11 @@
 								<input type="hidden" class="hdnUrlVisualizar" value="<%= Html.Encode(item.UrlVisualizar) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
+								<input type="hidden" class="hdnUrlListar" value="<%= Html.Encode(item.UrlListar) %>" />
 								<% if (!Model.IsVisualizar && Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
 								<% else { %> <% if (!Model.IsVisualizar) { %><input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar" type="button" /><%} %>
 								<%		} %>
-								<% if (Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) {%><input title="Operar" class="icone opcoes btnVisualizar" type="button"/><% } %>
+								<% if (Model.CaracterizacoesAssociadas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) {%><input title="Operar" class="icone opcoes btnListar" type="button"/><% } %>
 								<% else{%><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/>  <%} %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>
 							</td>
@@ -130,10 +132,11 @@
 								<input type="hidden" class="hdnUrlExcluir" value="<%= Html.Encode(item.UrlExcluir) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
 								<input type="hidden" class="hdnProjetoGeograficoVisualizar" value="<%= Html.Encode(item.ProjetoGeograficoVisualizar) %>" />
+								<input type="hidden" class="hdnUrlListar" value="<%= Html.Encode(item.UrlListar) %>" />
 								<% if (item.PodeAssociar && !Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %><input title="Associar ao projeto digital" class="icone associar btnAssociar" type="button" /><% } %>
 								<% if (item.PodeCopiar) { %><input title="Copiar do institucional" class="icone comparar btnCopiar" type="button" /><% } %>
 								<% if (item.ProjetoGeografico && item.ProjetoGeograficoId > 0) { %><input title="Projeto geográfico" class="icone projetoGeografico btnProjetoGeografico" type="button"/><% } %>
-								<% if (item.PodeVisualizar && item.PodeEditar && Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %> <input title = "Operar" class="icone opcoes btnVisualizar" type="button"/> <% } %>
+								<% if (item.PodeVisualizar && item.PodeEditar && Model.CaracterizacoesCadastradas.Any(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca)) { %> <input title = "Operar" class="icone opcoes btnListar" type="button"/> <% } %>
 								<% else { %>
 								<% if (item.PodeVisualizar) { %><input title="Visualizar" class="icone visualizar btnVisualizar" type="button"/><% } %>
 								<% if (item.PodeEditar) { %><input title="Editar" class="icone editar btnEditar" type="button"/><% } %>
@@ -169,6 +172,7 @@
 								<input type="hidden" class="hdnUrlCriar" value="<%= Html.Encode(item.UrlCriar) %>" />
 								<input type="hidden" class="hdnPossuiProjetoGeo" value="<%= item.ProjetoGeoObrigatorio.ToString().ToLower() %>" />
 								<input type="hidden" class="hdnProjetoGeograficoId" value="<%= Html.Encode(item.ProjetoGeograficoId) %>" />
+								<input type="hidden" class="hdnUrlListar" value="<%= Html.Encode(item.UrlListar) %>" />
 
 								<% var temModeloCarac = (item.ProjetoGeograficoId > 0); %>
 								<% if (item.PodeCopiar) { %><input title="Copiar do Institucional" class="icone comparar btnCopiar" type="button" /><% } %>

@@ -9,7 +9,9 @@
 
 	<div class="dataGrid">
 		<input type="hidden" class="associadoAoProjeto" value="<%= Model.CaracterizacoesAssociadas.Count%>" />
-		<input title="Cadastrar" class="btnAdicionar floatRight ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" style="margin:0.5%" value="+ Barragem">
+		<%if (!Model.IsVisualizar) { %>
+			<input title="Cadastrar" class="btnAdicionar floatRight ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" style="margin:0.5%" value="+ Barragem">
+		<%} %>
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>
 					<tr>
@@ -35,9 +37,13 @@
 							<input type="hidden" class="dependencias" value="<%= item.PossuiAssociacaoExterna %>" />
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />
 							<input type="hidden" class="hdnTid" value="<%= item.Tid %>" />
-							<input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
+							<%if (!Model.IsVisualizar) { %>
+								<input title="Cancelar associação ao projeto digital" class="icone dispensado btnDesassociar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
+							<%} %>
 							<input title="Visualizar" class="icone visualizar btnVisualizar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
-							<input title="Editar" class="icone editar btnEditar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
+							<%if (!Model.IsVisualizar) { %>
+								<input title="Editar" class="icone editar btnEditar ui-button ui-widget ui-state-default ui-corner-all" type="button" role="button" aria-disabled="false">
+							<%} %>
 						</td>
 					</tr>
 					<%	} %>

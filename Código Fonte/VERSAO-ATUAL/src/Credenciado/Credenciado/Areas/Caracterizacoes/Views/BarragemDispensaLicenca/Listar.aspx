@@ -41,7 +41,7 @@
 		</div>
 
 		<div class="block box">
-			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoID, projetoDigitalId = Request.Params["projetoDigitalId"] }) %>">Voltar</a></span>
+			<span class="cancelarCaixa"><a class="linkCancelar" href="<%= Url.Action("", "Caracterizacao", new { id = Model.Caracterizacao.EmpreendimentoID, projetoDigitalId = Request.Params["projetoDigitalId"], visualizar = Model.IsVisualizar }) %>">Voltar</a></span>
 		</div>
 	</div>
 </asp:Content>
