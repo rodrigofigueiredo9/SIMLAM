@@ -220,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#region Listar
 
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
-		public ActionResult Listar(int id, int projetoDigitalId)
+		public ActionResult Listar(int id, int projetoDigitalId, bool isVisualizar = false)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 			{
@@ -253,6 +253,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
 			vm.Caracterizacao.PossuiAssociacaoExterna = _bus.PossuiAssociacaoExterna(id, projetoDigitalId);
 			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, projetoDigitalId);
+			vm.IsVisualizar = isVisualizar;
 			int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
 			if (result != 0)
 				vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
