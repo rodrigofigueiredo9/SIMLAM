@@ -23,15 +23,13 @@
         public Mensagem InformeCursoHidrico { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "CursoHidrico", Texto = "Informe o nome do curso hídrico." }; } }
         public Mensagem InformeVazaoInchenteZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "VazaoEnchente", Texto = "Informe a vazão máxima de cheia maior que zero." }; } }
         public Mensagem InformeAreaBaciaContribuicaoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AreaBaciaContribuicao", Texto = "Informe a área da bacia de contribuição (ha) maior que zero." }; } }
-        public Mensagem InformePrecipitacaoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Precipitacao", Texto = "Informe a intensidade máxima média de precipitação (im) (mm/h) maior que zero." }; } }
-        public Mensagem InformePrecipitacaoFonteDados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Precipitacao", Texto = "Informe a font de dados da intensidade máxima média de precipitação (im) (mm/h)." }; } }
-        public Mensagem InformePeriodoRetornoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoRetorno", Texto = "Informe o período de retorno (T) (anos) maior que zero." }; } }
+        public Mensagem InformePrecipitacaoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Precipitacao", Texto = "Informe a Intensidade máxima média de precipitação (mm/h) maior que zero." }; } }
+        public Mensagem InformePrecipitacaoFonteDados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Precipitacao", Texto = "Informe a font de dados da Intensidade máxima média de precipitação (mm/h)." }; } }
+        public Mensagem InformePeriodoRetornoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoRetorno", Texto = "Informe o período de retorno (anos) maior que zero." }; } }
         public Mensagem InformeCoeficienteEscoamentoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "CoeficienteEscoamento", Texto = "Informe o coeficiente de escoamento (C) maior que zero." }; } }
         public Mensagem InformeCoeficienteEscoamentoZeroFonteDados { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "CoeficienteEscoamento", Texto = "Informe a fonte de dados do coeficiente de escoamento (C)." }; } }
-        public Mensagem InformeTempoConcentracao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TempoConcentracao", Texto = "Informe o tempo de concentração (tc) (min)." }; } }
-        public Mensagem InformeEquacaoCalculo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "EquacaoCalculo", Texto = "Informe a equação utilizada no cálculo do tc." }; } }
-        public Mensagem InformeAreaAlagadaZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AreaAlagada", Texto = "Informe a área alagada (ha) válida." }; } }
-        public Mensagem InformeVolumeArmazenadoZero { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "VolumeArmazanado", Texto = "Informe o volume armazenado (m³) maior que zero." }; } }
+        public Mensagem InformeTempoConcentracao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TempoConcentracao", Texto = "Informe o Tempo de Concentração (em minutos)." }; } }
+        public Mensagem InformeEquacaoCalculo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "EquacaoCalculo", Texto = "Informe a equação utilizada no cálculo do tempo de concentração." }; } }
         public Mensagem InformeFase { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Fase", Texto = "Informe a fase da barragem a ser feita a dispensa de licença." }; } }
         public Mensagem InformePossuiMonge { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PossuiMonge", Texto = "Informe se a barragem possui Monge." }; } }
         public Mensagem InformeTipoMonge { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MongeTipo", Texto = "Informe o tipo de Monge da barragem." }; } }
@@ -41,6 +39,9 @@
         public Mensagem InformeEspecificacaoVertedouro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "EspecificacaoVertedouro", Texto = "Informe a especificação do tipo de Vertedouro da barragem." }; } }
         public Mensagem InformePossuiEstruturaHidraulica { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PossuiEstruturaHidraulica", Texto = "Informe se as estruturas (monge e vertedouro) e o corpo do barramento estão funcionando de acordo com as normas de segurança." }; } }
         public Mensagem InformeAdequacoesRealizada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AdequacoesRealizada", Texto = "Informe quais adequações serão realizadas para a barragem." }; } }
+
+		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida. Maior que 0.01 e menor que {0}.", valor) }; }
+		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o voluma armazenado (m³) válida. Maior que 0.01 e menor que {0}.", valor) }; }
 
         public Mensagem InformeDataInicioObra { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano)." }; } }
         public Mensagem InformeDataInicioObraFormatoValido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano) em um formato correto." }; } }

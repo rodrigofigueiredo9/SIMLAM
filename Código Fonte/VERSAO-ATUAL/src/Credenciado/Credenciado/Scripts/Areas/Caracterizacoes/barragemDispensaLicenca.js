@@ -661,7 +661,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeBarramento: function () {
-		if ($('.rbBarramentoNormas:checked').val() == 1) {
+		if ($('.rbBarramentoNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoBarramento').removeClass('hide');
 
 		} else {
@@ -681,7 +681,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeVazaoMinNormas: function () {
-		if ($('.rbVazaoMinNormas:checked').val() == 1) {
+		if ($('.rbVazaoMinNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
 
 		} else {
@@ -701,7 +701,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeVazaoMaxNormas: function () {
-		if ($('.rbVazaoMaxNormas:checked').val() == 1) {
+		if ($('.rbVazaoMaxNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
 
 		} else {
@@ -772,13 +772,10 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeProfissaoRT: function () {
-		
-
-		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) {
+		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) 
 			$('.arquivoRT').removeClass('hide');
-		} else {
+		 else 
 			$('.arquivoRT').addClass('hide');
-		}
 	}
 
 }

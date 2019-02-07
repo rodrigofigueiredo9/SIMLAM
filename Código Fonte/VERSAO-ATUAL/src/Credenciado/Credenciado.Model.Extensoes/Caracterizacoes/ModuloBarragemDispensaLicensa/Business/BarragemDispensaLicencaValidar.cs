@@ -19,12 +19,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 
-        internal bool Salvar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId)
-        {
-            if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoID))
-            {
-                return false;
-            }
+		internal bool Salvar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId)
+		{
+			if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoID))
+			{
+				return false;
+			}
 
 			//BarragemDispensaLicenca auxiliar = _da.ObterPorEmpreendimento(caracterizacao.EmpreendimentoID, true) ?? new BarragemDispensaLicenca();
 
@@ -49,26 +49,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.SelecioneTipoBarragem);
 			}
 
-			if (AreaAlagadaValida(caracterizacao.areaAlagada))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaAlagadaZero);
-			}
-			
-			if (VolumeArmazenadoValida(caracterizacao.volumeArmazanado))
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaAlagadaZero);
-			}
+			AreaAlagadaValida(caracterizacao.areaAlagada);
+			VolumeArmazenadoValida(caracterizacao.volumeArmazanado);
 
-			if(caracterizacao.alturaBarramento <= 0)
+			if (caracterizacao.alturaBarramento <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAlturaBarramento);
-			
-			if(caracterizacao.comprimentoBarramento <= 0)
+
+			if (caracterizacao.comprimentoBarramento <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeComprimentoBarramento);
-			
-			if(caracterizacao.larguraBaseBarramento <= 0)
+
+			if (caracterizacao.larguraBaseBarramento <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeLarguraBaseBarramento);
-			
-			if(caracterizacao.larguraCristaBarramento <= 0)
+
+			if (caracterizacao.larguraCristaBarramento <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeLarguraCristaBarramento);
 
 			if (caracterizacao.vazaoEnchente <= 0)
@@ -84,11 +77,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTempoConcentracao);
 
 			if (string.IsNullOrWhiteSpace(caracterizacao.tempoConcentracaoEquacaoUtilizada))
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeTempoConcentracao);
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEquacaoCalculo);
 
 			if (caracterizacao.coeficienteEscoamento <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoeficienteEscoamentoZero);
-			
+
 			if (String.IsNullOrWhiteSpace(caracterizacao.fonteDadosCoeficienteEscoamento))
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoeficienteEscoamentoZeroFonteDados);
 
@@ -109,14 +102,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			caracterizacao.coordenadas.ForEach(x =>
 			{
-				if(x.northing <= 0)
+				if (x.northing <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.Description()));
-				if(x.easting <= 0)
+				if (x.easting <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
-			
+
+			if (!caracterizacao.Fase.HasValue)
+			{
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFase);
+				return false;
+			}
+
 			if (caracterizacao.Fase == (int)eFase.Construida)
 			{
+				#region Barragem construida
 				if (caracterizacao.construidaConstruir.isDemarcacaoAPP == 1)
 				{
 					if (caracterizacao.construidaConstruir.larguraDemarcada <= 0)
@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				{
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinInstalado);
 				}
-				else if(caracterizacao.construidaConstruir.vazaoMinInstalado == true)
+				else if (caracterizacao.construidaConstruir.vazaoMinInstalado == true)
 				{
 					if (!caracterizacao.construidaConstruir.vazaoMinNormas.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinNormas);
@@ -172,7 +172,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				{
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxInstalado);
 				}
-				else if(caracterizacao.construidaConstruir.vazaoMaxInstalado == true)
+				else if (caracterizacao.construidaConstruir.vazaoMaxInstalado == true)
 				{
 					if (!caracterizacao.construidaConstruir.vazaoMaxNormas.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxNormas);
@@ -182,6 +182,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxAdequacoes);
 					}
 				}
+				#endregion
 			}
 			else
 			{
@@ -222,7 +223,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInvalido("início"));
 				}
 
-				if(mesInicio < DateTime.Now.Month && anoInicio <= DateTime.Now.Year)
+				if (mesInicio < DateTime.Now.Month && anoInicio <= DateTime.Now.Year)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
 
 				if (mesFim <= 0)
@@ -252,15 +253,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 
 			if (!Validacao.EhValido) return false;
-			var profissoesSemAutorizacao = new List<int>() { 15, 37, 38};
+			var profissoesSemAutorizacao = new List<int>() { 15, 37, 38 };
 
 			caracterizacao.responsaveisTecnicos.ForEach(x =>
 			{
-				if(x.tipo == eTipoRT.ElaboracaoDeclaracao || x.tipo == eTipoRT.ElaboracaoProjeto || x.tipo == eTipoRT.ElaboracaoEstudoAmbiental)
+				if (x.tipo == eTipoRT.ElaboracaoDeclaracao || x.tipo == eTipoRT.ElaboracaoProjeto || x.tipo == eTipoRT.ElaboracaoEstudoAmbiental)
 				{
-					if(String.IsNullOrWhiteSpace(x.nome))
+					if (String.IsNullOrWhiteSpace(x.nome))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNomeRT(x.tipo.Description()));
-					if(x.profissao.Id <= 0)
+					if (x.profissao.Id <= 0)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeProfissapRT(x.tipo.Description()));
 					if (String.IsNullOrWhiteSpace(x.registroCREA))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCREART(x.tipo.Description()));
@@ -270,32 +271,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (x.tipo == eTipoRT.ElaboracaoProjeto &&
 					!profissoesSemAutorizacao.Contains(x.profissao.Id) &&
 					String.IsNullOrWhiteSpace(x.autorizacaoCREA.Nome))
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
 
 			return Validacao.EhValido;
-        }
-
-		public bool Acessar(int empreendimentoId, int projetoDigitalId)
-		{
-			return _caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca);
 		}
 
-        internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
-        {
-            if (caracterizacao.InternoID <= 0)
-            {
-                Validacao.Add(Mensagem.BarragemDispensaLicenca.CopiarCaractizacaoCadastrada);
-            }
+		public bool Acessar(int empreendimentoId, int projetoDigitalId) =>
+			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca);
 
-            return Validacao.EhValido;
-        }
+		internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
+		{
+			if (caracterizacao.InternoID <= 0) 
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.CopiarCaractizacaoCadastrada);
+			return Validacao.EhValido;
+		}
 
-		internal bool AreaAlagadaValida(decimal area) => 
-			area < Convert.ToDecimal(0.01) || area > _da.AreaAlagadaConfiguracao(area);
+		internal void AreaAlagadaValida(decimal area)
+		{
+			var valorMax = _da.AreaAlagadaConfiguracao(area);
+			if (area < Convert.ToDecimal(0.01) || area > valorMax)
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.AreaAlagada(valorMax));
+		}
 
-		internal bool VolumeArmazenadoValida(decimal area) => 
-			area < Convert.ToDecimal(0.01) && area > _da.VolumeArmazenadoConfiguracao(area);
+		internal void VolumeArmazenadoValida(decimal area)
+		{
+			var valorMax = _da.VolumeArmazenadoConfiguracao(area);
+			if(area < Convert.ToDecimal(0.01) || area > valorMax)
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
+		} 
 			
 		
 	}
