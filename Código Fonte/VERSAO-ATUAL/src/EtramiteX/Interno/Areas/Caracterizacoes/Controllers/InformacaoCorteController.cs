@@ -84,7 +84,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.Empreendimento.Id, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
