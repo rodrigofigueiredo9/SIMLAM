@@ -125,6 +125,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		{
 			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto =  String.Format("O projeto digital não poderá ser excluído, pois está associado a uma Solicitação de Inscrição na situação {0}.", situacao) };
 		}
+		public Mensagem ProibidoExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Projeto Digital não pode ser excluído, pois está vinculado a um título declaratório." }; } }
+
 
 		public Mensagem AtividadeDesativadaInformacao(object atividadeNome)
 		{

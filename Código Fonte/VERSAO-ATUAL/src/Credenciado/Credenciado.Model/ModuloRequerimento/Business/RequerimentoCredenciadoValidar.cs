@@ -80,12 +80,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 				return Validacao.EhValido;
 			}
 
-			if (!_busPessoa.ExisteEndereco(requerimento.Interessado.Id))
-			{
-				Validacao.Add(Msg.InteressadoSemEndereco);
-				return Validacao.EhValido;
-			}
-
 			if (requerimento.Atividades.Any(item => item.Id == 209) &&
 				!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id)) 
 				Validacao.Add(Msg.NaoExisteEmpreendimentoAssociadoResponsavel);

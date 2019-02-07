@@ -115,8 +115,7 @@ Requerimento = {
 
 			case 4:
 				Requerimento.obterReqInterEmp(Requerimento.urlObterReqInterEmp, objeto.params);
-				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;
-				debugger;
+				objeto.params.id = Requerimento.ReqInterEmp.empreendimentoId;				
 				if (RequerimentoEmpreendimento.onRequerimentoAtividadeCorte()) {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
@@ -969,6 +968,10 @@ RequerimentoInteressado = {
 			}			
 		}
 
+		if (Requerimento.ReqInterEmp != null) {
+			Requerimento.ReqInterEmp.empreendimentoId = 0;
+		}
+
 		return retorno;
 
 	},
@@ -1408,7 +1411,6 @@ RequerimentoEmpreendimento = {
 	filtros: {},
 
 	callBackObterEmpreendimento: function () {
-		
 		EmpreendimentoInline.load(Requerimento.container, {
 			onIdentificacaoEnter: RequerimentoEmpreendimento.onIdentificacaoEnterEmpreendimento,
 			onVisualizarEnter: RequerimentoEmpreendimento.onVisualizarEnterEmpreendimento,
@@ -1438,7 +1440,6 @@ RequerimentoEmpreendimento = {
 	},
 
 	onSalvarEmpreendimento: function (partialContent, responseJson, isEditar) {
-		debugger;
 		var retorno = false;
 		var param = { requerimentoId: null, empreendimentoId: null };
 
@@ -1489,7 +1490,6 @@ RequerimentoEmpreendimento = {
 	},
 
 	onNovoEmpreendimentoEnter: function () {
-		debugger;
 		Requerimento.salvarEdicao = false;
 		Requerimento.botoes({ btnSalvar: true, btnEmpAssNovo: true, spnCancelarCadastro: true });
 	},

@@ -607,5 +607,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 		{
 			return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Select(x => new Lista() { Id = Convert.ToInt32(x).ToString(), Texto = x.ToDescription() }).ToList();
 		}
+
+		public static List<Lista> SilviculturaCulturasFlorestais
+		{
+			get
+			{
+				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
+				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeySilviculturaCulturasFlorestais);
+			}
+		}
+
+		public static List<Lista> CaracterizacaoProdutosExploracao
+		{
+			get
+			{
+				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
+				return _configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyCaracterizacaoProdutosExploracao);
+			}
+		}
 	}
 }

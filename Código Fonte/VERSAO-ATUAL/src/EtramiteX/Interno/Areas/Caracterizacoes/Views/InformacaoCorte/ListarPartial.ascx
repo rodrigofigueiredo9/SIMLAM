@@ -67,6 +67,7 @@
 						<td class="tdAcoes">
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(informacao)%>' />
 							<input type="hidden" class="itemId" value="<%= informacao.Id %>" />
+							<input type="hidden" class="itemAntigo" value="<%= informacao.Antigo %>" />
 							<%if (Model.PodeVisualizar){%><input title="Visualizar" type="button" class="icone visualizar btnVisualizarInformacaoCorte" value="" /><%} %>
 							<%if (Model.PodeEditar){%><input title="Editar" type="button" class="icone editar btnEditarInformacaoCorte" value="" /><%} %>
 							<%if (Model.PodeExcluir){%><input title="Excluir" type="button" class="icone excluir btnExcluirInformacaoCorte" value="" /><%} %>

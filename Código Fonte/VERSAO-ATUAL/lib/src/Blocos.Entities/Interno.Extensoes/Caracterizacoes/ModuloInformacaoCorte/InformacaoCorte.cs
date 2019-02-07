@@ -39,6 +39,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 
 		public Decimal AreaCorteCalculada { get; set; }
 
+		public bool Antigo { get; set; }
+
 		public InformacaoCorte()
 		{
 			Empreendimento = new EmpreendimentoCaracterizacao();

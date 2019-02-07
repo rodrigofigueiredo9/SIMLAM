@@ -113,6 +113,10 @@
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\eTipoExploracao.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ExploracaoFlorestalProduto.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloExploracaoFlorestal\ListarExploracaoFlorestalFiltro.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Antigo\Especie.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Antigo\InformacaoCorteAntigo.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Antigo\InformacaoCorteInformacao.cs" />
+    <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\Antigo\Produto.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eEspecieInformada.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\eSituacaoDua.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloInformacaoCorte\InformacaoCorteLicenca.cs" />

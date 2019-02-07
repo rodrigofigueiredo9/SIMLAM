@@ -17,6 +17,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	public class TituloMsg
 	{
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "Título salvo com sucesso." }; } }
+		public Mensagem SalvarCorte { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "Após a emissão do DUA não será mais possível alterar informações cadastradas no Título de Informação de Corte. \n Confira o PDF gerado antes da emissão do DUA." }; } }
 		public Mensagem Editar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "Título editado com sucesso." }; } }
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso,   Texto = "Título excluído com sucesso." }; } }
 

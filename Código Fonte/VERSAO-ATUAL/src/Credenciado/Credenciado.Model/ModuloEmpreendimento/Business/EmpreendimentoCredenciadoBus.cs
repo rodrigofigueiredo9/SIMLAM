@@ -634,7 +634,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 				return new Mensagem();
 			}
 
-			if (Convert.ToBoolean(resposta.Data["EstaNoEstado"]))
+			if (resposta.Data != null && Convert.ToBoolean(resposta.Data["EstaNoEstado"]))
 			{
 				municipioCoordenada = new ListaValoresDa().ObterMunicipio(Convert.ToInt32(resposta.Data["Municipio"]["IBGE"]));
 			}

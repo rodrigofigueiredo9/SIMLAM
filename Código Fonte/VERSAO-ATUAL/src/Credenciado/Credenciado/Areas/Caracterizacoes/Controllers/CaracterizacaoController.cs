@@ -156,12 +156,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				{
 					x.UrlListar = Url.Action("Listar", x.Tipo.ToString());
 					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
-
 				}
+				else if(x.Tipo == eCaracterizacao.InformacaoCorte && cadastradasInterno.Exists(y => y.Tipo == x.Tipo))
+					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
 				else
-				{
 					x.UrlCriar = Url.Action("Criar", x.Tipo.ToString());
-				}
 			});
 
 			#endregion

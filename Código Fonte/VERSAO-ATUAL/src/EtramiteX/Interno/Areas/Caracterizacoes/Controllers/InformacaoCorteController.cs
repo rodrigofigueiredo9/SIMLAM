@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Antigo;
 using Tecnomapas.Blocos.Entities.Interno.Security;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels;
@@ -36,7 +37,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var informacaoCorteVM = new InformacaoCorteVM(empreendimento, _listaBus.DestinacaoMaterial, _listaBus.CaracterizacaoProdutosInformacaoCorte,
-				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>());
+				_listaBus.ListaEnumerado<eTipoCorte>(), _listaBus.ListaEnumerado<eEspecieInformada>())
+			{
+				InformacaoCorteLicencaList = _informacaoCorteBus.ObterLicencas(id)
+			};
 
 			return View(informacaoCorteVM);
 		}
@@ -80,7 +84,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("Listar", "InformacaoCorte", new { id = caracterizacao.Empreendimento.Id, Msg = Validacao.QueryParam() })
+				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.Empreendimento.Id, Msg = Validacao.QueryParam() })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
@@ -104,6 +108,29 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			};
 
 			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorte)]
+		public ActionResult VisualizarAntigo(int id)
+		{
+			InformacaoCorteAntigo caracterizacao = _informacaoCorteBus.ObterAntigo(id);
+			InformacaoCorteAntigoVM vm = new InformacaoCorteAntigoVM(caracterizacao, true);
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.InformacaoCorteVisualizar })]
+		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.informacaocorteinformacao)]
+		public ActionResult InformacaoCorteInformacaoVisualizar(int id)
+		{
+			InformacaoCorteInformacaoVM vm = new InformacaoCorteInformacaoVM(_informacaoCorteBus.ObterInformacaoItem(id), _listaBus.SilviculturaCulturasFlorestais, _listaBus.CaracterizacaoProdutosExploracao, _listaBus.DestinacaoMaterial, true);
+			String html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "InformacaoCorteInformacao", vm);
+
+			return Json(new
+			{
+				@Html = html,
+				@Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion

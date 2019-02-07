@@ -235,9 +235,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				(select m.ibge from {0}lov_municipio m where m.id = ee.municipio) municipio_ibge,
 				cm.id modulo_id, cm.modulo_ha, (select es.sigla from {0}lov_estado es where es.id = ee.estado) estado,
 				case when ee.zona = 1 then 'Urbana' else 'Rural' end zona_texto, e.interno_tid,
-				(select sum(dd.area_croqui) from crt_dominialidade_dominio dd
+				(select sum(dd.area_croqui) from idaf.crt_dominialidade_dominio dd
 					where exists
-					(select 1 from crt_dominialidade d
+					(select 1 from idaf.crt_dominialidade d
 					where d.id = dd.dominialidade
 					and d.empreendimento = e.interno)) area_croqui
 				from {0}tab_empreendimento e,
@@ -268,6 +268,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						empreendimento.CNPJ = reader.GetValue<string>("cnpj");
 						empreendimento.InternoTID = reader.GetValue<string>("interno_tid");
 						empreendimento.AreaImovelHA = reader.GetValue<decimal>("area_croqui");
+						if (empreendimento.AreaImovelHA > 0)
+							empreendimento.AreaImovelHA = empreendimento.AreaImovelHA / 10000;
 					}
 
 					reader.Close();
@@ -1177,7 +1179,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 							break;
 						default:
-							query = query.Remove(query.Length - 11);
+							if(query.Length > 0) query = query.Remove(query.Length - 11);
 							break;
 					}
 
@@ -1187,7 +1189,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 
 				comando.DbCommand.CommandText = query.Remove(query.Length - 11);
-
+				if (string.IsNullOrWhiteSpace(comando.DbCommand.CommandText))
+					return new List<int>();
 				return bancoDeDados.ExecutarList<Int32>(comando);
 			}
 		}

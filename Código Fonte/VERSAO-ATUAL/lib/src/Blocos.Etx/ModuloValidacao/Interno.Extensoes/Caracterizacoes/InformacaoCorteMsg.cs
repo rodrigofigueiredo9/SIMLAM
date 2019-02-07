@@ -13,6 +13,7 @@
 	public class InformacaoCorteMsg
 	{
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte excluída com sucesso." }; } }
+		public Mensagem ProibidoExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização não pode ser excluída pois está vinculada a um título declaratório." }; } }
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Excluir caracterização Informação de Corte?" }; } }
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte salva com sucesso." }; } }
 		public Mensagem ProibidoCriar { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível incluir Informação de Corte para o empreendimento, pois possui informação(s) de corte em aberto." }; } }
@@ -24,7 +25,7 @@
 
 		#region Licenca
 
-		public Mensagem LicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma licença adicionada. Pelo menos uma licença deve ser adicionada." }; } }
+		public Mensagem LicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Nenhuma licença adicionada. \n Para Área de Floresta Plantada maior que 100 ha é necessário informar a Licença Ambiental de Silvicultura." }; } }
 		public Mensagem NumeroLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_NumeroLicenca", Texto = @"Nº Licença é obrigatória." }; } }
 		public Mensagem TipoLicencaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_TipoLicenca", Texto = @"Tipo de Licença é obrigatória." }; } }
 		public Mensagem AtividadeObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_Atividade", Texto = @"Atividade é obrigatória." }; } }

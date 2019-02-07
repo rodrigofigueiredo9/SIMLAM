@@ -4,6 +4,7 @@ using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Antigo;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
@@ -255,6 +256,41 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			}
 			return retorno;
 		}
+
+		public InformacaoCorteAntigo ObterAntigo(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+
+			InformacaoCorteAntigo caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.ObterAntigo(id, simplificado, banco);
+				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.InformacaoCorte, eCaracterizacaoDependenciaTipo.Caracterizacao);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
+		public InformacaoCorteInformacao ObterInformacaoItem(int id, BancoDeDados banco = null)
+		{
+
+			InformacaoCorteInformacao item = null;
+			try
+			{
+				item = _da.ObterInformacaoItem(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return item;
+		}
+
+		public List<InformacaoCorteLicenca> ObterLicencas(int empreendimento, BancoDeDados banco = null) => _da.ObterLicencas(empreendimento, banco);
 
 		#endregion
 
