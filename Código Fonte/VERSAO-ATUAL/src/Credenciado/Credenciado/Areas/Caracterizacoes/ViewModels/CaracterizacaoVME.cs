@@ -16,6 +16,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		public String UrlExcluirConfirm { get; set; }
 		public String UrlExcluir { get; set; }
 		public String UrlProjetoGeo { get; set; }
+		public String UrlListar { get; set; }
 
 		public Int32 ProjetoGeograficoId { get; set; }
 		public bool PodeCadastrar { get; set; }

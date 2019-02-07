@@ -32,7 +32,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		{
 			FormacaoRTOutros = Mensagem.BarragemDispensaLicenca.FormacaoRTOutros,
 			ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio,
-			RtRequired = Mensagem.BarragemDispensaLicenca.InformeRT
+			RtRequired = Mensagem.BarragemDispensaLicenca.InformeRT,
+			PeriodoInicioRequired = Mensagem.BarragemDispensaLicenca.InformePeriodoInicio,
+			PeriodoTerminoRequired = Mensagem.BarragemDispensaLicenca.InformePeriodoTermino
 		});
 
 		public List<int> ProfissoesAutorizacao { get; set; }

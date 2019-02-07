@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 
@@ -34,6 +34,7 @@ Caracterizacao = {
 		Caracterizacao.container.delegate('.btnAssociar', 'click', Caracterizacao.associar);
 		Caracterizacao.container.delegate('.btnDesassociar', 'click', Caracterizacao.desassociar);
 		Caracterizacao.container.delegate('.btnFinalizarPasso', 'click', Caracterizacao.confirmarFinalizar);
+		Caracterizacao.container.delegate('.btnListar', 'click', Caracterizacao.listar);
 
 		Listar.atualizarEstiloTable();
 	},
@@ -293,5 +294,14 @@ Caracterizacao = {
 			}
 		});
 		MasterPage.carregando(false);
+	},
+
+	listar: function () {
+		debugger;
+		MasterPage.redireciona($('.hdnUrlListar', $(this).closest('tr')).val() + '/' +
+			Caracterizacao.settings.empreendimentoID +
+			'?projetoDigitalId=' + Caracterizacao.settings.projetoDigitalID +
+			'&retornarVisualizar=' + ($('.btnFinalizarPasso', Caracterizacao.container).length <= 0) +
+			'&isVisualizar=' + $('.hdnIsVisualizar').val());
 	}
 }
