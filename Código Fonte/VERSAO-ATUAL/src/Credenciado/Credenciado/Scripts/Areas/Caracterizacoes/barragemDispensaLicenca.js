@@ -48,6 +48,7 @@ BarragemDispensaLicenca = {
 		container.delegate('.rbVazaoMaxNormas', 'change', BarragemDispensaLicenca.onChangeVazaoMaxNormas);
 		container.delegate('.cbCopiaDeclarante', 'change', BarragemDispensaLicenca.onCheckCopiaDeclarante);
 		container.delegate('.ddlRTElaboracaoProjetoProfissao', 'change', BarragemDispensaLicenca.onChangeProfissaoRT);
+		container.delegate('.txtAreaAlagada', 'blur', BarragemDispensaLicenca.onChangeAreaAlagada);
 
 		BarragemDispensaLicenca.bloquearCriar();
         //BarragemDispensaLicenca.changeBarragemTipo();
@@ -738,8 +739,8 @@ BarragemDispensaLicenca = {
 		$('.txtDiametroTubulacaoVazaoMinAConstruir').val('');
 		$('.ddlTipoDispositivoVazaoMaxAConstruir').val(0);
 		$('.txtDiametroTubulacaoVazaoMaxAConstruir').val('');
-		$('.txtMesInicio').val('');
-		$('.txtAnoInicio').val('');
+		$('.txtperiodoInicioObra').val('');
+		$('.txtperiodoTerminoObra').val('');
 
 		$('.boxApp').addClass('hide');
 		$('.vazaoMinNormas').addClass('hide');
@@ -776,6 +777,12 @@ BarragemDispensaLicenca = {
 			$('.arquivoRT').removeClass('hide');
 		 else 
 			$('.arquivoRT').addClass('hide');
-	}
+	},
 
+	onChangeAreaAlagada: function () {
+		if (parseFloat($('.txtAreaAlagada').val()) >= 1)
+			$('.isDemarcacaoAPPNaoSeAplica').addClass('hide');
+		else
+			$('.isDemarcacaoAPPNaoSeAplica').removeClass('hide');
+	}
 }

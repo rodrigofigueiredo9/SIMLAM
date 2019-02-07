@@ -50,11 +50,11 @@
 	<div class="block">
 		<div class="coluna40">
 			<label for="comprimentoBarramento">Comprimento do barramento (m) *</label>
-			<%= Html.TextBox("comprimentoBarramento", Model.Caracterizacao.comprimentoBarramento, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto txtComprimentoBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("comprimentoBarramento", Model.Caracterizacao.comprimentoBarramento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtComprimentoBarramento", maxlength = "14" })) %>
 		</div>
 		<div class="coluna40">
 			<label for="larguraCristaBarramento">Largura da crista (m) *</label>
-			<%= Html.TextBox("larguraCristaBarramento", Model.Caracterizacao.larguraCristaBarramento, ViewModelHelper.SetaDisabled(true, new { @class = "text maskDecimalPonto txtLarguraCristaBarramento", maxlength = "14" })) %>
+			<%= Html.TextBox("larguraCristaBarramento", Model.Caracterizacao.larguraCristaBarramento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraCristaBarramento", maxlength = "14" })) %>
 		</div>
 	</div>
 	<br />

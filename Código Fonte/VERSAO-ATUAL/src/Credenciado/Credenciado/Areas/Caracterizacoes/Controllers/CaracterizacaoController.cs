@@ -155,6 +155,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
 				{
 					x.UrlListar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
 
 				}
 				else
