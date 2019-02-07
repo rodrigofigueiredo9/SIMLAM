@@ -297,7 +297,6 @@ Caracterizacao = {
 	},
 
 	listar: function () {
-		debugger;
 		MasterPage.redireciona($('.hdnUrlListar', $(this).closest('tr')).val() + '/' +
 			Caracterizacao.settings.empreendimentoID +
 			'?projetoDigitalId=' + Caracterizacao.settings.projetoDigitalID +
