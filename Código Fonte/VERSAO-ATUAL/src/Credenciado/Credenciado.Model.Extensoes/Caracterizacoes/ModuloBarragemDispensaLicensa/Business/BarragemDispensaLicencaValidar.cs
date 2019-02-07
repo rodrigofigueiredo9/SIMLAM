@@ -185,6 +185,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 			else
 			{
+				#region Barragem A Construir
 				if (caracterizacao.construidaConstruir.vazaoMinTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinTipo);
 
@@ -197,21 +198,57 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (caracterizacao.construidaConstruir.vazaoMaxDiametro <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
-				if (caracterizacao.construidaConstruir.mesInicioObra <= 0)
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeMesInicio);
+				#region Validações DATA
+				var periodoInicio = caracterizacao.construidaConstruir.periodoInicioObra.Split('/');
+				var mesInicio = Convert.ToInt32(periodoInicio[0]);
+				var anoInicio = Convert.ToInt32(periodoInicio[1]);
+				var periodoFim = caracterizacao.construidaConstruir.periodoTerminoObra.Split('/');
+				var mesFim = Convert.ToInt32(periodoInicio[0]);
+				var anoFim = Convert.ToInt32(periodoInicio[1]);
+
+				if (mesInicio <= 0)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeMes("início"));
 				else
 				{
-					if (caracterizacao.construidaConstruir.mesInicioObra > 12 || caracterizacao.construidaConstruir.mesInicioObra < 0)
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.MesInicioInvalido);
+					if (mesInicio > 12 || mesInicio < 0)
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.MesInvalido("início"));
 				}
 
-				if (caracterizacao.construidaConstruir.anoInicioObra <= 0)
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAnoInicio);
+				if (anoInicio <= 0)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAno("início"));
 				else
 				{
-					if (caracterizacao.construidaConstruir.anoInicioObra > 2100 || caracterizacao.construidaConstruir.anoInicioObra < 1900)
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInicioInvalido);
+					if (anoInicio > 2100 || anoInicio < 1900)
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInvalido("início"));
 				}
+
+				if(mesInicio < DateTime.Now.Month && anoInicio <= DateTime.Now.Year)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
+
+				if (mesFim <= 0)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeMes("início"));
+				else
+				{
+					if (mesFim > 12 || mesFim < 0)
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.MesInvalido("início"));
+				}
+
+				if (anoFim <= 0)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAno("início"));
+				else
+				{
+					if (anoFim > 2100 || anoFim < 1900)
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInvalido("início"));
+				}
+
+				if (mesFim < DateTime.Now.Month && anoFim <= DateTime.Now.Year)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
+
+				if (mesInicio > mesFim && anoInicio >= anoFim)
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.DataTerminoMaiorInicio);
+
+				#endregion
+				#endregion
 			}
 
 			if (!Validacao.EhValido) return false;

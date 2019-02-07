@@ -71,10 +71,16 @@
 		public Mensagem InformeBarramentoNormas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe se o barramento está dentro das normas técnicas." }; } }
 		public Mensagem InformeBarramentoAdequacoes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe as adequações do barramento." }; } }
 		public Mensagem InformeSupressaoApp { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe as adequações do barramento." }; } }
-		public Mensagem InformeMesInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Informe o mês de início." }; } }
-		public Mensagem MesInicioInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "MesInicio", Texto = "Mês de início inválido." }; } }
-		public Mensagem InformeAnoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AnoInicio", Texto = "Informe o ano de início." }; } }
-		public Mensagem AnoInicioInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AnoInicio", Texto = "Ano de início inválido." }; } }
+
+		// Validações DATA
+		public Mensagem InformePeriodoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoInicio", Texto = "Informe o período de início." }; } }
+		public Mensagem InformePeriodoTermino { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoTermino", Texto = "Informe o período de término." }; } }
+		public Mensagem InformeMes (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o mês do período de {0}.", periodo) }; }
+		public Mensagem MesInvalido (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Mês do período {0} inválido.", periodo) }; }
+		public Mensagem InformeAno (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o ano do período de {0}.", periodo) }; }
+		public Mensagem AnoInvalido (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Ano do período {0} inválido {0}.", periodo) }; }
+		public Mensagem PeriodoMaior (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("O período de {0} tem que ser maior ou igual a data de hoje.", periodo) }; }
+		public Mensagem DataTerminoMaiorInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "O período de término tem que ser maior que o período de início." }; } }
 
 		public Mensagem InformeVazaoMinTipo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinTipo", Texto = "Informe o tipo de dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMinDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinDiametro", Texto = "Informe o diâmetro do dispositivo de vazão mínima." }; } }
