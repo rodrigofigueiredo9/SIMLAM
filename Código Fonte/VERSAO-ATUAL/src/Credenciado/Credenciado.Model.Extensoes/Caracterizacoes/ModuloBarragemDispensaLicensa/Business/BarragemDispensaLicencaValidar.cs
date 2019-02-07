@@ -204,8 +204,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				var mesInicio = Convert.ToInt32(periodoInicio[0]);
 				var anoInicio = Convert.ToInt32(periodoInicio[1]);
 				var periodoFim = caracterizacao.construidaConstruir.periodoTerminoObra.Split('/');
-				var mesFim = Convert.ToInt32(periodoInicio[0]);
-				var anoFim = Convert.ToInt32(periodoInicio[1]);
+				var mesFim = Convert.ToInt32(periodoFim[0]);
+				var anoFim = Convert.ToInt32(periodoFim[1]);
 
 				if (mesInicio <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeMes("início"));

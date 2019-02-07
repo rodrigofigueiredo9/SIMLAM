@@ -487,7 +487,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		{
 			List<ProfissaoLst> lst = new List<ProfissaoLst>();
 
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto from tab_profissao c");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select c.id, c.texto from tab_profissao c order by c.texto");
 			foreach (var item in daReader)
 			{
 				lst.Add(new ProfissaoLst()
