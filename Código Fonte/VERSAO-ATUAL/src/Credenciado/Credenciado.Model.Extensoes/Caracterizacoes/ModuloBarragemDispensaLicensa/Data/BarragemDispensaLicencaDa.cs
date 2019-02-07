@@ -134,7 +134,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_min_normas", caracterizacao.construidaConstruir.vazaoMinNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_min_adequacoes", caracterizacao.construidaConstruir.vazaoMinAdequacoes, DbType.String);
 				comando.AdicionarParametroEntrada("vazao_max_tipo", (int)caracterizacao.construidaConstruir.vazaoMaxTipo, DbType.Decimal);
-				comando.AdicionarParametroEntrada("vazao_max_diametro", caracterizacao.construidaConstruir.vazaoMaxDiametro, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_max_diametro", caracterizacao.construidaConstruir.vazaoMaxDiametro, DbType.String);
 				comando.AdicionarParametroEntrada("vazao_max_instalado", caracterizacao.construidaConstruir.vazaoMaxInstalado, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_normas", caracterizacao.construidaConstruir.vazaoMaxNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_adequacoes", caracterizacao.construidaConstruir.vazaoMaxAdequacoes, DbType.String);
@@ -275,7 +275,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_min_normas", caracterizacao.construidaConstruir.vazaoMinNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_min_adequacoes", caracterizacao.construidaConstruir.vazaoMinAdequacoes, DbType.String);
 				comando.AdicionarParametroEntrada("vazao_max_tipo", (int)caracterizacao.construidaConstruir.vazaoMaxTipo, DbType.Decimal);
-				comando.AdicionarParametroEntrada("vazao_max_diametro", caracterizacao.construidaConstruir.vazaoMaxDiametro, DbType.Decimal);
+				comando.AdicionarParametroEntrada("vazao_max_diametro", caracterizacao.construidaConstruir.vazaoMaxDiametro, DbType.String);
 				comando.AdicionarParametroEntrada("vazao_max_instalado", caracterizacao.construidaConstruir.vazaoMaxInstalado, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_normas", caracterizacao.construidaConstruir.vazaoMaxNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_adequacoes", caracterizacao.construidaConstruir.vazaoMaxAdequacoes, DbType.String);
@@ -724,7 +724,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.construidaConstruir.vazaoMinNormas = reader.GetValue<bool>("vazao_min_normas");
 						caracterizacao.construidaConstruir.vazaoMinAdequacoes = reader.GetValue<string>("vazao_min_adequacoes");
 						caracterizacao.construidaConstruir.vazaoMaxTipo = reader.GetValue<int>("vazao_max_tipo");
-						caracterizacao.construidaConstruir.vazaoMaxDiametro = reader.GetValue<decimal>("vazao_max_diametro");
+						caracterizacao.construidaConstruir.vazaoMaxDiametro = reader.GetValue<string>("vazao_max_diametro");
 						caracterizacao.construidaConstruir.vazaoMaxInstalado = reader.GetValue<bool>("vazao_max_instalado");
 						caracterizacao.construidaConstruir.vazaoMaxNormas = reader.GetValue<bool>("vazao_max_normas");
 						caracterizacao.construidaConstruir.vazaoMaxAdequacoes = reader.GetValue<string>("vazao_max_adequacoes");

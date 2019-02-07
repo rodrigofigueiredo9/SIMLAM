@@ -28,7 +28,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string vazaoMinAdequacoes { get; set; }
 
 		public int vazaoMaxTipo { get; set; }
-		public decimal vazaoMaxDiametro { get; set; }
+		public string vazaoMaxDiametro { get; set; }
 		public bool ?vazaoMaxInstalado { get; set; }
 		public bool ?vazaoMaxNormas { get; set; }
 		public string vazaoMaxAdequacoes { get; set; }

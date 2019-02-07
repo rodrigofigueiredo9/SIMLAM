@@ -18,7 +18,7 @@
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
 		</div>
-		<div class="coluna20">
+		<div class="coluna20 isDemarcacaoAPPNaoSeAplica">
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.Dispensado, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não se aplica (somente para barragens menores que 1 hectare de lâmina d’água onde não houve supressão de vegetação em APP para sua implantação).
 		</div>
 	</div>
@@ -45,7 +45,7 @@
 		</div>
 		<div class="coluna86">
 			<label for="DescricaoDesenvolvimento">Descreva o estágio de desenvolvimento, a caracterização da vegetação na faixa de APP e as medidas necessárias para atendimento à legislação. *</label>
-			<%= Html.TextBox("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "300" })) %>
+			<%= Html.TextArea("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento" })) %>
 		</div>
 	</div>
 
@@ -54,13 +54,16 @@
 			<label for="BarramentoNormas">O barramento está dimensionado de acordo com as normas técnicas e legais? *</label>
 			<%= Html.RadioButton("BarramentoNormas", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.barramentoNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarramentoNormas" })) %> Sim
 			<%= Html.RadioButton("BarramentoNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.barramentoNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarramentoNormas" })) %> Não
-		</div><br />
-		<div class="coluna40 AdequacoesDimensionamentoBarramento  <%= (Model.Caracterizacao.construidaConstruir.barramentoNormas == true) ? "" : "hide"%>">
-			<label for="AdequacoesDimensionamentoBarramento">Quais adequações serão realizadas? *</label>
-			<%= Html.TextBox("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento", maxlength = "300" })) %>
-		</div>
+		</div><br />		
 	</div>
-	 <br /> <br />
+	<div class="block">
+		<div class="coluna60 AdequacoesDimensionamentoBarramento  <%= (Model.Caracterizacao.construidaConstruir.barramentoNormas == true) ? "" : "hide"%>">
+			<label for="AdequacoesDimensionamentoBarramento">Quais adequações serão realizadas? *</label>
+			<%= Html.TextArea("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento ", width ="200" })) %>
+		</div>
+		<br />
+	</div>
+	 
 	<div class="block">
 		<b>Dispositivo de vazão mínima</b> <br />
 		<div class="coluna20">
@@ -75,7 +78,7 @@
 	</div>
 	<div class="block">
 		<div class="coluna40">
-			<label for="VazaoMinInstalado">Já está instalado *</label>
+			<label for="VazaoMinInstalado">Já está instalado? *</label>
 			<%= Html.RadioButton("VazaoMinInstalado", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinInstalado" })) %> Sim
 			<%= Html.RadioButton("VazaoMinInstalado", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinInstalado" })) %> Não
 		</div>
@@ -87,12 +90,15 @@
 			<%= Html.RadioButton("VazaoMinNormas", ConfiguracaoSistema.SIM,  Model.Caracterizacao.construidaConstruir.vazaoMinNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinNormas" })) %> Sim
 			<%= Html.RadioButton("VazaoMinNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinNormas" })) %> Não
 		</div>
-		<div class="coluna40 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == true) ? "" : "hide"%>">
-			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
-			<%= Html.TextBox("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin", maxlength = "300" })) %>
-		</div>
 	</div>
-	 <br /> <br />
+	<div class="block">		
+		<div class="coluna60 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == true) ? "" : "hide"%>">
+			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
+			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin " })) %>
+		</div>
+		<br />
+	</div>
+
 	<div class="block">
 		<b>Dispositivo de vazão máxima</b> <br />
 		<div class="coluna20">
@@ -101,12 +107,12 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMax">Largura e altura ou diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMax", maxlength = "22" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDiametroTubulacaoVazaoMax", maxlength = "20" })) %>
 		</div>
 		<br />
 	</div>
 	<div class="coluna40">
-		<label for="VazaoMinInstalado">Já está instalado *</label>
+		<label for="VazaoMinInstalado">Já está instalado? *</label>
 		<%= Html.RadioButton("VazaoMaxInstalado", ConfiguracaoSistema.SIM,  Model.Caracterizacao.construidaConstruir.vazaoMaxInstalado == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxInstalado" })) %> Sim
 		<%= Html.RadioButton("VazaoMaxInstalado", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMaxInstalado == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxInstalado" })) %> Não
 	</div>
@@ -116,8 +122,10 @@
 		<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Sim
 		<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Não
 	</div>
-	<div class="coluna40 AdequacoesDimensionamentoVazaoMax <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == true) ? "" : "hide"%>">
-		<label for="AdequacoesDimensionamentoVazaoMax">Quais adequações serão realizadas? *</label>
-		<%= Html.TextBox("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax", maxlength = "300" })) %>
+	<div class="block">		
+		<div class="coluna60 AdequacoesDimensionamentoVazaoMax <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == true) ? "" : "hide"%>">
+			<label for="AdequacoesDimensionamentoVazaoMax">Quais adequações serão realizadas? *</label>
+			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax ", @width ="200%" })) %>
+		</div>
 	</div>
 </fieldset>

@@ -165,7 +165,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (caracterizacao.construidaConstruir.vazaoMaxTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxTipo);
 
-				if (caracterizacao.construidaConstruir.vazaoMaxDiametro <= 0)
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
 				if (!caracterizacao.construidaConstruir.vazaoMaxInstalado.HasValue)
@@ -196,7 +196,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (caracterizacao.construidaConstruir.vazaoMaxTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxTipo);
 
-				if (caracterizacao.construidaConstruir.vazaoMaxDiametro <= 0)
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
 				#region Validações DATA
@@ -204,8 +204,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				var mesInicio = Convert.ToInt32(periodoInicio[0]);
 				var anoInicio = Convert.ToInt32(periodoInicio[1]);
 				var periodoFim = caracterizacao.construidaConstruir.periodoTerminoObra.Split('/');
-				var mesFim = Convert.ToInt32(periodoInicio[0]);
-				var anoFim = Convert.ToInt32(periodoInicio[1]);
+				var mesFim = Convert.ToInt32(periodoFim[0]);
+				var anoFim = Convert.ToInt32(periodoFim[1]);
 
 				if (mesInicio <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeMes("início"));
@@ -245,7 +245,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (mesFim < DateTime.Now.Month && anoFim <= DateTime.Now.Year)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
 
-				if (mesInicio > mesFim && anoInicio >= anoFim)
+				if (mesInicio > mesFim && anoInicio >= anoFim || anoInicio > anoFim)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.DataTerminoMaiorInicio);
 
 				#endregion
