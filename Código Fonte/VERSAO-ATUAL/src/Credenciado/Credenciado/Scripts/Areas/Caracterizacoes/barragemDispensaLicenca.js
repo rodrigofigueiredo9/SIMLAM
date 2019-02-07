@@ -299,7 +299,8 @@ BarragemDispensaLicenca = {
     },
     //-------------------------ENVIAR ARQUIVO-------------------------//
 
-    obter: function () {
+	obter: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
         var objeto = {
             Id: $('.hdnCaracterizacaoId', BarragemDispensaLicenca.container).val(),
             EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
@@ -352,15 +353,23 @@ BarragemDispensaLicenca = {
 				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true : false,
 				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val() == 1 ? true : false,
 				vazaoMaxAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMax').val(),
-				mesInicioObra: $('.txtMesInicio').val(),
-				anoInicioObra: $('.txtAnoInicio').val()
+				periodoInicioObra: $('.txtperiodoInicioObra').val(),
+				periodoTerminoObra: $('.txtperiodoTerminoObra').val()
 				
 			},
 		};
 		objeto.construidaConstruir.isSupressaoAPP = objeto.construidaConstruir.isSupressaoAPP ?
 			objeto.construidaConstruir.isSupressaoAPP : $('.rbPerguntaSupressaoAContruir:checked').val();
-
-
+		if (objeto.fase == 2) {
+			if (objeto.construidaConstruir.periodoInicioObra.length < 7) {
+				Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.PeriodoInicioRequired]);
+				return false;
+			}
+			if (objeto.construidaConstruir.periodoTerminoObra.length < 7) {
+				Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.PeriodoTerminoRequired]);
+				return false;
+			}
+		}
         $('.cbFinalidadeAtividade').each(function (index, item) {
 			if ($(item).is(':checked')) {
 				objeto.finalidade.push($(item).val());
@@ -652,7 +661,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeBarramento: function () {
-		if ($('.rbBarramentoNormas:checked').val() == 1) {
+		if ($('.rbBarramentoNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoBarramento').removeClass('hide');
 
 		} else {
@@ -672,7 +681,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeVazaoMinNormas: function () {
-		if ($('.rbVazaoMinNormas:checked').val() == 1) {
+		if ($('.rbVazaoMinNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
 
 		} else {
@@ -692,7 +701,7 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeVazaoMaxNormas: function () {
-		if ($('.rbVazaoMaxNormas:checked').val() == 1) {
+		if ($('.rbVazaoMaxNormas:checked').val() == 0) {
 			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
 
 		} else {
@@ -763,13 +772,10 @@ BarragemDispensaLicenca = {
 	},
 
 	onChangeProfissaoRT: function () {
-		
-
-		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) {
+		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) 
 			$('.arquivoRT').removeClass('hide');
-		} else {
+		 else 
 			$('.arquivoRT').addClass('hide');
-		}
 	}
 
 }

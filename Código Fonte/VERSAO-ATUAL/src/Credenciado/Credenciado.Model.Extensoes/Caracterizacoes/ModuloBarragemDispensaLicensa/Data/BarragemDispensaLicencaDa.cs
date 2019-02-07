@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
@@ -113,11 +113,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				insert into crt_barragem_construida_con (id, barragem, supressao_app, largura_demarcada, largura_demarcada_legislacao,
 						faixa_cercada, descricao_desen_app, demarcacao_app, barramento_normas, barramento_adequacoes, vazao_min_tipo, vazao_min_diametro,
 						vazao_min_instalado, vazao_min_normas, vazao_min_adequacoes, vazao_max_tipo, vazao_max_diametro,
-						vazao_max_instalado, vazao_max_normas, vazao_max_adequacoes, mes_inicio_obra, ano_inicio_obra)
+						vazao_max_instalado, vazao_max_normas, vazao_max_adequacoes, periodo_inicio_obra, periodo_termino_obra)
 				values (seq_crt_barragem_const.nextval, :barragem, :supressao_app, :largura_demarcada, :largura_demarcada_legislacao,
 						:faixa_cercada, :descricao_desen_app, :demarcacao_app, :barramento_normas, :barramento_adequacoes, :vazao_min_tipo, :vazao_min_diametro,
 						:vazao_min_instalado, :vazao_min_normas, :vazao_min_adequacoes, :vazao_max_tipo, :vazao_max_diametro,
-						:vazao_max_instalado, :vazao_max_normas, :vazao_max_adequacoes, :mes_inicio_obra, :ano_inicio_obra)  ", EsquemaCredenciadoBanco);
+						:vazao_max_instalado, :vazao_max_normas, :vazao_max_adequacoes, :periodo_inicio_obra, :periodo_termino_obra)  ", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("supressao_app", caracterizacao.construidaConstruir.isSupressaoAPP, DbType.Int32);
@@ -138,8 +138,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_max_instalado", caracterizacao.construidaConstruir.vazaoMaxInstalado, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_normas", caracterizacao.construidaConstruir.vazaoMaxNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_adequacoes", caracterizacao.construidaConstruir.vazaoMaxAdequacoes, DbType.String);
-				comando.AdicionarParametroEntrada("mes_inicio_obra", caracterizacao.construidaConstruir.mesInicioObra, DbType.Int32);
-				comando.AdicionarParametroEntrada("ano_inicio_obra", caracterizacao.construidaConstruir.anoInicioObra, DbType.Int32);
+				comando.AdicionarParametroEntrada("periodo_inicio_obra", caracterizacao.construidaConstruir.periodoInicioObra, DbType.String);
+				comando.AdicionarParametroEntrada("periodo_termino_obra", caracterizacao.construidaConstruir.periodoTerminoObra, DbType.String);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -257,7 +257,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					vazao_min_diametro = :vazao_min_diametro, vazao_min_instalado = :vazao_min_instalado, vazao_min_normas = :vazao_min_normas, 
 					vazao_min_adequacoes = :vazao_min_adequacoes, vazao_max_tipo = :vazao_max_tipo, vazao_max_diametro = :vazao_max_diametro,
 					vazao_max_instalado = :vazao_max_instalado, vazao_max_normas = :vazao_max_normas, vazao_max_adequacoes = :vazao_max_adequacoes, 
-					mes_inicio_obra = :mes_inicio_obra, ano_inicio_obra = :ano_inicio_obra
+					periodo_inicio_obra = :periodo_inicio_obra, periodo_termino_obra = :periodo_termino_obra
 				where barragem = :barragem ", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
@@ -279,8 +279,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("vazao_max_instalado", caracterizacao.construidaConstruir.vazaoMaxInstalado, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_normas", caracterizacao.construidaConstruir.vazaoMaxNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("vazao_max_adequacoes", caracterizacao.construidaConstruir.vazaoMaxAdequacoes, DbType.String);
-				comando.AdicionarParametroEntrada("mes_inicio_obra", caracterizacao.construidaConstruir.mesInicioObra, DbType.Int32);
-				comando.AdicionarParametroEntrada("ano_inicio_obra", caracterizacao.construidaConstruir.anoInicioObra, DbType.Int32);
+				comando.AdicionarParametroEntrada("periodo_inicio_obra", caracterizacao.construidaConstruir.periodoInicioObra, DbType.String);
+				comando.AdicionarParametroEntrada("periodo_termino_obra", caracterizacao.construidaConstruir.periodoTerminoObra, DbType.String);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -669,7 +669,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							c.faixa_cercada, c.descricao_desen_app, c.demarcacao_app, c.barramento_normas, 
 							c.barramento_adequacoes, c.vazao_min_tipo, c.vazao_min_diametro, c.vazao_min_instalado, 
 							c.vazao_min_normas, c.vazao_min_adequacoes, c.vazao_max_tipo, c.vazao_max_diametro,
-							c.vazao_max_instalado, c.vazao_max_normas, c.vazao_max_adequacoes, c.mes_inicio_obra, c.ano_inicio_obra
+							c.vazao_max_instalado, c.vazao_max_normas, c.vazao_max_adequacoes, c.periodo_inicio_obra, c.periodo_termino_obra
 					from crt_barragem_dispensa_lic b
 					inner join crt_barragem_construida_con c on b.id = c.barragem
 					where b.id = :id", EsquemaCredenciadoBanco);
@@ -689,8 +689,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.AtividadeID = reader.GetValue<int>("atividade");
 						caracterizacao.BarragemTipo = (eBarragemTipo)reader.GetValue<int>("tipo_barragem");
-						//caracterizacao.BarragemTipoTexto = reader.GetValue<string>("tipo_barragem_texto");
-						//caracterizacao.FinalidadeAtividade = reader.GetValue<int>("finalidade_atividade");
 						caracterizacao.cursoHidrico = reader.GetValue<string>("curso_hidrico");
 						caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
 						caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
@@ -730,8 +728,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.construidaConstruir.vazaoMaxInstalado = reader.GetValue<bool>("vazao_max_instalado");
 						caracterizacao.construidaConstruir.vazaoMaxNormas = reader.GetValue<bool>("vazao_max_normas");
 						caracterizacao.construidaConstruir.vazaoMaxAdequacoes = reader.GetValue<string>("vazao_max_adequacoes");
-						caracterizacao.construidaConstruir.mesInicioObra = reader.GetValue<int>("mes_inicio_obra");
-						caracterizacao.construidaConstruir.anoInicioObra = reader.GetValue<int>("ano_inicio_obra");
+						caracterizacao.construidaConstruir.periodoInicioObra = reader.GetValue<string>("periodo_inicio_obra");
+						caracterizacao.construidaConstruir.periodoTerminoObra = reader.GetValue<string>("periodo_termino_obra");
 					}
 
 					reader.Close();
@@ -999,9 +997,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select possui_barragem_contigua from tab_projeto_digital p 
-						inner join tab_requerimento_barragem r on p.requerimento = r.requerimento
-					where p.id = :projetoDigital", EsquemaCredenciadoBanco);
+					select possui_barragem_contigua from tab_requerimento_barragem r
+						where r.requerimento in (
+							select p.requerimento from tab_projeto_digital p where p.id = :projetoDigital )", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
 

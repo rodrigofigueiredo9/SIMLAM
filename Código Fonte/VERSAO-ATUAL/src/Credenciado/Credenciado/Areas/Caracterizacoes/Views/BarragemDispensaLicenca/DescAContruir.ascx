@@ -45,12 +45,12 @@
 		<b>Previsão de execução da obra (mês/ano) *</b> <br />
 		
 		<div class="coluna10">
-			<label for="DiametroTubulacaoVazaoMax">Mês *</label>
-			<%= Html.TextBox("MesInicio", Model.Caracterizacao.construidaConstruir.mesInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum3 txtMesInicio", maxlength = "14" })) %>
+			<label for="PeriodoInicio">Início *</label>
+			<%= Html.TextBox("PeriodoInicio", Model.Caracterizacao.construidaConstruir.periodoInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskMesAno txtperiodoInicioObra", maxlength = "8" })) %>
 		</div>
 		<div class="coluna10">
-			<label for="DiametroTubulacaoVazaoMax">Ano *</label>
-			<%= Html.TextBox("AnoInicio", Model.Caracterizacao.construidaConstruir.anoInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum4 txtAnoInicio", maxlength = "14" })) %>
+			<label for="PeriodoTermino">Fim *</label>
+			<%= Html.TextBox("PeriodoTermino", Model.Caracterizacao.construidaConstruir.periodoTerminoObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskMesAno txtperiodoTerminoObra", maxlength = "8" })) %>
 		</div>
 	</div>
 	

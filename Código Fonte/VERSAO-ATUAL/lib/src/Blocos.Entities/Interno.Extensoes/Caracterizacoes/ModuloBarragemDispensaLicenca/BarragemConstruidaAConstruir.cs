@@ -33,8 +33,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public bool ?vazaoMaxNormas { get; set; }
 		public string vazaoMaxAdequacoes { get; set; }
 
-		public int mesInicioObra { get; set; }
-		public int anoInicioObra { get; set; }
+		public string periodoInicioObra { get; set; }
+		public string periodoTerminoObra { get; set; }
 
 		public BarragemConstruidaAConstruir() { }
 	}

@@ -116,9 +116,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
 
 					bancoDeDados.ExecutarNonQuery(comando);
-					#endregion
 
 				}
+				#endregion
 
 				#region Atividades
 				if (requerimento.Atividades != null && requerimento.Atividades.Count > 0)
