@@ -66,7 +66,7 @@
 		public Mensagem InformeLarguraBaseBarramento { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LarguraBaseBarramento", Texto = "Informe a largura base do barramento maior que zero." }; } }
 		public Mensagem InformeLarguraCristaBarramento { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "LarguraCristaBarramento", Texto = "Informe a largura da crista do barramento maior que zero." }; } }
 		public Mensagem InformeEquacaoTempo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TempoConcentracao", Texto = "Informe a equação utilizada no tempo de concentração." }; } }
-		public Mensagem InformeLarguraDemarcada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "larguraDemarcada", Texto = "Informe a argura demarcada maior que zero." }; } }
+		public Mensagem InformeLarguraDemarcada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "larguraDemarcada", Texto = "Informe a largura demarcada maior que zero." }; } }
 		public Mensagem InformeFaixaCercada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "faixaCercada", Texto = "Informe se a faixa demarcada está cercada." }; } }
 		public Mensagem InformeDescricaoApp { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "descricaoApp", Texto = "Informe a descrição do estágio de desenvolvimento." }; } }
 		public Mensagem InformeBarramentoNormas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe se o barramento está dentro das normas técnicas." }; } }
@@ -89,7 +89,7 @@
 		public Mensagem InformeVazaoMinNormas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinNormas", Texto = "Informe se o dispositivo de vazão mínima está dentro das normas." }; } }
 		public Mensagem InformeVazaoMinAdequacoes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinAdequacoes", Texto = "Informe as adequações do dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMaxTipo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxTipo", Texto = "Informe o tipo de dispositivo de vazão máxima." }; } }
-		public Mensagem InformeVazaoMaxDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxDiametro", Texto = "Informe o diâmetro do dispositivo de vazão máxima." }; } }
+		public Mensagem InformeVazaoMaxDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxDiametro", Texto = "Informe a largura e altura ou diâmetro do dispositivo de vazão máxima." }; } }
 		public Mensagem InformeVazaoMaxInstalado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxInstalado", Texto = "Informe se o dispositivo de vazão máxima já está instalado." }; } }
 		public Mensagem InformeVazaoMaxNormas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxNormas", Texto = "Informe se o dispositivo de vazão máxima está dentro das normas." }; } }
 		public Mensagem InformeVazaoMaxAdequacoes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxAdequacoes", Texto = "Informe as adequações do dispositivo de vazão máxima." }; } }
