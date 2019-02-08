@@ -83,7 +83,7 @@
 			</div>
 			<div class="coluna21 append5">
 				<label for ="AreaCCIR">Área no CCIR(m²)</label>
-				<%= Html.TextBox("AreaCCIR", Model.Caracterizacao.Posse.AreaCCIR, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCCIR maskDecimalPonto", @maxlength = "25"})) %>
+				<%= Html.TextBox("AreaCCIR", Model.Caracterizacao.Posse.AreaCCIR.ToStringTrunc(2), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAreaCCIR maskDecimalPonto", @maxlength = "25"})) %>
 			</div>
 			<div class="coluna21 DataUltimaAtualizacaoCCIR">
 				<label for ="DataUltimaAtualizacaoCCIR">Data da ultima atualização do CCIR</label>

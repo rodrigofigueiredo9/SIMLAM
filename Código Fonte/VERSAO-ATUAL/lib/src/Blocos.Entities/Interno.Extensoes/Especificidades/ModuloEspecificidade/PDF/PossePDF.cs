@@ -192,6 +192,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Identificacao = posse.Identificacao;
 			NumeroCCIR = posse.NumeroCCIR;
 			//ComprovacaoTexto = posse.DescricaoComprovacao;
+			AreaCCIR = posse.AreaCCIR.ToString();
+			DataAtualizacao = posse.DataUltimaAtualizacaoCCIR.DataTexto;
 			ConfrontacaoNorte = posse.ConfrontacoesNorte;
 			ConfrontacaoSul = posse.ConfrontacoesSul;
 			ConfrontacaoLeste = posse.ConfrontacoesLeste;

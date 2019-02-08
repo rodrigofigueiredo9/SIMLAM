@@ -154,7 +154,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 					dominio.Registro = item.DescricaoComprovacao;
 					dominio.AreaCroquiDecimal = Convert.ToDecimal(item.AreaCroqui);
 					dominio.AreaDocumentoDecimal = Convert.ToDecimal(item.AreaPosseDocumento);
-					dominio.AreaCCIRDecimal = Convert.ToDecimal(item.AreaCCIR);
+					dominio.AreaCCIR = item.AreaCCIR.ToString();
+					dominio.DataAtualizacao = item.DataAtualizacao;
 					dominio.ConfrontacaoNorte = item.ConfrontacaoNorte;
 					dominio.ConfrontacaoSul = item.ConfrontacaoSul;
 					dominio.ConfrontacaoLeste = item.ConfrontacaoLeste;
