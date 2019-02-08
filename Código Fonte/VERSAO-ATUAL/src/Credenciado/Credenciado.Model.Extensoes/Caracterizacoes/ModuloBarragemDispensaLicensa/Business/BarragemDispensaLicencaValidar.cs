@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 				else
 				{
-					if (caracterizacao.construidaConstruir.barramentoNormas == true && String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.barramentoAdequacoes))
+					if (caracterizacao.construidaConstruir.barramentoNormas == false && String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.barramentoAdequacoes))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeBarramentoAdequacoes);
 				}
 
@@ -155,7 +155,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				{
 					if (!caracterizacao.construidaConstruir.vazaoMinNormas.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinNormas);
-					else if (caracterizacao.construidaConstruir.vazaoMinNormas == true)
+					else if (caracterizacao.construidaConstruir.vazaoMinNormas == false)
 					{
 						if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMinAdequacoes))
 							Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinAdequacoes);
@@ -176,7 +176,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				{
 					if (!caracterizacao.construidaConstruir.vazaoMaxNormas.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxNormas);
-					else if (caracterizacao.construidaConstruir.vazaoMaxNormas == true)
+					else if (caracterizacao.construidaConstruir.vazaoMaxNormas == false)
 					{
 						if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxAdequacoes))
 							Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxAdequacoes);

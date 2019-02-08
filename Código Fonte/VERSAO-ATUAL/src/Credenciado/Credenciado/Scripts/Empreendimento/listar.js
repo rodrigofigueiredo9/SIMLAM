@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -39,7 +39,6 @@ EmpreendimentoListar = {
 
 	visualizar: function () {
 		var itemId = parseInt($(this).closest('tr').find('.itemId:first').val());
-		debugger;
 		if (EmpreendimentoListar.settings.associarFuncao) {
 			Modal.abrir($('.urlVisualizar', EmpreendimentoListar.container).val() + "/?internoID=" + itemId, null, function (container) {
 				Modal.defaultButtons(container);

@@ -128,7 +128,7 @@
 		<div class="block">
 			<div class="coluna40">
 				<label for="cursoHidrico">Nome do curso hídrico *</label>
-				<%= Html.TextBox("cursoHidrico", Model.Caracterizacao.cursoHidrico, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtCursoHidrico", maxlength = "14" })) %>
+				<%= Html.TextBox("cursoHidrico", Model.Caracterizacao.cursoHidrico, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtCursoHidrico", maxlength = "50" })) %>
 			</div>
 		</div>
 		<div class="block">
@@ -170,7 +170,7 @@
 			</div>
 			<div class="coluna40">
 				<label for="tempoConcentracaoEquacaoUtilizada">Equação utilizada *</label>
-				<%= Html.TextBox("tempoConcentracaoEquacaoUtilizada", Model.Caracterizacao.tempoConcentracaoEquacaoUtilizada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEquacaoTempoConcentracao", maxlength = "14" })) %>
+				<%= Html.TextBox("tempoConcentracaoEquacaoUtilizada", Model.Caracterizacao.tempoConcentracaoEquacaoUtilizada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtEquacaoTempoConcentracao", maxlength = "60" })) %>
 			</div>
 		</div>
 		<div class="block">

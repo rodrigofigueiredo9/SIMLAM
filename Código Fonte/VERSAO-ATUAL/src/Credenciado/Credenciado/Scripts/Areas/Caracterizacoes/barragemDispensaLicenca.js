@@ -758,24 +758,22 @@ BarragemDispensaLicenca = {
 			nomeDeclarante = $('.txtRTElaboracaoDeclaracaoNome').val();
 			profissaoDeclarante = $('.ddlRTElaboracaoDeclaracaoProfissao:visible').val();
 			creaDeclarante = $('.txtRTElaboracaoDeclaracaoCREA').val();
-			numeroDeclarante = $('.txtRTElaboracaoDeclaracaoNumero').val();
 
 			$('.rtNome', container).val(nomeDeclarante).prop('disabled', true).addClass('disabled');
 			$('.rtProfissao', container).val(profissaoDeclarante).prop('disabled', true).addClass('disabled');
 			$('.rtCREA', container).val(creaDeclarante).prop('disabled', true).addClass('disabled');
-			$('.rtNumero', container).val(numeroDeclarante).prop('disabled', true).addClass('disabled');
 		} else {
 			$('.rtNome', container).val('').prop('disabled', false).removeClass('disabled');
 			$('.rtProfissao', container).val(' ').prop('disabled', false).removeClass('disabled');
 			$('.rtCREA', container).val(' ').prop('disabled', false).removeClass('disabled');
-			$('.rtNumero', container).val(' ').prop('disabled', false).removeClass('disabled');
+			$('.rtNumero', container).val(' ');
 		}
 	},
 
 	onChangeProfissaoRT: function () {
 		if (!BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRTElaboracaoProjetoProfissao:visible').val())) 
 			$('.arquivoRT').removeClass('hide');
-		 else 
+		else 
 			$('.arquivoRT').addClass('hide');
 	},
 

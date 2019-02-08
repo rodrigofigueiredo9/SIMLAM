@@ -26,7 +26,7 @@
 		
 		<div class="coluna40">
 			<label for="larguraDemarcada">Qual a largura demarcada (m)? *</label>
-			<%= Html.TextBox("larguraDemarcada", Model.Caracterizacao.construidaConstruir.larguraDemarcada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraDemarcada", maxlength = "22" })) %>
+			<%= Html.TextBox("larguraDemarcada", Model.Caracterizacao.construidaConstruir.larguraDemarcada, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtLarguraDemarcada", maxlength = "10" })) %>
 		</div>
 		<div class="block coluna80">
 			<div class="coluna80">
@@ -119,7 +119,7 @@
 		</div>
 		<br />
 		<div class="coluna80 vazaoMaxNormas <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxInstalado == true) ? "" : "hide"%>">
-			<label for="VazaoMinNormas">O dispositivo de vazão mínima está dimensionado de acordo com as normas técnicas e legais? *</label>
+			<label for="VazaoMinNormas">O dispositivo de vazão máxima está dimensionado de acordo com as normas técnicas e legais? *</label>
 			<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Sim
 			<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Não
 		</div>

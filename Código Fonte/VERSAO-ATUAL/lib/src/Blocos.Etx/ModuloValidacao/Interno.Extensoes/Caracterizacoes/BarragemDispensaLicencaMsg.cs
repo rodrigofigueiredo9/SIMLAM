@@ -41,7 +41,7 @@
         public Mensagem InformeAdequacoesRealizada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AdequacoesRealizada", Texto = "Informe quais adequações serão realizadas para a barragem." }; } }
 
 		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida. Maior que 0.01 e menor que {0}.", valor) }; }
-		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o voluma armazenado (m³) válida. Maior que 0.01 e menor que {0}.", valor) }; }
+		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o volume armazenado (m³) válida. Maior que 0.01 e menor que {0}.", valor) }; }
 
         public Mensagem InformeDataInicioObra { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano)." }; } }
         public Mensagem InformeDataInicioObraFormatoValido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano) em um formato correto." }; } }
@@ -81,7 +81,7 @@
 		public Mensagem InformeAno (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o ano do período de {0}.", periodo) }; }
 		public Mensagem AnoInvalido (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Ano do período {0} inválido {0}.", periodo) }; }
 		public Mensagem PeriodoMaior (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("O período de {0} tem que ser maior ou igual a data de hoje.", periodo) }; }
-		public Mensagem DataTerminoMaiorInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "O período de término tem que ser maior que o período de início." }; } }
+		public Mensagem DataTerminoMaiorInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "O período de término deve ser maior do que o período de início." }; } }
 
 		public Mensagem InformeVazaoMinTipo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinTipo", Texto = "Informe o tipo de dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMinDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinDiametro", Texto = "Informe o diâmetro do dispositivo de vazão mínima." }; } }
