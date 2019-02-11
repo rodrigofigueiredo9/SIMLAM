@@ -578,7 +578,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		public ActionResult DestinatarioEditar(int id)
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(destinatario.EstadoID.Value));
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(destinatario.EstadoID));
 
 			return View("Destinatario/Editar", vm);
 		}
@@ -602,7 +602,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			DestinatarioPTV destinatario = _bus.Obter(id);
 
-			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(destinatario.EstadoID.Value), true);
+			DestinatarioPTVVM vm = new DestinatarioPTVVM(destinatario, ListaCredenciadoBus.Estados, ListaCredenciadoBus.Municipios(destinatario.EstadoID), true);
 
 			return View("Destinatario/Visualizar", vm);
 		}

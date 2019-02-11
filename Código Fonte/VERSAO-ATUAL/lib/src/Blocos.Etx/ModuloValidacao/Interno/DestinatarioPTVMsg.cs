@@ -17,8 +17,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem CNPJNaoAssociado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "CNPJ não esta associado a um destinatário." }; } }
 
-		public Mensagem ExportacaoNaoAssociado { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "Nome do destinatário não esta associado a um destinatário para exportação." }; } }
-
 		public Mensagem DestinatarioSalvoSucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Destinatário salvo com sucesso." }; } }
 
 		public Mensagem DestinatarioExcluido { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Destinatário excluído com sucesso." }; } }
@@ -30,8 +28,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem CPFDestinatarioJaExiste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CPF já está associado a um destinatário cadastrado.", Campo = "CPFCNPJ" }; } }
 
 		public Mensagem CNPJDestinatarioJaExiste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CNPJ já está associado a um destinatário cadastrado.", Campo = "CPFCNPJ" }; } }
-
-		public Mensagem ExportacaoDestinatarioJaExiste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O nome para exportação já está associado a um destinatário cadastrado.", Campo = "NomeRazaoSocial" }; } }
 
 		public Mensagem CNPJObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O CNPJ é obrigatório.", Campo = "CPFCNPJ" }; } }
 

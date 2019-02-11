@@ -15,12 +15,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloPTV.Destinatario
 		public string CPFCNPJ { get; set; }
 		public string NomeRazaoSocial { get; set; }
 		public string Endereco { get; set; }
-		public int? EstadoID { get; set; }
+		public int EstadoID { get; set; }
 		public string EstadoTexto { get; set; }
 		public string EstadoSigla { get; set; }
-		public int? MunicipioID { get; set; }
+		public int MunicipioID { get; set; }
 		public string MunicipioTexto { get; set; }
-		public string Pais { get; set; }
 		public string Itinerario { get; set; }
 	}
 }

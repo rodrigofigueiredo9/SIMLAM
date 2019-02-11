@@ -26,17 +26,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.DestinatarioPTV.EnderecoObrigatorio);
 			}
 
-			if (destinatario.EstadoID.Equals(0) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
+			if (destinatario.EstadoID.Equals(0))
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.EstadoObrigatorio);
 			}
 
-			if (destinatario.MunicipioID.Equals(0) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
+			if (destinatario.MunicipioID.Equals(0))
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.MunicipioObrigatorio);
 			}
 
-			if (string.IsNullOrWhiteSpace(destinatario.Itinerario) && destinatario.PessoaTipo != PessoaTipo.EXPORTACAO)
+			if (string.IsNullOrWhiteSpace(destinatario.Itinerario))
 			{
 				Validacao.Add(Mensagem.DestinatarioPTV.ItinerarioObrigatorio);
 			}
@@ -94,28 +94,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			if (destinatarioId > 0)
 			{
 				Validacao.Add(pessoaTipo == PessoaTipo.FISICA ? Mensagem.DestinatarioPTV.CPFDestinatarioJaExiste : Mensagem.DestinatarioPTV.CNPJDestinatarioJaExiste);
-			}
-
-			return Validacao.EhValido;
-		}
-
-		public bool VerificarExportacao(string nomeRazaoSocial)
-		{
-			if (string.IsNullOrEmpty(nomeRazaoSocial))
-			{
-				Validacao.Add(Mensagem.DestinatarioPTV.NomeObrigatorio);
-			}
-
-			if (!Validacao.EhValido)
-			{
-				return false;
-			}
-
-			int destinatarioId = _da.ObterIdExportacao(nomeRazaoSocial);
-
-			if (destinatarioId > 0)
-			{
-				Validacao.Add(Mensagem.DestinatarioPTV.ExportacaoDestinatarioJaExiste);
 			}
 
 			return Validacao.EhValido;

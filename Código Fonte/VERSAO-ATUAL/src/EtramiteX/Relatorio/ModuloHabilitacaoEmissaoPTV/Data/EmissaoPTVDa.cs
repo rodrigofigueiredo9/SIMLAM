@@ -111,8 +111,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					        led.sigla destinatario_uf,
 					        lmd.texto destinatario_mun,
 					        lme.texto as municipio_emissao,
-					        d.cpf_cnpj destinatario_cpfcnpj,
-							d.pais destinatario_pais
+					        d.cpf_cnpj destinatario_cpfcnpj 
                             from tab_ptv t 
                             left join tab_empreendimento e on t.empreendimento = e.id
                             left join tab_empreendimento_endereco ee on ee.empreendimento = e.id and ee.correspondencia = 0
@@ -155,11 +154,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.Destinatario.UF = reader.GetValue<string>("destinatario_uf");
 						emissaoPTV.Destinatario.Municipio = reader.GetValue<string>("destinatario_mun");
 						emissaoPTV.Destinatario.CPFCNPJ = reader.GetValue<string>("destinatario_cpfcnpj");
-						if (reader.GetValue<string>("destinatario_pais") != null)
-						{
-							emissaoPTV.Destinatario.Endereco += " - " + reader.GetValue<string>("destinatario_pais");
-						}
-
 						emissaoPTV.MunicipioEmissao = reader.GetValue<string>("municipio_emissao");
 						emissaoPTV.Empreendimento.ResponsavelRazaoSocial = reader.GetValue<string>("resp_razao_social");
 						emissaoPTV.Empreendimento.NomeRazao = reader.GetValue<string>("denominador");
@@ -202,8 +196,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
                         emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao");
                         emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse==9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
-						if (string.IsNullOrWhiteSpace(emissaoPTV.FuncionarioHabilitado.Registro))
-							emissaoPTV.FuncionarioHabilitado.Registro = emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea;
 					}
 					reader.Close();
 				}
@@ -354,7 +346,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 					d.municipio_texto destinatario_mun,
 					t.municipio_emissao_texto as municipio_emissao,
 					d.cpf_cnpj destinatario_cpfcnpj,
-					d.pais destinatario_pais,
 					t.declaracao_adicional_formatado
 				from hst_ptv                     t,
 					hst_empreendimento           e,
@@ -410,11 +401,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						emissaoPTV.Destinatario.UF = reader.GetValue<string>("destinatario_uf");
 						emissaoPTV.Destinatario.Municipio = reader.GetValue<string>("destinatario_mun");
 						emissaoPTV.Destinatario.CPFCNPJ = reader.GetValue<string>("destinatario_cpfcnpj");
-						if(reader.GetValue<string>("destinatario_pais") != null)
-						{
-							emissaoPTV.Destinatario.Endereco += " - " + reader.GetValue<string>("destinatario_pais");
-						}
-
 						emissaoPTV.MunicipioEmissao = reader.GetValue<string>("municipio_emissao");
 						emissaoPTV.DataExecucao = reader.GetValue<DateTime>("data_execucao");
 						emissaoPTV.Empreendimento.ResponsavelRazaoSocial = reader.GetValue<string>("resp_razao_social");
@@ -488,8 +474,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 
                         emissaoPTV.FuncionarioHabilitado.UFHablitacao = reader.GetValue<int>("uf_habilitacao_id");
                         emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea = (orgaoClasse == 9 && emissaoPTV.FuncionarioHabilitado.UFHablitacao != 8) ? reader.GetValue<string>("registro_orgao_classe") + "/" + reader.GetValue<string>("sigla") : reader.GetValue<string>("numero_visto_crea");
-						if (string.IsNullOrWhiteSpace(emissaoPTV.FuncionarioHabilitado.Registro))
-							emissaoPTV.FuncionarioHabilitado.Registro = emissaoPTV.FuncionarioHabilitado.NumeroVistoCrea;
 					}
 
 					reader.Close();
@@ -763,7 +747,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 						{
 							int origemPTV = reader.GetValue<int>("origem");
 							int origemTipoPTV = reader.GetValue<int>("origem_tipo");
-							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida");
+							int unidadeMedidaIdPTV = reader.GetValue<int>("unidade_medida_id");
 
 							retorno.AddRange(ObterDeclaracaoAdicional(origemPTV, origemTipoPTV, (int)ValidacoesGenericasBus.ObterTipoProducao(unidadeMedidaIdPTV), cultivarID, bancoDeDados));
 						}

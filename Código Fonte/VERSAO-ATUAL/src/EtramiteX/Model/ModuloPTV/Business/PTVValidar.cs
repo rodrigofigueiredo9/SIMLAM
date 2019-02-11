@@ -609,32 +609,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return destinatario;
 		}
 
-		public DestinatarioPTV ValidarDestinatarioExportacao(string nomeDestinatario)
-		{
-			DestinatarioPTV destinatario = new DestinatarioPTV();
-
-			if (string.IsNullOrEmpty(nomeDestinatario))
-			{
-				Validacao.Add(Mensagem.PTV.DestinatarioObrigatorio);
-			}
-
-			if (Validacao.EhValido)
-			{
-				DestinatarioPTVBus destinatarioBus = new DestinatarioPTVBus();
-
-				int idDestinatario = destinatarioBus.ObterIdExportacao(nomeDestinatario);
-				destinatario = destinatarioBus.Obter(idDestinatario);
-
-				if (destinatario.ID <= 0)
-				{
-					NovoDestinatario = true;//Habilita botão Novo destinatário
-					Validacao.Add(Mensagem.PTV.DestinatarioNaoCadastrado);
-				}
-			}
-
-			return destinatario;
-		}
-
 		internal bool Ativar(DateTecno DataAtivacao, PTV ptvBanco)
 		{
 			if (!FuncionarioHabilitadoValido())
