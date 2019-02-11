@@ -354,7 +354,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						{
 							comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set d.dominio = :dominio, d.zona = :zona, d.identificacao = :identificacao, 
 							d.area_requerida = :area_requerida, d.area_croqui = :area_croqui, d.perimetro = :perimetro, d.regularizacao_tipo = :regularizacao_tipo, d.relacao_trabalho= :relacao_trabalho, 
-							d.benfeitorias = :benfeitorias, d.observacoes = :observacoes, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao = :data_ultima_atualizacao,
+							d.benfeitorias = :benfeitorias, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao = :data_ultima_atualizacao,
 							d.registro = :registro, d.numero_ccri = :numero_ccri, d.area_ccri = :area_ccri, d.confrontante_norte = :confrontante_norte,  d.confrontante_sul = :confrontante_sul, d.confrontante_leste = :confrontante_leste, d.confrontante_oeste = :confrontante_oeste where d.id = :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
@@ -367,7 +367,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							numero_ccri, area_ccri, confrontante_norte, confrontante_sul, confrontante_leste, confrontante_oeste) 
 							values 
 							({0}seq_crt_regularizacao_dominio.nextval, :regularizacao, :dominio, :zona, :identificacao, :area_requerida, :area_croqui, :perimetro, :regularizacao_tipo, 
-							:relacao_trabalho, :benfeitorias, :observacoes, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
+							:relacao_trabalho, :benfeitorias, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
 							:area_ccri, :confrontante_norte, :confrontante_sul, :confrontante_leste, :confrontante_oeste) returning d.id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
@@ -383,7 +383,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
 						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
+						//comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
@@ -397,6 +397,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
 						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
 						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set observacoes = '" + item.Observacoes + "' where id = " + item.Id, EsquemaBanco);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 
