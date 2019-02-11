@@ -139,17 +139,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCredenciado.Business
 				return false;
 			}
 
-    //        try
-    //        {
-				//var wSDUA = new WSDUA();
-				//var dua = wSDUA.ObterDUA(liberacao.NumeroDua, liberacao.CPF);
+            try
+            {
+				var wSDUA = new WSDUA();
+				var dua = wSDUA.ObterDUA(liberacao.NumeroDua, liberacao.CPF);
 
-				//ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
-    //        }
-    //        catch (Exception exc)
-    //        {
-    //            Validacao.AddErro(exc);
-    //        }
+				ValidarDadosWebServiceDuaCFO(dua, liberacao.NumeroDua, liberacao.CPF, liberacao);
+            }
+            catch (Exception exc)
+            {
+                Validacao.AddErro(exc);
+            }
 
 			if (liberacao.LiberarBlocoCFO)
 			{

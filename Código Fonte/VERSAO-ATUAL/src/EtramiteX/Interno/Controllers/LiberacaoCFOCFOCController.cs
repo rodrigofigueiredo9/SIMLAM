@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
         [Permite(RoleArray = new Object[] { ePermissao.LiberacaoNumeroCFOCFOCCriar })]
         public ActionResult VerificarConsultaDUA(string NumeroDua, string cpf)
         { 
-            //_bus.VerificarDUA(NumeroDua, cpf);
+            _bus.VerificarDUA(NumeroDua, cpf);
 
             return Json(new
             {
@@ -133,7 +133,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (Validacao.EhValido)
 				credenciado = _busCredenciadoInterno.ObterPorCPF(cpf);
 
-            //_bus.VerificarDUA(NumeroDua, cpf);
+            _bus.VerificarDUA(NumeroDua, cpf);
 
 			return Json(new { @Msg = Validacao.Erros, @EhValido = Validacao.EhValido, @Credenciado = credenciado });
 		}

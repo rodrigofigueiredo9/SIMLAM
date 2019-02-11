@@ -162,6 +162,7 @@
     <Compile Include="jobs\Class\Datum.cs" />
     <Compile Include="jobs\Class\Dependencia.cs" />
     <Compile Include="jobs\Class\DisplayAttribute.cs" />
+    <Compile Include="jobs\Class\eBanco.cs" />
     <Compile Include="jobs\Class\eCarSolicitacaoOrigem.cs" />
     <Compile Include="jobs\Class\eCARSolicitacaoSituacao.cs" />
     <Compile Include="jobs\Class\eFiscalizacaoSituacao.cs" />
