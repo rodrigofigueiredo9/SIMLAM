@@ -5,13 +5,13 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BarragemDispensaLicencaVM>" %>
 
 <fieldset class="block box">
-	<legend>Descrição da barragem a contruir</legend>
+	<legend>Descrição da barragem a construir</legend>
 
 	<div class="block">
 		<div class="coluna80">
-			<label for="PerguntaSupressaoAContruir">Haverá supressão de vegetação em Área de Preservação Permanente (APP) para implantação da barragem? *</label>
-			<%= Html.RadioButton("PerguntaSupressaoAContruir", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAContruir" })) %> Sim
-			<%= Html.RadioButton("PerguntaSupressaoAContruir", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAContruir" })) %> Não
+			<label for="PerguntaSupressaoAConstruir">Haverá supressão de vegetação em Área de Preservação Permanente (APP) para implantação da barragem? *</label>
+			<%= Html.RadioButton("PerguntaSupressaoAConstruir", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Sim
+			<%= Html.RadioButton("PerguntaSupressaoAConstruir", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Não
 		</div>
 	</div>
 	<div class="block">
@@ -35,7 +35,7 @@
 			<%= Html.DropDownList("VertedouroTipo", Model.VertedouroTiposLst,ViewModelHelper.SetaDisabled(Model.IsVisualizar,new { @class="ddlTipoDispositivoVazaoMaxAConstruir" })) %>
 		</div>
 		<div class="coluna40">
-			<label for="DiametroTubulacaoVazaoMax">Largura e altura ou diâmetro da tubulação (m) *</label>
+			<label for="DiametroTubulacaoVazaoMax">Largura e altura ou Diâmetro (m) *</label>
 			<%= Html.TextBox("DiametroTubulacaoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDiametroTubulacaoVazaoMaxAConstruir", maxlength = "20" })) %>
 		</div>
 		<br />
