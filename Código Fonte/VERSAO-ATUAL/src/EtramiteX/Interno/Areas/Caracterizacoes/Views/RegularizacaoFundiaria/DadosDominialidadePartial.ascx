@@ -121,7 +121,7 @@
 						<input type="text" id="Livro" name="Livro" class="text txtLivro campoMatricula" maxlength="24" />
 					</div>
 					<div class="coluna22">
-						<label for="AreaDocumento">Área Documento (ha) *</label>
+						<label for="AreaDocumento">Área Documento (m²) *</label>
 						<input type="text" id="AreaDocumento" name="AreaDocumento" class="text maskDecimalPonto txtAreaDocumento campoMatricula" maxlength="20" />
 					</div>
 				</div>

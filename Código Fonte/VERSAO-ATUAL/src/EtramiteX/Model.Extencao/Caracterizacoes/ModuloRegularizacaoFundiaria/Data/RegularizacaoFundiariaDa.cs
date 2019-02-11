@@ -111,7 +111,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
 						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 500, item.Observacoes);
+						comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -383,7 +383,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
 						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 500, item.Observacoes);
+						comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
