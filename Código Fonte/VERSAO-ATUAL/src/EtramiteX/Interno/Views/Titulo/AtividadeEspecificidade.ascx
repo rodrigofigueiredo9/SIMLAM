@@ -25,6 +25,15 @@
 		</div>
 	</div>
 
+	<% if(Model.Especificidade == Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.eEspecificidade.AutorizacaoExploracaoFlorestal){ %>
+	<div class="block">
+		<div class="coluna75">
+			<label>Destinatário *</label>
+			<%: Html.DropDownList("Autorizacao.Destinatario", Model.Destinatarios, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Destinatarios.Count <= 1, new { @class = "text  ddlDestinatarios" }))%>
+		</div>
+	</div>
+	<%} %>
+
 	<% if (!Model.IsVisualizar) { %>
 			<div class="block">
 				<div class="coluna75">

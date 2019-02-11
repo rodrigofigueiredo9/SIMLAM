@@ -32,6 +32,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloChecagemPendencia.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloChecagemRoteiro.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProcesso.Business;
@@ -50,11 +51,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys;
 		DocumentoValidar _validar = new DocumentoValidar();
 		ProtocoloDa _da = new ProtocoloDa();
-		PessoaBus _busPessoa = new PessoaBus(new PessoaValidar());		
+		PessoaBus _busPessoa = new PessoaBus(new PessoaValidar());
 		ChecagemRoteiroBus _busCheckList = new ChecagemRoteiroBus();
 		RequerimentoBus _busRequerimento = new RequerimentoBus(new RequerimentoValidar());
 		FiscalizacaoBus _busFiscalizacao;
 		ProjetoDigitalBus _busProjetoDigital;
+		FuncionarioBus _busFuncionario = new FuncionarioBus();
 
 		public static EtramiteIdentity User
 		{
@@ -672,6 +674,49 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 			return doc;
 		}
 
+		public List<ListaValor> ObterAssinanteFuncionarios(int setorId, int cargoId)
+		{
+			try
+			{
+				return _da.ObterAssinanteFuncionarios(setorId, cargoId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<ListaValor> ObterAssinanteCargos(int setorId)
+		{
+			try
+			{
+				return _da.ObterAssinanteCargos(setorId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<TituloAssinante> ObterAssinantesCargos(List<TituloAssinante> lstAssinantes)
+		{
+			try
+			{
+				foreach (TituloAssinante assinante in lstAssinantes)
+				{
+					assinante.Cargos = _busFuncionario.ObterFuncionarioCargos(assinante.FuncionarioId);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return lstAssinantes;
+		}
+
 		#endregion
 
 		#region Verificar / Validar
@@ -717,7 +762,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 		}
 
 		public string VerificarDocumentoJuntadoNumero(int protocolo)
-		{			
+		{
 			ProtocoloNumero retorno = _da.VerificarProtocoloAssociado(protocolo);
 			if (retorno != null)
 			{

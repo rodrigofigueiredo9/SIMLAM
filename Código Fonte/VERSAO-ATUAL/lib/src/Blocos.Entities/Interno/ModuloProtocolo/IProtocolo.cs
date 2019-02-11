@@ -9,6 +9,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFuncionario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
+using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 {
@@ -40,5 +41,9 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo
 		List<ResponsavelTecnico> Responsaveis { get; set; }
 		Arquivo.Arquivo Arquivo { get; set; }
 		Funcionario Emposse { get; set; }
+		String InteressadoLivre { get; set; }
+		String InteressadoLivreTelefone { get; set; }
+		Int32 Folhas { get; set; }
+		List<TituloAssinante> Assinantes { get; set; }
 	}
 }

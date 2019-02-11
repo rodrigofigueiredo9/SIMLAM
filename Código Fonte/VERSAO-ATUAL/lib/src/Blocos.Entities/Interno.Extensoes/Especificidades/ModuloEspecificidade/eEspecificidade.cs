@@ -48,6 +48,7 @@
 		CertificadoCadastroProdutoAgrotoxico = 53,
 		TermoCPFARLC = 44,
 		TermoCPFARLCR = 45,
-		CertidaoDispensaLicenciamentoAmbiental = 54
+		CertidaoDispensaLicenciamentoAmbiental = 54,
+		LaudoVistoriaQueimaControlada = 60
 	}
 }

@@ -5,10 +5,13 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloLaudo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo;
 
@@ -90,17 +93,38 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Especificidades.ViewModels.Laudo
 			set { _arquivoVM = value; }
 		}
 
-		public LaudoVistoriaFlorestalVM(LaudoVistoriaFlorestal laudo,List<Protocolos> processosDocumentos,List<AtividadeSolicitada> atividades,
+		private List<TituloExploracaoFlorestal> _exploracoes = new List<TituloExploracaoFlorestal>();
+		public List<TituloExploracaoFlorestal> Exploracoes { get { return _exploracoes; } set { _exploracoes = value; } }
+
+		public string ParecerFavoravelLabel { get; set; }
+		public string ParecerDesfavoravelLabel { get; set; }
+
+		public String Mensagens
+		{
+			get
+			{
+				return ViewModelHelper.Json(new
+				{
+					@CaracterizacaoDuplicada = Mensagem.LaudoVistoriaFlorestalMsg.CaracterizacaoDuplicada
+				});
+			}
+		}
+
+		public LaudoVistoriaFlorestalVM(int? modeloTitulo, LaudoVistoriaFlorestal laudo,List<Protocolos> processosDocumentos,List<AtividadeSolicitada> atividades,
 			List<CaracterizacaoLst> caracterizacoes, List<PessoaLst> destinatarios, List<PessoaLst> responsaveisTecnicos, List<Lista> parecerTecnico, 
 			List<TituloCondicionante> condicionantes = null, string processoDocumentoSelecionado = null, bool isVisualizar = false)
 		{
 			Laudo = laudo;
-			caracterizacoes = caracterizacoes.Where(x => x.Id == (int)eCaracterizacao.ExploracaoFlorestal || x.Id == (int)eCaracterizacao.QueimaControlada || x.Id == (int)eCaracterizacao.Silvicultura).ToList();
-
 			IsVisualizar = isVisualizar;
 			ArquivoVM.IsVisualizar = isVisualizar;
 			Atividades = new AtividadeEspecificidadeVM(processosDocumentos, atividades, processoDocumentoSelecionado, 0, isVisualizar);
-			Caracterizacoes = ViewModelHelper.CriarSelectList(caracterizacoes, true, true, selecionado: laudo.Caracterizacao.ToString());
+			if(modeloTitulo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+				Caracterizacoes = ViewModelHelper.CriarSelectList(caracterizacoes, true, true);
+			else
+			{
+				caracterizacoes = caracterizacoes.Where(x => x.Id == (int)eCaracterizacao.ExploracaoFlorestal || x.Id == (int)eCaracterizacao.QueimaControlada || x.Id == (int)eCaracterizacao.Silvicultura).ToList();
+				Caracterizacoes = ViewModelHelper.CriarSelectList(caracterizacoes, true, true, selecionado: laudo.Caracterizacao.ToString());
+			}
 			Destinatarios = ViewModelHelper.CriarSelectList(destinatarios, true, true, Laudo.Destinatario.ToString());
 			ResponsaveisTecnico = ViewModelHelper.CriarSelectList(responsaveisTecnicos, true, true, Laudo.Responsavel.ToString());
 			Conclusoes = ViewModelHelper.CriarSelectList(parecerTecnico, true, true, Laudo.Conclusao.ToString());

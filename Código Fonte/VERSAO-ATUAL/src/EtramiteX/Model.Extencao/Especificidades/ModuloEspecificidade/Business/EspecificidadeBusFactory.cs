@@ -43,6 +43,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 					return new LaudoConstatacaoBus();
 
 				case eEspecificidade.LaudoVistoriaFlorestal:
+				case eEspecificidade.LaudoVistoriaQueimaControlada:
 					return new LaudoVistoriaFlorestalBus();
 
 				case eEspecificidade.LaudoVistoriaFundiaria:

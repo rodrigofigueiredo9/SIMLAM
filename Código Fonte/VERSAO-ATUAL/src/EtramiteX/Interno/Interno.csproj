@@ -76,9 +76,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\System.Web.WebPages.Razor.dll</HintPath>
+    <Reference Include="System.Web.WebPages.Razor">
+      <HintPath>..\..\..\lib\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -161,6 +160,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\CaracterizacaoVME.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\CoordenadaAtividadeVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\ConsumoVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\ExploracaoFlorestalListVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoItemVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeConsolidacaoVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\UnidadeProducaoVM.cs" />
@@ -190,6 +190,7 @@
     <Compile Include="Areas\Caracterizacoes\ViewModels\SilviculturaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\SuinoculturaVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\TerraplanagemVM.cs" />
+    <Compile Include="Areas\Caracterizacoes\ViewModels\VMExploracaoFlorestal\ListarVM.cs" />
     <Compile Include="Areas\Caracterizacoes\ViewModels\VMProjetoGeografico\SobreposicoesVM.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AtividadeEspecificidadeController.cs" />
     <Compile Include="Areas\Especificidades\Controllers\AutorizacaoController.cs" />
@@ -269,8 +270,6 @@
     <Compile Include="Controllers\AgrotoxicoController.cs" />
     <Compile Include="Controllers\CFOCController.cs" />
     <Compile Include="Controllers\CFOController.cs" />
-    <Compile Include="Controllers\FiscalizacaoCobrancaController.cs" />
-    <Compile Include="Controllers\FiscalizacaoNotificacaoController.cs" />
     <Compile Include="Controllers\HabilitacaoEmissaoPTVController.cs" />
     <Compile Include="Controllers\CARSolicitacaoController.cs" />
     <Compile Include="Controllers\ConfiguracaoDocumentoFitossanitarioController.cs" />
@@ -300,17 +299,14 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\PenalidadeVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ProdutoDestinacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\CodigosReceitaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\HabilitacaoEmissaoPTVVM.cs" />
     <Compile Include="ViewModels\VMHabilitacaoEmissaoPTV\ListarVM.cs" />
     <Compile Include="ViewModels\VMAgrotoxico\ListarVM.cs" />
@@ -339,6 +335,8 @@
     <Compile Include="ViewModels\VMFiscalizacao\FiscalizacaoAssinanteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -377,6 +375,10 @@
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\CadastroAmbientalRural\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Dominialidade\DominialidadeARLPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarFiltros.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\ListarResultados.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\InformacaoCorte\Especie.ascx" />
@@ -414,8 +416,8 @@
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\DespolpamentoCafe.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\DespolpamentoCafe\Visualizar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Editar.aspx" />
-    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\EditarExploracaoFlorestal.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\ExploracaoFlorestal\VisualizarExploracaoFlorestal.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProducaoCarvaoVegetal\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\ProjetoGeografico\ProcessamentoPartial.ascx" />
@@ -478,10 +480,16 @@
     <Content Include="Areas\Especificidades\Views\Certificado\CertificadoRegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaCompraVenda.ascx" />
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
+    <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
+    <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoConstatacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoFundiarioSimplificado.ascx" />
-    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
+    <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaQueimaControlada.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFomentoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFundiaria.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaLicenciamento.ascx" />
@@ -703,8 +711,10 @@
     <Content Include="Content\_img\projdigital_04.gif" />
     <Content Include="Scripts\AlertaEPTV\alertaEPTV.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
+    <Content Include="Scripts\Areas\Caracterizacoes\exploracaoFlorestalListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Certidao\CertidaoDispensaLicenciamentoAmbiental.js" />
     <Content Include="Scripts\arquivoFiscalizacao.js" />
+    <Content Include="Scripts\bignumber.js" />
     <Content Include="Scripts\CFOC\emitir.js" />
     <Content Include="Scripts\CFOC\listar.js" />
     <Content Include="Scripts\CFOC\lote.js" />
@@ -1181,6 +1191,7 @@
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoConfiguracaoListarPergunta.js" />
     <Content Include="Scripts\Fiscalizacao\fiscalizacaoDocumentosGerados.js" />
     <Content Include="Scripts\jquery.tablesorter.js" />
+    <Content Include="Scripts\json-bigint.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\consultarNumeroCFOCFOCLiberado.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\liberarNumeroCFOCFOC.js" />
     <Content Include="Scripts\LiberacaoCFOCFOC\listar.js" />
@@ -1417,7 +1428,7 @@
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaCompraVenda.js" />
     <Content Include="Scripts\Areas\Especificidades\Escritura\escrituraPublicaDoacao.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoConstatacao.js" />
-    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaQueimaControlada.js" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFundiaria.js" />
     <Content Include="Scripts\Areas\Especificidades\Licenca\licencaPorteUsoMotosserra.js" />
     <Content Include="Scripts\Areas\Especificidades\Notificacao\notificacaoIndeferimento.js" />
@@ -1450,6 +1461,7 @@
     <Content Include="Scripts\PTVOutro\listar.js" />
     <Content Include="Scripts\PTV\listarEPTV.js" />
     <Content Include="Scripts\PTV\listar.js" />
+    <Content Include="Scripts\PTV\retificacaoNFCaixa.js" />
     <Content Include="Scripts\RelatorioEspecifico\relatorioMapa.js" />
     <Content Include="Scripts\Setor\listar.js" />
     <Content Include="Scripts\Setor\listarItem.js" />
@@ -2188,6 +2200,8 @@
     <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
+    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />
@@ -2423,10 +2437,15 @@
     <Content Include="Views\PTVOutro\ListarResultados.ascx" />
     <Content Include="Views\PTVOutro\PTVOutroPartial.ascx" />
     <Content Include="Views\PTVOutro\Visualizar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarListar.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarPartial.ascx" />
     <Content Include="Views\PTV\ComunicadorPTVPartial.ascx" />
     <Content Include="Views\PTV\AtivarPartial.ascx" />
     <Content Include="Views\PTV\CancelarPartial.ascx" />
     <Content Include="Views\PTV\Ativar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarResultados.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarFiltros.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixa.aspx" />
     <Content Include="Views\PTV\EPTVPartialCredenciado.ascx" />
     <Content Include="Views\PTV\EPTVVisualizar.aspx" />
     <Content Include="Views\PTV\EPTVAnalisar.aspx" />
@@ -2852,8 +2871,10 @@
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
     <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\Simlam_DEV.pubxml" />
     <None Include="Properties\PublishProfiles\versao 2.pubxml" />
     <None Include="Properties\PublishProfiles\versao-ddsiv.pubxml" />
     <None Include="Properties\PublishProfiles\Versao-Apresentacao_car.pubxml" />

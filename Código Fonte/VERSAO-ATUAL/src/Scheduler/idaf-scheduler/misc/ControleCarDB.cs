@@ -110,6 +110,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 							 resultado.codigoResposta == 400 ||
 							 resultado.codigoResposta == 500)
 						{
+							resultado.mensagensResposta = TratandoMensagens(conn, resultado.mensagensResposta);
 							pendencias = resultado.mensagensResposta.Aggregate("", (current, resposta) => current + (resposta + " ; "));
 							situacaoEnvio = SITUACAO_ENVIO_ARQUIVO_REPROVADO;
 						}
@@ -149,7 +150,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("pendencias = :pendencias,");
 			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
-			sqlBuilder.Append("url_recibo = :url_recibo,");
+			if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+				sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
 			if(!String.IsNullOrWhiteSpace(codigoProtocolo))
@@ -177,7 +179,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
-					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
+					if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+						cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
 					if (!String.IsNullOrWhiteSpace(codigoProtocolo))
@@ -233,7 +236,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("pendencias = :pendencias,");
 			if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 				sqlBuilder.Append("codigo_imovel = :codigo_imovel,");
-			sqlBuilder.Append("url_recibo = :url_recibo,");
+			if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+				sqlBuilder.Append("url_recibo = :url_recibo,");
 			sqlBuilder.Append("status_sicar = :status_sicar,");
 			sqlBuilder.Append("condicao = :condicao,");
 
@@ -252,7 +256,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 					cmd.Parameters.Add(new OracleParameter("pendencias", pendencias));
 					if (!String.IsNullOrWhiteSpace(resultado.codigoImovel))
 						cmd.Parameters.Add(new OracleParameter("codigo_imovel", resultado.codigoImovel));
-					cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
+					if (!String.IsNullOrWhiteSpace(resultado.urlReciboInscricao))
+						cmd.Parameters.Add(new OracleParameter("url_recibo", resultado.urlReciboInscricao));
 					cmd.Parameters.Add(new OracleParameter("status_sicar", "IN"));
 					cmd.Parameters.Add(new OracleParameter("condicao", condicao));
 
@@ -536,8 +541,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			sqlBuilder.Append("situacao = :situacao,");
 			sqlBuilder.Append("situacao_data = SYSDATE,");
 			sqlBuilder.Append("situacao_anterior = situacao,");
-			sqlBuilder.Append("situacao_anterior_data = situacao_data,");
-			sqlBuilder.Append("motivo = :motivo");
+			sqlBuilder.Append("situacao_anterior_data = situacao_data");
 			sqlBuilder.Append(" WHERE id = :id");
 
 			try
@@ -546,8 +550,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				{
 					cmd.Parameters.Add(new OracleParameter("tid", tid));
 					cmd.Parameters.Add(new OracleParameter("situacao", situacao));
-					if (situacao == 2 || situacao == 1) cmd.Parameters.Add(new OracleParameter("motivo", " "));
-					if (situacao == 6 || situacao == 3) cmd.Parameters.Add(new OracleParameter("motivo", "Arquivo CAR Reprovado"));
 					cmd.Parameters.Add(new OracleParameter("id", solicitacaoId));
 
 					cmd.ExecuteNonQuery();
@@ -833,6 +835,37 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				Log.Error("Erro ao conectar ao Banco de dados - INSERIR:" + exception.Message, exception);
 			}
+		}
+
+		private static List<string> TratandoMensagens(OracleConnection conn, List<string> mensagens)
+		{
+			for (int i =0; i < mensagens.Count; i++)
+			{
+				if(mensagens[i].Contains("Ocorreu um erro ao processar"))
+				{
+					mensagens[i] = "Mensagem retornada do SICAR: " + mensagens[i];
+				}
+			}
+
+			return mensagens;
+			//Ocorreu um erro ao processar 
+		}
+
+		public static bool VerificarCarValido(OracleConnection conn, int id)
+		{
+			try
+			{
+				using (var cmd = new OracleCommand(@"SELECT count(1) FROM TAB_CONTROLE_SICAR WHERE SOLICITACAO_CAR = :id AND SITUACAO_ENVIO = 6", conn))
+				{
+					cmd.Parameters.Add(new OracleParameter("id", id));
+					return Convert.ToBoolean(cmd.ExecuteScalar());
+				}
+			}
+			catch (Exception exception)
+			{
+				Log.Error("Erro VerificarCarValido:  - " + id + " ID -- " + exception + " + exception.Message, exception");
+			}
+			return false;
 		}
 	}
 }

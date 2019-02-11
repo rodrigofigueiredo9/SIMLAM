@@ -11,6 +11,8 @@
 		$(function () {
 			ConsultarInformacoes.urlGerarEntregaPdf = '<%= Url.Action("GerarPdfEntrega", "Titulo") %>';
 			ConsultarInformacoes.urlGerarRecebimentoPdf = '<%= Url.Action("GerarPdfDocRegistroRecebimento", "Processo") %>';
+			ConsultarInformacoes.urlGerarCIPdf = '<%= Url.Action("GerarPdfDocComunicacaoInterna", "Processo") %>';
+			ConsultarInformacoes.urlGerarOficioPdf = '<%= Url.Action("GerarPdfDocOficioAdministrativo", "Processo") %>';
 			ConsultarInformacoes.urlPdfHistoricoTramitacao = '<%= Url.Action("Historico", "Tramitacao") %>';
 			ConsultarInformacoes.urlPdfAnalise = '<%= Url.Action("GerarPdfAnaliseDocumeto", "AnaliseItens") %>';
 			ConsultarInformacoes.urlPdfDocumentosJuntados = '<%= Url.Action("GerarPdfDocJuntadoProcApensado", "Processo") %>';

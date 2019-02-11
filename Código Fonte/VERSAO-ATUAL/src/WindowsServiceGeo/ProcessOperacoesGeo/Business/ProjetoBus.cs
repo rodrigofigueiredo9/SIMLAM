@@ -51,7 +51,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 			}
 		}
 
-		private void SalvarArquivo(Arquivo arquivo)
+		private int? SalvarArquivo(Arquivo arquivo)
 		{
 			if (arquivo != null)
 			{
@@ -74,9 +74,11 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 					}
 				}
 			}
+
+			return arquivo.Id;
 		}
 
-		public void SalvarArquivo(Arquivo arquivo, int projeto, int tipoProjeto, int tipoArquivo)
+		public int? SalvarArquivo(Arquivo arquivo, int projeto, int tipoProjeto, int tipoArquivo, int? titulo = null)
 		{
 			_banco.IniciarTransacao();
 			string[] fileNames = ",BaseDeReferencia.zip,BaseDeReferenciaGEOBASES.zip,ArquivoEnviado.zip,RelatorioImportacao.pdf,ArquivoProcessado.zip,ArquivoProcessadoTrackMaker.zip,PdfDoMapa.pdf,PecaTecnica.pdf".Split(',');
@@ -87,10 +89,20 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 			arquivo.ContentLength = (int)arquivo.Buffer.Length;
 			arquivo.ContentType = (arquivo.Extensao == ".zip") ? "application / octet - stream" : "application / pdf";
 
-			SalvarArquivo(arquivo);
+			int? idArquivo = SalvarArquivo(arquivo);
 
-			_dataAccess.SetArquivoDisponivel(arquivo.Id ?? 0, projeto, tipoProjeto, tipoArquivo);
+			if (titulo != null)
+			{
+				_dataAccess.SetArquivoTitulo(arquivo.Id ?? 0, titulo, tipoProjeto, tipoArquivo);
+			}
+			else
+			{
+				_dataAccess.SetArquivoDisponivel(arquivo.Id ?? 0, projeto, tipoProjeto, tipoArquivo);
+			}
+
 			_banco.Commit();
+
+			return idArquivo;
 		}
 
 		public string ObterCaminhoDoArquivoEnviado(int projeto)

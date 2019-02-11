@@ -147,6 +147,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTramitacao
 			get { return _arquivo; }
 			set { _arquivo = value; }
 		}
+		public String DestinoExterno { get; set; }
+		public String CodigoRastreio { get; set; }
+		public int? FormaEnvio { get; set; }
+		public String NumeroAutuacao { get; set; }
 
 		public Tramitacao() {}
 	}

@@ -18,6 +18,7 @@ using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCFOCFOC.Business;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPulverizacaoProduto;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -174,6 +175,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					}
 				}
 			}
+
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1 && ptv.NotaFiscalDeCaixas.Count() <= 0))
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
+			}
+
+			if (ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana) && ptv.NotaFiscalDeCaixas.Count() <= 0)
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionadaECulturaBanana);
 
 			return Validacao.EhValido;
 		}
@@ -869,5 +878,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 			return habilitado;
 		}
+
+		#region Retificação NotaFiscalDeCaixa
+		internal bool ExcluirNFCaixa(int id)
+		{
+			if (_da.VerificarExcluirNFCaixa(id))
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.NaoPodeExcluir);
+
+			return Validacao.EhValido;
+		}
+		#endregion
 	}
 }

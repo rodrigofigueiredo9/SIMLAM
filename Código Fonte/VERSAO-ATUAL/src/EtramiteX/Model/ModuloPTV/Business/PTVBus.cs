@@ -336,6 +336,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
+							eptvBanco.LacreNumero = eptv.LacreNumero;
+							eptvBanco.ContainerNumero = eptv.ContainerNumero;
+							eptvBanco.PoraoNumero = eptv.PoraoNumero;
+							eptvBanco.PartidaLacradaOrigem = eptv.PartidaLacradaOrigem;
 							eptvBanco.ValidoAte = eptv.ValidoAte;
 							eptvBanco.ResponsavelTecnicoId = eptv.ResponsavelTecnicoId;
 							eptvBanco.ResponsavelTecnicoNome = eptv.ResponsavelTecnicoNome;
@@ -1188,5 +1192,99 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 
 		#endregion Alerta de E-PTV
+
+		#region Retificação Nota fiscal de caixa
+
+		public Resultados<RetificacaoNFCaixaListarResultado> FiltrarNFCaixa(RetificacaoNFCaixaListarFiltro ptvListarFiltro, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<RetificacaoNFCaixaListarFiltro> filtro = new Filtro<RetificacaoNFCaixaListarFiltro>(ptvListarFiltro, paginacao);
+				Resultados<RetificacaoNFCaixaListarResultado> resultados = _da.FiltrarNFCaixa(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		public bool ExcluirNFCaixa(int id)
+		{
+			try
+			{
+				if (!_validar.ExcluirNFCaixa(id))
+				{
+					return false;
+				}
+
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ExcluirNFCaixa(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.RetificacaoNFCaixa.Excluido);
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public NotaFiscalCaixa ObterNFCaixa(int id)
+		{
+			try
+			{
+				return _da.ObterNFCaixa(id);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new NotaFiscalCaixa();
+		}
+
+		public Resultados<PTVNFCaixaResultado> ObterPTVNFCaixa(Filtro<int> filtro)
+		{
+			try
+			{
+				return _da.ObterPTVNFCaixa(filtro);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new Resultados<PTVNFCaixaResultado>();
+		}
+
+		public void SalvarNFCaixa(int id, int novoSaldo)
+		{
+			try
+			{
+				_da.SalvarNFCaixa(id, novoSaldo);
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.Salvar);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+		}
+
+		#endregion
 	}
 }

@@ -275,11 +275,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#region NotaFiscalCaixa
 		public Mensagem NotaFiscalDeCaixaNumeroVazio { get { return new Mensagem() { Campo = "", Texto = "O número da nota fiscal de caixa está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem CpfCnpjNotaFiscalDeCaixaVazio { get { return new Mensagem() { Campo = "", Texto = "O número do CPF/CNPJ está vazio.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NumeroDeCaixasMaiorQueSaldoAtual { get { return new Mensagem() { Campo = "", Texto = "Você não pode consumir mais caixas que o saldo atual.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem SaldoInicialMaiorQueZero { get { return new Mensagem() { Campo = "", Texto = "O saldo inicial precisa ser maior que zero.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem SaldoENumeroCaixasRequerid { get { return new Mensagem() { Campo = "", Texto = "Os campos Total de caixas e Nº de caixas utilizadas precisam ser maiores do que 0.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem InserirGridCaixaNumerosNFIguais { get { return new Mensagem() { Campo = "", Texto = "Esse N° da nota fiscal de caixa já foi inserido.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NenhumaNFCaixaAdicionada { get { return new Mensagem() { Campo = "", Texto = "Você não adicionou nenhuma Nota Fiscal de caixa.", Tipo = eTipoMensagem.Advertencia }; } }
+		public Mensagem NenhumaNFCaixaAdicionadaECulturaBanana { get { return new Mensagem() { Campo = "", Texto = "Você precisa de uma Nota fiscal de caixa caso um documento de origem tenha como cultura 'Banana'.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem NumeroDiferenteDoTipo(string numero, string tipo)
 		{
 			return new Mensagem() { Texto = String.Format("A nota fiscal {0} está cadastrada com o tipo {1}.", numero, tipo), Tipo = eTipoMensagem.Advertencia };

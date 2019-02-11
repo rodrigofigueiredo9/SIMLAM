@@ -37,7 +37,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 
 		public Hashtable ObterDadosPDF()
 		{
-			return _dataAccess.BuscarDadosPDF(Project.Id, Project.Type);
+			return _dataAccess.BuscarDadosPDF(Project.Id, Project.Type, Project.Step);
 		}
 
 		#endregion
@@ -824,6 +824,48 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business
 			doc.Open();
 
 			Hashtable hashData = ObterDadosPDF();
+
+			mxd.GerarPdf(doc, wrt, Project.Id, hashData);
+			GerarVersoAtividade(doc, wrt, hashData);
+
+			doc.Close();
+
+			mxd.ApagarTempFile();
+
+			return ms;
+		}
+
+		internal MemoryStream GerarPdfAtividadePorTitulo(MxdLayout mxd, out int titulo)
+		{
+			Document doc = new Document(mxd.MxdPageSize, 85, 40, 73, 50);
+
+			MemoryStream ms = new MemoryStream();
+			PdfWriter wrt = PdfWriter.GetInstance(doc, ms);
+
+			//Cabecalho e Rodape
+			Hashtable htConfiguracoes = ObterDadosCabecalhoRodapePDF();
+
+			PdfCabecalhoRodape headerFooter = new PdfCabecalhoRodape();
+
+			headerFooter.GovernoNome = HasKey(htConfiguracoes, "GOVERNO_NOME") ? htConfiguracoes["GOVERNO_NOME"].ToString() : null;
+			headerFooter.OrgaoCep = HasKey(htConfiguracoes, "ORGAO_CEP") ? htConfiguracoes["ORGAO_CEP"].ToString() : null;
+			headerFooter.OrgaoContato = HasKey(htConfiguracoes, "ORGAO_CONTATO") ? htConfiguracoes["ORGAO_CONTATO"].ToString() : null;
+			headerFooter.OrgaoEndereco = HasKey(htConfiguracoes, "ORGAO_ENDERECO") ? htConfiguracoes["ORGAO_ENDERECO"].ToString() : null;
+			headerFooter.OrgaoMunicipio = HasKey(htConfiguracoes, "ORGAO_MUNICIPIO") ? htConfiguracoes["ORGAO_MUNICIPIO"].ToString() : null;
+			headerFooter.OrgaoNome = HasKey(htConfiguracoes, "ORGAO_NOME") ? htConfiguracoes["ORGAO_NOME"].ToString() : null;
+			headerFooter.OrgaoSigla = HasKey(htConfiguracoes, "ORGAO_SIGLA") ? htConfiguracoes["ORGAO_SIGLA"].ToString() : null;
+			headerFooter.OrgaoUF = HasKey(htConfiguracoes, "ORGAO_UF") ? htConfiguracoes["ORGAO_UF"].ToString() : null;
+			headerFooter.SecretariaNome = HasKey(htConfiguracoes, "SECRETARIA_NOME") ? htConfiguracoes["SECRETARIA_NOME"].ToString() : null;
+			headerFooter.SetorNome = HasKey(htConfiguracoes, "SETOR_NOME") ? htConfiguracoes["SETOR_NOME"].ToString() : null;
+
+			wrt.PageEvent = headerFooter;
+			//------------------------
+
+			doc.Open();
+
+			Hashtable hashData = ObterDadosPDF();
+
+			titulo = (int)hashData["TITULO"];
 
 			mxd.GerarPdf(doc, wrt, Project.Id, hashData);
 			GerarVersoAtividade(doc, wrt, hashData);

@@ -23,64 +23,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			LaudoVistoriaFlorestal esp = especificidade as LaudoVistoriaFlorestal;
-			RequerimentoAtividade(esp, apenasObrigatoriedade: true);
+			if(esp.Titulo.Modelo == "12") //Laudo de Vistoria de Exploração Florestal
+				RequerimentoAtividade(esp, jaAssociado: true, apenasObrigatoriedade: true);
+			else
+				RequerimentoAtividade(esp, apenasObrigatoriedade: true);
 
 			Destinatario(especificidade.ProtocoloReq.Id, esp.Destinatario, "Laudo_Destinatario");
 
 			ValidacoesGenericasBus.DataMensagem(esp.DataVistoria, "Laudo_DataVistoria_DataTexto", "vistoria");
 
 			if (String.IsNullOrWhiteSpace(esp.Objetivo))
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ObjetivoObrigatorio);
-			}
 
 			if (esp.Caracterizacao <= 0)
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.CaracterizacaoObrigatoria);
-			}
 			else
 			{
 				CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
 				int caracterizacao = caracterizacaoBus.Existe(esp.Titulo.EmpreendimentoId.GetValueOrDefault(), (eCaracterizacao)esp.Caracterizacao);
 
 				if (caracterizacao <= 0)
-				{
 					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.CaracterizacaoCadastrada);
-				}
-				else
-				{
-					CaracterizacaoValidar caracterizacaoValidar = new CaracterizacaoValidar();
-					List<Dependencia> dependencias = caracterizacaoBus.ObterDependencias(caracterizacao, 
-						(eCaracterizacao)esp.Caracterizacao, 
-						eCaracterizacaoDependenciaTipo.Caracterizacao);
-
-					string retorno = caracterizacaoValidar.DependenciasAlteradas(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(), 
-						esp.Caracterizacao, 
-						eCaracterizacaoDependenciaTipo.Caracterizacao, 
-						dependencias);
-
-					if (!string.IsNullOrEmpty(retorno))
-					{
-						List<CaracterizacaoLst> caracterizacoes = _caracterizacaoConfig.Obter<List<CaracterizacaoLst>>(ConfiguracaoCaracterizacao.KeyCaracterizacoes);
-						Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.CaracterizacaoInvalida(caracterizacoes.SingleOrDefault(x => x.Id == esp.Caracterizacao).Texto));
-					}
-				}
 			}
 
 			if (String.IsNullOrWhiteSpace(esp.Consideracao))
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConsideracoesObrigatorio);
-			}
 
-			if (String.IsNullOrWhiteSpace(esp.ParecerDescricao))
+			if (esp.Titulo.Modelo == "12") //Laudo de Vistoria de Exploração Florestal
 			{
-				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
+				if (esp.FavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricao))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
+
+				if (esp.DesfavoravelObrigatorio && String.IsNullOrWhiteSpace(esp.ParecerDescricaoDesfavoravel))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoDesfavoravelObrigatorio);
 			}
+			else if (String.IsNullOrWhiteSpace(esp.ParecerDescricao))
+					Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ParecerTecnicoDescricaoObrigatorio);
 
 			if (esp.Conclusao <= 0)
-			{
 				Validacao.Add(Mensagem.LaudoVistoriaFlorestalMsg.ConclusaoObrigatoria);
-			}
 
 			return Validacao.EhValido;
 		}

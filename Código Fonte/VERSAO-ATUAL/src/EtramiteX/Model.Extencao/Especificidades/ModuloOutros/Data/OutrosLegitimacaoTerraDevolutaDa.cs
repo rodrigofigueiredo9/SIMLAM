@@ -408,7 +408,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					{
 						var pessoa = DaEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), banco: bancoDeDados);
 						outros.Destinatarios.Add(pessoa);
-						outros.Titulo.AssinanteSource.Add(new AssinanteDefault { Cargo = "Titulado", Nome = pessoa.NomeRazaoSocial });
+						//outros.Titulo.AssinanteSource.Add(new AssinanteDefault { Cargo = "Titulado", Nome = pessoa.NomeRazaoSocial });
 					}
 
 					reader.Close();

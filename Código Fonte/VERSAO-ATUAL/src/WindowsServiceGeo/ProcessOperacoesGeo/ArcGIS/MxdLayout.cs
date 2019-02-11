@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +9,7 @@ using iTextSharp.text.pdf;
 using Tecnomapas.ArcGis;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Business.PDF.CabecalhoRodape;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data;
+using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Entities;
 
 namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 {
@@ -53,7 +54,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 		{
 			if (!File.Exists(_PathServico + "\\ArcGIS\\" + tipo.ToString() + ".mxd"))
 			{
-				throw new Exception("Arquivo " + tipo.ToString() + ".mxd n„o foi encontrado na pasta ArcGIS.");
+				throw new Exception("Arquivo " + tipo.ToString() + ".mxd n√£o foi encontrado na pasta ArcGIS.");
 			}
 
 			_mxd = new MxdService(_PathServico + "\\ArcGIS\\" + tipo.ToString() + ".mxd");
@@ -89,7 +90,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 			{
 				return new List<LayerItem>()
 				{
-					new LayerItem(){ Grupo=1, Name="VÈrtice matrÌcula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="V√©rtice matr√≠cula/posse", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Nascente", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Linha de transm.", Query="PROJETO={0}"},
@@ -97,39 +98,77 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 					new LayerItem(){ Grupo=1, Name="Estrada", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Duto", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rocha", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Massa d'·gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
+					new LayerItem(){ Grupo=1, Name="Massa d'√°gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
 					new LayerItem(){ Grupo=1, Name="Escarpa", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rest. de declividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea construÌda", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea constru√≠da", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="ARL em APP", Query="PROJETO={0} and TIPO = 'APP_ARL'"},
 					new LayerItem(){ Grupo=1, Name="RPPN", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Duna", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de servid„o", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de servid√£o", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="APP preservada", Query="PROJETO={0} and TIPO = 'APP_AVN'"},
-					new LayerItem(){ Grupo=1, Name="APP em recuperaÁ„o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
+					new LayerItem(){ Grupo=1, Name="APP em recupera√ß√£o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
 					new LayerItem(){ Grupo=1, Name="APP em uso", Query="PROJETO={0} and TIPO = 'APP_AA_USO'"},
-					new LayerItem(){ Grupo=1, Name="APP n„o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
+					new LayerItem(){ Grupo=1, Name="APP n√£o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
 					new LayerItem(){ Grupo=1, Name="ARL preservada", Query="PROJETO={0} and SITUACAO = 'PRESERV'"},
-					new LayerItem(){ Grupo=1, Name="ARL em recuperaÁ„o", Query="PROJETO={0} and SITUACAO = 'REC'"},
+					new LayerItem(){ Grupo=1, Name="ARL em recupera√ß√£o", Query="PROJETO={0} and SITUACAO = 'REC'"},
 					new LayerItem(){ Grupo=1, Name="ARL em uso", Query="PROJETO={0} and SITUACAO = 'USO'"},
-					new LayerItem(){ Grupo=1, Name="ARL n„o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
-					new LayerItem(){ Grupo=1, Name="¡rea de vegetaÁ„o nativa", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea alterada", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea de matrÌcula/posse", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea total da propriedade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de domÌnio", Query="PROJETO={0}"}
+					new LayerItem(){ Grupo=1, Name="ARL n√£o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
+					new LayerItem(){ Grupo=1, Name="√Årea de vegeta√ß√£o nativa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea alterada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea de matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea total da propriedade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de dom√≠nio", Query="PROJETO={0}"}
 				};
 			}
-
-			if (_tipo == ArquivoMxd.MAPA_ATIVIDADE)
+			else if (_tipo == ArquivoMxd.MAPA_ATIVIDADE_TITULO)
 			{
 				return new List<LayerItem>()
 				{
+					new LayerItem(){ Grupo=2, Name="Ponto da atividade", Query="ID IN ({0})"},
+					new LayerItem(){ Grupo=2, Name="Linha da atividade", Query="ID IN ({0})"},
+					new LayerItem(){ Grupo=2, Name="√Årea de influ√™ncia da atividade", Query="ID IN ({0})"},
+					new LayerItem(){ Grupo=2, Name="√Årea da atividade", Query="ID IN ({0})"},
+					new LayerItem(){ Grupo=1, Name="V√©rtice matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Nascente", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Linha de transm.", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Ferrovia", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Estrada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Duto", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rocha", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Massa d'√°gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
+					new LayerItem(){ Grupo=1, Name="Escarpa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rest. de declividade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea constru√≠da", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="ARL em APP", Query="PROJETO={0} and TIPO = 'APP_ARL'"},
+					new LayerItem(){ Grupo=1, Name="RPPN", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Duna", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de servid√£o", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="APP preservada", Query="PROJETO={0} and TIPO = 'APP_AVN'"},
+					new LayerItem(){ Grupo=1, Name="APP em recupera√ß√£o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
+					new LayerItem(){ Grupo=1, Name="APP em uso", Query="PROJETO={0} and TIPO = 'APP_AA_USO'"},
+					new LayerItem(){ Grupo=1, Name="APP n√£o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
+					new LayerItem(){ Grupo=1, Name="ARL preservada", Query="PROJETO={0} and SITUACAO = 'PRESERV'"},
+					new LayerItem(){ Grupo=1, Name="ARL em recupera√ß√£o", Query="PROJETO={0} and SITUACAO = 'REC'"},
+					new LayerItem(){ Grupo=1, Name="ARL em uso", Query="PROJETO={0} and SITUACAO = 'USO'"},
+					new LayerItem(){ Grupo=1, Name="ARL n√£o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
+					new LayerItem(){ Grupo=1, Name="√Årea de vegeta√ß√£o nativa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea alterada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea de matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea total da propriedade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de dom√≠nio", Query="PROJETO={0}"}
+				};
+			}
+			else if (_tipo == ArquivoMxd.MAPA_ATIVIDADE)
+			{
+				return new List<LayerItem>()
+				{					
 					new LayerItem(){ Grupo=2, Name="Ponto da atividade", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=2, Name="Linha da atividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=2, Name="¡rea de influÍncia da atividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=2, Name="¡rea da atividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="VÈrtice matrÌcula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=2, Name="√Årea de influ√™ncia da atividade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=2, Name="√Årea da atividade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="V√©rtice matr√≠cula/posse", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Nascente", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Linha de transm.", Query="PROJETO={0}"},
@@ -137,64 +176,63 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 					new LayerItem(){ Grupo=1, Name="Estrada", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Duto", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rocha", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Massa d'·gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
+					new LayerItem(){ Grupo=1, Name="Massa d'√°gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
 					new LayerItem(){ Grupo=1, Name="Escarpa", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Rest. de declividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea construÌda", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="ARL em APP", Query="PROJETO={0} and TIPO = 'APP_ARL"},
-					new LayerItem(){ Grupo=1, Name="RPPN", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Duna", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de servid„o", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="APP preservada", Query="PROJETO={0} and TIPO = 'APP_AVN'"},
-					new LayerItem(){ Grupo=1, Name="APP em recuperaÁ„o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
-					new LayerItem(){ Grupo=1, Name="APP em uso", Query="PROJETO={0} and TIPO = 'APP_AA_USO'"},
-					new LayerItem(){ Grupo=1, Name="APP n„o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
-					new LayerItem(){ Grupo=1, Name="ARL preservada", Query="PROJETO={0} and SITUACAO = 'PRESERV'"},
-					new LayerItem(){ Grupo=1, Name="ARL em recuperaÁ„o", Query="PROJETO={0} and SITUACAO = 'REC'"},
-					new LayerItem(){ Grupo=1, Name="ARL em uso", Query="PROJETO={0} and SITUACAO = 'USO'"},
-					new LayerItem(){ Grupo=1, Name="ARL n„o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
-					new LayerItem(){ Grupo=1, Name="¡rea de vegetaÁ„o nativa", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea alterada", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea de matrÌcula/posse", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea total da propriedade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de domÌnio", Query="PROJETO={0}"}
-				};
-			}
-
-			if (_tipo == ArquivoMxd.MAPA_CAR)
-			{
-				return new List<LayerItem>()
-				{
-					new LayerItem(){ Grupo=1, Name="VÈrtice matrÌcula/posse", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Nascente", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Linha de transm.", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Ferrovia", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Estrada", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Duto", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Rocha", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Massa d'·gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
-					new LayerItem(){ Grupo=1, Name="Escarpa", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Rest. de declividade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea construÌda", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea constru√≠da", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="ARL em APP", Query="PROJETO={0} and TIPO = 'APP_ARL'"},
 					new LayerItem(){ Grupo=1, Name="RPPN", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="Duna", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de servid„o", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de servid√£o", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="APP preservada", Query="PROJETO={0} and TIPO = 'APP_AVN'"},
+					new LayerItem(){ Grupo=1, Name="APP em recupera√ß√£o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
+					new LayerItem(){ Grupo=1, Name="APP em uso", Query="PROJETO={0} and TIPO = 'APP_AA_USO'"},
+					new LayerItem(){ Grupo=1, Name="APP n√£o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
+					new LayerItem(){ Grupo=1, Name="ARL preservada", Query="PROJETO={0} and SITUACAO = 'PRESERV'"},
+					new LayerItem(){ Grupo=1, Name="ARL em recupera√ß√£o", Query="PROJETO={0} and SITUACAO = 'REC'"},
+					new LayerItem(){ Grupo=1, Name="ARL em uso", Query="PROJETO={0} and SITUACAO = 'USO'"},
+					new LayerItem(){ Grupo=1, Name="ARL n√£o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
+					new LayerItem(){ Grupo=1, Name="√Årea de vegeta√ß√£o nativa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea alterada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea de matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea total da propriedade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de dom√≠nio", Query="PROJETO={0}"}
+				};
+			}
+			else if (_tipo == ArquivoMxd.MAPA_CAR)
+			{
+				return new List<LayerItem>()
+				{
+					new LayerItem(){ Grupo=1, Name="V√©rtice matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Nascente", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rio", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Linha de transm.", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Ferrovia", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Estrada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Duto", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rocha", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Massa d'√°gua", Query="PROJETO={0} and TIPO= 'MASSA_DAGUA_APMP'"},
+					new LayerItem(){ Grupo=1, Name="Escarpa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Rest. de declividade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea constru√≠da", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="ARL em APP", Query="PROJETO={0} and TIPO = 'APP_ARL'"},
+					new LayerItem(){ Grupo=1, Name="RPPN", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Duna", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de servid√£o", Query="PROJETO={0}"},
 					new LayerItem(){ Grupo=1, Name="APP a recuperar (Calculado)", Query="PROJETO={0} and TIPO='CAR_APP_AA_USO'"},
 					new LayerItem(){ Grupo=1, Name="APP preservada", Query="PROJETO={0} and TIPO = 'APP_AVN'"},
-					new LayerItem(){ Grupo=1, Name="APP em recuperaÁ„o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
+					new LayerItem(){ Grupo=1, Name="APP em recupera√ß√£o", Query="PROJETO={0} and TIPO = 'APP_AA_REC'"},
 					new LayerItem(){ Grupo=1, Name="APP em uso", Query="PROJETO={0} and TIPO = 'APP_AA_USO'"},
-					new LayerItem(){ Grupo=1, Name="APP n„o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
+					new LayerItem(){ Grupo=1, Name="APP n√£o caracterizada", Query="PROJETO={0} and TIPO = 'APP_APMP'"},
 					new LayerItem(){ Grupo=1, Name="ARL preservada", Query="PROJETO={0} and SITUACAO = 'PRESERV'"},
-					new LayerItem(){ Grupo=1, Name="ARL em recuperaÁ„o", Query="PROJETO={0} and SITUACAO = 'REC'"},
+					new LayerItem(){ Grupo=1, Name="ARL em recupera√ß√£o", Query="PROJETO={0} and SITUACAO = 'REC'"},
 					new LayerItem(){ Grupo=1, Name="ARL em uso", Query="PROJETO={0} and SITUACAO = 'USO'"},
-					new LayerItem(){ Grupo=1, Name="ARL n„o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
-					new LayerItem(){ Grupo=1, Name="¡rea de vegetaÁ„o nativa", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea alterada", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea de matrÌcula/posse", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="¡rea total da propriedade", Query="PROJETO={0}"},
-					new LayerItem(){ Grupo=1, Name="Faixa de domÌnio", Query="PROJETO={0}"}
+					new LayerItem(){ Grupo=1, Name="ARL n√£o caracterizada", Query="PROJETO={0} and SITUACAO = 'D'"},
+					new LayerItem(){ Grupo=1, Name="√Årea de vegeta√ß√£o nativa", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea alterada", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea de matr√≠cula/posse", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="√Årea total da propriedade", Query="PROJETO={0}"},
+					new LayerItem(){ Grupo=1, Name="Faixa de dom√≠nio", Query="PROJETO={0}"}
 				};
 			}
 
@@ -234,14 +272,14 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
 				_mxd.ActivateMap("MAPA_PRINCIPAL");
 
-				//Setar as informaÁıes no mxd
+				//Setar as informa√ß√µes no mxd
 				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
 				_mxd.SetElementText("uf", hashData["UF"].ToString());
 				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 
 				//Definir Zoom
-				_mxd.ZoomToFeature("¡rea total da propriedade", "PROJETO", projetoId.ToString());
+				_mxd.ZoomToFeature("√Årea total da propriedade", "PROJETO", projetoId.ToString());
 				_mxd.ZoomPercentage(1.1);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
@@ -283,6 +321,89 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				doc.NewPage();
 				//----------------------------------------
 			}
+			else if (_tipo == ArquivoMxd.MAPA_ATIVIDADE_TITULO)
+			{
+				int dominialidade = Convert.ToInt32(hashData["DOMINIALIDADE"]);
+
+				//Aplicando filtros
+				_mxd.ActivateMap("MAPA_PRINCIPAL");
+
+				foreach (var layer in ObterLayers())
+				{
+					layer.Source = _mxd.GetDataSource(layer.Name);
+
+					if (layer.Grupo == 1)//Dominialidade
+					{
+						_mxd.SetLayerVisibility(layer.Name, _da.ObterQuantidade(layer, dominialidade) > 0);
+						_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, dominialidade));
+					}
+					else
+					{
+						if(layer.Name == "Ponto da atividade" && hashData["PATIV"] != null)
+						{
+							_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, hashData["PATIV"]));
+							_mxd.SetLayerVisibility(layer.Name, true);
+						}
+						else if (layer.Name == "√Årea da atividade" && hashData["AATIV"] != null)
+						{
+							_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, hashData["AATIV"]));
+							_mxd.SetLayerVisibility(layer.Name, true);
+						}
+					}
+				}
+
+				_mxd.ActivateMap("MINI_MAPA");
+				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
+
+				//Setar as informa√ß√µes no mxd
+				_mxd.SetElementText("atividade", hashData["ATIVIDADE"].ToString());
+				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
+				_mxd.SetElementText("uf", hashData["UF"].ToString());
+				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
+				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
+
+				//Definir Zoom
+				_mxd.ZoomToFeature("√Årea total da propriedade", "PROJETO", dominialidade.ToString());
+				_mxd.ZoomPercentage(1.5);
+				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
+				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
+
+				_mxd.ActivateMap("MINI_MAPA");
+				string[] coord = hashData["COORDENADA"].ToString().Split(';');
+				int centerX = Convert.ToInt32(coord[0]);
+				int centerY = Convert.ToInt32(coord[1]);
+				_mxd.ZoomToEnvelope(new Envelope(centerX - 2000, centerX + 2000, centerY - 2000, centerY + 2000));
+				_mxd.ZoomToBestScale("MINI_MAPA", 800000D);
+
+				_mxd.ActivateMap("MAPA_PRINCIPAL");
+				//----------------------------------------
+				//Mapa Tematico
+				_mxd.SetLayerVisibility("IMAGEM/Aerolevantamento", false);
+				_mxd.RefreshLegends(scaleSymbols: true);
+
+				_mxd.SetElementText("nome_croqui", "Croqui da Atividade");
+				_mxd.SetElementText("imagem", String.Empty);
+				_mxd.ExportToPDF(tempFile1, 300);
+
+				loadPdfToDocument(doc, wrt, tempFile1, isUsePageEvent);
+
+				doc.NewPage();
+				//----------------------------------------
+
+				//----------------------------------------
+				//Mapa Imagem
+				_mxd.SetLayerVisibility("IMAGEM/Aerolevantamento", true);
+				_mxd.RefreshLegends(scaleSymbols: true);
+
+				_mxd.SetElementText("nome_croqui", "Croqui com Imagem");
+				_mxd.SetElementText("imagem", "Aerolevantamento: ano 2007/2008");
+				_mxd.ExportToPDF(tempFile2, 300);
+
+				loadPdfToDocument(doc, wrt, tempFile2, isUsePageEvent);
+
+				doc.NewPage();
+				//----------------------------------------
+			}
 			else if (_tipo == ArquivoMxd.MAPA_ATIVIDADE)
 			{
 				int dominialidade = Convert.ToInt32(hashData["DOMINIALIDADE"]);
@@ -292,21 +413,24 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 
 				foreach (var layer in ObterLayers())
 				{
-					_mxd.SetLayerVisibility(layer.Name, true);
+					layer.Source = _mxd.GetDataSource(layer.Name);
+
 					if (layer.Grupo == 1)//Dominialidade
 					{
+						_mxd.SetLayerVisibility(layer.Name, _da.ObterQuantidade(layer, dominialidade) > 0);
 						_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, dominialidade));
 					}
 					else
 					{
 						_mxd.SetQueryDefinition(layer.Name, String.Format(layer.Query, projetoId));
+						_mxd.SetLayerVisibility(layer.Name, _da.ObterQuantidade(layer, projetoId.ToString()) > 0);
 					}
 				}
 
 				_mxd.ActivateMap("MINI_MAPA");
 				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
 
-				//Setar as informaÁıes no mxd
+				//Setar as informa√ß√µes no mxd
 				_mxd.SetElementText("atividade", hashData["ATIVIDADE"].ToString());
 				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
 				_mxd.SetElementText("uf", hashData["UF"].ToString());
@@ -314,7 +438,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 
 				//Definir Zoom
-				_mxd.ZoomToFeature("¡rea total da propriedade", "PROJETO", dominialidade.ToString());
+				_mxd.ZoomToFeature("√Årea total da propriedade", "PROJETO", dominialidade.ToString());
 				_mxd.ZoomPercentage(1.5);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
@@ -366,7 +490,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 					_mxd.SetLayerVisibility(layer.Name, true);
 				}
 
-				//Setar as informaÁıes no mxd
+				//Setar as informa√ß√µes no mxd
 				_mxd.SetElementText("processo", " ");
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 				_mxd.SetElementText("data_emissao", DateTime.Today.ToString("dd/MM/yyyy"));
@@ -386,7 +510,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetElementText("orgao_classe_art_responsavel_tecnico", " ");
 
 				//Definir Zoom
-				_mxd.ZoomToFeature("¡rea total da propriedade", "PROJETO", projetoId.ToString());
+				_mxd.ZoomToFeature("√Årea total da propriedade", "PROJETO", projetoId.ToString());
 				_mxd.ZoomPercentage(1.1);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);
@@ -396,7 +520,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetLayerVisibility("IMAGEM", false);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
-				_mxd.SetElementText("titulo_croqui", "Croqui da PeÁa TÈcnica");
+				_mxd.SetElementText("titulo_croqui", "Croqui da Pe√ßa T√©cnica");
 				_mxd.SetElementText("imagem", String.Empty);
 				_mxd.ExportToPDF(tempFile1, 300);
 
@@ -410,7 +534,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetLayerVisibility("IMAGEM", true);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
-				_mxd.SetElementText("titulo_croqui", "Croqui da PeÁa TÈcnica com Imagem");
+				_mxd.SetElementText("titulo_croqui", "Croqui da Pe√ßa T√©cnica com Imagem");
 				_mxd.SetElementText("imagem", "Aerolevantamento: ano 2007/2008");
 				_mxd.ExportToPDF(tempFile2, 300);
 
@@ -426,23 +550,23 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 
 				_mxd.SetQueryDefinition("Ponto fiscalizado", "PROJETO=" + projetoId);
 				_mxd.SetQueryDefinition("Linha fiscalizada", "PROJETO=" + projetoId);
-				_mxd.SetQueryDefinition("¡rea fiscalizada", "PROJETO=" + projetoId);
+				_mxd.SetQueryDefinition("√Årea fiscalizada", "PROJETO=" + projetoId);
 
 				_mxd.SetLayerVisibility("Ponto fiscalizado", true);
 				_mxd.SetLayerVisibility("Linha fiscalizada", true);
-				_mxd.SetLayerVisibility("¡rea fiscalizada", true);
+				_mxd.SetLayerVisibility("√Årea fiscalizada", true);
 
 				_mxd.ActivateMap("MINI_MAPA");
-				_mxd.SetQueryDefinition("Ponto de fiscalizaÁ„o", "FISCALIZACAO=" + hashData["FISCALIZACAO"]);
+				_mxd.SetQueryDefinition("Ponto de fiscaliza√ß√£o", "FISCALIZACAO=" + hashData["FISCALIZACAO"]);
 
-				//Setar as informaÁıes no mxd
+				//Setar as informa√ß√µes no mxd
 				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
 				_mxd.SetElementText("uf", hashData["UF"].ToString());
 				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 				_mxd.SetElementText("total_ponto", FormatNumber(hashData["TOTAL_PONTOS"], 0));
 				_mxd.SetElementText("total_linha", FormatNumber(hashData["TOTAL_LINHAS"], 0) + " ( " + FormatNumber(hashData["SOMA_LINHAS"], 3) + " m)");
-				_mxd.SetElementText("total_areas", FormatNumber(hashData["TOTAL_AREAS"], 0) + " ( " + FormatNumber(hashData["SOMA_AREAS"], 2) + " m≤)");
+				_mxd.SetElementText("total_areas", FormatNumber(hashData["TOTAL_AREAS"], 0) + " ( " + FormatNumber(hashData["SOMA_AREAS"], 2) + " m¬≤)");
 
 				string[] envelope = hashData["ENVELOPE"].ToString().Split(';');
 				//Definir Zoom
@@ -476,7 +600,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetLayerVisibility("IMAGEM", false);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
-				_mxd.SetElementText("nome_croqui", "CROQUI TEM¡TICO DE FISCALIZA«√O");
+				_mxd.SetElementText("nome_croqui", "CROQUI TEM√ÅTICO DE FISCALIZA√á√ÉO");
 				_mxd.SetElementText("imagem", String.Empty);
 				_mxd.ExportToPDF(tempFile1, 300);
 
@@ -495,7 +619,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetLayerVisibility("IMAGEM", true);
 				_mxd.RefreshLegends(scaleSymbols: true);
 
-				_mxd.SetElementText("nome_croqui", "CROQUI IMAGEM DE FISCALIZA«√O");
+				_mxd.SetElementText("nome_croqui", "CROQUI IMAGEM DE FISCALIZA√á√ÉO");
 				_mxd.SetElementText("imagem", "Aerolevantamento: ano 2007/2008");
 				_mxd.ExportToPDF(tempFile2, 300);
 
@@ -535,14 +659,14 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 				_mxd.SetQueryDefinition("Ponto empreendimento", "EMPREENDIMENTO=" + hashData["EMPREENDIMENTO"]);
 				_mxd.ActivateMap("MAPA_PRINCIPAL");
 
-				//Setar as informaÁıes no mxd
+				//Setar as informa√ß√µes no mxd
 				_mxd.SetElementText("municipio", hashData["MUNICIPIO"].ToString());
 				_mxd.SetElementText("uf", hashData["UF"].ToString());
 				_mxd.SetElementText("data", DateTime.Today.ToString("dd/MM/yyyy"));
 				_mxd.SetElementText("precisao", hashData["PRECISAO"].ToString());
 
 				//Definir Zoom
-				_mxd.ZoomToFeature("¡rea total da propriedade", "PROJETO", projetoDomId.ToString());
+				_mxd.ZoomToFeature("√Årea total da propriedade", "PROJETO", projetoDomId.ToString());
 				_mxd.ZoomPercentage(1.1);
 				_mxd.ZoomToBestScale("MAPA_PRINCIPAL", 250D);
 				_mxd.AdjustGrid("MAPA_PRINCIPAL", 3, 3);

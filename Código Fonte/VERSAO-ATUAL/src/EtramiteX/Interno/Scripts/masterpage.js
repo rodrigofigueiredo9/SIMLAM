@@ -713,6 +713,16 @@ Mascara = {
 		$(".maskNum15", container).unmask().mask("999999999999999");
 		$(".maskNum38", container).unmask().mask("99999999999999999999999999999999999999");
 
+		$(".maskNumNegative", container).unmask().maskMoney({ precision: 0, allowNegative: true, allowZero: true });
+		//$(".maskNumNegative", container).keyup(function (e) {
+		//	if (e.target.value.length < 2) {
+		//		if (e.keyCode == 109 || e.keyCode == 189)
+		//			$(".maskNumNegative8", container).unmask().mask("-99999999");
+		//		else
+		//			$(".maskNumNegative8", container).unmask().mask("99999999");
+		//	}
+		//});
+		
 		//Número do Endereço
 		$(".maskNumEndereco", container).unmask().mask("999999");
 

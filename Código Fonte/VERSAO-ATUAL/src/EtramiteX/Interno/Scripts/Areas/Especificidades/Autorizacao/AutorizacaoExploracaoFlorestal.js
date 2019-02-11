@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../../masterpage.js" />
 /// <reference path="../../../jquery.ddl.js" />
 
@@ -17,6 +17,7 @@ AutorizacaoExploracaoFlorestal = {
 		AutorizacaoExploracaoFlorestal.container = especificidadeRef;
 		AtividadeEspecificidade.load(especificidadeRef);
 		TituloCondicionante.load($('.condicionantesContainer', AutorizacaoExploracaoFlorestal.container));
+		TituloAutorizacaoExploracaoFlorestal.load(AutorizacaoExploracaoFlorestal.container);
 		AutorizacaoExploracaoFlorestal.container.find('.fsArquivos').arquivo({ extPermitidas: ['jpg', 'gif', 'png', 'bmp', 'pdf'] });
 		AutorizacaoExploracaoFlorestal.container.delegate('.btnVistoriaAdicionar', 'click', AutorizacaoExploracaoFlorestal.btnLaudoVistoriaAdicionarClick);
 		AutorizacaoExploracaoFlorestal.container.delegate('.btnVistoriaLimpar', 'click', AutorizacaoExploracaoFlorestal.btnLaudoVistoriaLimparClick);
@@ -25,6 +26,7 @@ AutorizacaoExploracaoFlorestal = {
 	obterDadosAutorizacaoExploracaoFlorestal: function (protocolo) {
 		if (protocolo == null) {
 			$('.ddlDestinatarios', AutorizacaoExploracaoFlorestal.container).ddlClear();
+			$('.ddlExploracoes', AutorizacaoExploracaoFlorestal.container).ddlClear();
 			return;
 		}
 
@@ -51,6 +53,7 @@ AutorizacaoExploracaoFlorestal = {
 		AutorizacaoExploracaoFlorestal.container.find('.txtLaudoVistoriaFlorestal').val('');
 		AutorizacaoExploracaoFlorestal.container.find('.btnVistoriaAdicionar').toggleClass('hide', false);
 		AutorizacaoExploracaoFlorestal.container.find('.btnVistoriaLimpar').toggleClass('hide', true);
+		AutorizacaoExploracaoFlorestal.container.find('.ddlExploracoes').val('');
 	},
 
 	btnLaudoVistoriaAdicionarClick: function () {
@@ -72,7 +75,39 @@ AutorizacaoExploracaoFlorestal = {
 			AutorizacaoExploracaoFlorestal.container.find('.btnVistoriaLimpar').toggleClass('hide', false);
 		}
 
+		AutorizacaoExploracaoFlorestal.carregarExploracoes(titulo.Id);
+
 		return { Msg: retorno.Msg, FecharModal: retorno.Msg.length <= 0 };
+	},
+
+	carregarExploracoes: function (tituloAssociadoId) {
+		if (!tituloAssociadoId) return;
+
+		$.ajax({
+			url: AutorizacaoExploracaoFlorestal.settings.urls.obterDadosExploracao,
+			data: { tituloAssociadoId: tituloAssociadoId },
+			cache: false,
+			async: true,
+			type: 'GET',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, MasterPage.getContent(AutorizacaoExploracaoFlorestal.container));
+			},
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Exploracoes.length > 0) {
+					var dropDown = $('.ddlExploracoes', AutorizacaoExploracaoFlorestal.container);
+					dropDown.find('option').remove();
+					dropDown.append('<option value="">*** Selecione ***</option>');
+					$.each(response.Exploracoes, function () {
+						dropDown.append('<option value="' + this.ExploracaoFlorestalId + '" detalhes="' + JSON.stringify(this.TituloExploracaoFlorestalExploracaoList).replaceAll('"', "'") + '">' + this.ExploracaoFlorestalTexto + '</option>');
+					});
+					dropDown.removeClass('disabled');
+					dropDown.removeAttr('disabled');
+					dropDown.val(0);
+				}
+			}
+		});
 	},
 
 	obterTitulosAssociado: function () {

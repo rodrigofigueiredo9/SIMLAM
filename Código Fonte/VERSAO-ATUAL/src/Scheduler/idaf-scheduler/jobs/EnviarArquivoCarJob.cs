@@ -61,19 +61,25 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
-                    if (item.Requisicao == null)
+
+                    if (String.IsNullOrEmpty(item.Requisicao))
                     {
                         nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
 						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
 						continue;
                     }
-
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
 					string resultado = "";
 					try
 					{
+						if(ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
+						{
+							nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+							Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
+							continue;
+						}
 						//Atualizar controle de envio do SICAR
                         ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
@@ -82,18 +88,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
 						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-						if (String.IsNullOrWhiteSpace(resultado))
+						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
-							throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
+							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
 						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
 						{
 							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-							if(String.IsNullOrWhiteSpace(resultado))
+							if(String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 							{
-								throw new System.ArgumentException("Resultado do SICAR is null or empty", "resultado");
+								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 							}
 							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 						}
@@ -143,15 +149,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					catch (Exception ex)
 					{
 						//Marcar como processado registrando a mensagem de erro
-						var msg = ex.Message +
+						var msg = " +++---+++ RESULTADO  :::: " +
+							(resultado ?? "noMessage ++++   00----000  " + ex.Message +
 							Environment.NewLine +
-							Environment.NewLine +
-							(resultado ?? "");
+							Environment.NewLine  );
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, new MensagemRetorno() { mensagensResposta = new List<string> { ex.Message, ex.ToString(), resultado ?? "" } }, requisicao, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_REPROVADO, tid, catchEnviar: true);
-						Log.Error("CATCH:" + nextItem.Requisicao + " =====> " + ex.Message, ex);
+						Log.Error("CATCH:" + nextItem.Requisicao + " ===== ++  " + ex.Message, ex);
 					}
 
 					System.Threading.Thread.Sleep(TimeSpan.FromSeconds(30));
@@ -168,30 +174,35 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				}
 
 				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
-                    {
-                        cmd.ExecuteNonQuery();                            
-                    }
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Value cannot be null.%'", conn))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%TCP%'", conn))
-                 {
-                     cmd.ExecuteNonQuery();
-                 }
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
-                 {
-                     cmd.ExecuteNonQuery();
-                 }
-                 using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-                                                WHERE resultado like '%Houve um problema%'", conn))
-                 {
-                     cmd.ExecuteNonQuery();
-                 }
+											WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
+				{
+					cmd.ExecuteNonQuery();                            
+				}
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+											WHERE resultado like '%Value cannot be null.%'", conn))
+				{
+					cmd.ExecuteNonQuery();
+				}
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+											WHERE resultado like '%TCP%'", conn))
+				{
+					cmd.ExecuteNonQuery();
+				}
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+											WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
+				{
+					cmd.ExecuteNonQuery();
+				}
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+											WHERE resultado like '%Houve um problema%'", conn))
+				{
+					cmd.ExecuteNonQuery();
+				}
+				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+											WHERE resultado like '%Erro de conexão com o SICAR%'", conn))
+				{
+				cmd.ExecuteNonQuery();
+				}
 
 				conn.Close();
 			}
@@ -240,14 +251,20 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
                         {
                             content.Add(new StreamContent(stream), "car", fileName);
                             content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-                            var response = await client.PostAsync("/sincronia/quick", content);
+                            HttpResponseMessage response = await client.PostAsync("/sincronia/quick", content);
 
-                            return await response.Content.ReadAsStringAsync();
+							if (!response.IsSuccessStatusCode)
+							{
+								Log.Error("ERRO RESPONSE::::?? //  " + response);
+								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+							}
+
+							return await response.Content.ReadAsStringAsync();
                         }
                     }
                     catch (Exception ex) 
                     {
-						Log.Error("EnviarArquivoCAR: " + ex.Message, ex);
+						Log.Error("EnviarArquivoCARFunction: " + ex.Message + " + ---- +" + localArquivoCar);
                         return ex.Message;
 					}
 				}

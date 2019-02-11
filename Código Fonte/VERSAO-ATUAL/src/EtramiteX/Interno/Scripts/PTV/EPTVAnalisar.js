@@ -6,7 +6,8 @@
 EPTVAnalisar = {
 	settings: {
 		urls: {
-			salvar: null
+			salvar: null,
+			urlPDF: null
 		},
 		idsTela: null,
 		Mensagens: null
@@ -22,6 +23,7 @@ EPTVAnalisar = {
 		container.delegate('.rdbOpcaoSituacao', 'change', EPTVAnalisar.situacaoChange);
 		container.delegate('.btnSalvar', 'click', EPTVAnalisar.salvar);
 		container.delegate('.rbPartidaLacradaOrigem', 'change', EPTVAnalisar.onChangePartidaLacrada);
+		container.delegate('.btnPDF', 'click', EPTVAnalisar.gerarPdf);
 	},
 
 	limparCampos: function (container) {
@@ -138,5 +140,11 @@ EPTVAnalisar = {
 		}
 
 		return objeto;
+	},
+
+	gerarPdf: function () {
+		debugger;
+		var item = EPTVAnalisar.obter(this);
+		MasterPage.redireciona(EPTVAnalisar.settings.urls.urlPDF + '/' + item.Id);
 	}
 }

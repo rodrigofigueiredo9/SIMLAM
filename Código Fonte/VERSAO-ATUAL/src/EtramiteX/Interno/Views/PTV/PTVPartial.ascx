@@ -1,6 +1,7 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPessoa" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
 
@@ -397,21 +398,41 @@
 		<div class="isTipoCaixaChecked hide">
 			<div class="coluna36">
 				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
-				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+			</div>
+			<div class="pessoaAssociadaNfCaixa">
+				<div class="coluna15 prepend1">
+					<label for="PessoaTipo">Tipo *</label><br />
+					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
+					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
+				</div>
+				<div class="coluna20">
+					<div class="CpfPessoaFisicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CPF *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCpf txtCPFCaixa" }))%>
+					</div>
+					<div class="CnpjPessoaJuridicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CNPJ *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCnpj txtCNPJCaixa" }))%>
+					</div>
+				</div>
 			</div>
 			<div class="coluna10">
 				<button class="inlineBotao btnVerificarNotaCaixaCaixa">Verificar</button>
 				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
 			</div>
 		</div>
+		
+	</div>
+	<div class="block">
 		<div class="isNFCaixaVerificado hide">
 			<div class="coluna15">
-				<label>Total de caixas *</label>
-				<%= Html.TextBox("SaldoAtual", Model.PTV.NFCaixa.saldoAtual, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNumInt txtNFCaixaSaldoAtual", @maxlength="8"}))%>
+				<label class="lblSaldoAtualInicial">Saldo atual</label>
+				<%= Html.TextBox("SaldoAtual", Model.PTV.NFCaixa.saldoAtual, ViewModelHelper.SetaDisabled(true, new { @class="text maskNum8 txtNFCaixaSaldoAtual", @maxlength="8"}))%>
 			</div>
 			<div class="coluna15">
-				<label>N° de caixas utilizadas *</label>
-				<%= Html.TextBox("NumeroDeCaixas", Model.PTV.NFCaixa.numeroCaixas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text maskNumInt txtNFCaixaNumeroDeCaixas", @maxlength="8"}))%>
+				<label>N° de caixas *</label>
+				<%= Html.TextBox("NumeroDeCaixas", Model.PTV.NFCaixa.numeroCaixas, ViewModelHelper.SetaDisabled(false, new { @class="text maskNum8 txtNFCaixaNumeroDeCaixas", @maxlength="8"}))%>
 			</div>
 			<div class="coluna10">
 				<button class="inlineBotao btnAddCaixa">Adicionar</button>
@@ -423,6 +444,7 @@
 				<thead>
 					<tr>
 						<th style="width: 30%">N° da nota fiscal de caixa </th>
+						<th>CPF/CNPJ</th>
 						<th>Tipo da caixa</th>
 						<th style="width: 10%">Saldo atual</th>
 						<th style="width: 16%">N° de caixas</th>
@@ -436,6 +458,7 @@
 					%>
 						<tr>
 							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%=item.PessoaAssociadaCpfCnpj %>"><%= item.PessoaAssociadaCpfCnpj %></td>
 							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
 							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
 							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
@@ -452,6 +475,9 @@
 					<tr class="trTemplate hide">
 						<td class="">
 							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lvlCPFCNPJ"></label>
 						</td>
 						<td class="">
 							<label class="lblTipoCaixa"></label>

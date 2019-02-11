@@ -28,6 +28,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 			AddInformacao(new InformacaoProtocoloVM() { Texto = "Arquivamento", Tipo = TipoInformacacao.PDF, Chave = "btnPdfArquivamento" });
 			AddInformacao(new InformacaoProtocoloVM() { Texto = "Recibo de Entrega de Título", Tipo = TipoInformacacao.PDF, Chave = "btnPdfEntrega" });
 			AddInformacao(new InformacaoProtocoloVM() { Texto = "Registro de Recebimento", Tipo = TipoInformacacao.PDF, Chave = "btnPdfRecebimento", });
+			AddInformacao(new InformacaoProtocoloVM() { Texto = "Comunicação Interna", Tipo = TipoInformacacao.PDF, Chave = "btnPdfCI", });
+			AddInformacao(new InformacaoProtocoloVM() { Texto = "Ofício (Administrativo)", Tipo = TipoInformacacao.PDF, Chave = "btnPdfOficio", });
 		}
 
 		private void AddInformacao(InformacaoProtocoloVM informacao)

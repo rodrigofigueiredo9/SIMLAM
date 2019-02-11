@@ -134,7 +134,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Dados do Título
-				Comando comando = bancoDeDados.CriarComando(@"select t.*, ta.*
+				Comando comando = bancoDeDados.CriarComando(@"select t.*, ta.*,
+				(select s.autorizacao_sinaflor from tab_integracao_sinaflor s where rownum = 1
+						and s.autorizacao_sinaflor is not null and exists
+						(select 1 from tab_titulo_exp_florestal tt
+							where tt.titulo = t.id
+							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
 				from  (select t.titulo_id id, t.modelo_nome, t.modelo_sigla, t.requerimento, 
 				(select tms.hierarquia from tab_titulo_modelo_setores tms, tab_titulo t where t.id = :id and tms.modelo = t.modelo and tms.setor = t.setor) modelo_hierarquia,
 				t.setor_id, t.setor_nome, t.autor_nome, t.situacao_id, t.situacao_texto, nvl(t.protocolo_id, t.protocolo_id) protocolo_id, 
@@ -189,6 +194,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 						dados.Titulo.SituacaoId = Convert.ToInt32(reader["situacao_id"]);
 						dados.Titulo.Situacao = reader["situacao_texto"].ToString();
 						dados.Titulo.Requerimento.Numero = reader.GetValue<int>("requerimento");
+						dados.Titulo.NumeroSinaflor = reader["codigo_sinaflor"].ToString();
 					}
 
 					reader.Close();
@@ -237,6 +243,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 							dados.Empreendimento.Denominador = reader["denominador_label"].ToString();
 							dados.Empreendimento.CNPJ = reader["cnpj"].ToString();
 							dados.Empreendimento.Segmento = reader["segmento"].ToString();
+							dados.Empreendimento.CodigoImovel = this.ObterCodigoSicarPorEmpreendimento(dados.Empreendimento.Id.GetValueOrDefault(0), bancoDeDados);
 							
 							dados.Empreendimento.EndLogradouro = reader["logradouro"].ToString();
 							dados.Empreendimento.EndCEP = reader["cep"].ToString();
@@ -1166,6 +1173,56 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			}
 
 			return retorno;
+		}
+
+		internal string ObterCodigoSicarPorEmpreendimento(int empreendimentoId, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select
+                       l.codigo_imovel                      
+				  from (select tsicar.codigo_imovel
+                              from tab_car_solicitacao tcs, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco ee,
+                                   lov_municipio lme, lov_car_solicitacao_situacao lcss, tab_controle_sicar tsicar,lov_situacao_envio_sicar lses
+                             where not exists (select lst.solic_tit_id from lst_car_solic_tit lst where lst.tipo=1 and lst.solic_tit_id=tcs.id)
+                               and tcs.protocolo=pt.id
+                               and tcs.declarante=pe.id
+                               and tcs.empreendimento=e.id
+                               and e.id=ee.empreendimento(+)
+                               and ee.municipio=lme.id(+)
+                               and ee.correspondencia(+)=0
+                               and tcs.situacao=lcss.id
+                               and tcs.id=tsicar.solicitacao_car(+)
+                               and tsicar.solicitacao_car_esquema(+)=1
+                               and tsicar.situacao_envio=lses.id(+)
+                               and e.id = :empreendimento
+                                 union all
+							select tcs.codigo_imovel
+						  from lst_car_solic_tit        s,
+							   tab_controle_sicar       tcs,
+							   lov_situacao_envio_sicar lses
+						 where s.tipo = 1
+						   and nvl(tcs.solicitacao_car_esquema, 1) = 1
+						   and s.solic_tit_id = tcs.solicitacao_car(+)
+						   and tcs.situacao_envio = lses.id(+)
+						   and s.empreendimento_id = :empreendimento
+						union all
+						select tcs.codigo_imovel
+						  from lst_car_solicitacao_cred c,
+							   tab_controle_sicar       tcs,
+							   lov_situacao_envio_sicar lses,
+							   tab_protocolo            tp
+						 where nvl(tcs.solicitacao_car_esquema, 2) = 2
+						   and c.solicitacao_id = tcs.solicitacao_car(+)
+						   and tcs.situacao_envio = lses.id(+)
+						   AND c.requerimento = TP.Requerimento(+)
+						   and c.empreendimento_id = :empreendimento) l
+				 where l.codigo_imovel is not null and rownum = 1", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
 		}
 
 		#endregion

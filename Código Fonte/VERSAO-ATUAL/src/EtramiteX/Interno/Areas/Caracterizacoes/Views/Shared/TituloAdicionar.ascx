@@ -34,7 +34,7 @@
 
 		<div class="block">
 			<% if (Model.Finalidade.Id < 1 || Model.Finalidade.TituloId.GetValueOrDefault() > 0) { %>
-			<div class="coluna19 append1">
+			<div class="coluna16 append1">
 				<label for="TituloValidadeData_DataTexto">Data de validade *</label>
 				<%= Html.TextBox("TituloValidadeData.DataTexto" + indice, Model.Finalidade.TituloValidadeData.DataTexto, new { @class = "text maskData disabled txtTituloValidadeData", @disabled = "disabled" })%>
 			</div>
@@ -43,7 +43,7 @@
 				<%= Html.TextBox("ProtocoloNumero" + indice, Model.Finalidade.ProtocoloNumero, new { @maxlength = "12", @class = "text disabled txtProtocoloNumero", @disabled = "disabled" })%>
 			</div>
 			<% } else { %>
-			<div class="coluna19 append1">
+			<div class="coluna16 append1">
 				<label for="TituloValidadeData_DataTexto">Data de validade *</label>
 				<%= Html.TextBox("TituloValidadeData.DataTexto" + indice, Model.Finalidade.TituloValidadeData.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtTituloValidadeData" }))%>
 			</div>
@@ -53,12 +53,12 @@
 			</div>
 			<% } %>
 
-			<div class="coluna19 append1">
-				<label for="ProtocoloRenovacaoData_DataTexto">Data da renovação</label>
+			<div class="coluna22 append1">
+				<label for="ProtocoloRenovacaoData_DataTexto">Data do protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoData.DataTexto" + indice, Model.Finalidade.ProtocoloRenovacaoData.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtProtocoloRenovacaoData" }))%>
 			</div>
 			<div class="coluna22">
-				<label for="ProtocoloRenovacaoNumero">Nº protocolo renovação</label>
+				<label for="ProtocoloRenovacaoNumero">Nº protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoNumero" + indice, Model.Finalidade.ProtocoloRenovacaoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "12", @class = "text txtProtocoloRenovacaoNumero" }))%>
 			</div>
 		</div>
@@ -77,7 +77,7 @@
 		</div>
 		
 		<div class="block">
-			<div class="coluna19 append1">
+			<div class="coluna17 append1">
 				<label for="TituloValidadeData_DataTexto">Data de validade *</label>
 				<%= Html.TextBox("TituloValidadeData.DataTexto" + indice, Model.Finalidade.TituloValidadeData.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtTituloValidadeData" }))%>
 			</div>
@@ -85,12 +85,12 @@
 				<label for="ProtocoloNumero">Nº protocolo *</label>
 				<%= Html.TextBox("ProtocoloNumero" + indice, Model.Finalidade.ProtocoloNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "12", @class = "text txtProtocoloNumero" }))%>
 			</div>
-			<div class="coluna19 append1">
-				<label for="ProtocoloRenovacaoData_DataTexto">Data da renovação</label>
+			<div class="coluna21 append1">
+				<label for="ProtocoloRenovacaoData_DataTexto">Data do protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoData.DataTexto" + indice, Model.Finalidade.ProtocoloRenovacaoData.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskData txtProtocoloRenovacaoData" }))%>
 			</div>
 			<div class="coluna22">
-				<label for="ProtocoloRenovacaoNumero">Nº protocolo renovação</label>
+				<label for="ProtocoloRenovacaoNumero">Nº protocolo de renovação</label>
 				<%= Html.TextBox("ProtocoloRenovacaoNumero" + indice, Model.Finalidade.ProtocoloRenovacaoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @maxlength = "12", @class = "text txtProtocoloRenovacaoNumero" }))%>
 			</div>
 		</div>

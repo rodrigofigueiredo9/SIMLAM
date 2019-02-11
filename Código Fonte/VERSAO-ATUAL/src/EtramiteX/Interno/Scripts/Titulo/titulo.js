@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 
@@ -25,6 +25,7 @@ Titulo = {
 		obterRepresentanteFunc: null,
 		obterAtividadesFunc: null,
 		obterCondicionantesFunc: null,
+		obterExploracoesFunc: null,
 		obterEspecificidadeObjetoFunc: null,
 		obterRequerimentoFunc: null,
 		especificidadeLoadCallback: null,
@@ -556,6 +557,8 @@ Titulo = {
 		titulo.Atividades = typeof Titulo.settings.obterAtividadesFunc == 'function' ? Titulo.settings.obterAtividadesFunc() : [];
 
 		titulo.CondicionantesJson = typeof Titulo.settings.obterCondicionantesFunc == 'function' ? Titulo.settings.obterCondicionantesFunc(Titulo.container) : [];
+
+		titulo.Exploracoes = typeof Titulo.settings.obterExploracoesFunc == 'function' ? Titulo.settings.obterExploracoesFunc() : [];
 
 		titulo.Especificidade = { Json: JSON.stringify(typeof Titulo.settings.obterEspecificidadeObjetoFunc == 'function' ? Titulo.settings.obterEspecificidadeObjetoFunc(Titulo.container) : null) };
 

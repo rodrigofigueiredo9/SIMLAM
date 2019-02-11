@@ -113,7 +113,7 @@ PTVEmitir = {
 		PTVEmitir.container.delegate('.rdbApresentacaoNotaFiscalCaixa', 'change', PTVEmitir.onPossuiNFCaixa);
 		PTVEmitir.container.delegate('.btnExcluirCaixa', 'click', PTVEmitir.onExcluirCaixa);
 		PTVEmitir.container.delegate('.btnLimparNotaCaixaCaixa', 'click', PTVEmitir.onlimparCamposCaixa);
-
+		PTVEmitir.container.delegate('.rdbPessaoNfCaixa', 'change', PTVEmitir.onTipoPessoaCaixaChange);
 
 		PTVEmitir.container.delegate('.ddlUFProdutor', 'change', PTVEmitir.onChangeUF);
 
@@ -456,7 +456,6 @@ PTVEmitir = {
 
 	onChangeCultura: function () {
 		Mensagem.limpar(PTVEmitir.container);
-		MasterPage.carregando(true);
 		var origemID = 0;
 		var origemTipo = $('.ddlOrigemTipo', PTVEmitir.container).val();
 		var culturaID = $('.ddlProdutoCultura', PTVEmitir.container).val();
@@ -603,7 +602,7 @@ PTVEmitir = {
 
 		if ($('.ddlProdutoCultura', PTVEmitir.container).val() != '0') {
 			Mensagem.limpar(PTVEmitir.container);
-			MasterPage.carregando(true);
+			//MasterPage.carregando(true);
 
 			var origemTipo = '0';
 			if ($('.rdbIsDocumentoOrigem  ', PTVEmitir.container)[0].checked) {
@@ -733,7 +732,6 @@ PTVEmitir = {
 	},
 
 	onObterUnidadeMedida: function () {
-		MasterPage.carregando(true);
 		var origemID = 0;
 
 		var origemTipo = '0';
@@ -775,7 +773,7 @@ PTVEmitir = {
 			        $('.ddlProdutoUnidadeMedida').removeClass('disabled');
 				}
 
-				PTVEmitir.saldoDocOrigem()
+				PTVEmitir.saldoDocOrigem();
 			}
 		});
 
@@ -795,7 +793,6 @@ PTVEmitir = {
 	},
 
 	onLimparIdentificacaoProduto: function (manterTipo) {
-		debugger;
 		$('.btnLimparDocumentoOrigem', PTVEmitir.container).addClass('hide');
 		$('.ddlProdutoCultura, .ddlProdutoUnidadeMedida, .ddlProdutoCultivar', PTVEmitir.container).ddlClear();
 		$('.txtProdutoQuantidade, .txtNumeroOrigem', PTVEmitir.container).val("");
@@ -1271,6 +1268,8 @@ PTVEmitir = {
 		$('.txtNotaFiscalCaixaNumero').val('');
 		$('.txtNFCaixaSaldoAtual').val('');
 		$('.txtNFCaixaNumeroDeCaixas').val('');
+		$('.txtCNPJCaixa').val('');
+		$('.txtCPFCaixa').val('');
 		$('.txtNFCaixaSaldoAtual').removeClass('disabled')
 		$('.txtNFCaixaSaldoAtual').removeAttr('disabled');
 		$('.txtNotaFiscalCaixaNumero').removeClass('disabled')
@@ -1282,11 +1281,16 @@ PTVEmitir = {
 
 	onVerificarNotaFiscalCaixa: function () {
 		var nfCaixaNumero = $('.txtNotaFiscalCaixaNumero').val();
-		if (nfCaixaNumero == "") {
+		var tipoPessoaCaixa = $('.rdbPessaoNfCaixa:checked').val();
+		var cpfCnpjCaixa = (tipoPessoaCaixa === '1') ? $('.txtCPFCaixa').val() : $('.txtCNPJCaixa').val();
+
+		if (nfCaixaNumero.isNullOrWhitespace()) {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.NotaFiscalDeCaixaNumeroVazio]);
 			return;
 		}
-		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero
+		PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero = nfCaixaNumero;
+		PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo = tipoPessoaCaixa;
+		PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj = cpfCnpjCaixa;
 
 		MasterPage.carregando(true);
 		$.ajax({
@@ -1324,6 +1328,17 @@ PTVEmitir = {
 		// #region Validações
 		var valido = true;
 		var mensagensValidacao = [];
+		var cpfCnpj;
+		var tipoPessoa;
+
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCPFCaixa').val();
+		} else {
+			tipoPessoa = $('.rdbPessaoNfCaixa:checked').val();
+			cpfCnpj = $('.txtCNPJCaixa').val();
+		}
+
 		if ($('.txtNFCaixaNumeroDeCaixas').val() == "" || $('.txtNFCaixaSaldoAtual').val() == "") {
 			Mensagem.gerar(PTVEmitir.container, [PTVEmitir.settings.Mensagens.SaldoENumeroCaixasRequerid]);
 			return;
@@ -1341,7 +1356,9 @@ PTVEmitir = {
 			valido = false;
 		}
 		$('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).each(function () {
-			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero) {
+			if ((JSON.parse($('.hdnItemJson', this).val())).notaFiscalCaixaNumero == PTVEmitir.nfCaixaTemp.notaFiscalCaixaNumero
+				&& (JSON.parse($('.hdnItemJson', this).val())).tipoCaixaTexto == PTVEmitir.nfCaixaTemp.tipoCaixaTexto
+				&& (JSON.parse($('.hdnItemJson', this).val())).PessoaAssociadaCpfCnpj == PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj) {
 				mensagensValidacao.push(PTVEmitir.settings.Mensagens.InserirGridCaixaNumerosNFIguais);
 				valido = false;
 			}
@@ -1363,7 +1380,14 @@ PTVEmitir = {
 		$('.lblTipoCaixa', linha).html(PTVEmitir.nfCaixaTemp.tipoCaixaTexto)//.attr('title', PTVEmitir.nfCaixaTemp.tipoCaixaTexto);
 		$('.lblSaldoAtual', linha).html(PTVEmitir.nfCaixaTemp.saldoAtual)//.attr('title', PTVEmitir.nfCaixaTemp.saldoAtual);
 		$('.lblNumeroDeCaixas', linha).html(PTVEmitir.nfCaixaTemp.numeroCaixas)//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
-		
+		if ($('.rdbPessaoNfCaixa:checked').val() == 1) { //CPF
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		} else {
+			$('.rdbPessaoNfCaixa', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaTipo);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+			$('.lvlCPFCNPJ', linha).html(PTVEmitir.nfCaixaTemp.PessoaAssociadaCpfCnpj);//.attr('title', PTVEmitir.nfCaixaTemp.numeroCaixas);
+		}
+
 		$('tbody', tabela).append(linha);
 
 		var cont = $('.gridCaixa tbody tr:not(.trTemplate)', PTVEmitir.container).size();
@@ -1416,6 +1440,20 @@ PTVEmitir = {
 		if (cont <= 0)
 			$('.identificacaoDaCaixa').addClass('hide');
 
+	},
+
+	onTipoPessoaCaixaChange: function () {
+
+		$('.txtCPFCaixa', PTVEmitir.container).val('');
+		$('.txtCNPJCaixa', PTVEmitir.container).val('');
+
+		if ($('.rdbPessaoNfCaixa:checked', PTVEmitir.container).val() == '1') {
+			$('.CnpjPessoaJuridicaNfCaixaContainer', PTVEmitir.container).addClass('hide');
+			$('.CpfPessoaFisicaNfCaixaContainer', PTVEmitir.container).removeClass('hide');
+		} else {
+			$('.CpfPessoaFisicaNfCaixaContainer', PTVEmitir.container).addClass('hide');
+			$('.CnpjPessoaJuridicaNfCaixaContainer', PTVEmitir.container).removeClass('hide');
+		}
 	},
 
 	// #endregion

@@ -75,6 +75,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProtocolo.Data
 						   r.tid,
 						   r.setor,
 						   r.setor_criacao, 
+						   r.assunto,
+						   r.descricao,
 						   lfs.texto fiscalizacao_sit_texto
 					  from {0}tab_protocolo          r,
 						   {0}tab_pessoa             p,
@@ -216,6 +218,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProtocolo.Data
 						{
 							documento = new Documento(protocolo);
 							documento.Nome = reader["nome"].ToString();
+							documento.Assunto = reader["assunto"].ToString();
+							documento.Descricao = reader["descricao"].ToString();
 
 							if (reader["protocolo_associado"] != null && !Convert.IsDBNull(reader["protocolo_associado"]))
 							{

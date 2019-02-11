@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 {
@@ -21,13 +22,16 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 			set { _configuracoesProtocoloTipos = value; }
 		}
 
+		private ProtocoloTipo _tipo = new ProtocoloTipo();
 		public ProtocoloTipo Tipo
 		{
 			get
 			{
-				ProtocoloTipo tipo = ConfiguracoesProtocoloTipos.FirstOrDefault(x => x.Id == Documento.Tipo.Id) ?? new ProtocoloTipo() { LabelInteressado = "Interessado" };
-				return tipo;
+				if (_tipo == null || _tipo.Id == 0)
+					_tipo = ConfiguracoesProtocoloTipos.FirstOrDefault(x => x.Id == Documento.Tipo.Id) ?? new ProtocoloTipo() { LabelInteressado = "Interessado" };
+				return _tipo;
 			}
+			set { _tipo = value; }
 		}
 
 		private Documento _documento = new Documento();
@@ -55,6 +59,27 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 		{
 			get { return _setores; }
 			set { _setores = value; }
+		}
+
+		public List<SelectListItem> SetoresDestinatario
+		{
+			get { return _setoresDestinatario; }
+			set { _setoresDestinatario = value; }
+		}
+		private List<SelectListItem> _setoresDestinatario = new List<SelectListItem>();
+
+		public List<SelectListItem> DestinatarioFuncionarios
+		{
+			get { return _destinatarioFuncionarios; }
+			set { _destinatarioFuncionarios = value; }
+		}
+		private List<SelectListItem> _destinatarioFuncionarios = new List<SelectListItem>();
+
+		private AssinantesVM _assinantesVM = new AssinantesVM();
+		public AssinantesVM AssinantesVM
+		{
+			get { return _assinantesVM; }
+			set { _assinantesVM = value; }
 		}
 
 		public bool ExibirGrupoProtocolo
@@ -126,13 +151,14 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 
 		public SalvarVM() { }
 
-		public SalvarVM(List<ProtocoloTipo> lstDocumentoTipo, int? documentoSelecionado = null)
+		public SalvarVM(List<ProtocoloTipo> lstDocumentoTipo, List<Setor> setoresDestinario, int? documentoSelecionado = null)
 		{
 			DocumentoTipos = ViewModelHelper.CriarSelectList(lstDocumentoTipo, true, selecionado: documentoSelecionado.ToString());
 			this.Documento.DataCadastro.Data = DateTime.Now;
 
 			this.ConfiguracoesProtocoloTipos = lstDocumentoTipo;
 			this.ConfiguracoesProtocoloTiposJson = ViewModelHelper.Json(lstDocumentoTipo);
+			CarregarSetoresDestinario(setoresDestinario);
 		}
 
 		public void CarregarSetores(List<Setor> lstSetores)
@@ -148,6 +174,11 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMDocumento
 				int id = (lstSetores.FirstOrDefault() ?? new Setor()).Id;
 				Setores = ViewModelHelper.CriarSelectList(lstSetores, true, selecionado: id.ToString());
 			}
+		}
+
+		public void CarregarSetoresDestinario(List<Setor> setoresDestinario)
+		{
+			SetoresDestinatario = ViewModelHelper.CriarSelectList(setoresDestinario, true);
 		}
 
 		public void SetDocumento(Documento documento, List<ResponsavelFuncoes> responsavelFuncoes)
