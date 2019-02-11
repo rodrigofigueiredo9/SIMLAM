@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
 {
@@ -19,6 +20,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		public CertidaoDispensaLicenciamentoAmbientalPDF()
 		{
+			this.Caracterizacao = new BarragemDispensaLicencaPDF( new BarragemDispensaLicenca());
 			this.Atividade = new AtividadePDF();
 			this.Requerimento = new RequerimentoPDF();
 			this.Interessado = new PessoaPDF();

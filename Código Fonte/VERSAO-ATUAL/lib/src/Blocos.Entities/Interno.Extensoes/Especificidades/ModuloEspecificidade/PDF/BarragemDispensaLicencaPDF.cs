@@ -17,12 +17,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public decimal? AreaAlagada { get; set; }
 		public decimal? VolumeArmazanado { get; set; }
 		public int FinalidadeAtividade { get; set; }
-
+		public BarragemDispensaLicenca barragemEntity { get; set; }
 		public string CampoNome { get; set; }
 		public string CampoValor { get; set; }
 
 		public BarragemDispensaLicencaPDF(BarragemDispensaLicenca caracterizacao)
 		{
+			barragemEntity = caracterizacao;
 			Id = caracterizacao.Id;
 			NorthingLatitude = caracterizacao.Coordenada.NorthingUtmTexto;
 			EastingLongitude = caracterizacao.Coordenada.EastingUtmTexto;
