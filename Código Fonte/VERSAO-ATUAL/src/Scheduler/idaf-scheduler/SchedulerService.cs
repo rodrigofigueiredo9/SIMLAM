@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Reflection;
 using System.ServiceProcess;
 using log4net;
@@ -9,9 +10,9 @@ using Tecnomapas.EtramiteX.Scheduler.jobs;
 
 namespace Tecnomapas.EtramiteX.Scheduler
 {
-	
 	public partial class SchedulerService : ServiceBase
 	{
+		//public static HttpClient httpClient = new HttpClient();
 		private const string NomeServico = "Tecnomapas.EtramiteX.Scheduler";
 
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -37,7 +38,7 @@ namespace Tecnomapas.EtramiteX.Scheduler
 			ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
 			_scheduler = schedulerFactory.GetScheduler();
 			_scheduler.Start();
-			
+
 
 			Log.Info(string.Format("Starting Windows Service: {0}", NomeServico));
 
@@ -45,9 +46,9 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 			//Log.Info("Criando Jobs");
 
-            ScheduleJobIntegrar();
+			ScheduleJobIntegrar();
 
-           // Log.Info("Integrando...");
+			// Log.Info("Integrando...");
 
 			ScheduleJobs();
 
@@ -56,40 +57,44 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 		private static void CreateJobs()
 		{
-            var IntegracaoCar = JobBuilder.Create<IntegracaoCarJob>().WithIdentity("IntegracaoCarJob").Build();
-            JobDictionary.Add("IntegracaoCarJob", IntegracaoCar);
-            
-            var gerarArquivoCar = JobBuilder.Create<GerarArquivoCarJob>().WithIdentity("GerarArquivoCarJob").Build();
-            JobDictionary.Add("GerarArquivoCarJob", gerarArquivoCar);
-			
-		    var enviarArquivoCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("EnviarArquivoCarJob").Build();
+			var IntegracaoCar = JobBuilder.Create<IntegracaoCarJob>().WithIdentity("IntegracaoCarJob").Build();
+			JobDictionary.Add("IntegracaoCarJob", IntegracaoCar);
+
+			var gerarArquivoCar = JobBuilder.Create<GerarArquivoCarJob>().WithIdentity("GerarArquivoCarJob").Build();
+			JobDictionary.Add("GerarArquivoCarJob", gerarArquivoCar);
+
+			var enviarArquivoCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("EnviarArquivoCarJob").Build();
 			JobDictionary.Add("EnviarArquivoCarJob", enviarArquivoCar);
-            
-            //var ajustarStatusCar = JobBuilder.Create<AjustarStatusCarJob>().WithIdentity("AjustarStatusCarJob").Build();
-            //JobDictionary.Add("AjustarStatusCarJob", ajustarStatusCar);
-            
-            //var consultarDua = JobBuilder.Create<ConsultarDUAJob>().WithIdentity("ConsultarDUAJob").Build();
-            //JobDictionary.Add("ConsultarDUAJob", consultarDua);
+
+			var reenvioCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("ReenvioCarJob").Build();
+			JobDictionary.Add("ReenvioCarJob", reenvioCar);
+
+			//var ajustarStatusCar = JobBuilder.Create<AjustarStatusCarJob>().WithIdentity("AjustarStatusCarJob").Build();
+			//JobDictionary.Add("AjustarStatusCarJob", ajustarStatusCar);
+
+			//var consultarDua = JobBuilder.Create<ConsultarDUAJob>().WithIdentity("ConsultarDUAJob").Build();
+			//JobDictionary.Add("ConsultarDUAJob", consultarDua);
 		}
 
 		private static void ScheduleJobs()
 		{
-            _scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   //("A cada 15 Segundos"));
-            _scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));
-            //_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
-            //_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
+			_scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   //("A cada 15 Segundos"));
+			_scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));
+			_scheduler.ScheduleJob(JobDictionary["ReenvioCarJob"], CreateTrigger("A CADA 6H COMEÇANDO AS 5"));
+			//_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
+			//_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}
-        
-        private static void ScheduleJobIntegrar()
-        {
-            //_scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 15 Segundos"));
-            _scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 10 Minutos"));
-        }
+
+		private static void ScheduleJobIntegrar()
+		{
+			//_scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 15 Segundos"));
+			_scheduler.ScheduleJob(JobDictionary["IntegracaoCarJob"], CreateTrigger("A cada 10 Minutos"));
+		}
 
 		private static ITrigger CreateTrigger(string key)
 		{
 			const int localTimeZone = -4;
-			
+
 			switch (key.ToUpper())
 			{
 				case "A CADA 1 SEGUNDO":
@@ -172,6 +177,16 @@ namespace Tecnomapas.EtramiteX.Scheduler
 							WithIntervalInHours(24)
 							.OnEveryDay()
 							.StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(6 - localTimeZone, 0))
+							.InTimeZone(TimeZoneInfo.Utc))
+						.Build();
+
+				case "A CADA 6H COMEÇANDO AS 5":
+					return TriggerBuilder.Create()
+						.WithDescription("Todo dia as 6AM (UTC-4)")
+						.WithDailyTimeIntervalSchedule(x => x.
+							WithIntervalInHours(24)
+							.OnEveryDay()
+							.StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(5 - localTimeZone, 0))
 							.InTimeZone(TimeZoneInfo.Utc))
 						.Build();
 

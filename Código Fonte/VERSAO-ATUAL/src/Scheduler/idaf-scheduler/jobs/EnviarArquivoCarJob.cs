@@ -13,12 +13,23 @@ using System.Threading.Tasks;
 using Tecnomapas.EtramiteX.Scheduler.misc;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using System.Collections.Generic;
+using System.Threading;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
 	[DisallowConcurrentExecution]
 	public class EnviarArquivoCarJob : IJob
 	{
+		private static HttpClientHandler _httpClientHandler = new HttpClientHandler()
+		{
+			PreAuthenticate = true,
+			UseDefaultCredentials = false,
+		};
+		private static HttpClient _client;
+		private static int count = 1;
+
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 		/// <summary>
@@ -62,60 +73,59 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
 
-                    if (String.IsNullOrEmpty(item.Requisicao))
-                    {
-                        nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-						Log.Error($" CONTROLE SICAR (ENVIAR) IS NULL ::: {item.Requisicao}");
+					if (String.IsNullOrEmpty(item.Requisicao))
+					{
+						nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
 						continue;
-                    }
+					}
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
 					string resultado = "";
 					try
 					{
-						if(ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
-						{
-							nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-							Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
-							continue;
-						}
+						//if (ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
+						//{
+						//	nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+						//	Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
+						//	continue;
+						//}
 						//Atualizar controle de envio do SICAR
-                        ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
+						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
 						//var controleCar = ControleCarDB.ObterItemControleCar(conn, requisicao);
 
 						var dataCadastroEstadual = ControleCarDB.ObterDataSolicitacao(conn, requisicao.solicitacao_car, requisicao.origem);
 
-						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
+						resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
 						if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
 						{
 							throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
-						if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
-						{
-							resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual);
-							if(String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
-							{
-								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-							}
-							resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
-						}
-                        //resultadoEnvio.codigoResposta = 200;
-                        
+						//if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
+						//{
+						//	resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
+						//	if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
+						//	{
+						//		throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+						//	}
+						//	resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
+						//}
+						//resultadoEnvio.codigoResposta = 200;
+
 						//Salvar no diretorio de arquivos do SIMLAM Institucional
 						string arquivoFinal;
 						using (var stream = File.Open(pathArquivoTemporario + nextItem.Requisicao, FileMode.Open, FileAccess.Read, FileShare.Read))
 						{
 							var arquivoManager = new ArquivoManager();
 							arquivoFinal = arquivoManager.Salvar(nextItem.Requisicao, stream, conn);
-                        }
+						}
 
-       
 
-                        /*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
+
+						/*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
 							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
 								&& resultadoEnvio.mensagensResposta.Any( r=> r.Equals("Foi encontrada sobreposição de 100,00% com outro imóvel já inscrito no CAR que possui os mesmos documentos (CPF e/ou CNPJ).", StringComparison.CurrentCultureIgnoreCase))))
 						{
@@ -125,16 +135,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						{*/
 
 						//Retificação
-                        ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
+						ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
 
-                        if(itemSicar != null)
-                        {
-                            if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
-                            {
-                                ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
-                                ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
-                            }
-                        }                            
+						if (itemSicar != null)
+						{
+							if (itemSicar.solicitacao_car_anterior > 0 && resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso)
+							{
+								ControleCarDB.AtualizarSolicitacaoCarRetificacao(conn, itemSicar.solicitacao_car_anterior_esquema, itemSicar.solicitacao_car_anterior, itemSicar.solicitacao_car_anterior_tid);
+								ControleCarDB.AtualizarControleSICarRetificacao(conn, resultadoEnvio, itemSicar, ControleCarDB.SITUACAO_ENVIO_ARQUIVO_ENTREGUE, requisicao.solicitacao_car, tid, arquivoFinal);
+							}
+						}
 						//Atualiza a Solicitacao do CAR
 						var situacaoSolicitacao = (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaSucesso) ? ControleCarDB.SITUACAO_SOLICITACAO_VALIDO : ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE;
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao, situacaoSolicitacao, tid);
@@ -152,7 +162,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						var msg = " +++---+++ RESULTADO  :::: " +
 							(resultado ?? "noMessage ++++   00----000  " + ex.Message +
 							Environment.NewLine +
-							Environment.NewLine  );
+							Environment.NewLine);
 
 						LocalDB.MarcarItemFilaTerminado(conn, nextItem.Id, false, msg);
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_SOLICITACAO_PENDENTE, tid);
@@ -173,41 +183,41 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					//catch (Exception) { /*ignored*/ }
 				}
 
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
-				{
-					cmd.ExecuteNonQuery();                            
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Value cannot be null.%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%TCP%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Houve um problema%'", conn))
-				{
-					cmd.ExecuteNonQuery();
-				}
-				using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
-											WHERE resultado like '%Erro de conexão com o SICAR%'", conn))
-				{
-				cmd.ExecuteNonQuery();
-				}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Não está na hora especificada para o sincronismo do seu sistema. %'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Value cannot be null.%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%TCP%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Object reference%' AND TIPO = 'enviar-car'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Houve um problema%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
+				//using (var cmd = new OracleCommand(@"UPDATE IDAF.TAB_SCHEDULER_FILA SET DATA_CRIACAO = null
+				//							WHERE resultado like '%Erro de conexão com o SICAR%'", conn))
+				//{
+				//	cmd.ExecuteNonQuery();
+				//}
 
 				conn.Close();
 			}
 
-		
+
 
 			Log.InfoFormat("ENDING {0} executing at {1}", jobKey, DateTime.Now.ToString("r"));
 		}
@@ -216,58 +226,86 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 		/// </summary>
 		/// <param name="localArquivoCar">The local arquivo car.</param>
 		/// <returns></returns>
-		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual)
+		private async Task<String> EnviarArquivoCAR(string localArquivoCar, string dataCadastroEstadual, int solicitacao)
 		{
-			var httpClientHandler = new HttpClientHandler()
+			var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
+			if (!String.IsNullOrWhiteSpace(proxyUrl))
 			{
-				PreAuthenticate = true,
-				UseDefaultCredentials = false,
-			};
-
-            var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
-
-            if (!String.IsNullOrWhiteSpace(proxyUrl))
-            {
-                httpClientHandler.Proxy = new WebProxy(proxyUrl, false)
-                {
-                    UseDefaultCredentials = false,
-                    Credentials = CredentialCache.DefaultCredentials
-                };
-            }
-
-			using (var stream = File.Open(localArquivoCar, FileMode.Open, FileAccess.Read, FileShare.Read))
-			{
-				var fileName = Path.GetFileName(localArquivoCar);
-
-				using (var client = new HttpClient(httpClientHandler))
+				_httpClientHandler.Proxy = new WebProxy(proxyUrl, false)
 				{
-					var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
-					client.BaseAddress = new Uri(sicarUrl);
-					client.DefaultRequestHeaders.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
+					UseDefaultCredentials = false,
+					Credentials = CredentialCache.DefaultCredentials
+				};
+			}
 
-                    try
-                    {
-                        using (var content = new MultipartFormDataContent())
-                        {
-                            content.Add(new StreamContent(stream), "car", fileName);
-                            content.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-                            HttpResponseMessage response = await client.PostAsync("/sincronia/quick", content);
+			Log.Info($"Verifica se httpClient já foi instanciado - {DateTime.Now }");
 
-							if (!response.IsSuccessStatusCode)
+			//verifica se objeto já foi instanciado
+			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
+			if (_client == null)
+			{
+				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now} ");
+				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
+				_client.DefaultRequestHeaders.Clear();
+
+				count++;
+			}
+
+			try
+			{
+				Log.Info($"Preparando para Enviar o Arquivo - {DateTime.Now}");
+				using (var fs = File.OpenRead(localArquivoCar))
+				{
+					using (var streamContent = new StreamContent(fs))
+					{
+						var imageContent = new ByteArrayContent(await streamContent.ReadAsByteArrayAsync());
+						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+
+						Log.Info($"Iniciando DataContent - {DateTime.Now}");
+						using (var form = new MultipartFormDataContent())
+						{
+							Log.Info($"Token: {ConfigurationManager.AppSettings["SicarToken"]} - {DateTime.Now}");
+							form.Headers.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
+
+							Log.Info($"Nome do Arquivo: {localArquivoCar} - {DateTime.Now}");
+							form.Add(imageContent, "car", Path.GetFileName(localArquivoCar));
+
+							Log.Info($"DataCadastroEstadual: {dataCadastroEstadual} - {dataCadastroEstadual}");
+							form.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
+
+							Log.Info($"Iniciando enviado de Arquivo - {DateTime.Now}");
+							var response = await _client.PostAsync("/sincronia/quick", form);
+							Log.Info($"Concluído envio do Arquivo - {DateTime.Now}");
+
+
+							Log.Info($"Verificando se envio foi realizado com sucesso - {DateTime.Now}");
+							if (response.IsSuccessStatusCode)
 							{
-								Log.Error("ERRO RESPONSE::::?? //  " + response);
-								throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+								var content = await response.Content.ReadAsStringAsync();
+								var jsonFormat = JToken.Parse(content).ToString();
+								Log.Info($"RETORNO ENVIO: {jsonFormat}");
+
+								return jsonFormat;
 							}
 
-							return await response.Content.ReadAsStringAsync();
-                        }
-                    }
-                    catch (Exception ex) 
-                    {
-						Log.Error("EnviarArquivoCARFunction: " + ex.Message + " + ---- +" + localArquivoCar);
-                        return ex.Message;
+							Log.Error("ERRO RESPONSE: " + response);
+							throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
+						}
 					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now}");
+				Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
+				Log.Error($"Error Message: {ex.Message}");
+				Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
+				Log.Error($"ERROR FULL: {ex.ToString()}");
+				Log.Error("*************************************************************************************************************************");
+				Log.Error("*************************************************************************************************************************");
+				return ex.Message;
 			}
 		}
 	}
