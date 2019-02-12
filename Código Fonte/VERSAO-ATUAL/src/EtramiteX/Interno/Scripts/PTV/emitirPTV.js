@@ -28,7 +28,8 @@ PTVEmitir = {
 			urlVerificarDocumentoOrigem: null,
 			urlVerificarNotaFiscalCaixa: null,
 			urlObterSaldoDocOrigem: null,
-			urlObterMunicipios: null
+			urlObterMunicipios: null,
+			urlValidarDestinatarioExportacao: null
 		},
 		Mensagens: null,
 		idsTela: null,
