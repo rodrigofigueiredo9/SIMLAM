@@ -1,13 +1,15 @@
 ﻿using Exiges.Negocios.Library;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Text;
-using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using System.Net.Http;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
 
@@ -18,6 +20,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		BarragemDispensaLicencaDa _da = new BarragemDispensaLicencaDa();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
+		GerenciadorConfiguracao<ConfiguracaoCoordenada> _configCoordenada = new GerenciadorConfiguracao<ConfiguracaoCoordenada>(new ConfiguracaoCoordenada());
 
 		internal bool Salvar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId)
 		{
@@ -107,6 +110,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (x.easting <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
+
+			ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
 
 			if (!caracterizacao.Fase.HasValue)
 			{
@@ -301,6 +306,45 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
 		} 
 			
-		
+		internal void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
+		{
+			try
+			{
+				RequestJson requestJson = new RequestJson();
+				EmpreendimentoCaracterizacao empreendimento = new EmpreendimentoCaracterizacao();
+				var apiUri = ConfigurationManager.AppSettings["apiGeo"];
+				var token = ConfigurationManager.AppSettings["tokenCredenciadoGeo"];
+
+				empreendimento = _da.ObterEmpreendimentoAtpEMunicipio(empreendimentoId);
+
+				if (empreendimento.AtpID > 0)
+				{
+					HttpClient _client = new HttpClient();
+					_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+					coordenadas.ForEach(x => {
+						if (x.tipo == eTipoCoordenadaBarragem.barramento)
+						{
+							HttpResponseMessage response = _client.GetAsync($"{apiUri}geoatp/coordenada/latitude/{x.easting}/longitude/{x.northing}").Result;
+							var json = response.Content.ReadAsStringAsync().Result;
+							var atpCoordenada = JsonConvert.DeserializeObject<List<int>>(json);
+
+							if (!atpCoordenada.Contains(empreendimento.AtpID))
+								Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaATP(x.tipo.Description()));
+						}
+					});
+				}
+				else
+				{
+					var resposta = requestJson.Executar<dynamic>(_configCoordenada.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada) + "?easting=" + coordenadas[0].easting + "&northing=" + coordenadas[0].northing);
+					if (resposta.Data["Municipio"]["IBGE"] != empreendimento.MunicipioIBGE.ToString())
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaMunicipio(eTipoCoordenadaBarragem.barramento.Description()));
+				}
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+		}
 	}
 }

@@ -237,8 +237,8 @@ BarragemDispensaLicenca = {
     //-------------------------ENVIAR ARQUIVO-------------------------//
     enviarArquivo: function (url) {
         var nome = "enviando ...";
-        var nomeArquivo = $('.inputFile').val();
-
+		var nomeArquivo = $('.inputFile').val();
+		MasterPage.carregando(true);
         if (nomeArquivo === '') {
             Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.ArquivoObrigatorio]);
             return;
@@ -249,6 +249,7 @@ BarragemDispensaLicenca = {
 
         FileUpload.upload(url, inputFile, BarragemDispensaLicenca.callBackEnviarArquivo);
         $('.inputFile').val('');
+		MasterPage.carregando(false);
     },
 
     callBackEnviarArquivo: function (controle, retorno, isHtml) {

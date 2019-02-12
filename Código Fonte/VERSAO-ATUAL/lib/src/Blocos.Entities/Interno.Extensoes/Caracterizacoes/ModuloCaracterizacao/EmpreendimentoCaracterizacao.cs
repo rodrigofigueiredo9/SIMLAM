@@ -22,5 +22,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCar
 		public decimal ModuloFiscalHA { get; set; }
 		public decimal AreaImovelHA { get; set; }
 		public decimal AreaFlorestaPlantadaHA { get; set; }
+		public int AtpID { get; set; } 
 	}
 }
