@@ -49,8 +49,11 @@
         public Mensagem InformeDataPrevisaoTerminoObraFormatoValido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataPrevisaoTerminoObra", Texto = "Informe a data de previsão de término da obra (mês/ano) em um formato correto." }; } }
         public Mensagem PeriodoObraValido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra, #DataPrevisaoTerminoObra", Texto = "A data de início da obra deve ser menor ou igual a data de previsão de término da obra." }; } }
 
+		// Validações Coordenadas
 		public Mensagem InformeCoordEasting(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a coordenada easting do {0}.", tipo) }; }
 		public Mensagem InformeCoordNorthing(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a coordenada northing do {0}.", tipo) }; }
+		public Mensagem CoordenadaForaATP(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora da ATP.", tipo) }; }
+		public Mensagem CoordenadaForaMunicipio(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora do município.", tipo) }; }
 
 		public Mensagem InformeFormacaoRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "FormacaoRT", Texto = "Informe a formação do responsável técnico." }; } }
         public Mensagem InformativoFormacaoRTOutro { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Campo = "EspecificacaoRT", Texto = "O IDAF (Instituto de Defesa Agropecuária e Florestal) informa que por orientação do CREA/ES, só são aptos a serem responsáveis técnicos de barragens de terra, os engenheiros agrônomos, engenheiros agrícolas e engenheiros civis, e apenas engenheiros civis no caso de barragens de concreto ou mista. Demais profissionais só serão aceitos com a apresentação de uma autorização específica do conselho de classe." }; } }
@@ -83,6 +86,7 @@
 		public Mensagem PeriodoMaior (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("O período de {0} tem que ser maior ou igual a data de hoje.", periodo) }; }
 		public Mensagem DataTerminoMaiorInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "O período de término deve ser maior do que o período de início." }; } }
 
+		// Validações Construida e A Construir
 		public Mensagem InformeVazaoMinTipo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinTipo", Texto = "Informe o tipo de dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMinDiametro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinDiametro", Texto = "Informe o diâmetro do dispositivo de vazão mínima." }; } }
 		public Mensagem InformeVazaoMinInstalado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMinInstalado", Texto = "Informe se o dispositivo de vazão mínima já está instalado." }; } }
@@ -94,6 +98,7 @@
 		public Mensagem InformeVazaoMaxNormas { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxNormas", Texto = "Informe se o dispositivo de vazão máxima está dentro das normas." }; } }
 		public Mensagem InformeVazaoMaxAdequacoes { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "vazaoMaxAdequacoes", Texto = "Informe as adequações do dispositivo de vazão máxima." }; } }
 
+		// Validações Responsavel Técnico
 		public Mensagem InformeNomeRT(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o nome do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeProfissapRT(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a profissão do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeCREART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o registro do CREA do responsável técnico {0}.", tipo) }; }

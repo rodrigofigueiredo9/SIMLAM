@@ -1022,6 +1022,50 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				return bancoDeDados.ExecutarList<string>(comando);
 			}
 		}
+
+		internal EmpreendimentoCaracterizacao ObterEmpreendimentoAtpEMunicipio(int empreendimento, BancoDeDados banco = null)
+		{
+			EmpreendimentoCaracterizacao retorno = new EmpreendimentoCaracterizacao();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT A.ID FROM IDAFCREDENCIADOGEO.GEO_ATP A 
+						WHERE A.PROJETO IN ( SELECT P.ID FROM TAB_EMPREENDIMENTO E 
+												INNER JOIN CRT_PROJETO_GEO P ON E.ID = P.EMPREENDIMENTO 
+												WHERE E.ID = :empreendimento)", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+						retorno.AtpID = reader.GetValue<int>("ID");
+
+					reader.Close();
+				}
+
+				comando = bancoDeDados.CriarComando(@"
+					SELECT e.municipio, m.ibge FROM tab_empreendimento_endereco e 
+						inner join lov_municipio m on m.id = e.municipio
+					WHERE correspondencia = 0 and empreendimento = :empreendimento", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						retorno.MunicipioId = reader.GetValue<int>("municipio");
+						retorno.MunicipioIBGE = reader.GetValue<int>("ibge");
+					}
+
+					reader.Close();
+				}
+
+				return retorno;
+			}
+		}
 		#endregion
 
 		#region Validações
