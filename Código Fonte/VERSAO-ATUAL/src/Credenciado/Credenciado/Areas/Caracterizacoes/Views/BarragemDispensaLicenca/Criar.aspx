@@ -5,7 +5,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">Barragem para Dispensa de Licença Ambiental</asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="JsHeadContent" runat="server">
-<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
+	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/GeoProcessamento/coordenada.js") %>"></script>
 	<script type="text/javascript" src="<%= Url.Content("~/Scripts/Areas/Caracterizacoes/barragemDispensaLicenca.js") %>"></script>
 	<script type="text/javascript">
 		$(function () {
@@ -24,7 +24,7 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		<h1 class="titTela">Barragem Dispensada Licença Ambiental</h1>
+		<h1 class="titTela">Barragem Dispensada de Licenciamento Ambiental</h1>
 		<br />
 
 		<div class="divCaracterizacao">

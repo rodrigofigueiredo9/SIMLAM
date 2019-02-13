@@ -31,7 +31,7 @@
 				</div>
 				<div class="coluna20">
 					<label for="Configurar_MaximoAreaAlagadaNovo">Novo valor máximo:</label>
-					<%= Html.TextBox("Configurar_MaximoAreaAlagadaNovo", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMaximoAreaAlagada", @maxlength ="5" }))%>
+					<%= Html.TextBox("Configurar_MaximoAreaAlagadaNovo", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMaximoAreaAlagada", @maxlength ="18" }))%>
 				</div>
 			</div>
 		</fieldset>
@@ -44,7 +44,7 @@
 				</div>
 				<div class="coluna20">
 					<label for="Configurar_MaximoVolumeArmazenadoNovo">Novo valor máximo:</label>
-					<%= Html.TextBox("Configurar_MaximoVolumeArmazenadoNovo", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMaximoVolumeArmazenado", @maxlength ="8" }))%>
+					<%= Html.TextBox("Configurar_MaximoVolumeArmazenadoNovo", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtValorMaximoVolumeArmazenado", @maxlength ="18" }))%>
 				</div>
 			</div>
 		</fieldset>

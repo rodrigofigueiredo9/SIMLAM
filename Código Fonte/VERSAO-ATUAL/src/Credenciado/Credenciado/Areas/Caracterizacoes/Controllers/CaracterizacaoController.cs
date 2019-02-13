@@ -154,6 +154,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
 				{
+					x.UrlListar = Url.Action("Listar", x.Tipo.ToString());
 					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
 
 				}
@@ -192,9 +193,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
 				{
-					x.UrlCriar = Url.Action("Listar", x.Tipo.ToString());
-					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
-					x.UrlEditar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlListar = Url.Action("Listar", x.Tipo.ToString());
 				}
 
 			});
@@ -217,7 +216,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 				if (x.Tipo == eCaracterizacao.BarragemDispensaLicenca)
 				{
-					x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+					x.UrlListar = Url.Action("Listar", x.Tipo.ToString());
 				}
 			});
 
