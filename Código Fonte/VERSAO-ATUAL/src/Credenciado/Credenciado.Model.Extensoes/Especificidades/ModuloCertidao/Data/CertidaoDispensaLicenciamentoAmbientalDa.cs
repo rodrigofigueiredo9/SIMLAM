@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
@@ -310,7 +313,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
-					{
+					{ 
 						caracterizacao.Id = reader.GetValue<int>("id");
 						caracterizacao.CredenciadoID = barragemId;
 						caracterizacao.Tid = reader.GetValue<string>("tid");
@@ -330,7 +333,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 						caracterizacao.tempoConcentracaoEquacaoUtilizada = reader.GetValue<string>("equacao_calculo");
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
-						caracterizacao.Fase = reader.GetValue<int>("fase");
+						caracterizacao.faseInstalacao = (eFase)reader.GetValue<int>("fase");
 
 						caracterizacao.barragemContiguaMesmoNivel = reader.GetValue<bool>("possui_barragem_contigua");
 						caracterizacao.alturaBarramento = reader.GetValue<decimal>("altura_barramento");
@@ -425,6 +428,72 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			#endregion
 
 			return certidao;
+		}
+
+		internal List<Lista> ObterFinalidadesTexto(int barragemId, BancoDeDados banco = null)
+		{
+			List<Lista> finalidades = new List<Lista>();
+			Lista finalidade;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select b.ATIVIDADE, b.BARRAGEM, atv.id, atv.texto from crt_barragem_finaldiade_ativ b " +
+					"inner join lov_crt_bdla_finalidade_atv atv on b.ATIVIDADE = atv.id " +
+					"where BARRAGEM = :barragem ", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						finalidade = new Lista();
+
+						finalidade.Tipo = reader.GetValue<int>("id");
+						finalidade.Texto = reader.GetValue<string>("texto");
+
+						finalidades.Add(finalidade);
+					}
+
+					reader.Close();
+				}
+			}
+
+			return finalidades;
+		}
+
+		internal string ObterVazaoMinimaTipoTexto(int barragemId, BancoDeDados banco = null)
+		{
+			string vazao;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando("select mt.texto from CRT_BARRAGEM_CONSTRUIDA_CON b " +
+					"inner join LOV_CRT_BDLA_MONGE_TIPO mt on b.VAZAO_MIN_TIPO = mt.id " +
+					"where b.BARRAGEM = :barragem", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
+
+				vazao = bancoDeDados.ExecutarScalar<string>(comando);
+			}
+			return vazao;
+		}
+
+		internal string ObterVazaoMaximaTipoTexto(int barragemId, BancoDeDados banco = null)
+		{
+			string vazao;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando("select mt.texto from CRT_BARRAGEM_CONSTRUIDA_CON b " +
+					"inner join LOV_CRT_BDLA_VERTEDOURO_TIPO mt on b.VAZAO_MIN_TIPO = mt.id " +
+					"where b.BARRAGEM = :barragem", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
+
+				vazao = bancoDeDados.ExecutarScalar<string>(comando);
+			}
+			return vazao;
 		}
 
 		#endregion

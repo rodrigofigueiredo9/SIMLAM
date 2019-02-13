@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
@@ -18,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public decimal? VolumeArmazanado { get; set; }
 		public int FinalidadeAtividade { get; set; }
 		public BarragemDispensaLicenca barragemEntity { get; set; }
+		public List<Lista> finalidades { get; set; }
 		public string CampoNome { get; set; }
 		public string CampoValor { get; set; }
 

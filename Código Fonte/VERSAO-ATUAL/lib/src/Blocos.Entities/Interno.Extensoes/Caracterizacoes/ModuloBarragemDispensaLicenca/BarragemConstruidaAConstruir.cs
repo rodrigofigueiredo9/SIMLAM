@@ -22,12 +22,14 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string barramentoAdequacoes { get; set; }
 
 		public int vazaoMinTipo { get; set; }
+		public string vazaoMinTipoTexto { get; set; }
 		public decimal vazaoMinDiametro { get; set; }
 		public bool ?vazaoMinInstalado { get; set; }
 		public bool ?vazaoMinNormas { get; set; }
 		public string vazaoMinAdequacoes { get; set; }
 
 		public int vazaoMaxTipo { get; set; }
+		public string vazaoMaxTipoTexto { get; set; }
 		public string vazaoMaxDiametro { get; set; }
 		public bool ?vazaoMaxInstalado { get; set; }
 		public bool ?vazaoMaxNormas { get; set; }

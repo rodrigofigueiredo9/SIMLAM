@@ -11,6 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public int Id { get; set; }
 		public string VinculoPropriedade { get; set; }
 		public string VinculoPropriedadeOutro { get; set; }
+		public BarragemRT ResponsavelTecnico { get; set; }
 		public AtividadePDF Atividade { get; set; }
 		public RequerimentoPDF Requerimento { get; set; }
 		public PessoaPDF Interessado { get; set; }
