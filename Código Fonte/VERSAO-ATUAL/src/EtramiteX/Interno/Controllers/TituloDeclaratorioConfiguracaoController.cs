@@ -16,8 +16,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 	{
 		TituloDeclaratorioConfiguracaoBus _bus = new TituloDeclaratorioConfiguracaoBus();
 
+		#region Configuracao de Titulo Declaratorio
+
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
-		public ActionResult Configurar()
+		public ActionResult Index()
 		{
 			ConfigurarVM vm = new ConfigurarVM()
 			{
@@ -33,7 +35,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-        [Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
 		public ActionResult Salvar(TituloDeclaratorioConfiguracao configuracao)
 		{
 			_bus.Salvar(configuracao);
@@ -45,5 +47,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				UrlRedireciona = Url.Action("Configurar", "TituloDeclaratorioConfiguracao") + "?Msg=" + Validacao.QueryParam()
 			}, JsonRequestBehavior.AllowGet);
 		}
+
+		#endregion Configuracao de Titulo Declaratorio
+
+		#region Relatorio de Alteracao de Titulo Declaratorio
+
+		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
+		public ActionResult RelatorioAlteracaoTitulo()
+		{
+			ConfigurarVM vm = new ConfigurarVM()
+			{
+				Configuracao = _bus.Obter()
+			};
+			vm.Configuracao.BarragemSemAPP = vm.Configuracao.BarragemSemAPP ?? new Arquivo();
+			vm.BarragemSemAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemSemAPP);
+
+			vm.Configuracao.BarragemComAPP = vm.Configuracao.BarragemComAPP ?? new Arquivo();
+			vm.BarragemComAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemComAPP);
+
+			return View(vm);
+		}
+
+		#endregion Relatorio de Alteracao de Titulo Declaratorio
 	}
 }
