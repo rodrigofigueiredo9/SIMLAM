@@ -410,10 +410,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			//Para o caso da coluna da atividade estar na tabela principal
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
-
-		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
-			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
-
+		
 		public List<BarragemRT> ObterResponsavelTecnicoRequerimento(List<BarragemRT> rtLst, int projetoDigital, BancoDeDados banco = null)
 		{
 			BarragemRT rt = new BarragemRT();
@@ -506,6 +503,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return false;
 		}
+
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
 
 		#endregion
 	}

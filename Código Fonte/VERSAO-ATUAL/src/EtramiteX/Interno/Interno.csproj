@@ -355,6 +355,12 @@
     <Content Include="Areas\Caracterizacoes\Views\Avicultura\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Avicultura\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\BarragemDispensaLicencaPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescAContruir.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescContruida.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescricaoGeralBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Listar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ResponsabilidadeTecnica.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Criar.aspx" />

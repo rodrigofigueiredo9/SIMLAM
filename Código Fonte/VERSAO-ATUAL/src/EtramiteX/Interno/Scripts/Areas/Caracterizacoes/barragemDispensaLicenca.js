@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -29,6 +29,8 @@ BarragemDispensaLicenca = {
 		BarragemDispensaLicenca.container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
 		BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
 		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
+		BarragemDispensaLicenca.container.delegate('.btnVisualziar', 'click', BarragemDispensaLicenca.visualizar);
+		BarragemDispensaLicenca.container.delegate('.btnExcluir', 'click', BarragemDispensaLicenca.excluirConfirm);
 
 		//BarragemDispensaLicenca.changeBarragemTipo();
 		//BarragemDispensaLicenca.changeFase();
@@ -340,6 +342,98 @@ BarragemDispensaLicenca = {
 	},
 
 	salvar: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.salvar,
+			data: JSON.stringify(BarragemDispensaLicenca.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
+
+	visualizar: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.salvar,
+			data: JSON.stringify(BarragemDispensaLicenca.obter()),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.EhValido) {
+					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
+
+	excluirConfirm: function () {
+		var carac = BarragemDispensaLicenca.obter();
+		if (!carac) return;
+
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.excluirConfirm,
+			data: JSON.stringify({ caracterizacao: carac, projetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val() }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+					return;
+				}
+
+				Modal.confirma({
+					btnOkLabel: 'Sim',
+					btCancelLabel: "Voltar para a caracterização",
+					titulo: response.Titulo,
+					conteudo: '<b>' + reponse.Conteudo + '</b>',
+					btnOkCallback: function (conteudoModal) {
+						Modal.fechar(conteudoModal);
+						BarragemDispensaLicenca.excluir();
+					}
+				});
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
+
+	excluir: function () {
 		Mensagem.limpar(BarragemDispensaLicenca.container);
 		MasterPage.carregando(true);
 

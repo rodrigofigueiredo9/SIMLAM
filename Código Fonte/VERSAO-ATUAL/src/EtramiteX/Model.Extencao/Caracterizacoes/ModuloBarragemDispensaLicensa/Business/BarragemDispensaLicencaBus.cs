@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			}
 		}
 
-		public bool Excluir(int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
@@ -141,18 +141,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				{
 					return Validacao.EhValido;
 				}
-
-				GerenciadorTransacao.ObterIDAtual();
-
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				if (_validar.Excluir(id))
 				{
-					bancoDeDados.IniciarTransacao();
+					GerenciadorTransacao.ObterIDAtual();
 
-					_da.Excluir(empreendimento, bancoDeDados);
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+					{
+						bancoDeDados.IniciarTransacao();
 
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
+						_da.Excluir(id, bancoDeDados);
 
-					bancoDeDados.Commit();
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
+
+						bancoDeDados.Commit();
+					}
 				}
 
 			}
@@ -188,6 +190,38 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
             return barragem;
 		}
 
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragens = _da.ObterLista(empreendimentoId, projetoDigitalId, simplificado, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragens;
+		}
+
+		public List<BarragemDispensaLicenca> ObterBarragemAssociada(int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			List<BarragemDispensaLicenca> Barragem = new List<BarragemDispensaLicenca>();
+
+			try
+			{
+				Barragem = _da.ObterBarragemAssociada(projetoDigitalId, simplificado, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Barragem;
+		}
+
 		public object ObterDadosPdfTitulo(int empreendimento, int atividade, IEspecificidade especificidade, BancoDeDados banco = null)
 		{
 			return _da.ObterDadosPdfTitulo(empreendimento, atividade, banco);
@@ -201,50 +235,56 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 		#endregion
 
+		#region Auxiliares
 		public bool CopiarDadosCredenciado(Dependencia dependencia, int empreendimentoInternoId, BancoDeDados banco, BancoDeDados bancoCredenciado)
 		{
-            if (banco == null)
-            {
-                return false;
-            }
+			if (banco == null)
+			{
+				return false;
+			}
 
-            if (_validar == null)
-            {
-                _validar = new BarragemDispensaLicencaValidar();
-            }
+			if (_validar == null)
+			{
+				_validar = new BarragemDispensaLicencaValidar();
+			}
 
-            #region Configurar Caracterização
+			#region Configurar Caracterização
 
-            BarragemDispensaLicencaCredBus.BarragemDispensaLicencaBus credenciadoBus = new BarragemDispensaLicencaCredBus.BarragemDispensaLicencaBus();
-            BarragemDispensaLicenca caracterizacao = credenciadoBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
+			BarragemDispensaLicencaCredBus.BarragemDispensaLicencaBus credenciadoBus = new BarragemDispensaLicencaCredBus.BarragemDispensaLicencaBus();
+			BarragemDispensaLicenca caracterizacao = credenciadoBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
 
-            caracterizacao.EmpreendimentoID = empreendimentoInternoId;
-            caracterizacao.CredenciadoID = caracterizacao.Id;
-            caracterizacao.Id = 0;
-            caracterizacao.Tid = string.Empty;
+			caracterizacao.EmpreendimentoID = empreendimentoInternoId;
+			caracterizacao.CredenciadoID = caracterizacao.Id;
+			caracterizacao.Id = 0;
+			caracterizacao.Tid = string.Empty;
 
-            #endregion
+			#endregion
 
-            if (_validar.CopiarDadosCredenciado(caracterizacao))
-            {
-                GerenciadorTransacao.ObterIDAtual();
+			if (_validar.CopiarDadosCredenciado(caracterizacao))
+			{
+				GerenciadorTransacao.ObterIDAtual();
 
-                using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-                {
-                    bancoDeDados.IniciarTransacao();
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
 
-                    //Setar ID 
-                    caracterizacao.Id = ObterPorEmpreendimento(empreendimentoInternoId, simplificado: true, banco: bancoDeDados).Id;
+					//Setar ID 
+					caracterizacao.Id = ObterPorEmpreendimento(empreendimentoInternoId, simplificado: true, banco: bancoDeDados).Id;
 
-                    _da.CopiarDadosCredenciado(caracterizacao, bancoDeDados);
+					_da.CopiarDadosCredenciado(caracterizacao, bancoDeDados);
 
-                    credenciadoBus.AtualizarInternoIdTid(caracterizacao.CredenciadoID, caracterizacao.Id, GerenciadorTransacao.ObterIDAtual(), bancoCredenciado);
+					credenciadoBus.AtualizarInternoIdTid(caracterizacao.CredenciadoID, caracterizacao.Id, GerenciadorTransacao.ObterIDAtual(), bancoCredenciado);
 
-                    bancoDeDados.Commit();
-                }
-            }
+					bancoDeDados.Commit();
+				}
+			}
 
-            return Validacao.EhValido;
+			return Validacao.EhValido;
 		}
+
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
+		#endregion
 	}
 }
