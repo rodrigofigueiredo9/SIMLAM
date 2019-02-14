@@ -128,20 +128,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			}
 		}
 
-		public bool Excluir(int id, int empreendimento, BancoDeDados banco = null, bool validarDependencias = true)
+		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
 			{
-				if (!_caracterizacaoValidar.Basicas(empreendimento))
-				{
-					return Validacao.EhValido;
-				}
-
-				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(empreendimento, eCaracterizacao.BarragemDispensaLicenca, eCaracterizacaoDependenciaTipo.Caracterizacao))
-				{
-					return Validacao.EhValido;
-				}
-				if (_validar.Excluir(id))
+				if (_validar.Excluir(id, validarDependencias))
 				{
 					GerenciadorTransacao.ObterIDAtual();
 
@@ -156,7 +147,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						bancoDeDados.Commit();
 					}
 				}
-
 			}
 			catch (Exception exc)
 			{

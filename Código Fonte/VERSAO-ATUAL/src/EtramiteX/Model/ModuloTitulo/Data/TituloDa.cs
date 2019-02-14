@@ -1163,8 +1163,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Quantidade de registro do resultado
 
 				comando.DbCommand.CommandText = String.Format(@"
-				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt + 
-				"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt , (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = "select sum(d.quantidade) from (" + comando.DbCommand.CommandText + ") d ";
 

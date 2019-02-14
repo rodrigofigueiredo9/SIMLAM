@@ -211,6 +211,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			if (excluirCred)
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 				{
+					int interno = 0;
+					Comando comando = bancoDeDados.CriarComando(@"select id from crt_barragem_dispensa_lic where interno_id = :interno");
+					comando.AdicionarParametroEntrada("interno", id, DbType.Int32);
+					bancoDeDados.ExecutarScalar(comando);
 					Excluir(id, bancoDeDados, true);
 				}
 		}
@@ -649,6 +653,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				comando.AdicionarParametroEntrada("projeto_digital", projetoDigitalId, DbType.Int32);
 				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
 				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		internal bool PossuiTituloValido(int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					SELECT COUNT(1) FROM TAB_TITULO T
+					INNER JOIN TAB_REQUERIMENTO_BARRAGEM B ON B.REQUERIMENTO = T.REQUERIMENTO
+					WHERE T.ID = :titulo AND T.SITUACAO = 8
+				");
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
