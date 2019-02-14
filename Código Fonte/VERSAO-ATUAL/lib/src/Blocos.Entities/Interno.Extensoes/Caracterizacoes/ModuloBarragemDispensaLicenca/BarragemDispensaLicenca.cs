@@ -21,6 +21,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public eBarragemTipo BarragemTipo { get; set; }
 		public eRTElabocarao rtElaboracao { get; set; }
 		public eFase ?faseInstalacao { get; set; }
+		public string faseInstalacaoTexto { get; set; }
 		public List<BarragemCoordenada> coordenadas { get; set; }
 
 		public bool barragemContiguaMesmoNivel { get; set; }

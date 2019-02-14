@@ -18,6 +18,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertida
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
+using System.ComponentModel;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -100,19 +101,40 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				CertidaoDispensaLicenciamentoAmbientalPDF certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
 				DataEmissaoPorExtenso(certidao.Titulo);
 
+				foreach (var c in certidao.Caracterizacao.barragemEntity.coordenadas)
+				{
+					if (c.tipo == eTipoCoordenadaBarragem.barramento)
+					{
+						c.tipoTexto = "Barragem";
+					}
+					if (c.tipo == eTipoCoordenadaBarragem.areaBotaFora)
+					{
+						c.tipoTexto = "Área de bota-fora";
+					}
+					if (c.tipo == eTipoCoordenadaBarragem.areaEmprestimo)
+					{
+						c.tipoTexto = "Área de empréstimo";
+					}
+				}
+
+				if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.AConstruir)
+				{
+					certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "A construir";
+				}
+				if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.Construida)
+				{
+					certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "Contruída";
+				}
+
 				certidao.Caracterizacao.finalidades = _da.ObterFinalidadesTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMaxTipoTexto = _da.ObterVazaoMaximaTipoTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
-				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoProjeto); 
-				
+				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoDeclaracao);
+				certidao.ResponsavelTecnico.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 
 				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
-				{
-					certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
-				}
-
-				//certidao.Caracterizacao = new BarragemDispensaLicencaPDF(new BarragemDispensaLicencaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
-
+						certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
+				
 				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 				List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
 
