@@ -70,9 +70,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tecnomapas.ArcGis">
-      <HintPath>..\DLLs\Tecnomapas.ArcGis.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.Blocos.Arquivo">
       <HintPath>..\DLLs\Tecnomapas.Blocos.Arquivo.dll</HintPath>
     </Reference>
@@ -168,6 +165,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ArcGIS\Tecnomapas.ArcGis\Tecnomapas.ArcGis.csproj">
+      <Project>{e8b541e6-aa7d-42f2-9b93-6b0b92761287}</Project>
+      <Name>Tecnomapas.ArcGis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProcessControl\ProcessControl.csproj">
       <Project>{CE6F2145-9A02-4CF1-9EB7-D09454231012}</Project>
       <Name>ProcessControl</Name>
@@ -215,6 +216,9 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

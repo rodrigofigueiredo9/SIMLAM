@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessControl", "ProcessControl\ProcessControl.csproj", "{CE6F2145-9A02-4CF1-9EB7-D09454231012}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessOperacoesGeo", "ProcessOperacoesGeo\ProcessOperacoesGeo.csproj", "{0170D9A1-DC16-488C-9EC3-2DE021874693}"
@@ -16,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DLLs\Tecnomapas.ArcGis.dll = DLLs\Tecnomapas.ArcGis.dll
 		DLLs\Tecnomapas.Blocos.Arquivo.dll = DLLs\Tecnomapas.Blocos.Arquivo.dll
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tecnomapas.ArcGis", "..\ArcGIS\Tecnomapas.ArcGis\Tecnomapas.ArcGis.csproj", "{E8B541E6-AA7D-42F2-9B93-6B0B92761287}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,8 +77,23 @@ Global
 		{9F43A484-98E8-4389-B4E1-F11FBF6F7603}.Release|Mixed Platforms.Build.0 = Release|x86
 		{9F43A484-98E8-4389-B4E1-F11FBF6F7603}.Release|x86.ActiveCfg = Release|x86
 		{9F43A484-98E8-4389-B4E1-F11FBF6F7603}.Release|x86.Build.0 = Release|x86
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8B541E6-AA7D-42F2-9B93-6B0B92761287}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06BAAB13-35F6-448F-8110-6645F7390DB2}
 	EndGlobalSection
 EndGlobal
