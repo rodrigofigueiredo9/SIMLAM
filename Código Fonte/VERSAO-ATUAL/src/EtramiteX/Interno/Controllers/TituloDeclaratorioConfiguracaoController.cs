@@ -7,7 +7,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
-using Tecnomapas.EtramiteX.Interno.ViewModels.VMTItuloDeclaratorioConfiguracao;
+using Tecnomapas.EtramiteX.Interno.ViewModels.VMTituloDeclaratorioConfiguracao;
 
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
@@ -55,15 +55,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.ConfigDocumentoFitossanitario })]
 		public ActionResult RelatorioAlteracaoTitulo()
 		{
-			ConfigurarVM vm = new ConfigurarVM()
-			{
-				Configuracao = _bus.Obter()
-			};
-			vm.Configuracao.BarragemSemAPP = vm.Configuracao.BarragemSemAPP ?? new Arquivo();
-			vm.BarragemSemAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemSemAPP);
+			//ConfigurarVM vm = new ConfigurarVM()
+			//{
+			//	Configuracao = _bus.Obter()
+			//};
+			//vm.Configuracao.BarragemSemAPP = vm.Configuracao.BarragemSemAPP ?? new Arquivo();
+			//vm.BarragemSemAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemSemAPP);
 
-			vm.Configuracao.BarragemComAPP = vm.Configuracao.BarragemComAPP ?? new Arquivo();
-			vm.BarragemComAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemComAPP);
+			//vm.Configuracao.BarragemComAPP = vm.Configuracao.BarragemComAPP ?? new Arquivo();
+			//vm.BarragemComAPPJSon = ViewModelHelper.JsSerializer.Serialize(vm.Configuracao.BarragemComAPP);
+
+			ListarVM vm = new ListarVM();
 
 			return View(vm);
 		}
