@@ -23,7 +23,7 @@
 			</div>
 			<div class="coluna21 apprend1">
 				<label for="Dominio_ComprovacaoId">Comprovação *</label>
-				<%= Html.DropDownList("DominioComprovacaoId", Model.Caracterizacao.Posse.Comprovacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text ddlComprovacao setarFoco"}))%>				
+				<%= Html.DropDownList("DominioComprovacaoId", Model.Caracterizacao.Posse.Comprovacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new {@required = "required", @class = "text ddlComprovacao setarFoco"}))%>				
 			</div>
 		</div>
 
