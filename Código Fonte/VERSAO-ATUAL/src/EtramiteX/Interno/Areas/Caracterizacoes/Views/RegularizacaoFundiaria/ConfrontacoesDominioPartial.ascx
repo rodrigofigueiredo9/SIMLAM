@@ -28,7 +28,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna100 divRadioFaixaDivisa ">
+			<div class="coluna100 divRadioFaixaDivisa">
 				<label for="">Oeste *</label>
 				<%= Html.TextArea("Caracterizacao.Posse.ConfrontacoesOeste", Model.Caracterizacao.Posse.ConfrontacoesOeste, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtConfrontacoesOeste", @maxlength = "250" }))%>
 			</div>
