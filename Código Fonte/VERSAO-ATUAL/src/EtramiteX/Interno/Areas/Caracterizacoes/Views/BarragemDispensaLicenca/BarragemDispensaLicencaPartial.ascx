@@ -16,7 +16,7 @@
 <fieldset class="block box">
 	<legend class="titFiltros">Atividade Dispensada</legend>
 
-	<div class="block boxBranca">
+<%--	<div class="block boxBranca">
 		<div class="coluna80">
 			<label for="Atividade">Atividade *</label>
 			<%= Html.DropDownList("Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlAtividade" }))%>
@@ -98,7 +98,7 @@
 				<%= Html.TextBox("VolumeArmazanado", Model.Caracterizacao.VolumeArmazanado, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto4 txtVolumeArmazenado", maxlength = "14" })) %>
 			</div>
 		</div>
-	</fieldset>
+	</fieldset>--%>
 
 	<!-- Fases -->
 	<fieldset class="block boxBranca">
