@@ -101,7 +101,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter(22);
 
 			titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
-			
+			titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+
 			return titulo.ArquivoPdf;
 		}
 
