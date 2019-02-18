@@ -109,6 +109,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				Validacao.Add(Mensagem.RegularizacaoFundiaria.ConfrontacoesOeste);
 			}
+			if (string.IsNullOrEmpty(posse.DescricaoComprovacao))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.DescricaoComprovacao);
+			}
+			
+
 
 			#region Dominios Avulsos
 
