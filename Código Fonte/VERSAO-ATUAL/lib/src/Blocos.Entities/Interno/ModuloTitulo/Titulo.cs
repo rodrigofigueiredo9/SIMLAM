@@ -82,6 +82,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		private List<TituloCondicionante> _condicionantes = new List<TituloCondicionante>();
 		public List<TituloCondicionante> Condicionantes { get { return _condicionantes; } set { _condicionantes = value; } }
 
+		private TituloDeclaratorioConfiguracao _condicionantesBarragem = new TituloDeclaratorioConfiguracao();
+		public TituloDeclaratorioConfiguracao CondicionantesBarragem { get {return _condicionantesBarragem; } set { _condicionantesBarragem = value;}  }
+
+
 		private List<Setor> _setores = new List<Setor>();
 		public List<Setor> Setores { get { return _setores; } set { _setores = value; } }
 

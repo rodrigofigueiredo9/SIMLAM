@@ -32,7 +32,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys;
 		TituloInternoDa _da;
 		private TituloModeloInternoBus _busModelo;
-
+		TituloDeclaratorioConfiguracaoBus _busTituloDeclaratorio;
 		public String UsuarioInterno
 		{
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioInterno); }
@@ -45,10 +45,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			_configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 			_da = new TituloInternoDa(UsuarioInterno);
 			_busModelo = new TituloModeloInternoBus();
+			_busTituloDeclaratorio = new TituloDeclaratorioConfiguracaoBus();
 		}
 
 		public Arquivo GerarPdf(int id)
 		{
+			ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 			Titulo titulo = _da.ObterSimplificado(id);
 			titulo.Modelo = ObterModelo(titulo.Modelo.Id);
 			titulo.Anexos = _da.ObterAnexos(id);
@@ -61,7 +63,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			if (titulo.ArquivoPdf.Id > 0)
 			{
-				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 				titulo.ArquivoPdf = busArquivo.Obter(titulo.ArquivoPdf.Id.Value);
 				string auxiliar = string.Empty;
 
@@ -97,7 +98,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
+			titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter(22);
 
+			titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
+			
 			return titulo.ArquivoPdf;
 		}
 

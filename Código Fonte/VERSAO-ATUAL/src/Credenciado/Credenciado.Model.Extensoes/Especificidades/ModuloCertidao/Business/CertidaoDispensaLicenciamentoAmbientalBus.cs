@@ -105,7 +105,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				{
 					if (c.tipo == eTipoCoordenadaBarragem.barramento)
 					{
-						c.tipoTexto = "Barragem";
+						c.tipoTexto = "Barramento";
 					}
 					if (c.tipo == eTipoCoordenadaBarragem.areaBotaFora)
 					{
