@@ -53,6 +53,9 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Oracle.DataAccess, Version=10.2.0.100, Culture=neutral, PublicKeyToken=89b483f429c47342">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\Oracle.DataAccess.dll</HintPath>
@@ -133,6 +136,8 @@
     <Compile Include="Models\Data\FuncaoOracle.cs" />
     <Compile Include="Models\Data\OrtofotoDa.cs" />
     <Compile Include="Models\Data\TopologiaDa.cs" />
+    <Compile Include="Models\Entities\Attributes.cs" />
+    <Compile Include="Models\Entities\GeoServiceJson.cs" />
     <Compile Include="Models\Entities\AtributoJson.cs" />
     <Compile Include="Models\Entities\Envelope.cs" />
     <Compile Include="Models\Entities\FeicaoJson.cs" />
