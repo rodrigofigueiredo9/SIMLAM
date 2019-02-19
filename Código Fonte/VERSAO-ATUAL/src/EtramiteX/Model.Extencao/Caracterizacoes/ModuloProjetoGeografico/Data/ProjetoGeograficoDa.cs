@@ -597,6 +597,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							and exists(select 1 from {0}tab_titulo_exp_florestal t
 							where t.titulo = :titulo
 							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					--Apaga tabelas oficiais
+					delete {0}crt_projeto_geo_arquivos g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo_ortofoto g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo_sobrepos g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo g where g.id = :projeto;   
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
