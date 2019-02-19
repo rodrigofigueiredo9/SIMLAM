@@ -94,11 +94,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						//ver se vai retirar o dominio
 						comando = bancoDeDados.CriarComando(@"
 						insert into {0}crt_regularizacao_dominio d (id, regularizacao, dominio, zona, identificacao, area_requerida, area_croqui, perimetro, regularizacao_tipo, 
-						relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid, comprovacao, area_documento, data_ultima_atualizacao, registro,
+						relacao_trabalho, benfeitorias, possui_dominio_avulso, tid, comprovacao, area_documento, data_ultima_atualizacao, registro,
 						numero_ccri, area_ccri, confrontante_norte, confrontante_sul, confrontante_leste, confrontante_oeste) 
 						values 
 						({0}seq_crt_regularizacao_dominio.nextval, :regularizacao, :dominio, :zona, :identificacao, :area_requerida, :area_croqui, :perimetro, :regularizacao_tipo, 
-						:relacao_trabalho, :benfeitorias, :observacoes, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
+						:relacao_trabalho, :benfeitorias, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
 						:area_ccri, :confrontante_norte, :confrontante_sul, :confrontante_leste, :confrontante_oeste) returning d.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
@@ -111,7 +111,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
 						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
+						//comando.AdicionarParametroEntrada("observacoes", DbType.AnsiString, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -119,13 +119,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
 						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
 						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
-						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
+						comando.AdicionarParametroEntrada("registro", DbType.AnsiString, 400, item.DescricaoComprovacao);
 						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
 						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
 						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
 						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
 						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
 						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set observacoes = '" + item.Observacoes + "' where id = " + item.Id, EsquemaBanco);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 
@@ -382,8 +386,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("perimetro", item.Perimetro, DbType.Decimal);
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
-						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						//comando.AdicionarParametroEntrada("observacoes", DbType.String, 4000, item.Observacoes);
+						comando.AdicionarParametroEntrada("benfeitorias", DbType.AnsiString, 500, item.Benfeitorias);
+						//comando.AdicionarParametroEntrada("observacoes", DbType.AnsiString, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 

@@ -30,7 +30,7 @@
 		<div class="block">
 			<div class="coluna87">
 				<label for="Descricao_Comprovacao">Descrição da Comprovação *</label>
-				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao"})) %>
+				<%= Html.TextBox("Descricao_Comprovacao", Model.Caracterizacao.Posse.DescricaoComprovacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoComprovacao", @maxlength = "80"})) %>
 			</div>			
 		</div>
 
