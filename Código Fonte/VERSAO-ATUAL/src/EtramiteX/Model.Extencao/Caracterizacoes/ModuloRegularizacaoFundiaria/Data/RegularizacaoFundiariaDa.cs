@@ -129,11 +129,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 						bancoDeDados.ExecutarNonQuery(comando);
 
+						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
 						comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set observacoes = '" + item.Observacoes + "' where id = " + item.Id, EsquemaBanco);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 
-						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 
 						#endregion
 
