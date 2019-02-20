@@ -46,6 +46,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
 			AtividadeBus atividadeBus = new AtividadeBus();
 
+			var rtElaborador = _bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, caracterizacao.RequerimentoId)[1].proprioDeclarante;
+
 			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
 				caracterizacao,
 				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
@@ -101,17 +103,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Excluir
 
-		[HttpGet]
+		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-		public ActionResult ExcluirConfirm(int id)
+		public ActionResult ExcluirConfirm(int titulo)
 		{
-			_validar.Excluir(id);
+			_validar.Excluir(titulo);
 
 			return Json(new
 			{
 				@EhValido = Validacao.EhValido,
 				@Titulo = "Excluir Barragem para Dispensa de Licença Ambiental",
-				@Conteudo = Mensagem.BarragemDispensaLicenca.ExcluirMensagem,
+				@Conteudo = Mensagem.BarragemDispensaLicenca.ExcluirMensagem.Texto,
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -164,13 +166,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_listaBus.Profissoes
 			);
 
-			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
-			////vm.Caracterizacao.PossuiAssociacaoExterna = _bus.PossuiAssociacaoExterna(id, projetoDigitalId);
-			//vm.CaracterizacoesCadastradas = _bus.ObterListar(id, 0);
-			//vm.IsVisualizar = isVisualizar;
-			////int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
-			//if (result != 0)
-			//	vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
+			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, 0);
+			vm.IsVisualizar = isVisualizar;
 			return View(vm);
 		}
 

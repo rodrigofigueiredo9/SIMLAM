@@ -21,7 +21,6 @@
 				},
 				mensagens: <%= Model.Mensagens %>,
 				idsTela: <%= Model.IdsTela %>,
-				projetoDigitalId: <%: Request.Params["projetoDigitalId"] %>,
 				empreendimentoId: <%: Model.Caracterizacao.EmpreendimentoID %>
 			});
 		});

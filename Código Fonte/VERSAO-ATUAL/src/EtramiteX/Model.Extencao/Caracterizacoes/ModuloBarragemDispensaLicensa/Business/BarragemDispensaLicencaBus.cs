@@ -140,7 +140,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 					{
 						bancoDeDados.IniciarTransacao();
 
-						_da.Excluir(id, bancoDeDados);
+						_da.Excluir(id, bancoDeDados, true);
 
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
 
@@ -244,6 +244,47 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
 
+		public List<BarragemRT> ObterResponsavelTecnicoRequerimento(List<BarragemRT> rtLst, int projetoDigital, BancoDeDados banco = null)
+		{
+			BarragemRT rt = new BarragemRT();
+			try
+			{
+				rt = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+				var id1 = rtLst[0].id;
+
+				rtLst[0] = rt;
+				rtLst[0].id = id1;
+				if (VerificarElaboracaoRT(projetoDigital))
+				{
+					var id2 = rtLst[1].id;
+					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
+					rtLst[1].id = id2;
+					rtLst[1].proprioDeclarante = true;
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return rtLst;
+		}
+
+		public bool ObterBarragemContiguaMesmoNivel(int projetoDigital)
+		{
+			try
+			{
+				return _da.ObterBarragemContiguaMesmoNivel(projetoDigital);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return false;
+		}
+
 		#endregion
 
 		#region Auxiliares
@@ -295,6 +336,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
 			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
+		public bool VerificarElaboracaoRT(int projetoDigital)
+		{
+			try
+			{
+				return _da.VerificarElaboracaoRT(projetoDigital);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return false;
+		}
 
 		#endregion
 	}

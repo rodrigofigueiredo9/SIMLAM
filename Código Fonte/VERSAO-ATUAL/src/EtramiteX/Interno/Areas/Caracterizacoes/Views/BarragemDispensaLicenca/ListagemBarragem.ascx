@@ -4,7 +4,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BarragemDispensaLicencaVM>" %>
 
-<div class="block">
+<div class="block box">
 	<div class="coluna80">
 		<label for="Atividade">Atividade *</label>
 		<%= Html.DropDownList("Atividade", Model.Atividades, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlAtividade" }))%>
@@ -19,13 +19,13 @@
 		<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0" rules="all">
 				<thead>
 					<tr>
-						<th width="35%">Requerimento</th>
-						<th width="35%">Título</th>
-						<th width="35%">Finalidade</th>
-						<th width="20%">Área alagada(ha)</th>
-						<th width="21%">Volume armazenado(m3)</th>
-						<th width="28%">Situação</th>
-						<th width="11%">Ações</th>
+						<th width="13%">Requerimento</th>
+						<th width="13%">Título</th>
+						<th >Finalidade</th>
+						<th width="13%">Área alagada(ha)</th>
+						<th width="13%">Volume armazenado(m3)</th>
+						<th width="13%">Situação</th>
+						<th width="8%">Ações</th>
 					</tr>
 				</thead>
 
@@ -42,7 +42,7 @@
 
 						<td>
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />
-							<input type="hidden" class="hdnTid" value="<%= item.Tid %>" />
+							<input type="hidden" class="hdnTit" value="<%= item.TituloId %>" />
 							<input type="button" title="Visualizar" class="icone visualizar btnVisualizar" />
 							<input type="button" title="Excluir" class="icone excluir btnExcluir" />
 						</td>

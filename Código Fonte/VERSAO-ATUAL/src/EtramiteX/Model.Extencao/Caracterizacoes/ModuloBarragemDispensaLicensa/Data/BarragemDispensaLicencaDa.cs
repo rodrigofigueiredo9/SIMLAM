@@ -177,12 +177,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				bancoDeDados.IniciarTransacao();
+				//bancoDeDados.IniciarTransacao();
 
 				#region Histórico
 
 				//Atualizar o tid para a nova ação
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id");
+				Comando comando = bancoDeDados.CriarComando(@"update crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id");
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -195,6 +195,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
+					delete from tab_requerimento_barragem where barragem = :id;
 					delete from CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :id;
 					delete from crt_barragem_coordenada where barragem = :id;
 					delete from crt_barragem_responsavel where barragem = :id;
@@ -207,15 +208,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				bancoDeDados.Commit();
 
 				#endregion
+
+				
 			}
 			if (excluirCred)
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+				using (BancoDeDados bd = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 				{
 					int interno = 0;
-					Comando comando = bancoDeDados.CriarComando(@"select id from crt_barragem_dispensa_lic where interno_id = :interno");
+					Comando comando = bd.CriarComando(@"select id from crt_barragem_dispensa_lic where interno_id = :interno");
 					comando.AdicionarParametroEntrada("interno", id, DbType.Int32);
-					bancoDeDados.ExecutarScalar(comando);
-					Excluir(id, bancoDeDados, true);
+					interno = bd.ExecutarScalar<int>(comando);
+					Excluir(interno, bd);
 				}
 		}
 
@@ -335,44 +338,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento,
-					c.area_alagada, c.volume_armazenado
-                from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt
-					where exists
-					(
+				Comando comando = bancoDeDados.CriarComando(@"
+					select  r.numero requerimento, 
+							n.numero || '/' || n.ano numero_titulo,
+							t.id titulo_id,
+							b.id, 
+							b.empreendimento,
+							b.area_alagada, 
+							b.volume_armazenado
+					from tab_titulo t 
+					inner join tab_titulo_numero n on t.id = n.titulo
+					inner join idafcredenciado.tab_requerimento r on r.id = t.requerimento
+					inner join tab_requerimento ri on ri.numero = r.id
+					inner join tab_requerimento_barragem rb on rb.requerimento = ri.id
+					inner join crt_barragem_dispensa_lic b on b.id = rb.barragem
 
-						select 1 from TAB_PROJ_DIGITAL_DEPENDENCIAS d
-						where d.DEPENDENCIA_ID = c.id
-						and d.DEPENDENCIA_TIPO = :dependencia_tipo
-						and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
-						and exists 
-						(
-							select 1 from TAB_PROJETO_DIGITAL p
-							where d.PROJETO_DIGITAL_ID = p.id							
-							and c.EMPREENDIMENTO = p.EMPREENDIMENTO
-							and exists 
-							(
-								select 1 from TAB_TITULO t 
-								where t.situacao = :titulo_situacao
-								and p.REQUERIMENTO = t.REQUERIMENTO
-							)
-						)			
-					)
-					and not exists 
-					(
-						select 1 from TAB_PROJ_DIGITAL_DEPENDENCIAS d
-						where d.DEPENDENCIA_ID = c.id
-						and d.DEPENDENCIA_TIPO = :dependencia_tipo
-						and d.DEPENDENCIA_CARACTERIZACAO = :dependencia_caracterizacao
-						and d.PROJETO_DIGITAL_ID = :projeto_digital_id
-					)
-					and c.EMPREENDIMENTO = :empreendimentoId and lt.id = c.TIPO_BARRAGEM");
+					where t.empreendimento in ( select id from idafcredenciado.tab_empreendimento e
+									where interno = :empreendimento ) 
+						and t.modelo = 72 and t.credenciado is not null ");
 
-				comando.AdicionarParametroEntrada("empreendimentoId", empreendimentoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("projeto_digital_id", projetoDigitalId, DbType.Int32);
-				comando.AdicionarParametroEntrada("dependencia_tipo", (int)eCaracterizacaoDependenciaTipo.Caracterizacao, DbType.Int32);
-				comando.AdicionarParametroEntrada("dependencia_caracterizacao", (int)eCaracterizacao.BarragemDispensaLicenca, DbType.Int32);
-				comando.AdicionarParametroEntrada("titulo_situacao", (int)eTituloSituacao.Valido, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
@@ -381,12 +366,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						caracterizacao = new BarragemDispensaLicenca();
 
 						caracterizacao.Id = reader.GetValue<int>("id");
-						caracterizacao.CredenciadoID = caracterizacao.Id;
-						caracterizacao.Tid = reader.GetValue<string>("tid");
-						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
-						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
-
-						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
+						caracterizacao.RequerimentoId = reader.GetValue<int>("requerimento");
+						caracterizacao.TituloNumero = reader.GetValue<string>("numero_titulo"); ;
+						caracterizacao.TituloId = reader.GetValue<int>("titulo_id"); ;
+						caracterizacao.EmpreendimentoID = empreendimentoId;
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
 
@@ -420,9 +403,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 							c.faixa_cercada, c.descricao_desen_app, c.demarcacao_app, c.barramento_normas, 
 							c.barramento_adequacoes, c.vazao_min_tipo, c.vazao_min_diametro, c.vazao_min_instalado, 
 							c.vazao_min_normas, c.vazao_min_adequacoes, c.vazao_max_tipo, c.vazao_max_diametro,
-							c.vazao_max_instalado, c.vazao_max_normas, c.vazao_max_adequacoes, c.periodo_inicio_obra, c.periodo_termino_obra
+							c.vazao_max_instalado, c.vazao_max_normas, c.vazao_max_adequacoes, c.periodo_inicio_obra, c.periodo_termino_obra,
+							r.requerimento
 					from crt_barragem_dispensa_lic b
 					inner join crt_barragem_construida_con c on b.id = c.barragem
+					inner join tab_requerimento_barragem r on r.barragem = b.id
 					where b.id = :id");
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -449,6 +434,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
 						caracterizacao.Fase = reader.GetValue<int>("fase");
+						caracterizacao.RequerimentoId = reader.GetValue<int>("requerimento");
 
 						caracterizacao.barragemContiguaMesmoNivel = reader.GetValue<bool>("possui_barragem_contigua");
 						caracterizacao.alturaBarramento = reader.GetValue<decimal>("altura_barramento");
@@ -629,6 +615,54 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			}
 		}
 
+		internal BarragemRT ObterResponsavelTecnicoRequerimento(int projetoDigital, BancoDeDados banco = null)
+		{
+
+			BarragemRT rt = new BarragemRT();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select pe.nome, pp.profissao, pp.registro, rr.numero_art 
+					from tab_requerimento_responsavel rr
+						inner join tab_pessoa pe on pe.id = rr.responsavel
+						inner join tab_pessoa_profissao pp on pe.id = pp.pessoa
+					where rr.requerimento = :requerimento");
+
+				comando.AdicionarParametroEntrada("requerimento", projetoDigital, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						rt.nome = reader.GetValue<string>("nome");
+						rt.profissao.Id = reader.GetValue<int>("profissao");
+						rt.registroCREA = reader.GetValue<string>("registro");
+						rt.numeroART = reader.GetValue<string>("numero_art");
+					}
+
+					reader.Close();
+				}
+
+			}
+			return rt;
+		}
+
+		internal bool ObterBarragemContiguaMesmoNivel(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select possui_barragem_contigua from tab_requerimento_barragem r
+						where r.requerimento in (
+							select p.requerimento from tab_projeto_digital p where p.id = :projetoDigital )");
+
+				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
 		#endregion
 
 		#region Auxiliares
@@ -662,11 +696,44 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					SELECT COUNT(1) FROM TAB_TITULO T
-					INNER JOIN TAB_REQUERIMENTO_BARRAGEM B ON B.REQUERIMENTO = T.REQUERIMENTO
+					/*INNER JOIN TAB_REQUERIMENTO_BARRAGEM B ON B.REQUERIMENTO = T.REQUERIMENTO*/
 					WHERE T.ID = :titulo AND T.SITUACAO = 8
 				");
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		internal bool VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select count(1) from tab_projeto_digital pd
+						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
+					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)");
+
+				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		internal bool PossuiTituloBarragemValido(int id, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+					select count(1) from tab_titulo t 
+						inner join idafcredenciado.tab_requerimento r on r.id = t.requerimento
+						inner join tab_requerimento ri on ri.numero = r.id
+						inner join tab_requerimento_barragem rb on rb.requerimento = ri.id
+						inner join crt_barragem_dispensa_lic b on b.id = rb.barragem 
+					where t.modelo = 72 and situacao = 8 and b.id = :id", EsquemaCredenciadoBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
