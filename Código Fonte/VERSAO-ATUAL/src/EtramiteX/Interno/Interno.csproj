@@ -486,6 +486,7 @@
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\configurar.js" />
+    <Content Include="Scripts\TituloDeclaratorioConfiguracao\listar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\ListarFiltros.ascx" />

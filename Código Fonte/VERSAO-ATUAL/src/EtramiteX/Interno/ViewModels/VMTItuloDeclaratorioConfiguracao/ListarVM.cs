@@ -41,10 +41,10 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTituloDeclaratorioConfigurac
 
 		public ListarVM() { }
 
-		public ListarVM(List<QuantPaginacao> quantPaginacao, List<Lista> situacao)
+		public ListarVM(List<QuantPaginacao> quantPaginacao, List<Situacao> situacoes)
 		{
 			Paginacao.ListaQuantPaginacao = ViewModelHelper.CriarSelectList(quantPaginacao, false, false);
-			SituacaoTipo = ViewModelHelper.CriarSelectList(situacao, true, true);
+			SituacaoTipo = ViewModelHelper.CriarSelectList(situacoes, true, true);
 		}
 
 		public void SetListItens(List<QuantPaginacao> quantPaginacao, int quantidadePagina = 5)
