@@ -44,19 +44,19 @@
 				<div class="coluna20 append2">
 					<label for="Filtros_CpfCnpjInteressado"><%= Html.RadioButton("RadioCPFCNPJ", 1, true, new { @class = "radio radioCpfCnpjInteressado radioCPF" })%>CPF</label>
 					<label for="Filtros_CpfCnpjInteressado"><%= Html.RadioButton("RadioCPFCNPJ", 2, false, new { @class = "radio radioCpfCnpjInteressado" })%>CNPJ do interessado</label>
-					<%= Html.TextBox("Filtros.CpfCnpjInteressado", Model.Filtros.InteressadoCpfCnpj, new { @class = "text txtCpfCnpj maskCpfParcial" })%>
+					<%= Html.TextBox("Filtros.InteressadoCpfCnpj", Model.Filtros.InteressadoCpfCnpj, new { @class = "text txtCpfCnpj maskCpfParcial" })%>
 				</div>
 
 				<div class="coluna16">
 					<label for="Filtros_DataSituacao_DataTexto">Data da situação atual</label>
-					<%= Html.TextBox("Filtros.DataSituacao.DataTexto", Model.Filtros.DataSituacaoAtual.DataTexto, new { @class = "text txtDataSituacao maskData" })%>
+					<%= Html.TextBox("Filtros.DataSituacaoAtual.DataTexto", Model.Filtros.DataSituacaoAtual.DataTexto, new { @class = "text txtDataSituacao maskData" })%>
 				</div>
 			</div>
 
 			<div class="block hide">
 				<div class="coluna21 append2">
 					<label for="Filtros_SituacaoTipo">Situação</label>
-					<%= Html.DropDownList("Filtros.SituacaoTipo", Model.SituacaoTipo, new { @class = "text ddlSituacaoTipo" })%>
+					<%= Html.DropDownList("Filtros.Situacao", Model.SituacaoTipo, new { @class = "text ddlSituacaoTipo" })%>
 				</div>
 
 				<div class="coluna23 append2">

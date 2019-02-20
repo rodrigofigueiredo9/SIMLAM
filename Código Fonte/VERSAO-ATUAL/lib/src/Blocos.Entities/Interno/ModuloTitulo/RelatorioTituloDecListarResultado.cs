@@ -13,7 +13,14 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		public string NomeUsuario { get; set; }
 		public string NomeInteressado { get; set; }
 		public string CPFCNPJInteressado { get; set; }
-		public string DataSituacao { get; set; }
+		public DateTime DataSituacao { get; set; }
+		public string DataSituacaoTexto
+		{
+			get
+			{
+				return DataSituacao.ToShortDateString();
+			}
+		}
 		public int Situacao { get; set; }
 		public string SituacaoTexto { get; set; }
 		public string IP { get; set; }

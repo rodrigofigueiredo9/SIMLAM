@@ -5,11 +5,53 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 {
 	public class RelatorioTituloDecListarFiltro
 	{
-		public String NumeroTitulo { get; set; }
-		public String Login { get; set; }
-		public String NomeUsuario { get; set; }
+		private String _numeroTitulo;
+		public String NumeroTitulo {
+			get
+			{
+				return _numeroTitulo;
+			}
+			set
+			{
+				_numeroTitulo = value.Trim().ToUpper();
+			}
+		}
 
-		public String NomeInteressado { get; set; }
+		private String _login;
+		public String Login {
+			get
+			{
+				return _login;
+			}
+			set
+			{
+				_login = value.Trim().ToUpper();
+			}
+		}
+
+		private String _nomeUsuario;
+		public String NomeUsuario {
+			get
+			{
+				return _nomeUsuario;
+			}
+			set
+			{
+				_nomeUsuario = value.Trim().ToUpper();
+			}
+		}
+
+		private String _nomeInteressado;
+		public String NomeInteressado {
+			get
+			{
+				return _nomeInteressado;
+			}
+			set
+			{
+				_nomeInteressado = value.Trim().ToUpper();
+			}
+		}
 		public String InteressadoCpfCnpj { get; set; }
 
 		private DateTecno _dataSituacaoAtual = new DateTecno();
@@ -23,9 +65,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		public String SituacaoTexto { get; set; }
 
 		public String IP { get; set; }
-
-		public Int32 SituacaoTipo { get; set; }
-		public String SituacaoTipoTexto { get; set; }
 
 	}
 }
