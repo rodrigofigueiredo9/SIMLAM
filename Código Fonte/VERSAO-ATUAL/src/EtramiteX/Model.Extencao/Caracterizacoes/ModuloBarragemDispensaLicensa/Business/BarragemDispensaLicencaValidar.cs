@@ -241,7 +241,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			return Validacao.EhValido;
 		}
 
-		public bool Acessar(int empreendimentoId, int projetoDigital)
+		public bool Acessar(int empreendimentoId)
 		{
 			return _caracterizacaoValidar.Dependencias(empreendimentoId, (int)eCaracterizacao.BarragemDispensaLicenca);
 		}

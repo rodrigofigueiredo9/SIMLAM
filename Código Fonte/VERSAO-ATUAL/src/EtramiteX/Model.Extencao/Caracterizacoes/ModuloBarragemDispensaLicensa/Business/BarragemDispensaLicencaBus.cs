@@ -160,6 +160,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 		#region Obter
 
+		public BarragemDispensaLicenca Obter(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+			BarragemDispensaLicenca barragem = null;
+			try
+			{
+				barragem = _da.Obter(id, simplificado: simplificado);
+				var rt = barragem.responsaveisTecnicos.FirstOrDefault(x => x.tipo == eTipoRT.ElaboracaoProjeto);
+				if (rt.autorizacaoCREA.Id > 0)
+				{
+					rt.autorizacaoCREA = _busArquivo.Obter(rt.autorizacaoCREA.Id.GetValueOrDefault());
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return barragem;
+
+		}
+
 		public BarragemDispensaLicenca ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
             BarragemDispensaLicenca barragem = null;

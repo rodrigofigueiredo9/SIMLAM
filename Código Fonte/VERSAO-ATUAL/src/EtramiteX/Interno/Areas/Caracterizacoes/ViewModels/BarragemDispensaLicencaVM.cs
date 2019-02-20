@@ -26,7 +26,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
         public int ProjetoDigitalId { get; set; }
         public int ProtocoloId { get; set; }
         public int RequerimentoId { get; set; }
-        public string UrlRetorno { get; set; }
+		public bool rtElaborador { get; set; }
 		public List<BarragemDispensaLicenca> CaracterizacoesCadastradas { get; set; } = new List<BarragemDispensaLicenca>();
 		public List<BarragemDispensaLicenca> CaracterizacoesAssociadas { get; set; } = new List<BarragemDispensaLicenca>();
 

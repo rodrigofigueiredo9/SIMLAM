@@ -413,7 +413,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 					select  b.id, b.tid, b.empreendimento, b.atividade, b.tipo_barragem, b.curso_hidrico, 
 							b.vazao_enchente, b.area_bacia_contribuicao, b.precipitacao, b.periodo_retorno, 
 							b.coeficiente_escoamento, b.tempo_concentracao, b.equacao_calculo, b.area_alagada, 
-							b.volume_armazenado, b.fase, b.interno_id, b.interno_tid, b.possui_barragem_contigua, 
+							b.volume_armazenado, b.fase, b.possui_barragem_contigua, 
 							b.altura_barramento, b.comprimento_barramento, b.largura_base_barramento, b.largura_crista_barramento,
 							b.fonte_precipitacao, b.fonte_coeficiente_escoamento, b.fonte_vazao_enchente,
 							c.id contruida_construir, c.supressao_app, c.largura_demarcada, c.largura_demarcada_legislacao,
@@ -434,8 +434,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						caracterizacao.Id = reader.GetValue<int>("id");
 						caracterizacao.CredenciadoID = id;
 						caracterizacao.Tid = reader.GetValue<string>("tid");
-						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
-						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.AtividadeID = reader.GetValue<int>("atividade");
@@ -485,7 +483,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
 					reader.Close();
 				}
-
+				
 				#region Coordenadas
 				comando = bancoDeDados.CriarComando(@"
 					select c.id, c.tipo, c.northing, c.easting from crt_barragem_coordenada c

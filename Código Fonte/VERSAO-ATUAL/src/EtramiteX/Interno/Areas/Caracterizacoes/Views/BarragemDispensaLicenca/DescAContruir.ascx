@@ -46,11 +46,11 @@
 		
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Mês *</label>
-			<%= Html.TextBox("MesInicio", Model.Caracterizacao.construidaConstruir.mesInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum3 txtMesInicio", maxlength = "14" })) %>
+			<%= Html.TextBox("MesInicio", Model.Caracterizacao.construidaConstruir.periodoInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text makMesAno txtMesInicio", maxlength = "14" })) %>
 		</div>
 		<div class="coluna10">
 			<label for="DiametroTubulacaoVazaoMax">Ano *</label>
-			<%= Html.TextBox("AnoInicio", Model.Caracterizacao.construidaConstruir.anoInicioObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskNum4 txtAnoInicio", maxlength = "14" })) %>
+			<%= Html.TextBox("AnoInicio", Model.Caracterizacao.construidaConstruir.periodoTerminoObra, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text makMesAno txtAnoInicio", maxlength = "14" })) %>
 		</div>
 	</div>
 	

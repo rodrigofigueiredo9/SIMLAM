@@ -18,6 +18,8 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertida
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
+using System.Configuration;
+using System.Net.Http;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -135,6 +137,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			});
 
 			return conf;
+		}
+
+		public void AlterarSituacao(int? tituloId)
+		{
+			try
+			{
+				var apiUri = ConfigurationManager.AppSettings["api"];
+				var token = ConfigurationManager.AppSettings["tokenCredenciado"];
+				HttpClient _client = new HttpClient();
+				_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+				HttpResponseMessage response = _client.GetAsync($"{apiUri}Titulo/ImportacaoBarragem/Titulo/{tituloId}").Result;
+				var json = response.Content.ReadAsStringAsync().Result;
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			
 		}
 	}
 }

@@ -38,12 +38,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemdispensalicenca)]
 		public ActionResult Visualizar(int id)
 		{
-			if (!_validar.Acessar(id, 0))
+			if (!_validar.Acessar(id))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
 			}
-
-			BarragemDispensaLicenca caracterizacao = _bus.ObterPorEmpreendimento(id);
+			
+			BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
 			AtividadeBus atividadeBus = new AtividadeBus();
 
 			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
@@ -134,20 +134,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Listar
 
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
-		public ActionResult Listar(int id, int projetoDigitalId, bool isVisualizar = false)
+		public ActionResult Listar(int id, bool isVisualizar = false)
 		{
 			if (!_caracterizacaoValidar.Basicas(id))
 			{
-				return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { id = projetoDigitalId, area = "" }));
+				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
 			}
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
 			caracterizacao.EmpreendimentoID = id;
 
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoID, projetoDigitalId))
+			if (!_validar.Acessar(caracterizacao.EmpreendimentoID))
 			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
+				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
 			}
 
 			AtividadeBus atividadeBus = new AtividadeBus();
@@ -165,12 +165,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			);
 
 			BarragemDispensaLicenca barragemAssociada = new BarragemDispensaLicenca();
-			vm.Caracterizacao.PossuiAssociacaoExterna = _bus.PossuiAssociacaoExterna(id, projetoDigitalId);
-			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, projetoDigitalId);
-			vm.IsVisualizar = isVisualizar;
-			int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
-			if (result != 0)
-				vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
+			////vm.Caracterizacao.PossuiAssociacaoExterna = _bus.PossuiAssociacaoExterna(id, projetoDigitalId);
+			//vm.CaracterizacoesCadastradas = _bus.ObterListar(id, 0);
+			//vm.IsVisualizar = isVisualizar;
+			////int result = _bus.ObterBarragemAssociada(projetoDigitalId).Count;
+			//if (result != 0)
+			//	vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
 			return View(vm);
 		}
 
