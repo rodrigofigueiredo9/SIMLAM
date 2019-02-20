@@ -228,13 +228,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					update tab_requerimento_barragem
-						set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
-					where requerimento = :requerimento", UsuarioCredenciado);
+					select id from tab_requerimento_barragem where requerimento = :requerimento", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
-					comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
-					comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+
+					int? idBarragem = bancoDeDados.ExecutarScalar<int?>(comando);
+
+					if (idBarragem != null && idBarragem > 0)
+					{
+						comando = bancoDeDados.CriarComando(@"
+						update tab_requerimento_barragem
+							set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
+						where requerimento = :requerimento", UsuarioCredenciado);
+
+						comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+						comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+					}
+					else
+					{
+						comando = bancoDeDados.CriarComando(@"
+						insert into tab_requerimento_barragem 
+							(id, requerimento, rt_elaboracao, possui_barragem_contigua)      
+							values(seq_requerimento_barragem.nextval, :requerimento, :rt_elaboracao, :possui_barragem_contigua)", UsuarioCredenciado);
+
+						comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+						comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+						comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+					}
 
 					bancoDeDados.ExecutarNonQuery(comando);
 				}
