@@ -6,7 +6,8 @@ ExploracaoFlorestalExploracao = {
 	settings: {
 		mensagens: null,
 		idsTela: null,
-		getEspecie: null
+		apiInstitucional: null,
+		token: null
 	},
 	container: null,
 
@@ -279,17 +280,18 @@ ExploracaoFlorestalExploracao = {
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: ExploracaoFlorestalExploracao.settings.getEspecie,
+					url: ExploracaoFlorestalExploracao.settings.apiInstitucional + "/Especie",
+					headers: { 'Authorization': 'Bearer ' + ExploracaoFlorestalExploracao.settings.token },
 					data: { "Search": request.term, "PageSize": 20 },
 					type: 'GET',
 					dataType: 'json',
 					contentType: 'application/json;charset=UTF-8',
 					success: function (result) {
 						if (result.data != null) {
-							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId +'\" }'));
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId + '\" }'));
 						}
 						response(tags);
-					},
+					}
 				});
 			},
 			select: function (event, ui) {

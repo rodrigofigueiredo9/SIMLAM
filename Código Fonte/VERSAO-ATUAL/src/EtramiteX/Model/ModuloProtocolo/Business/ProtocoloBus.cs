@@ -288,6 +288,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 			return null;
 		}
 
+		public List<PessoaLst> ObterResponsaveisTecnicosPorRequerimento(int id)
+		{
+			try
+			{
+				return _da.ObterResponsaveisTecnicosPorRequerimento(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
 		public List<PessoaLst> ObterResponsaveisTecnicos(string numero)
 		{
 			try

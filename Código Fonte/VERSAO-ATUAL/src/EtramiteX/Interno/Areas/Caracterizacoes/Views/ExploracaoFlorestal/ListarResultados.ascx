@@ -14,8 +14,9 @@
 				<th width="17%">Tipo de Exploração</th>
 				<th width="17%">Código Exploração</th>
 				<th width="17%">Data Cadastro da Exploração</th>
-				<th>Geometria</th>
-				<th width="15%">Ações</th>
+				<th width="17%">Geometria</th>
+				<th width="17%">Área / N° de Árvores Requeridas</th>
+				<th width="17%">Ações</th>
 			</tr>
 		</thead>
 
@@ -26,6 +27,7 @@
 				<td title="<%= Html.Encode(item.CodigoExploracaoTexto)%>"><%= Html.Encode(item.CodigoExploracaoTexto)%></td>
 				<td title="<%= Html.Encode(item.DataCadastro.DataTexto)%>" ><%= Html.Encode(item.DataCadastro.DataTexto)%></td>
 				<td title="<%= Html.Encode(item.GeometriaPredominanteTexto)%>"><%= Html.Encode(item.GeometriaPredominanteTexto)%></td>
+				<td title="<%= Html.Encode(item.Quantidade)%>"><%= Html.Encode(item.Quantidade)%></td>
 				<td>
 					<input type="hidden" value="<%= item.Id %>" class="itemId" />
 					<%if (Model.PodeVisualizar && Model.Filtros.IsVisualizar) {%><button type="button" title="Visualizar" class="icone visualizar btnVisualizar"></button><% } %>

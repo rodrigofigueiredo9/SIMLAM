@@ -762,6 +762,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				{
 					if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido)
 						_busExploracao.FinalizarExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), titulo.Id, banco);
+					else if (titulo.Situacao.Id == (int)eTituloSituacao.Encerrado)
+						_busExploracao.ReabrirExploracao(titulo.EmpreendimentoId.GetValueOrDefault(0), titulo.Id, banco);
 				}
 
 				#endregion Explorações
