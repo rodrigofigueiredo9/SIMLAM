@@ -21,7 +21,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 		TituloDeclaratorioConfiguracaoDa _da = new TituloDeclaratorioConfiguracaoDa();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
-		TituloDeclaratorioConfiguracaoValidar _validar = null;
+		TituloDeclaratorioConfiguracaoValidar _validar = new TituloDeclaratorioConfiguracaoValidar();
 
 		public EtramiteIdentity User
 		{
@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				}
 				
 				Filtro<RelatorioTituloDecListarFiltro> filtro = new Filtro<RelatorioTituloDecListarFiltro>(filtrosListar, paginacao);
-				Resultados<RelatorioTituloDecListarResultado> resultados = null;//_da.Filtrar(filtro);
+				Resultados<RelatorioTituloDecListarResultado> resultados = _da.Filtrar(filtro);
 
 				if (resultados.Quantidade < 1)
 				{

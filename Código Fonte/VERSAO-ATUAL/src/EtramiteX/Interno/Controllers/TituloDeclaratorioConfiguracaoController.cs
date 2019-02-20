@@ -98,7 +98,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.Paginacao.EfetuarPaginacao();
 			vm.Resultados = resultados.Itens;
 
-			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "TituloListarResultados", vm) }, JsonRequestBehavior.AllowGet);
+			return Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "ListarResultados", vm) }, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion Relatorio de Alteracao de Titulo Declaratorio

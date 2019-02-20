@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -177,158 +179,122 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			return configuracao;
 		}
 
-		//public Resultados<RelatorioTituloDecListarResultado> Filtrar(Filtro<RelatorioTituloDecListarFiltro> filtros, BancoDeDados banco = null)
-		//{
-		//	Resultados<Titulo> retorno = new Resultados<Titulo>();
-		//	using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-		//	{
-		//		string comandtxt = string.Empty;
-		//		Comando comando = bancoDeDados.CriarComando("");
+		public Resultados<RelatorioTituloDecListarResultado> Filtrar(Filtro<RelatorioTituloDecListarFiltro> filtros, BancoDeDados banco = null)
+		{
+			Resultados<RelatorioTituloDecListarResultado> retorno = new Resultados<RelatorioTituloDecListarResultado>();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				string comandtxt = string.Empty;
+				Comando comando = bancoDeDados.CriarComando("");
 
-		//		#region Adicionando Filtros
+				#region Adicionando Filtros
 
-		//		comandtxt += comando.FiltroAnd("l.requerimento", "requerimento", filtros.Dados.RequerimentoID);
+				comandtxt += comando.FiltroAnd("l.numero_titulo", "numero_titulo", filtros.Dados.NumeroTitulo);
+				comandtxt += comando.FiltroAnd("l.executor_login", "executor_login", filtros.Dados.Login);
+				comandtxt += comando.FiltroAnd("l.executor_nome", "executor_nome", filtros.Dados.NomeUsuario);
+				comandtxt += comando.FiltroAndLike("l.nome_interessado", "nome_interessado", filtros.Dados.NomeInteressado, true, true);
+				comandtxt += comando.FiltroAnd("l.cpfcnpj_interessado", "cpfcnpj_interessado", filtros.Dados.InteressadoCpfCnpj);
 
-		//		if (!string.IsNullOrWhiteSpace(filtros.Dados.DataEmisssao))
-		//		{
-		//			comandtxt += " and exists (select null from tab_titulo t where t.id = l.titulo_id and trunc(t.data_emissao) = :data_emissao) ";
-		//			comando.AdicionarParametroEntrada("data_emissao", filtros.Dados.DataEmisssao, DbType.DateTime);
-		//		}
+				if (!string.IsNullOrWhiteSpace(filtros.Dados.DataSituacaoAtual.DataTexto))
+				{
+					comandtxt += comando.FiltroAnd("l.data_situacao", "data_situacao", filtros.Dados.DataSituacaoAtual.DataTexto);
+				}
+				if (filtros.Dados.Situacao > 0)
+				{
+					comandtxt += comando.FiltroAnd("l.situacao_id", "situacao_id", filtros.Dados.Situacao);
+				}
+				comandtxt += comando.FiltroAnd("l.executor_ip", "executor_ip", filtros.Dados.IP);
+				
 
-		//		comandtxt += comando.FiltroAnd("l.interessado_cpf_cnpj", "interessado_cpf_cnpj", filtros.Dados.InteressadoCPFCNPJ);
+				List<String> ordenar = new List<String>();
+				List<String> colunas = new List<String>() { "numero_titulo", "executor_login", "executor_nome", "nome_interessado", "cpfcnpj_interessado", "data_situacao", "situacao_id", "situacao_texto", "executor_ip" };
 
-		//		comandtxt += comando.FiltroAndLike("l.interessado_nome_razao", "interessado_nome_razao", filtros.Dados.InteressadoNomeRazao, true, true);
+				if (filtros.OdenarPor > 0)
+				{
+					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
+				}
+				else
+				{
+					ordenar.Add("data_situacao");
+				}
 
-		//		if (filtros.Dados.OrigemID == 1)//Institucional
-		//		{
-		//			comandtxt += " and l.credenciado is null ";
-		//		}
-		//		else if (filtros.Dados.OrigemID == 2)//Credenciado
-		//		{
-		//			comandtxt += " and l.credenciado is not null ";
-		//		}
+				#endregion
 
-		//		comandtxt += comando.FiltroAnd("l.modelo_id", "modelo", filtros.Dados.Modelo);
+				#region Quantidade de registro do resultado
 
-		//		comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
+				comando.DbCommand.CommandText = String.Format(@"
+				select count(*) quantidade
+				from hst_titulo ht 
+				inner join tab_titulo_modelo htm on ht.modelo_id = htm.id
+				left join hst_requerimento hr on ht.requerimento_id = hr.requerimento_id  and ht.requerimento_tid = hr.tid
+				left join tab_pessoa tp on hr.interessado_id = tp.id 
+				left join idafcredenciado.hst_requerimento hrc on ht.requerimento_id = hrc.requerimento_id and ht.requerimento_tid = hrc.tid
+				left join idafcredenciado.tab_pessoa tpc on hrc.interessado_id = tpc.id
+				where htm.documento = 2  " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
-		//		comandtxt += comando.FiltroAnd("l.setor_id", "setor", filtros.Dados.Setor);
+				comando.DbCommand.CommandText = "select sum(d.quantidade) from (" + comando.DbCommand.CommandText + ") d ";
 
-		//		comandtxt += comando.FiltroAndLike("l.numero || '/' || l.ano", "numero", filtros.Dados.Numero, true);
+				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
-		//		comandtxt += comando.FiltroAndLike("l.protocolo_numero", "protocolo_numero", filtros.Dados.Protocolo.NumeroTexto, true);
+				comando.AdicionarParametroEntrada("menor", filtros.Menor);
+				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-		//		comandtxt += comando.FiltroAnd("l.empreendimento_codigo", "empreendimento_codigo", filtros.Dados.EmpreendimentoCodigo);
+				comandtxt = String.Format(@"
+				select ht.id,
+					   (select lt.numero || '/' || lt.ano
+						from tab_titulo_numero lt
+						where lt.titulo = ht.titulo_id) numero_titulo,
+					   ht.executor_login,
+					   ht.executor_nome,
+					   nvl(tp.nome, tpc.nome) nome_interessado,
+					   nvl(nvl(tp.cpf, tp.cnpj), nvl(tpc.cpf, tpc.cnpj)) cpfcnpj_interessado,
+					   ht.data_situacao,
+					   ht.situacao_id,
+					   ht.situacao_texto,
+					   ht.executor_ip
+				from hst_titulo ht 
+				inner join tab_titulo_modelo htm on ht.modelo_id = htm.id
+				left join hst_requerimento hr on ht.requerimento_id = hr.requerimento_id  and ht.requerimento_tid = hr.tid
+				left join tab_pessoa tp on hr.interessado_id = tp.id 
+				left join idafcredenciado.hst_requerimento hrc on ht.requerimento_id = hrc.requerimento_id and ht.requerimento_tid = hrc.tid
+				left join idafcredenciado.tab_pessoa tpc on hrc.interessado_id = tpc.id
+				where htm.documento = 2 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
-		//		comandtxt += comando.FiltroAndLike("l.empreendimento_denominador", "empreendimento", filtros.Dados.Empreendimento, true);
+				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a " + DaHelper.Ordenar(colunas, ordenar) + ") where rnum <= :maior and rnum >= :menor";
 
-		//		if (filtros.Dados.Modelo <= 0 && filtros.Dados.ModeloFiltrar != null && filtros.Dados.ModeloFiltrar.Count > 0)
-		//		{
-		//			comandtxt += comando.AdicionarIn("and", "l.modelo_id", DbType.Int32, filtros.Dados.ModeloFiltrar.Select(x => x).ToList());
-		//		}
+				#endregion
 
-		//		if (filtros.Dados.SituacoesFiltrar != null && filtros.Dados.SituacoesFiltrar.Count > 0)
-		//		{
-		//			comandtxt += comando.AdicionarIn("and", "l.situacao_id", DbType.Int32, filtros.Dados.SituacoesFiltrar.Select(x => x).ToList());
-		//		}
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					#region Adicionando os dados na classe de retorno
 
-		//		if (filtros.Dados.IsDeclaratorio)
-		//		{
-		//			comandtxt += " and l.requerimento is not null ";
-		//		}
-		//		else
-		//		{
-		//			comandtxt += " and l.requerimento is null ";
-		//		}
+					RelatorioTituloDecListarResultado titulo;
+					while (reader.Read())
+					{
+						titulo = new RelatorioTituloDecListarResultado();
 
-		//		List<String> ordenar = new List<String>();
-		//		List<String> colunas = new List<String>() { "numero", "modelo_sigla", "protocolo_numero", "empreendimento_denominador", "situacao_texto", "data_vencimento" };
+						titulo.ID = reader.GetValue<int>("id");
+						titulo.NumeroTitulo = reader.GetValue<string>("numero_titulo");
+						titulo.Login = reader.GetValue<string>("executor_login");
+						titulo.NomeUsuario = reader.GetValue<string>("executor_nome");
+						titulo.NomeInteressado = reader.GetValue<string>("nome_interessado");
+						titulo.CPFCNPJInteressado = reader.GetValue<string>("cpfcnpj_interessado");
+						titulo.DataSituacao = reader.GetValue<string>("data_situacao");
+						titulo.Situacao = reader.GetValue<int>("situacao_id");
+						titulo.SituacaoTexto = reader.GetValue<string>("situacao_texto");
+						titulo.IP = reader.GetValue<string>("executor_ip");
 
-		//		if (filtros.OdenarPor > 0)
-		//		{
-		//			ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
-		//		}
-		//		else
-		//		{
-		//			ordenar.Add("numero");
-		//		}
+						retorno.Itens.Add(titulo);
+					}
 
-		//		#endregion
+					reader.Close();
 
-		//		#region Quantidade de registro do resultado
+					#endregion
+				}
+			}
 
-		//		comando.DbCommand.CommandText = String.Format(@"
-		//		select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt +
-		//		"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
-
-		//		comando.DbCommand.CommandText = "select sum(d.quantidade) from (" + comando.DbCommand.CommandText + ") d ";
-
-		//		retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
-
-		//		comando.AdicionarParametroEntrada("menor", filtros.Menor);
-		//		comando.AdicionarParametroEntrada("maior", filtros.Maior);
-
-		//		comandtxt = String.Format(@"
-		//		select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
-		//			modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
-		//			from lst_titulo l where l.credenciado is null " + comandtxt +
-		//		@" union all 
-		//		select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
-		//			modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
-		//			from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
-
-		//		comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a " + DaHelper.Ordenar(colunas, ordenar) + ") where rnum <= :maior and rnum >= :menor";
-
-		//		#endregion
-
-		//		using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-		//		{
-		//			#region Adicionando os dados na classe de retorno
-
-		//			Titulo titulo;
-		//			while (reader.Read())
-		//			{
-		//				titulo = new Titulo();
-		//				titulo.Id = reader.GetValue<int>("titulo_id");
-		//				titulo.Autor.Id = reader.GetValue<int>("autor_id");
-		//				titulo.Autor.Nome = reader.GetValue<string>("autor_nome");
-		//				titulo.Tid = reader.GetValue<string>("titulo_tid");
-		//				titulo.Numero.Texto = reader.GetValue<string>("numero_completo");
-		//				titulo.Modelo.Id = reader.GetValue<int>("modelo_id");
-		//				titulo.Modelo.Sigla = reader.GetValue<string>("modelo_sigla");
-		//				titulo.Modelo.Nome = reader.GetValue<string>("modelo_nome");
-		//				titulo.Modelo.Codigo = reader.GetValue<int>("modelo_codigo");
-		//				titulo.Situacao.Id = reader.GetValue<int>("situacao_id");
-		//				titulo.Situacao.Nome = reader.GetValue<string>("situacao_texto");
-		//				titulo.EmpreendimentoCodigo = reader.GetValue<long>("empreendimento_codigo");
-		//				titulo.EmpreendimentoTexto = reader.GetValue<string>("empreendimento_denominador");
-		//				titulo.DataVencimento.DataTexto = reader.GetValue<string>("data_vencimento");
-		//				titulo.RequerimetoId = reader.GetValue<int>("requerimento");
-
-		//				titulo.Protocolo.Id = reader.GetValue<int>("protocolo_id");
-		//				if (titulo.Protocolo.Id.GetValueOrDefault() > 0)
-		//				{
-		//					ProtocoloNumero prot = new ProtocoloNumero(reader.GetValue<string>("protocolo_numero"));
-		//					titulo.Protocolo.IsProcesso = (reader.GetValue<int>("protocolo_tipo") == 1);
-		//					titulo.Protocolo.NumeroProtocolo = prot.Numero;
-		//					titulo.Protocolo.Ano = prot.Ano;
-		//				}
-		//				if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido && titulo.DataVencimento?.Data < DateTime.Now.Date)
-		//				{
-		//					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
-		//						titulo.Situacao.Nome = "Vencido";
-		//				}
-		//				retorno.Itens.Add(titulo);
-		//			}
-
-		//			reader.Close();
-
-		//			#endregion
-		//		}
-		//	}
-
-		//	return retorno;
-		//}
+			return retorno;
+		}
 
 		#endregion
 	}
