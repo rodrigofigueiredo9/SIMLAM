@@ -98,6 +98,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
+
+			//parte que retorna os arquivos de condicionantes.
 			titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter(22);
 
 			titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
