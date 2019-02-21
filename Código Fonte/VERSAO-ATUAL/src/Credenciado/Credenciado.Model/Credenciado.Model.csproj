@@ -153,6 +153,7 @@
     <Compile Include="ModuloTitulo\Business\TituloCredenciadoBus.cs" />
     <Compile Include="ModuloTitulo\Business\TituloDeclaratorioBus.cs" />
     <Compile Include="ModuloTitulo\Business\TituloDeclaratorioConfiguracaoBus.cs" />
+    <Compile Include="ModuloTitulo\Business\TituloDeclaratorioConfiguracaoValidar.cs" />
     <Compile Include="ModuloTitulo\Business\TituloDeclaratorioValidar.cs" />
     <Compile Include="ModuloTitulo\Business\TituloExtencoes.cs" />
     <Compile Include="ModuloTitulo\Business\TituloInternoBus.cs" />
