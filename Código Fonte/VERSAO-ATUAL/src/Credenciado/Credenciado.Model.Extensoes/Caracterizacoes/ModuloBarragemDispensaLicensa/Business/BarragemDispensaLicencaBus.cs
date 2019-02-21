@@ -454,6 +454,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return false;
 		}
+
+		public bool PossuiCaracterizacao(int? requerimentoId)
+		{
+			bool possui = false;
+			try
+			{
+				possui = _da.PossuiDadosCaracterizacao(requerimentoId ?? 0);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return possui;
+		}
+
 		#endregion
 
 		#region Auxilizares
