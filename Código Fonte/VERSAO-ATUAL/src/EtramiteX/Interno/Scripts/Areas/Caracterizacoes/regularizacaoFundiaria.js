@@ -565,7 +565,7 @@ RegularizacaoFundiaria = {
 			}
 		});
 		MasterPage.carregando(false);
-
+		$('#NumeroCCIR').val(item.NumeroCCIR);
 		$('.cancelarCaixaPrincipal', RegularizacaoFundiaria.container).closest('div').addClass('hide');
 		Listar.atualizarEstiloTable($('.dataGridTable', RegularizacaoFundiaria.container));
 	},
@@ -617,7 +617,7 @@ RegularizacaoFundiaria = {
 			}
 		});
 		MasterPage.carregando(false);
-
+		$('#NumeroCCIR').val(item.NumeroCCIR);
 		$('.txtAreaRequerida', RegularizacaoFundiaria.container).focus();
 		$('.cancelarCaixaPrincipal', RegularizacaoFundiaria.container).closest('div').addClass('hide');
 		Listar.atualizarEstiloTable($('.dataGridTable', RegularizacaoFundiaria.container));
