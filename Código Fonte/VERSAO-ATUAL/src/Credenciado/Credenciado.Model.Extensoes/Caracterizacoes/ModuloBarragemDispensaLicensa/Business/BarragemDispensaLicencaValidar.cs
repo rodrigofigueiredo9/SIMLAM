@@ -259,6 +259,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			if (!Validacao.EhValido) return false;
 			var profissoesSemAutorizacao = new List<int>() { 15, 37, 38 };
+			List<BarragemRT> rtsBarragemCopia = new List<BarragemRT>();
+
+			for (int i = 0; i < caracterizacao.responsaveisTecnicos.Count(); i++)
+			{
+				if(caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoDeclaracao)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoEstudoAmbiental)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoPlanoRecuperacao)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoProjeto)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+			}
+
+			
 
 			caracterizacao.responsaveisTecnicos.ForEach(x =>
 			{
@@ -278,6 +293,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					String.IsNullOrWhiteSpace(x.autorizacaoCREA.Nome))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
+
+			for(int i = 0; i < rtsBarragemCopia.Count(); i++)
+			{
+				if(caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
+				{
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+				}
+				if (caracterizacao.responsaveisTecnicos[5].numeroART == rtsBarragemCopia[i].numeroART)
+				{
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+				}
+			}
 
 			return Validacao.EhValido;
 		}
