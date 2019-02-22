@@ -57,6 +57,9 @@
       <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -335,7 +338,8 @@
     <Compile Include="ViewModels\VMFiscalizacao\FiscalizacaoAssinanteVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
-    <Compile Include="ViewModels\VMTItuloDeclaratorioConfiguracao\ConfigurarVM.cs" />
+    <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ConfigurarVM.cs" />
+    <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ListarVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -482,9 +486,13 @@
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\configurar.js" />
+    <Content Include="Scripts\TituloDeclaratorioConfiguracao\listar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
-    <Content Include="Views\TituloDeclaratorioConfiguracao\Configurar.aspx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\ListarFiltros.ascx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\ListarResultados.ascx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\RelatorioAlteracaoTitulo.aspx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\Index.aspx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
@@ -2867,6 +2875,7 @@
     <Content Include="Content\_pdfAspose\CFO.doc" />
     <Content Include="Content\_pdfAspose\CFOC.doc" />
     <Content Include="Content\_manuais\Manual de Elaboração do Projeto Geográfico - Credenciado.pdf" />
+    <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\DEV Institucional.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\PROD Institucional.pubxml" />

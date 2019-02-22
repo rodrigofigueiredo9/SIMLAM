@@ -75,15 +75,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeEquacaoCalculo);
 			}
 
-			if (caracterizacao.areaAlagada <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaAlagadaZero);
-			}
+			//if (caracterizacao.areaAlagada <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAreaAlagadaZero);
+			//}
 
-			if (caracterizacao.volumeArmazanado <= 0)
-			{
-				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVolumeArmazenadoZero);
-			}
+			//if (caracterizacao.volumeArmazanado <= 0)
+			//{
+			//	Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVolumeArmazenadoZero);
+			//}
 
 			if (caracterizacao.Fase.GetValueOrDefault() <= 0)
 			{
