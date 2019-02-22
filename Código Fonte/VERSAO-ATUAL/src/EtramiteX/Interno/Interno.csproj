@@ -339,6 +339,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\MaterialApreendidoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
     <Compile Include="ViewModels\VMTItuloDeclaratorioConfiguracao\ConfigurarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\RelatorioVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -488,6 +489,9 @@
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\Configurar.aspx" />
+    <Content Include="Views\TituloDeclaratorio\Relatorio.aspx" />
+    <Content Include="Views\TituloDeclaratorio\RelatorioListarFiltros.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloListarResultados.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
@@ -2478,7 +2482,6 @@
     <Content Include="Views\TituloDeclaratorio\Index.aspx" />
     <Content Include="Views\TituloDeclaratorio\TituloCamposModelo.ascx" />
     <Content Include="Views\TituloDeclaratorio\TituloListarFiltros.ascx" />
-    <Content Include="Views\TituloDeclaratorio\TituloListarResultados.ascx" />
     <Content Include="Views\Shared\Anexo.ascx" />
     <Content Include="Views\Documento\ConverterDocumento.aspx" />
     <Content Include="Views\Documento\ConverterDocumentoDadosPartial.ascx" />

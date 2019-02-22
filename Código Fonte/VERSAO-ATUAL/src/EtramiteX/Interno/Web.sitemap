@@ -254,6 +254,7 @@
 				<siteMapNode url="~/TituloDeclaratorio/AlterarSituacao" title="Alterar Situação de Título Declaratório" description="linkMenu" roles="TituloDeclaratorioAlterarSituacao"></siteMapNode>
 			</siteMapNode>
 			<siteMapNode url="~/TituloDeclaratorio/Criar" title="Cadastrar Título Declaratório" description="linkMenu" roles="TituloDeclaratorioCriar"></siteMapNode>
+			<siteMapNode url="~/TituloDeclaratorio/Relatorio" title="Relatório de Títulos Declaratórios" description="linkMenu" roles="TituloDeclaratorioRelatorio"></siteMapNode>
 		</siteMapNode>
 
 		<siteMapNode url="~/Titulo/TituloModeloListar" title="Modelo de Título" description="linkMenu titulos" roles="TituloModeloListar, TituloModeloEditar, TituloModeloAtivar, TituloModeloDesativar, TituloModeloVisualizar">

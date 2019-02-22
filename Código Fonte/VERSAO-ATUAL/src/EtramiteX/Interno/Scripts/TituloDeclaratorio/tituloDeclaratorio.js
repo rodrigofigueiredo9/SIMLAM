@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../mensagem.js" />
@@ -48,6 +48,7 @@ TituloDeclaratorio = {
 		container.delegate('.btnExcluirAssinante', 'click', TituloDeclaratorio.onExcluirAssinante);
 
 		container.delegate('.btnTituloSalvar', 'click', TituloDeclaratorio.onSalvarClick);
+		container.delegate('.btnGerar', 'click', TituloDeclaratorio.gerarRelatorio);
 
 		if (TituloDeclaratorio.settings.isVisualizar || TituloDeclaratorio.settings.carregarEspecificidade) {
 			var params = {
@@ -428,5 +429,49 @@ TituloDeclaratorio = {
 			}
 		});
 
+	},
+
+	//Relatorio
+	gerarRelatorio: function () {
+		filtro = {
+			modelo: $('.filterModelo:visible').val(),
+			inicioPeriodo: $('.filterInicioPeriodo').val(),
+			fimPeriodo: $('.filterFImPeriodo').val(),
+			nomeRazaoSocial: $('.filterNome').val(),
+			cpfCnpj: $('.filterCpfCnpj').val(),
+			municipio: $('.filterMunicipio:visible').val()
+		};
+
+		MasterPage.redireciona(TituloDeclaratorio.settings.urls.urlGerar);
+		//$.ajax({
+		//	url: TituloDeclaratorio.settings.urls.urlGerar,
+		//	data: JSON.stringify(filtro),
+		//	cache: false,
+		//	async: false,
+		//	type: 'POST',
+		//	dataType: 'json',
+		//	contentType: 'application/json; charset=utf-8',
+		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
+		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloDeclaratorio.container);
+		//		MasterPage.carregando(false);
+		//	},
+		//	success: function (response, textStatus, XMLHttpRequest) {
+		//		debugger;
+		//		window.location.href(response.Relatorio);
+
+
+		//		//if (response.EhValido) {
+		//		//	MasterPage.redireciona(response.UrlSucesso);
+		//		//} else if (response.Msg && response.Msg.length > 0) {
+		//		//	Mensagem.gerar(MasterPage.getContent(TituloDeclaratorio.container), response.Msg);
+
+		//		//	if (TituloDeclaratorio.settings.especificidadeErroSalvarCallback && typeof TituloDeclaratorio.settings.especificidadeErroSalvarCallback == 'function') {
+		//		//		TituloDeclaratorio.settings.especificidadeErroSalvarCallback(response.Msg);
+		//		//	}
+		//		//}
+
+		//		MasterPage.carregando(false);
+		//	}
+		//});
 	}
 }
