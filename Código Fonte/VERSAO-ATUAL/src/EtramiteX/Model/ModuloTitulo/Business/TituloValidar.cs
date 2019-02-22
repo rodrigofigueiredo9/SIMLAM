@@ -44,8 +44,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public EtramiteIdentity User
 		{
-			get
-			{
+			get {
 				try
 				{
 					return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity;
@@ -300,11 +299,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 
 			List<Setor> lstSetores = _funcionarioBus.ObterSetoresFuncionario(User.FuncionarioId);
-
+#if !DEBUG
 			if (!lstSetores.Exists(x => x.Id == titulo.Setor.Id))
 			{
 				Validacao.Add(Mensagem.Titulo.AutorSetor);
 			}
+#endif
 
 			if (!titulo.Modelo.Setores.Any(x => x.Id == titulo.Setor.Id))
 			{
@@ -371,7 +371,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return true;
 		}
 
-		#endregion
+#endregion
 
 		public Action ValidarEspecificidade { get; set; }
 
@@ -392,6 +392,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public bool ProtocoloPosse(Titulo titulo)
 		{
+#if DEBUG
+			return true;
+#endif
+
 			if (!titulo.Modelo.Regra(eRegra.ProtocoloObrigatorio) && titulo.Protocolo.Id <= 0)
 			{
 				return true;
@@ -501,7 +505,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			//Esta validação deve ser feita para cadastrar/Editar pois na edição do titulo deve existir a
 			//possibilidade de alterar o protocolo para o processo pai
 			//Esta validação não pode ser feita no botao editar do listar
-			#region Validacao de Juntado/Apensado
+#region Validacao de Juntado/Apensado
 
 			if (titulo.Protocolo != null && titulo.Protocolo.Id > 0)
 			{
@@ -527,7 +531,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					Validacao.Add(Mensagem.TituloAlterarSituacao.TituloNaoPossuiSolicitacaoDeInscricao);
 				}
 			}
-			#endregion
+#endregion
 
 			#region [ Autorização de Exploração ]
 			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
@@ -560,11 +564,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				Validacao.Add(Mensagem.Titulo.ModeloDesativado);
 			}
 
-			#region Validacao de Posse
+#region Validacao de Posse
 
 			ProtocoloPosse(titulo);
 
-			#endregion
+#endregion
 
 			return Validacao.EhValido;
 		}
@@ -579,11 +583,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			Modelo(titulo);
 
-			#region Validacao de Posse
+#region Validacao de Posse
 
 			ProtocoloPosse(titulo);
 
-			#endregion
+#endregion
 
 			return Validacao.EhValido;
 		}
@@ -598,11 +602,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			//Validacao de Empreendimento
 			//Não ha validação de empreendimento
 
-			#region Validacao de Posse
+#region Validacao de Posse
 
 			ProtocoloPosse(titulo);
 
-			#endregion
+#endregion
 		}
 
 		public bool Excluir(Titulo titulo)
