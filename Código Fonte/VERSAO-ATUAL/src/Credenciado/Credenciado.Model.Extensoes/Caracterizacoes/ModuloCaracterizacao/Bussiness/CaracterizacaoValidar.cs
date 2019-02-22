@@ -236,15 +236,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			List<Caracterizacao> lista = new List<Caracterizacao>();
 			List<Caracterizacao> caracterizacoesCredenciado = _da.ObterCaracterizacoesInternoAtuais(empreendimentoID, caracterizacoesCadastradas);
 
+			
 			foreach (var item in caracterizacoesCredenciado)
 			{
-				Caracterizacao caracterizacao = caracterizacoesInterno.SingleOrDefault(x => x.Tipo == item.Tipo);
+				Caracterizacao caracterizacao = caracterizacoesInterno.SingleOrDefault(x => x.Tipo == item.Tipo && item.Tipo != eCaracterizacao.BarragemDispensaLicenca);
 
 				if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
 				{
 					lista.Add(item);
 				}
 			}
+			
 
 			desatualizadas = new List<int>();
 			desatualizadas.AddRange(lista.Select(x => (int)x.Tipo));
