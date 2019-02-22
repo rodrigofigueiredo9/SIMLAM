@@ -41,6 +41,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public bool AlterarSituacaoAbrir(Titulo titulo)
 		{
+#if DEBUG
+			return true;
+#endif
+
 			#region Validacao de Posse
 			if (titulo.Protocolo.Id > 0 && !_protocoloDa.EmPosse(titulo.Protocolo.Id.Value))
 			{
@@ -123,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					acaoPermissao.Add(ePermissao.TituloProrrogar);
 					break;
 
-				#endregion
+					#endregion
 			}
 
 			if (!_permissaoValdiar.ValidarAny(acaoPermissao.ToArray()))
@@ -131,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				return false;
 			}
 
-			#endregion 
+			#endregion
 
 			//Validar Titulo
 			if ((eAlterarSituacaoAcao)acao == eAlterarSituacaoAcao.EmitirParaAssinatura)
@@ -152,11 +156,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				(eAlterarSituacaoAcao)acao == eAlterarSituacaoAcao.Prorrogar ||
 				(eAlterarSituacaoAcao)acao == eAlterarSituacaoAcao.Concluir)
 			{
-				if(titulo.Atividades != null)
+				if (titulo.Atividades != null)
 				{
 					foreach (var item in titulo.Atividades)
 					{
-						if(!item.Ativada)
+						if (!item.Ativada)
 						{
 							Validacao.Add(Mensagem.AtividadeEspecificidade.AtividadeDesativada(item.NomeAtividade));
 						}
@@ -211,7 +215,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						Validacao.Add(Mensagem.TituloAlterarSituacao.PrazoObrigatorio);
 					}
 
-					if (titulo.Modelo.Regra(eRegra.Prazo) && (titulo.Prazo.GetValueOrDefault()+DateTime.Now.Year) > DateTime.MaxValue.Year)
+					if (titulo.Modelo.Regra(eRegra.Prazo) && (titulo.Prazo.GetValueOrDefault() + DateTime.Now.Year) > DateTime.MaxValue.Year)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.PrazoInvalido);
 					}
@@ -257,7 +261,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						Validacao.Add(Mensagem.TituloAlterarSituacao.PrazoInvalido);
 					}
 
-					if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
 					{
 						var associados = _da.ObterAssociados(titulo.Id);
 						if (associados.Exists(x => x.DataVencimento.Data < titulo.DataEmissao.Data.Value.AddDays(titulo.Prazo.Value)))
@@ -268,11 +272,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
 					{
 						var busCARSolicitacao = new CARSolicitacaoBus();
-						if(!busCARSolicitacao.VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(titulo.EmpreendimentoId.GetValueOrDefault()))
+						if (!busCARSolicitacao.VerificarSeEmpreendimentoPossuiSolicitacaoValidaEEnviada(titulo.EmpreendimentoId.GetValueOrDefault()))
 						{
 							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloNaoPossuiSolicitacaoDeInscricao);
 						}
-						
+
 					}
 					#endregion
 
@@ -335,9 +339,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
 						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoEncerramentoObrigatorio);
 
-					if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
+					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
 					{
-						if(_da.ExistsTituloAssociadoNaoEncerrado(titulo.Id))
+						if (_da.ExistsTituloAssociadoNaoEncerrado(titulo.Id))
 							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiAssociadoNaoEncerrado);
 					}
 
@@ -407,7 +411,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+					#endregion
 			}
 
 			AtivarCondicionantes(titulo);

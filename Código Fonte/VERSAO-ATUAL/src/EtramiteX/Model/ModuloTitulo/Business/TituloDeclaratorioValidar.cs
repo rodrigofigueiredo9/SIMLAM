@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			if (titulo.Modelo.TipoDocumentoEnum == eTituloModeloTipoDocumento.Titulo)
 			{
 				List<Setor> lstSetores = _funcionarioBus.ObterSetoresFuncionario(User.FuncionarioId);
-
+#if !DEBUG
 				if (!lstSetores.Exists(x => x.Id == titulo.Setor.Id))
 				{
 					Validacao.Add(Mensagem.Titulo.AutorSetor);
@@ -124,6 +124,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				{
 					Validacao.Add(Mensagem.Titulo.ModeloSetor);
 				}
+#endif
 			}
 
 			ModeloPendenciaEmitido(titulo);
@@ -263,7 +264,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return Validacao.EhValido;
 		}
 
-		#endregion
+#endregion
 
 		//Validacoes de Cadastro/Edição
 		public bool Salvar(Titulo titulo)
@@ -383,7 +384,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			switch ((eTituloSituacao)titulo.Situacao.Id)
 			{
-				#region Valido
+#region Valido
 
 				case eTituloSituacao.Valido:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
@@ -392,9 +393,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+#endregion
 
-				#region Suspenso
+#region Suspenso
 
 				case eTituloSituacao.Suspenso:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
@@ -408,9 +409,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+#endregion
 
-				#region Encerrado
+#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
@@ -424,7 +425,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+#endregion
 			}
 
 			if (!Validacao.EhValido)
