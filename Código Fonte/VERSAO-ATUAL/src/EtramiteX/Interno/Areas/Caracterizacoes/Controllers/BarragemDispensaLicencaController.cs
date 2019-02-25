@@ -120,12 +120,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-		public ActionResult Excluir(int id)
+		public ActionResult Excluir(int id, int empreeendimento)
 		{
 			string urlRedireciona = string.Empty;
 			if (_bus.Excluir(id))
 			{
-				urlRedireciona = Url.Action("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
+				urlRedireciona = Url.Action("Listar", "BarragemDispensaLicenca", new { id = empreeendimento, Msg = Validacao.QueryParam() });
 			}
 
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);

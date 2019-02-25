@@ -445,7 +445,7 @@ BarragemDispensaLicenca = {
 
 		$.ajax({
 			url: BarragemDispensaLicenca.settings.urls.excluir,
-			data: JSON.stringify({ id }),
+			data: JSON.stringify({ id: id, empreendimento: $('.hdnEmpreendimentoId').val() }),
 			cache: false,
 			async: false,
 			type: 'POST',
