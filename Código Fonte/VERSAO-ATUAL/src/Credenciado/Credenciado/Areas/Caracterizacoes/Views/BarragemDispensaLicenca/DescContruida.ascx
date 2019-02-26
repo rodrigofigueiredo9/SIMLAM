@@ -10,8 +10,8 @@
 	<div class="block">
 		<div class="coluna80">
 			<label for="isSupressaoAPP">Houve supressão de vegetação em Área de Preservação Permanente (APP) para implantação da barragem? *</label>
-			<%= Html.RadioButton("isSupressaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Sim
-			<%= Html.RadioButton("isSupressaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Não
+			<%= Html.RadioButton("isSupressaoAPP", true, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Sim
+			<%= Html.RadioButton("isSupressaoAPP", false, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Não
 		</div>
 		<div class="coluna66">
 			<label for="isDemarcacaoAPP">Há faixa demarcada como Área de Preservação Permanente (APP) no entorno do reservatório? *</label>
