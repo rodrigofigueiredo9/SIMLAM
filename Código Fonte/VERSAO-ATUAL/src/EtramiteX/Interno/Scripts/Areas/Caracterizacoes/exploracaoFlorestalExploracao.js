@@ -41,7 +41,7 @@ ExploracaoFlorestalExploracao = {
 		if ($(this).attr('initialize')) {
 			showConteudo = this.checked;
 			$(this).removeAttr('initialize');
-		} 
+		}
 
 		var area = $("label[for='ExploracaoFlorestal_Exploracoes_AreaCroqui']", container);
 		var qtd = $("label[for='ExploracaoFlorestal_Exploracoes_QuantidadeArvores']", container);
@@ -174,7 +174,7 @@ ExploracaoFlorestalExploracao = {
 		if (produto.Quantidade == '' && produto.ProdutoId != ExploracaoFlorestalExploracao.settings.idsTela.ProdutoSemRendimento) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.QuantidadeObrigatoria));
 		}
-		
+
 		if (produto.DestinacaoMaterialId == 0 || produto.DestinacaoMaterialId == null) {
 			mensagens.push(jQuery.extend(true, {}, ExploracaoFlorestalExploracao.settings.mensagens.DestinacaoMateriallObrigatoria));
 		}
@@ -235,17 +235,17 @@ ExploracaoFlorestalExploracao = {
 			if (Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked).length > 0)
 				parecerFavoravel = Array.from($('.rbParecerFavoravel', this)).filter(x => x.checked)[0].value > 0;
 
-		    var objeto = {
-		        Id: $('.hdnExploracaoId', this).val(),
+			var objeto = {
+				Id: $('.hdnExploracaoId', this).val(),
 				ParecerFavoravel: parecerFavoravel,
-		        Identificacao: $('.txtIdentificacao', this).val(),
-		        GeometriaTipoId: Number($('.hdnGeometriaId', this).val()),
-		        ClassificacaoVegetacaoId: $('.ddlClassificacoesVegetais', this).val(),
-		        ExploracaoTipoId: $('.ddlExploracaoTipo', this).val(),
-		        AreaCroqui: Number($('.hdnAreaCroqui', this).val()),
-		        QuantidadeArvores: $('.txtQuantidadeArvores', this).val(),
-		        AreaRequerida: Mascara.getFloatMask($('.txtAreaRequerida', this).val()),
-		        AreaRequeridaTexto: $('.txtAreaRequerida', this).val(),
+				Identificacao: $('.txtIdentificacao', this).val(),
+				GeometriaTipoId: Number($('.hdnGeometriaId', this).val()),
+				ClassificacaoVegetacaoId: $('.ddlClassificacoesVegetais', this).val(),
+				ExploracaoTipoId: $('.ddlExploracaoTipo', this).val(),
+				AreaCroqui: Number($('.hdnAreaCroqui', this).val()),
+				QuantidadeArvores: $('.txtQuantidadeArvores', this).val(),
+				AreaRequerida: Mascara.getFloatMask($('.txtAreaRequerida', this).val()),
+				AreaRequeridaTexto: $('.txtAreaRequerida', this).val(),
 				ArvoresRequeridas: $('.txtArvoresRequeridas', this).val(),
 				FinalidadeExploracao: $('.ddlFinalidade option:selected', this).val(),
 				FinalidadeEspecificar: $('.txtFinalidadeEspecificar', this).val(),
@@ -281,7 +281,9 @@ ExploracaoFlorestalExploracao = {
 				var tags = [];
 				$.ajax({
 					url: ExploracaoFlorestalExploracao.settings.apiInstitucional + "/Especie",
-					headers: { 'Authorization': 'Bearer ' + ExploracaoFlorestalExploracao.settings.token },
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Authorization', 'Bearer ' + ExploracaoFlorestalExploracao.settings.token);
+					},
 					data: { "Search": request.term, "PageSize": 20 },
 					type: 'GET',
 					dataType: 'json',
@@ -291,6 +293,9 @@ ExploracaoFlorestalExploracao = {
 							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId + '\" }'));
 						}
 						response(tags);
+					},
+					error: function (XMLHttpRequest, textStatus, errorThrown) {
+						console.log(textStatus);
 					}
 				});
 			},
@@ -300,7 +305,7 @@ ExploracaoFlorestalExploracao = {
 			}
 		});
 	},
-	
+
 	onChangeFinalidade: function () {
 		var container = this.parentElement.parentElement.parentElement;
 		$('.divEspecificarFinalidade', container).removeClass('hide');
@@ -312,5 +317,5 @@ ExploracaoFlorestalExploracao = {
 		if ($('.ddlFinalidade option:selected', container).val() == 8) {
 			$('.divEspecificarFinalidade', container).removeClass('hide');
 		}
-	}	
+	}
 }
