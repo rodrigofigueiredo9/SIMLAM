@@ -351,7 +351,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var relatorio = _bus.GerarRelatorio(filtro);
 
 
-			return ViewModelHelper.GerarArquivo("Relatorio.xslx", relatorio, "application/pdf", dataHoraControleAcesso: true);
+			return ViewModelHelper.GerarArquivo("Relatorio.xslx", relatorio, "application/txt");
 			//return Json(new { @EhValido = true, @Msg = Validacao.QueryParam(), @Relatorio = relatorio });
 			//return File(relatorio, "application/txt");
 		}

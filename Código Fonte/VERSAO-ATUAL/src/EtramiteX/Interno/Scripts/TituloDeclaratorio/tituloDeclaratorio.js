@@ -442,37 +442,38 @@ TituloDeclaratorio = {
 			municipio: $('.filterMunicipio:visible').val()
 		};
 
-		MasterPage.redireciona(TituloDeclaratorio.settings.urls.urlGerar);
-		//$.ajax({
-		//	url: TituloDeclaratorio.settings.urls.urlGerar,
-		//	data: JSON.stringify(filtro),
-		//	cache: false,
-		//	async: false,
-		//	type: 'POST',
-		//	dataType: 'application/txt',
-		//	contentType: 'application/txt; charset=utf-8',
-		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
-		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloDeclaratorio.container);
-		//		MasterPage.carregando(false);
-		//	},
-		//	success: function (data, response, file, pdf, textStatus, XMLHttpRequest) {
-		//		debugger;
-		//		window.downloadFile = data
-		//		//window.location.href(response.Relatorio);
+		//MasterPage.redireciona(TituloDeclaratorio.settings.urls.urlGerar);
+
+		$.ajax({
+			url: TituloDeclaratorio.settings.urls.urlGerar,
+			data: JSON.stringify(filtro),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'application/txt',
+			contentType: 'application/txt; charset=utf-8',
+			error: function (XMLHttpRequest, textStatus, erroThrown) {
+				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloDeclaratorio.container);
+				MasterPage.carregando(false);
+			},
+			success: function (data, response, file, pdf, textStatus, XMLHttpRequest) {
+				debugger;
+				window.downloadFile = data
+				//window.location = 'Relatorio.xslx';
 
 
-		//		//if (response.EhValido) {
-		//		//	MasterPage.redireciona(response.UrlSucesso);
-		//		//} else if (response.Msg && response.Msg.length > 0) {
-		//		//	Mensagem.gerar(MasterPage.getContent(TituloDeclaratorio.container), response.Msg);
+				//if (response.EhValido) {
+				//	MasterPage.redireciona(response.UrlSucesso);
+				//} else if (response.Msg && response.Msg.length > 0) {
+				//	Mensagem.gerar(MasterPage.getContent(TituloDeclaratorio.container), response.Msg);
 
-		//		//	if (TituloDeclaratorio.settings.especificidadeErroSalvarCallback && typeof TituloDeclaratorio.settings.especificidadeErroSalvarCallback == 'function') {
-		//		//		TituloDeclaratorio.settings.especificidadeErroSalvarCallback(response.Msg);
-		//		//	}
-		//		//}
+				//	if (TituloDeclaratorio.settings.especificidadeErroSalvarCallback && typeof TituloDeclaratorio.settings.especificidadeErroSalvarCallback == 'function') {
+				//		TituloDeclaratorio.settings.especificidadeErroSalvarCallback(response.Msg);
+				//	}
+				//}
 
-		//		MasterPage.carregando(false);
-		//	}
-		//});
+				MasterPage.carregando(false);
+			}
+		});
 	}
 }
