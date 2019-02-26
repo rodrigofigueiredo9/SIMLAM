@@ -344,14 +344,16 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioRelatorio })]
-		public ActionResult BuscarRelatorio()
+		//public FileStreamResult GerarRelatorio()
+		public ActionResult GerarRelatorio()
 		{
 			TituloRelatorioFiltro filtro = new TituloRelatorioFiltro();
 			var relatorio = _bus.GerarRelatorio(filtro);
 
 
-			return ViewModelHelper.GerarArquivo("Relatorio.xslx", relatorio, "application/txt", dataHoraControleAcesso: true);
+			return ViewModelHelper.GerarArquivo("Relatorio.xslx", relatorio, "application/pdf", dataHoraControleAcesso: true);
 			//return Json(new { @EhValido = true, @Msg = Validacao.QueryParam(), @Relatorio = relatorio });
+			//return File(relatorio, "application/txt");
 		}
 
 		#endregion

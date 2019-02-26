@@ -449,15 +449,16 @@ TituloDeclaratorio = {
 		//	cache: false,
 		//	async: false,
 		//	type: 'POST',
-		//	dataType: 'json',
-		//	contentType: 'application/json; charset=utf-8',
+		//	dataType: 'application/txt',
+		//	contentType: 'application/txt; charset=utf-8',
 		//	error: function (XMLHttpRequest, textStatus, erroThrown) {
 		//		Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloDeclaratorio.container);
 		//		MasterPage.carregando(false);
 		//	},
-		//	success: function (response, textStatus, XMLHttpRequest) {
+		//	success: function (data, response, file, pdf, textStatus, XMLHttpRequest) {
 		//		debugger;
-		//		window.location.href(response.Relatorio);
+		//		window.downloadFile = data
+		//		//window.location.href(response.Relatorio);
 
 
 		//		//if (response.EhValido) {
