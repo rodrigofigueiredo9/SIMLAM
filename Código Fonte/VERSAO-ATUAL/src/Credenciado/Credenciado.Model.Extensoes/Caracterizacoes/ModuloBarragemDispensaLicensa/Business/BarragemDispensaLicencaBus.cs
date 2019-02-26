@@ -419,18 +419,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			BarragemRT rt = new BarragemRT();
 			try
 			{
+				var rtElaboracao = VerificarElaboracaoRT(projetoDigital);
 				rt = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
 				var id1 = rtLst[0].id;
 
 				rtLst[0] = rt;
 				rtLst[0].id = id1;
-				if (VerificarElaboracaoRT(projetoDigital))
+				if (rtElaboracao == 1 || rtElaboracao == 3)
 				{
 					var id2 = rtLst[1].id;
 					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
 					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 					rtLst[1].id = id2;
 					rtLst[1].proprioDeclarante = true;
+				}
+
+				if (rtElaboracao == 2 || rtElaboracao == 3)
+				{
+					var id2 = rtLst[3].id;
+					rtLst[3] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+					rtLst[3].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
+					rtLst[3].id = id2;
+					rtLst[3].proprioDeclarante = true;
 				}
 			}
 			catch (Exception exc)
@@ -493,7 +503,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public bool VerificarElaboracaoRT(int projetoDigital)
+		public int VerificarElaboracaoRT(int projetoDigital)
 		{
 			try
 			{
@@ -504,7 +514,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.AddErro(exc);
 			}
 
-			return false;
+			return 0;
 		}
 
 		#endregion

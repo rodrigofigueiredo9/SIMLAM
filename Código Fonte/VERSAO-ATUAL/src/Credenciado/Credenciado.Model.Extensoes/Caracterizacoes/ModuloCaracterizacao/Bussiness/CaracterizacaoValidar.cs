@@ -249,7 +249,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			desatualizadas = new List<int>();
 			desatualizadas.AddRange(lista.Select(x => (int)x.Tipo));
 
-			if (lista.Count > 0)
+			if (lista.Count > 0 && !lista.Exists(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca))
 			{
 				return Mensagem.Caracterizacao.CopiarCaracterizacaoDesatualizada(lista.Select(x => x.Nome).ToList()).Texto;
 			}
