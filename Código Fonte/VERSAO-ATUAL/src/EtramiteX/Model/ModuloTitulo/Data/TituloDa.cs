@@ -2514,22 +2514,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Adicionando Filtros
 
 				if(filtro.modelo > 0)
-					comandtxt += comando.FiltroAnd("l.modelo", "modelo", filtro.modelo);
+					comandtxt += comando.FiltroAnd("tm.id", "modelo", filtro.modelo);
 
 				if(filtro.municipio > 0)
-					comandtxt += comando.FiltroAnd("l.municipio", "municipio", filtro.municipio);
+					comandtxt += comando.FiltroAnd("mp.id", "municipio", filtro.municipio);
 
-				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo))
-					comandtxt += comando.FiltroAnd("l.inicioPeriodo", "inicioPeriodo", filtro.inicioPeriodo);
+				//if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo))
+				//	comandtxt += comando.FiltroAnd("l.inicioPeriodo", "inicioPeriodo", filtro.inicioPeriodo);
 
-				if (!string.IsNullOrWhiteSpace(filtro.fimPeriodo))
-					comandtxt += comando.FiltroAnd("l.fimPeriodo", "fimPeriodo", filtro.fimPeriodo);
+				//if (!string.IsNullOrWhiteSpace(filtro.fimPeriodo))
+				//	comandtxt += comando.FiltroAnd("l.fimPeriodo", "fimPeriodo", filtro.fimPeriodo);
 				
 				if (!string.IsNullOrWhiteSpace(filtro.nomeRazaoSocial))
-					comandtxt += comando.FiltroAnd("l.nomeRazaoSocial", "nomeRazaoSocial", filtro.nomeRazaoSocial);
+					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial);
 								
 				if (!string.IsNullOrWhiteSpace(filtro.cpfCnpj))
-					comandtxt += comando.FiltroAnd("l.cpfCnpj", "cpfCnpj", filtro.cpfCnpj);
+					comandtxt += comando.FiltroAnd("pc.cpf", "cpfCnpj", filtro.cpfCnpj);
 
 				#endregion
 
