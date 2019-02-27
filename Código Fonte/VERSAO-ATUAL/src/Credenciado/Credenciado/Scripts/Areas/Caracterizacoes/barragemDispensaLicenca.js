@@ -675,11 +675,14 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMinInstalado: function () {
 		if ($('.rbVazaoMinInstalado:checked').val() == 1) {
 			$('.vazaoMinNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
 		} else {
 			$('.vazaoMinNormas').addClass('hide');
 			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
 		}
 		$('.rbVazaoMinNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
 	},
 
 	onChangeVazaoMinNormas: function () {
@@ -695,11 +698,13 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMaxInstalado: function () {
 		if ($('.rbVazaoMaxInstalado:checked').val() == 1) {
 			$('.vazaoMaxNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
 		} else {
 			$('.vazaoMaxNormas').addClass('hide');
-			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
 		}
 		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
 	},
 
 	onChangeVazaoMaxNormas: function () {
