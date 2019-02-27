@@ -21,6 +21,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 		TituloDeclaratorioConfiguracaoDa _da = new TituloDeclaratorioConfiguracaoDa();
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
+		TituloDeclaratorioConfiguracaoValidar _validar = new TituloDeclaratorioConfiguracaoValidar();
 
 		public EtramiteIdentity User
 		{
@@ -74,6 +75,37 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			}
 		}
 
+		#region Obter / Filtrar
+
 		public TituloDeclaratorioConfiguracao Obter(int id = 0) => _da.Obter(id);
+
+		public Resultados<RelatorioTituloDecListarResultado> Filtrar(RelatorioTituloDecListarFiltro filtrosListar, Paginacao paginacao)
+		{
+			try
+			{
+				if (!_validar.Filtrar(filtrosListar))
+				{
+					return new Resultados<RelatorioTituloDecListarResultado>();
+				}
+				
+				Filtro<RelatorioTituloDecListarFiltro> filtro = new Filtro<RelatorioTituloDecListarFiltro>(filtrosListar, paginacao);
+				Resultados<RelatorioTituloDecListarResultado> resultados = _da.Filtrar(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		#endregion  Obter / Filtrar
 	}
 }

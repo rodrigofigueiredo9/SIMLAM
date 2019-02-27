@@ -1091,18 +1091,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal bool VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
+		internal int VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select count(1) from tab_projeto_digital pd
+					select nvl(rb.rt_elaboracao, 0) from tab_projeto_digital pd
 						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
-					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)", EsquemaCredenciadoBanco);
+					where pd.id = :projetoDigital", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
 		}
 		#endregion

@@ -78,6 +78,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 			});
 			ProfissoesAutorizacao = new List<int>() { 15, 37, 38 };
 
+			foreach(var item in barragemTipos)
+			{
+				if (item.Texto.Equals("Mista"))
+				{
+					item.Texto = "Misto";
+				}
+			}
+
 			FasesLst = fases;
             FormacoesRTLst = formacoesRT;
 			BarragemTiposLst = barragemTipos;

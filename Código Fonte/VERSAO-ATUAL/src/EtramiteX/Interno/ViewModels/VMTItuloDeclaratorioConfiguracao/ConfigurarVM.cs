@@ -1,6 +1,6 @@
 ﻿using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
-namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTItuloDeclaratorioConfiguracao
+namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTituloDeclaratorioConfiguracao
 {
 	public class ConfigurarVM
 	{
