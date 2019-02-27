@@ -43,6 +43,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string tempoConcentracaoEquacaoUtilizada { get; set; }
 		public decimal vazaoEnchente { get; set; }
 		public string fonteDadosVazaoEnchente { get; set; }
+		public bool? haSupresVegetApp { get; set; }
 
 		public string EquacaoCalculo { get; set; }
 		public int? Fase { get; set; }

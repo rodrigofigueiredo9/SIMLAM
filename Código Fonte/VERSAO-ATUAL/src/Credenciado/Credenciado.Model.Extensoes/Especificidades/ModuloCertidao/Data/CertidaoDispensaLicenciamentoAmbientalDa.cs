@@ -420,7 +420,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#region Finalidade Atividade
 				comando = bancoDeDados.CriarComando(@"
-					select  f.atividade from crt_barragem_finaldiade_ativ f where f.barragem = :barragem", EsquemaBanco);
+					select  f.atividade from crt_barragem_finalidade_ativ f where f.barragem = :barragem", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
 
@@ -441,7 +441,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select b.ATIVIDADE, b.BARRAGEM, atv.id, atv.texto from crt_barragem_finaldiade_ativ b " +
+				Comando comando = bancoDeDados.CriarComando(@"select b.ATIVIDADE, b.BARRAGEM, atv.id, atv.texto from crt_barragem_finalidade_ativ b " +
 					"inner join lov_crt_bdla_finalidade_atv atv on b.ATIVIDADE = atv.id " +
 					"where BARRAGEM = :barragem ", EsquemaBanco);
 

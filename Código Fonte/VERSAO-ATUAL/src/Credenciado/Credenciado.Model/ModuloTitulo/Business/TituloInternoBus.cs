@@ -97,13 +97,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos() + ".pdf";
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
-			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
+			MemoryStream mstr = GerarPdf(titulo);
+			titulo.ArquivoPdf.Buffer = mstr;
 
-			//parte que retorna os arquivos de condicionantes.
-			titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter(22);
+			////Inclusão de arquivos de condicionante específicos para títulos cujo modelo seja
+			////Declaração de Dispensa de Licenciamento Ambiental de Barragem
+			//if (titulo.Modelo.Id == 72)
+			//{
+			//	titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
 
-			titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
-			titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+			//	if (titulo.CondicionantesBarragem != null)
+			//	{
+			//		titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
+			//		titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+			//		List<Arquivo> listaCondBarragem = new List<Arquivo>();
+			//		listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
+			//		listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
+
+			//		titulo.ArquivoPdf.Buffer = GeradorAspose.AnexarPdf(mstr, listaCondBarragem);
+			//	}
+			//}
 
 			return titulo.ArquivoPdf;
 		}
@@ -160,6 +173,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			{
 				Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf dataAnexos = dataSource as Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf;
 				msPdf = GeradorAspose.AnexarPdf(msPdf, dataAnexos.AnexosPdfs);
+			}
+
+			//Inclusão de arquivos de condicionante específicos para títulos cujo modelo seja
+			//Declaração de Dispensa de Licenciamento Ambiental de Barragem
+			if (titulo.Modelo.Id == 72)
+			{
+				CertidaoDispensaLicenciamentoAmbientalPDF pdfBarragemDisp = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
+				bool semApp = false;
+				if (pdfBarragemDisp.Caracterizacao.barragemEntity.areaAlagada < 1 && pdfBarragemDisp.Caracterizacao.barragemEntity.construidaConstruir.isSupressaoAPP == false)
+				{
+					semApp = true;
+				}
+
+				titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
+
+				if (titulo.CondicionantesBarragem != null)
+				{
+					titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
+					titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+					List<Arquivo> listaCondBarragem = new List<Arquivo>();
+
+					if (semApp) listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
+					else listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
+
+					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
+				}
 			}
 
 			return msPdf;

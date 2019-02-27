@@ -22,6 +22,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public List<Lista> finalidades { get; set; }
 		public string CampoNome { get; set; }
 		public string CampoValor { get; set; }
+		public bool? HaSupresVegetApp { get; set; }
 
 		public BarragemDispensaLicencaPDF(BarragemDispensaLicenca caracterizacao)
 		{
@@ -33,6 +34,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			NumeroARTExecucao = caracterizacao.NumeroARTExecucao;
 			AreaAlagada = caracterizacao.areaAlagada;
 			VolumeArmazanado = caracterizacao.volumeArmazanado;
+			HaSupresVegetApp = caracterizacao.haSupresVegetApp;
 		}
 	}
 }
