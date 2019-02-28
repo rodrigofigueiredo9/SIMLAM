@@ -25,6 +25,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public List<BarragemCoordenada> coordenadas { get; set; }
 
 		public bool barragemContiguaMesmoNivel { get; set; }
+		public string barragemContiguaMesmoNivelTexto { get; set; }
 		public decimal areaAlagada { get; set; }
 		public decimal volumeArmazanado { get; set; }
 		public decimal alturaBarramento { get; set; }
@@ -47,6 +48,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 
 		public string EquacaoCalculo { get; set; }
 		public int? Fase { get; set; }
+		public string FaseTexto { get; set; }
 		public int? PossuiMonge { get; set; }
 		public int? MongeTipo { get; set; }
 		public string EspecificacaoMonge { get; set; }

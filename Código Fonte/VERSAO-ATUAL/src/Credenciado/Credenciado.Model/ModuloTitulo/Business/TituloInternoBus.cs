@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -97,26 +98,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos() + ".pdf";
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
-			MemoryStream mstr = GerarPdf(titulo);
-			titulo.ArquivoPdf.Buffer = mstr;
-
-			////Inclusão de arquivos de condicionante específicos para títulos cujo modelo seja
-			////Declaração de Dispensa de Licenciamento Ambiental de Barragem
-			//if (titulo.Modelo.Id == 72)
-			//{
-			//	titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
-
-			//	if (titulo.CondicionantesBarragem != null)
-			//	{
-			//		titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
-			//		titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
-			//		List<Arquivo> listaCondBarragem = new List<Arquivo>();
-			//		listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
-			//		listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
-
-			//		titulo.ArquivoPdf.Buffer = GeradorAspose.AnexarPdf(mstr, listaCondBarragem);
-			//	}
-			//}
+			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
 
 			return titulo.ArquivoPdf;
 		}
@@ -199,6 +181,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
 				}
+
+				string caminhoRelatorio = @"~/Content/_pdfAspose/Relatorio_Caracterizacao_Barragem_Dispensada.docx";
+				FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(caminhoRelatorio));
+				Arquivo templatePdfRelatorio = new Arquivo();
+				templatePdfRelatorio.Buffer = (Stream)file;
+
+				MemoryStream relatorioCarac = gerador.Pdf(templatePdfRelatorio, dataSource);
+				relatorioCarac.CopyTo(msPdf);   //isso anexa  relatorioCarac no final de msPdf
+
+				//ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO.doc";
+				//FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(ArquivoDocCaminho));
+				//Arquivo.Arquivo templatePdf = new Arquivo.Arquivo();
+				//templatePdf.Buffer = (Stream)file;
 			}
 
 			return msPdf;
