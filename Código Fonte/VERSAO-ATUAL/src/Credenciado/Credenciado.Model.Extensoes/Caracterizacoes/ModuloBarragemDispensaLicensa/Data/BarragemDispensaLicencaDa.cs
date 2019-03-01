@@ -169,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							numero_art, autorizacao_crea, proprio_declarante)
 						values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
 							:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
-						var arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
+						var arquivo = (x.autorizacaoCREA != null && x.autorizacaoCREA.Id > 0) ? x.autorizacaoCREA.Id : null;
 						comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
