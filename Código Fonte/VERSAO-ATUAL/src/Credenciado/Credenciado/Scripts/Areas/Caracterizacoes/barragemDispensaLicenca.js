@@ -360,9 +360,10 @@ BarragemDispensaLicenca = {
 				
 			},
 		};
-		objeto.construidaConstruir.isSupressaoAPP = objeto.construidaConstruir.isSupressaoAPP ?
-			objeto.construidaConstruir.isSupressaoAPP : $('.rbPerguntaSupressaoAContruir:checked').val();
+
 		if (objeto.fase == 2) {
+			objeto.construidaConstruir.isSupressaoAPP = $('.rbPerguntaSupressaoAConstruir:checked').val();
+
 			if (objeto.construidaConstruir.periodoInicioObra.length < 7) {
 				Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.PeriodoInicioRequired]);
 				return false;
@@ -372,6 +373,7 @@ BarragemDispensaLicenca = {
 				return false;
 			}
 		}
+
         $('.cbFinalidadeAtividade').each(function (index, item) {
 			if ($(item).is(':checked')) {
 				objeto.finalidade.push($(item).val());
@@ -675,11 +677,14 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMinInstalado: function () {
 		if ($('.rbVazaoMinInstalado:checked').val() == 1) {
 			$('.vazaoMinNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
 		} else {
 			$('.vazaoMinNormas').addClass('hide');
 			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
 		}
 		$('.rbVazaoMinNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
 	},
 
 	onChangeVazaoMinNormas: function () {
@@ -695,11 +700,13 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMaxInstalado: function () {
 		if ($('.rbVazaoMaxInstalado:checked').val() == 1) {
 			$('.vazaoMaxNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
 		} else {
 			$('.vazaoMaxNormas').addClass('hide');
-			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
 		}
 		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
 	},
 
 	onChangeVazaoMaxNormas: function () {

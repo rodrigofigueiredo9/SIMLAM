@@ -1049,8 +1049,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
                            t.nome Texto,
                            case when t.situacao = 1 then 1 else 0 end IsAtivo
                       from tab_titulo_modelo t
-                     where t.documento = 2 /*Título Declaratório*/
-						   and t.id != 72 /*Não traz o título declaratório de barragem*/";
+                     where t.documento = 2 /*Título Declaratório*/";
 
 				using (var command = bancoDeDados.CriarComando(sql))
 				{

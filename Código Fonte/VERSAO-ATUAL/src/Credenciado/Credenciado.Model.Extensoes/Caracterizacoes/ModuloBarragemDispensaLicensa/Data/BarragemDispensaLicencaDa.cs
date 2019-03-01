@@ -169,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							numero_art, autorizacao_crea, proprio_declarante)
 						values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
 							:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
-						var arquivo = (x.autorizacaoCREA != null) ? x.autorizacaoCREA.Id : null;
+						var arquivo = (x.autorizacaoCREA != null && x.autorizacaoCREA.Id > 0) ? x.autorizacaoCREA.Id : null;
 						comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("nome", x.nome, DbType.String);
@@ -392,7 +392,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
-					delete from crt_barragem_finalidade_ativ where barragem = :id;
 					delete from crt_barragem_finalidade_ativ where barragem = :id;
 					delete from crt_barragem_coordenada where barragem = :id;
 					delete from crt_barragem_responsavel where barragem = :id;
@@ -1092,18 +1091,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal bool VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
+		internal int VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select count(1) from tab_projeto_digital pd
+					select nvl(rb.rt_elaboracao, 0) from tab_projeto_digital pd
 						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
-					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)", EsquemaCredenciadoBanco);
+					where pd.id = :projetoDigital", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
 		}
 		#endregion

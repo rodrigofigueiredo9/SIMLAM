@@ -111,6 +111,7 @@
 		TituloDeclaratorioExcluir,
 		TituloDeclaratorioListar,
 		TituloDeclaratorioAlterarSituacao,
+		TituloDeclaratorioRelatorio,
 
 		CondicionanteDescricaoListar,
 		CondicionanteDescricaoCriar,

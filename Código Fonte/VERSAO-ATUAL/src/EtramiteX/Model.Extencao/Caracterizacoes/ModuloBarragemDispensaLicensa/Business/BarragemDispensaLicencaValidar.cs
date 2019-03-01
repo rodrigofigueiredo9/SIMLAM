@@ -256,5 +256,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 
             return Validacao.EhValido;
         }
+
+		public bool Excluir (int id, bool validarDependencias = true)
+		{
+			//int empreendimento = _da.Obter(id).EmpreendimentoID;
+
+			//if (!_caracterizacaoValidar.Basicas(empreendimento))
+			//{
+			//	return Validacao.EhValido;
+			//}
+
+			//if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(empreendimento, eCaracterizacao.BarragemDispensaLicenca, eCaracterizacaoDependenciaTipo.Caracterizacao))
+			//{
+			//	return Validacao.EhValido;
+			//}
+
+			if (_da.PossuiTituloValido(id))
+                Validacao.Add(Mensagem.BarragemDispensaLicenca.NaoEpossivelExcluir);
+
+			return Validacao.EhValido;
+		}
 	}
 }

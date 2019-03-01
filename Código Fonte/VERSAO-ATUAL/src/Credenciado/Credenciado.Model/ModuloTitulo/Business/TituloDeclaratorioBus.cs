@@ -418,12 +418,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 				#endregion
 
-				if (!Validacao.EhValido)
-				{
-					bancoDeDados.Rollback();
-					return;
-				}
-
 				#region Salvar A especificidade
 
 				if (EspecificiadadeBusFactory.Possui(titulo.Modelo.Codigo.GetValueOrDefault()))
@@ -442,9 +436,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 						}
 						_da.Dependencias(titulo.Id, titulo.Modelo.Id, titulo.EmpreendimentoId.GetValueOrDefault(), lstDependencias);
 					}
+					if(titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
+						busEsp.AlterarSituacao(titulo.Id);
 				}
 
 				#endregion
+
+				if (!Validacao.EhValido)
+				{
+					bancoDeDados.Rollback();
+					return;
+				}
 
 				#region Histórico
 

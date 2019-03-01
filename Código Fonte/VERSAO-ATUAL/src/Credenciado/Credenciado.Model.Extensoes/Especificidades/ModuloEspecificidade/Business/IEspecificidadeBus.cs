@@ -22,5 +22,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		Object ObterDadosPdf(IEspecificidade especificidade, BancoDeDados banco);
 		IConfiguradorPdf ObterConfiguradorPdf(IEspecificidade especificidade);
 		int? ObterSituacaoAtividade(int? titulo);
+		void AlterarSituacao(int? titulo);
 	}
 }
