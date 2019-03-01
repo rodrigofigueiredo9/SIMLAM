@@ -124,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
-				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);
+				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, DbType.String);
 				comando.AdicionarParametroEntrada("demarcacao_app", caracterizacao.construidaConstruir.isDemarcacaoAPP, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_normas", caracterizacao.construidaConstruir.barramentoNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_adequacoes", caracterizacao.construidaConstruir.barramentoAdequacoes, DbType.String);
@@ -265,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
-				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);
+				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, DbType.String);
 				comando.AdicionarParametroEntrada("demarcacao_app", caracterizacao.construidaConstruir.isDemarcacaoAPP, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_normas", caracterizacao.construidaConstruir.barramentoNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_adequacoes", caracterizacao.construidaConstruir.barramentoAdequacoes, DbType.String);
@@ -714,7 +714,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.construidaConstruir.larguraDemarcada = reader.GetValue<decimal>("largura_demarcada");
 						caracterizacao.construidaConstruir.larguraDemarcadaLegislacao = reader.GetValue<bool>("largura_demarcada_legislacao");
 						caracterizacao.construidaConstruir.faixaCercada = reader.GetValue<int>("faixa_cercada");
-						caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
+						caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
 						caracterizacao.construidaConstruir.isDemarcacaoAPP = reader.GetValue<int>("demarcacao_app");
 						caracterizacao.construidaConstruir.barramentoNormas = reader.GetValue<bool>("barramento_normas");
 						caracterizacao.construidaConstruir.barramentoAdequacoes = reader.GetValue<string>("barramento_adequacoes");

@@ -449,7 +449,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						caracterizacao.construidaConstruir.larguraDemarcada = reader.GetValue<decimal>("largura_demarcada");
 						caracterizacao.construidaConstruir.larguraDemarcadaLegislacao = reader.GetValue<bool>("largura_demarcada_legislacao");
 						caracterizacao.construidaConstruir.faixaCercada = reader.GetValue<int>("faixa_cercada");
-						caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
+						caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
 						caracterizacao.construidaConstruir.isDemarcacaoAPP = reader.GetValue<int>("demarcacao_app");
 						caracterizacao.construidaConstruir.barramentoNormas = reader.GetValue<bool>("barramento_normas");
 						caracterizacao.construidaConstruir.barramentoAdequacoes = reader.GetValue<string>("barramento_adequacoes");

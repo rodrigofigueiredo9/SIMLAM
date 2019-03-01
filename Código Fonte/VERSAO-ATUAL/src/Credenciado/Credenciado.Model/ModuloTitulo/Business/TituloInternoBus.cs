@@ -168,7 +168,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					semApp = true;
 				}
 
-				titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
+				titulo.CondicionantesBarragem = null; // _busTituloDeclaratorio.Obter();
 
 				if (titulo.CondicionantesBarragem != null)
 				{
@@ -189,6 +189,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 				MemoryStream relatorioCarac = gerador.Pdf(templatePdfRelatorio, dataSource);
 				relatorioCarac.CopyTo(msPdf);   //isso anexa  relatorioCarac no final de msPdf
+				msPdf = relatorioCarac;
 
 				//ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO.doc";
 				//FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(ArquivoDocCaminho));

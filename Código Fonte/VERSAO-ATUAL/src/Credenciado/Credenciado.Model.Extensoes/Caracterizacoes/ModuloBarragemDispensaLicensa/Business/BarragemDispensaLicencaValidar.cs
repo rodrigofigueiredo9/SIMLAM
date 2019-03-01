@@ -130,7 +130,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (!caracterizacao.construidaConstruir.faixaCercada.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFaixaCercada);
 
-					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP))
+					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDescricaoApp);
 				}
 

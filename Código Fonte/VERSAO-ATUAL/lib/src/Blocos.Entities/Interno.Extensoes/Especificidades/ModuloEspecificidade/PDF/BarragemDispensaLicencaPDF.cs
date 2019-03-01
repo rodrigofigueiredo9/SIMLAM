@@ -34,7 +34,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			NumeroARTExecucao = caracterizacao.NumeroARTExecucao;
 			AreaAlagada = caracterizacao.areaAlagada;
 			VolumeArmazanado = caracterizacao.volumeArmazanado;
-			HaSupresVegetApp = caracterizacao.haSupresVegetApp;
+			HaSupresVegetApp = caracterizacao.construidaConstruir.isSupressaoAPP;
 		}
 	}
 }
