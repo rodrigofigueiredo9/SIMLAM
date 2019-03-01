@@ -294,9 +294,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
 
-			for(int i = 0; i < rtsBarragemCopia.Count(); i++)
+			for (int i = 0; i < rtsBarragemCopia.Count(); i++)
 			{
-				if(caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
+				if (caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
 				{
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
 				}

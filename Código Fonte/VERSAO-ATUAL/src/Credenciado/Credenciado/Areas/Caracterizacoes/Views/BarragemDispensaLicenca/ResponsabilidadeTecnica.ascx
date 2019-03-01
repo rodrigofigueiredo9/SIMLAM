@@ -140,7 +140,7 @@
 		<div class="block">
 			<div class="coluna30">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do estudo ambiental *</label>
-				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[3].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[3].proprioDeclarante, new { @class = "text txtRTElaboracaoEstudoAmbientalNumero", maxlength = "14" })) %>
+				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[3].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoEstudoAmbientalNumero", maxlength = "14" })) %>
 			</div>
 		</div>
 	</fieldset>

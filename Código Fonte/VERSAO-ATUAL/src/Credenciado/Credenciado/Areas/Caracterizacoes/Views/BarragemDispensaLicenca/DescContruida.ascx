@@ -92,7 +92,7 @@
 		</div>
 	</div>
 	<div class="block">		
-		<div class="coluna60 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false) ? "" : "hide"%>">
+		<div class="coluna60 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false || Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
 			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin " })) %>
 		</div>
@@ -123,7 +123,7 @@
 			<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Sim
 			<%= Html.RadioButton("VazaoMaxNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMaxNormas" })) %> Não
 		</div>
-		<div class="coluna60 AdequacoesDimensionamentoVazaoMax <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false) ? "" : "hide"%>">
+		<div class="coluna60 AdequacoesDimensionamentoVazaoMax <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false || Model.Caracterizacao.construidaConstruir.vazaoMaxInstalado == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoVazaoMax">Quais adequações serão realizadas? *</label>
 			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax ", @width ="200%" })) %>
 		</div>
