@@ -14,7 +14,8 @@
     {
         public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização de Barragem para Dispensa de Licença Ambiental salva com sucesso" }; } }
         public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização de Barragem para Dispensa de Licença Ambiental excluída com sucesso" }; } }
-        public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a caracterização de Barragem para Dispensa de Licença Ambiental deste empreendimento?" }; } }
+        public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Essa ação apagará a caracterização do tipo Barragem Dispensada de Licenciamento Ambiental selecionada. Deseja continuar?" }; } }
+        public Mensagem NaoEpossivelExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,  Texto = "Não é possível excluir a caracterização, pois existem títulos válidos associados a ela." }; } }
         public Mensagem FormacaoRTOutros { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O IDAF (Instituto de Defesa Agropecuária e Florestal) informa que por orientação do CREA/ES, só são aptos a serem responsáveis técnicos de barragens de terra, os engenheiros agrônomos, engenheiros agrícolas e engenheiros civis, e apenas engenheiros civis no caso de barragens de concreto ou mista. Demais profissionais só serão aceitos com a apresentação de uma autorização específica do conselho de classe." }; } }
 
         public Mensagem SelecioneAtividade { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Atividade", Texto = "Selecione a atividade." }; } }
@@ -104,7 +105,8 @@
 		public Mensagem InformeCREART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o registro do CREA do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeNumeroART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o número do ART do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeAutorizacaoCREA(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A autorização do CREA do responsável técnico {0} é obrigatória.", tipo) }; }
-
 		public Mensagem InformeRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Se alguma informação do Responsável técnico for preenchida, todas as outras precisam ser preenchidas." }; } }
+
+		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "Não é possivel prosseguir com o mesmo número de ART do responsável técnico de elaboração e execução." }; } }
 	}
 }

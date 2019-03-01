@@ -22,11 +22,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
         public List<SelectListItem> MongeTiposLst { get; set; }
         public List<SelectListItem> VertedouroTiposLst { get; set; }
         public List<List<SelectListItem>> profissoesLst { get; set; }
+		public List<int> ProfissoesAutorizacao { get; set; }
         public bool IsVisualizar { get; set; }
-		public List<BarragemDispensaLicenca> CaracterizacoesCadastradas { get; set; } = new List<BarragemDispensaLicenca>();
-		public List<BarragemDispensaLicenca> CaracterizacoesAssociadas { get; set; } = new List<BarragemDispensaLicenca>();
 		public ProjetoDigital projetoDigital { get; set; } = new ProjetoDigital();
 		public bool rtElaborador { get; set; }
+		public List<BarragemDispensaLicenca> CaracterizacoesCadastradas { get; set; } = new List<BarragemDispensaLicenca>();
+		public List<BarragemDispensaLicenca> CaracterizacoesAssociadas { get; set; } = new List<BarragemDispensaLicenca>();
 
 		public string Mensagens => ViewModelHelper.Json(new
 		{
@@ -37,7 +38,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 			PeriodoTerminoRequired = Mensagem.BarragemDispensaLicenca.InformePeriodoTermino
 		});
 
-		public List<int> ProfissoesAutorizacao { get; set; }
 		public string IdsTela
         {
             get
@@ -77,6 +77,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 				x.IsAtivo = (x.Id == ((int)Caracterizacao.BarragemTipo).ToString()) ? true : false;
 			});
 			ProfissoesAutorizacao = new List<int>() { 15, 37, 38 };
+
+			foreach(var item in barragemTipos)
+			{
+				if (item.Texto.Equals("Mista"))
+				{
+					item.Texto = "Misto";
+				}
+			}
 
 			FasesLst = fases;
             FormacoesRTLst = formacoesRT;

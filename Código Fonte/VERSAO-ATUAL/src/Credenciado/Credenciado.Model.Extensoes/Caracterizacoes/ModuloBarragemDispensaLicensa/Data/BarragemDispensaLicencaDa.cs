@@ -187,7 +187,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Finalidade Atividade
 				caracterizacao.finalidade.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_barragem_finaldiade_ativ(id, barragem, atividade)
+					insert into CRT_BARRAGEM_FINALIDADE_ATIV(id, barragem, atividade)
 						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
@@ -287,13 +287,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#endregion
 
 				#region Finalidade Atividade
-				comando = bancoDeDados.CriarComando(@" delete crt_barragem_finaldiade_ativ where barragem = :barragem", EsquemaCredenciadoBanco);
+				comando = bancoDeDados.CriarComando(@" delete CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :barragem", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				caracterizacao.finalidade.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
-					insert into crt_barragem_finaldiade_ativ(id, barragem, atividade)
+					insert into CRT_BARRAGEM_FINALIDADE_ATIV(id, barragem, atividade)
 						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
@@ -392,8 +392,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
-					delete from crt_barragem_finaldiade_ativ where barragem = :id;
-					delete from crt_barragem_finaldiade_ativ where barragem = :id;
+					delete from CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :id;
 					delete from crt_barragem_coordenada where barragem = :id;
 					delete from crt_barragem_responsavel where barragem = :id;
 					delete from crt_barragem_construida_con where barragem = :id;
@@ -783,7 +782,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Finalidade Atividade
 				comando = bancoDeDados.CriarComando(@"
-					select  f.atividade from crt_barragem_finaldiade_ativ f where f.barragem = :barragem", EsquemaCredenciadoBanco);
+					select  f.atividade from CRT_BARRAGEM_FINALIDADE_ATIV f where f.barragem = :barragem", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
 
@@ -1013,7 +1012,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select a.texto from crt_barragem_finaldiade_ativ f
+					select a.texto from CRT_BARRAGEM_FINALIDADE_ATIV f
 						inner join lov_crt_bdla_finalidade_atv a on f.atividade = a.id
 					where f.barragem = :barragem", EsquemaCredenciadoBanco);
 
@@ -1092,18 +1091,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		internal bool VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
+		internal int VerificarElaboracaoRT(int projetoDigital, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select count(1) from tab_projeto_digital pd
+					select nvl(rb.rt_elaboracao, 0) from tab_projeto_digital pd
 						inner join tab_requerimento_barragem rb on rb.requerimento = pd.requerimento
-					where pd.id = :projetoDigital and rb.rt_elaboracao in (1,3)", EsquemaCredenciadoBanco);
+					where pd.id = :projetoDigital", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("projetoDigital", projetoDigital, DbType.Int32);
 
-				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+				return bancoDeDados.ExecutarScalar<int>(comando);
 			}
 		}
 		#endregion
