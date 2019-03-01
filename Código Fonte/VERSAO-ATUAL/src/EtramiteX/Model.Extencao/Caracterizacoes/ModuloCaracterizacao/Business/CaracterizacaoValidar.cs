@@ -36,11 +36,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 				return false;
 			}
 
+#if !DEBUG
 			if (!isVisualizar && !_da.EmPosse(empreendimento))
 			{
 				Validacao.Add(Mensagem.Caracterizacao.Posse);
 				return false;
 			}
+#endif
 
 			return Validacao.EhValido;
 		}
@@ -134,7 +136,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 			return Validacao.EhValido;
 		}
 
-		public string DependenciasAlteradas(int empreendimentoId, int caracterizacaoTipo, eCaracterizacaoDependenciaTipo dependenciaTipo, List<Dependencia> dependencias, bool isVisualizar=false)
+		public string DependenciasAlteradas(int empreendimentoId, int caracterizacaoTipo, eCaracterizacaoDependenciaTipo dependenciaTipo, List<Dependencia> dependencias, bool isVisualizar = false)
 		{
 			List<Dependencia> dependenciasBanco = _da.ObterDependenciasAtual(empreendimentoId, (eCaracterizacao)caracterizacaoTipo, dependenciaTipo);
 			List<CaracterizacaoLst> caracterizacoesLst = _caracterizacaoConfig.Obter<List<CaracterizacaoLst>>(ConfiguracaoCaracterizacao.KeyCaracterizacoes);
@@ -147,14 +149,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 					caracterizacoes.Add(new CaracterizacaoLst()
 					{
 						IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
-						IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,	
+						IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
 						Texto = caracterizacoesLst.SingleOrDefault(x => x.Id == item.DependenciaCaracterizacao).Texto
 					});
 
 					if (caracterizacoes.Count > 0)
 					{
-						return Mensagem.Caracterizacao.AtualizacaoDadosGeografico(caracterizacoes, 
-							dependenciaTipo == eCaracterizacaoDependenciaTipo.ProjetoGeografico, 
+						return Mensagem.Caracterizacao.AtualizacaoDadosGeografico(caracterizacoes,
+							dependenciaTipo == eCaracterizacaoDependenciaTipo.ProjetoGeografico,
 							dependenciaTipo == eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
 							isVisualizar).Texto;
 					}
@@ -167,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 			{
 				dependencia = dependenciasBanco.SingleOrDefault(x => x.DependenciaId == item.DependenciaId && x.DependenciaCaracterizacao == item.DependenciaCaracterizacao
 					&& x.DependenciaTipo == item.DependenciaTipo
-					
+
 					) ?? new Dependencia();
 
 				if (item.DependenciaTid != dependencia.DependenciaTid)
@@ -183,7 +185,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 
 			if (caracterizacoes.Count > 0)
 			{
-				return Mensagem.Caracterizacao.AtualizacaoDadosGeografico(caracterizacoes, 
+				return Mensagem.Caracterizacao.AtualizacaoDadosGeografico(caracterizacoes,
 					dependenciaTipo == eCaracterizacaoDependenciaTipo.ProjetoGeografico,
 					dependenciaTipo == eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
 					isVisualizar).Texto;
