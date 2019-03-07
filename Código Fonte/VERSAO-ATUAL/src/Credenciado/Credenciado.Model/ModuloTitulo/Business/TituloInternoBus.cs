@@ -8,6 +8,7 @@ using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -16,13 +17,12 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
-using Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
-using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
+using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 {
@@ -168,7 +168,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					semApp = true;
 				}
 
-				titulo.CondicionantesBarragem = null; // _busTituloDeclaratorio.Obter();
+				titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
 
 				if (titulo.CondicionantesBarragem != null)
 				{
@@ -190,11 +190,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				MemoryStream relatorioCarac = gerador.Pdf(templatePdfRelatorio, dataSource);
 				relatorioCarac.CopyTo(msPdf);   //isso anexa  relatorioCarac no final de msPdf
 				msPdf = relatorioCarac;
-
-				//ArquivoDocCaminho = @"~/Content/_pdfAspose/CFO.doc";
-				//FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(ArquivoDocCaminho));
-				//Arquivo.Arquivo templatePdf = new Arquivo.Arquivo();
-				//templatePdf.Buffer = (Stream)file;
 			}
 
 			return msPdf;

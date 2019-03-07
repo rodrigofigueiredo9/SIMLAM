@@ -24,11 +24,27 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public eBarragemTipo BarragemTipo { get; set; }
 		public eRTElabocarao rtElaboracao { get; set; }
 		public eFase ?faseInstalacao { get; set; }
-		public string faseInstalacaoTexto { get; set; }
+		public string faseInstalacaoTexto
+		{
+			get
+			{
+				if (faseInstalacao == eFase.Construida) return "Construída";
+				else if (faseInstalacao == eFase.AConstruir) return "A construir";
+				else return string.Empty;
+			}
+		}
 		public List<BarragemCoordenada> coordenadas { get; set; }
 
 		public bool barragemContiguaMesmoNivel { get; set; }
-		public string barragemContiguaMesmoNivelTexto { get; set; }
+		public string barragemContiguaMesmoNivelTexto
+		{
+			get
+			{
+				if (barragemContiguaMesmoNivel == true) return "Sim";
+				else if (barragemContiguaMesmoNivel == false) return "Não";
+				else return string.Empty;
+			}
+		}
 		public decimal areaAlagada { get; set; }
 		public decimal volumeArmazanado { get; set; }
 		public decimal alturaBarramento { get; set; }
@@ -75,6 +91,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 
 		public BarragemConstruidaAConstruir construidaConstruir { get; set; }
 		public List<BarragemRT> responsaveisTecnicos { get; set; }
+
+		public string SecaoConstruida { get; set; }
 
 		public BarragemDispensaLicenca()
 		{

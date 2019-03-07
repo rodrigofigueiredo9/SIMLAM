@@ -119,14 +119,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					}
 				}
 
-				if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.AConstruir)
-				{
-					certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "A construir";
-				}
-				if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.Construida)
-				{
-					certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "Contruída";
-				}
+				//if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.AConstruir)
+				//{
+				//	certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "A construir";
+				//}
+				//if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.Construida)
+				//{
+				//	certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "Contruída";
+				//}
 
 				certidao.Caracterizacao.finalidades = _da.ObterFinalidadesTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
