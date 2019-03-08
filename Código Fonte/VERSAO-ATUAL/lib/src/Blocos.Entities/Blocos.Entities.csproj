@@ -367,6 +367,8 @@
     <Compile Include="Interno\ModuloSetor\eCargo.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloModeloTipoDocumento.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloMotivoEncerramento.cs" />
+    <Compile Include="Interno\ModuloTitulo\RelatorioTituloDecListarResultado.cs" />
+    <Compile Include="Interno\ModuloTitulo\RelatorioTituloDecListarFiltro.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloDeclaratorioConfiguracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestalExploracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestal.cs" />

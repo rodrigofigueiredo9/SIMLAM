@@ -1164,8 +1164,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Quantidade de registro do resultado
 
 				comando.DbCommand.CommandText = String.Format(@"
-				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt + 
-				"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt +
+				"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " +
+				"and exists (select 1 from tab_requerimento r where r.numero = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
 
 				comando.DbCommand.CommandText = "select sum(d.quantidade) from (" + comando.DbCommand.CommandText + ") d ";
 
@@ -1181,7 +1183,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				@" union all 
 				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
-					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.numero = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a " + DaHelper.Ordenar(colunas, ordenar) + ") where rnum <= :maior and rnum >= :menor";
 

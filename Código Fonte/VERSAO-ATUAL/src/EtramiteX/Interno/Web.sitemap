@@ -495,6 +495,11 @@
 			</siteMapNode>
 		</siteMapNode>
 		
-		<siteMapNode url="~/TituloDeclaratorioConfiguracao/Configurar" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+		<!--<siteMapNode url="~/TituloDeclaratorioConfiguracao/Configurar" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>-->
+		<siteMapNode url="~/TituloDeclaratorioConfiguracao" title="Configuração de Título Declaratório"  description="linkMenu conf_tit_decl" roles="ConfigDocumentoFitossanitario">
+			<siteMapNode url="~/TituloDeclaratorioConfiguracao/Index" title="Configuração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+			<siteMapNode url="~/TituloDeclaratorioConfiguracao/RelatorioAlteracaoTitulo" title="Relatório de Alteração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+		</siteMapNode>
+		
 	</siteMapNode>
 </siteMap>

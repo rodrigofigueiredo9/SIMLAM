@@ -19,7 +19,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			var esp = especificidade as CertidaoDispensaLicenciamentoAmbiental;
 
-			DeclaratorioRequerimentoAtividade(esp);
+			DeclaratorioRequerimentoAtividade(esp, jaAssociado: false);
 
 			if (esp.VinculoPropriedade <= 0)
 			{
