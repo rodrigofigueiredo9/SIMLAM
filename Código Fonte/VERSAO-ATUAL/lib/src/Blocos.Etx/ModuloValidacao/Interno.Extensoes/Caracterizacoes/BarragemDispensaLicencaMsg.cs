@@ -17,6 +17,7 @@
         public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Essa ação apagará a caracterização do tipo Barragem Dispensada de Licenciamento Ambiental selecionada. Deseja continuar?" }; } }
         public Mensagem NaoEpossivelExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,  Texto = "Não é possível excluir a caracterização, pois existem títulos válidos associados a ela." }; } }
         public Mensagem FormacaoRTOutros { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O IDAF (Instituto de Defesa Agropecuária e Florestal) informa que por orientação do CREA/ES, só são aptos a serem responsáveis técnicos de barragens de terra, os engenheiros agrônomos, engenheiros agrícolas e engenheiros civis, e apenas engenheiros civis no caso de barragens de concreto ou mista. Demais profissionais só serão aceitos com a apresentação de uma autorização específica do conselho de classe." }; } }
+        public Mensagem ImportacaoErro { get { return new Mensagem() { Tipo = eTipoMensagem.Erro, Texto = "Não foi possível realizar a importação das informações." }; } }
 
         public Mensagem SelecioneAtividade { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Atividade", Texto = "Selecione a atividade." }; } }
         public Mensagem SelecioneTipoBarragem { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TipoBarragem", Texto = "Selecione o tipo de barragem." }; } }

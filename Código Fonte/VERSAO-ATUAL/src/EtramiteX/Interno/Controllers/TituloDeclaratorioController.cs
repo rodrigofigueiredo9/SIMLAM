@@ -332,6 +332,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
+		#region Relatorio
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioRelatorio })]
+		public ActionResult Relatorio()
+		{
+			RelatorioVM vm = new RelatorioVM(
+				_busModelo.ObterModelosDeclaratorios().Where(x => x.Id == 92).ToList(),
+				_busLista.Municipios("ES"));
+			
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioRelatorio })]
+		public ActionResult GerarRelatorio(string paramsJson)
+		{
+			TituloRelatorioFiltro filtro = ViewModelHelper.JsSerializer.Deserialize<TituloRelatorioFiltro>(paramsJson);
+			var relatorio = _bus.GerarRelatorio(filtro);
+			return ViewModelHelper.GerarArquivo("Relatorio.csv", relatorio, "application/vnd.ms-excel");
+		}
+
+		#endregion
+
 		#region Auxiliar
 
 		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioCriar, ePermissao.TituloDeclaratorioEditar })]

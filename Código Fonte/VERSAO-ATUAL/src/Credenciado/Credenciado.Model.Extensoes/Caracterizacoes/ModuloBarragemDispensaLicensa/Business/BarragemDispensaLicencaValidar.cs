@@ -103,8 +103,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (string.IsNullOrWhiteSpace(caracterizacao.cursoHidrico))
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
 
-			caracterizacao.coordenadas.ForEach(x =>
-			{
+			caracterizacao.coordenadas.ForEach(x => {
 				if (x.northing <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.Description()));
 				if (x.easting <= 0)
@@ -263,7 +262,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			for (int i = 0; i < caracterizacao.responsaveisTecnicos.Count(); i++)
 			{
-				if(caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoDeclaracao)
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoDeclaracao)
 					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
 				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoEstudoAmbiental)
 					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
@@ -273,10 +272,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
 			}
 
-			
 
-			caracterizacao.responsaveisTecnicos.ForEach(x =>
-			{
+
+			caracterizacao.responsaveisTecnicos.ForEach(x => {
 				if (x.tipo == eTipoRT.ElaboracaoDeclaracao || x.tipo == eTipoRT.ElaboracaoProjeto || x.tipo == eTipoRT.ElaboracaoEstudoAmbiental)
 				{
 					if (String.IsNullOrWhiteSpace(x.nome))
@@ -294,17 +292,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
 
-			for (int i = 0; i < rtsBarragemCopia.Count(); i++)
-			{
-				if (caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
-				{
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
-				}
-				if (caracterizacao.responsaveisTecnicos[5].numeroART == rtsBarragemCopia[i].numeroART)
-				{
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
-				}
-			}
+			if (caracterizacao.responsaveisTecnicos.Exists(x =>
+						 !String.IsNullOrWhiteSpace(x.numeroART) &&
+						 (
+							x.numeroART == caracterizacao.responsaveisTecnicos[2].numeroART ||
+							x.numeroART == caracterizacao.responsaveisTecnicos[5].numeroART
+						 )))
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+
+			//for (int i = 0; i < rtsBarragemCopia.Count(); i++)
+			//{
+			//	if (caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
+			//	{
+			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+			//	}
+			//	if (caracterizacao.responsaveisTecnicos[5].numeroART == rtsBarragemCopia[i].numeroART)
+			//	{
+			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+			//	}
+			//}
 
 			return Validacao.EhValido;
 		}
@@ -314,25 +320,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
 		{
-			if (caracterizacao.InternoID <= 0) 
+			if (caracterizacao.InternoID <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.CopiarCaractizacaoCadastrada);
 			return Validacao.EhValido;
 		}
 
 		internal void AreaAlagadaValida(decimal area)
 		{
-			var valorMax = _da.AreaAlagadaConfiguracao(area);
+			var valorMax = _da.ObterConfiguracao("area_alagada");
 			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.AreaAlagada(valorMax));
 		}
 
 		internal void VolumeArmazenadoValida(decimal area)
 		{
-			var valorMax = _da.VolumeArmazenadoConfiguracao(area);
-			if(area < Convert.ToDecimal(0.01) || area > valorMax)
+			var valorMax = _da.ObterConfiguracao("volume_armazenado");
+			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
-		} 
-			
+		}
+
 		internal void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
 		{
 			try

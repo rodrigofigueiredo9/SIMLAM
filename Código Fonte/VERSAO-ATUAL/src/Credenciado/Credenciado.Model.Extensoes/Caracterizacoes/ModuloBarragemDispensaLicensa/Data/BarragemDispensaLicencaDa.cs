@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
@@ -1069,23 +1069,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Validações
 
-		internal decimal AreaAlagadaConfiguracao(decimal area, BancoDeDados banco = null)
+		internal decimal ObterConfiguracao(string codigo, BancoDeDados banco = null)
 		{
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select area_alagada from tab_titulo_configuracao", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select cast(valor as number) from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
 
-				return bancoDeDados.ExecutarScalar<decimal>(comando);
-			}
-		}
-
-		internal decimal VolumeArmazenadoConfiguracao(decimal area, BancoDeDados banco = null)
-		{
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select volume_armazenado from tab_titulo_configuracao", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
 
 				return bancoDeDados.ExecutarScalar<decimal>(comando);
 			}

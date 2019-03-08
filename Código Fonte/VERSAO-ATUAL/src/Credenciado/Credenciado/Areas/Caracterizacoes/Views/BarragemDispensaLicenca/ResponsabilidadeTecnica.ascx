@@ -82,7 +82,7 @@
 
 			<div class="coluna46">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico/laudo de barragem construída *</label>
-				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[1].proprioDeclarante, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
+				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
 			</div>
 		</div>
 	</fieldset>
