@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -80,6 +81,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				TipoCorte = ViewModelHelper.CriarSelectList(tipoCorte),
 				Especie = ViewModelHelper.CriarSelectList(especie)
 			};
+
+			this.TipoLicenca = new List<SelectListItem>
+			{
+				new SelectListItem() { Text = "*** Selecione ***", Value = "", Selected = true },
+				new SelectListItem() { Text = "LAR", Value = "LAR" },
+				new SelectListItem() { Text = "LO", Value = "LO" }
+			};
 		}
 
 		#endregion
@@ -97,6 +105,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public InformacaoCorteTipoVM InformacaoCorteTipo { get; set; }
 		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
 
+		public List<SelectListItem> TipoLicenca { get; set; } = new List<SelectListItem>();
 		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
 		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();
 

@@ -52,9 +52,9 @@
 					<%= Html.TextBox("InformacaoCorte_NumeroLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text numeroLicenca", @maxlength = "30" }))%>
 				</div>
 
-				 <div class="coluna10">
+				 <div class="coluna12">
 					<label>Tipo de Licença *</label>
-					<%= Html.TextBox("InformacaoCorte_TipoLicenca", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca", @maxlength = "250"}))%>
+					<%= Html.DropDownList("InformacaoCorte_TipoLicenca", Model.TipoLicenca, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text tipoLicenca"}))%>
 				</div>
 
 				<div class="coluna17">
@@ -165,9 +165,13 @@
 						<label>Espécie Informada *</label>
 						<%= Html.DropDownList("InformacaoCorte_EspecieInformada", Model.InformacaoCorteTipo.Especie, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text especieInformada"}))%>
 					</div>
-					<div class="coluna20">
-						<label>Área Corte(ha) / Nº Árvores *</label>
+					<div class="coluna20 divAreaCorte">
+						<label for="InformacaoCorte_AreaCorte">Área Corte(ha) *</label>
 						<%= Html.TextBox("InformacaoCorte_AreaCorte", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto areaCorte"}))%>
+					</div>
+					<div class="coluna20 divNumArvores hide">
+						<label for="InformacaoCorte_AreaCorte">Nº Árvores *</label>
+						<%= Html.TextBox("InformacaoCorte_AreaCorte", string.Empty, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskInteger areaCorte"}))%>
 					</div>
 					<div class="coluna15 append2">
 						<label>Idade Plantio (anos) *</label>

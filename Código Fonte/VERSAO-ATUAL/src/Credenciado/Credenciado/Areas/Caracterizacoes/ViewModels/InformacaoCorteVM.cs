@@ -83,6 +83,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 				TipoCorte = ViewModelHelper.CriarSelectList(tipoCorte),
 				Especie = ViewModelHelper.CriarSelectList(especie)
 			};
+
+			this.TipoLicenca = new List<SelectListItem>
+			{
+				new SelectListItem() { Text = "*** Selecione ***", Value = "", Selected = true },
+				new SelectListItem() { Text = "LAR", Value = "LAR" },
+				new SelectListItem() { Text = "LO", Value = "LO" }
+			};
 		}
 
 		#endregion
@@ -101,6 +108,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Areas.Caracterizacoes.ViewModels
 		public InformacaoCorteTipoVM InformacaoCorteTipo { get; set; }
 		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
 
+		public List<SelectListItem> TipoLicenca { get; set; } = new List<SelectListItem>();
 		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
 		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();
 
