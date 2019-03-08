@@ -521,6 +521,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data
 			}
 		}
 
+		internal void DesassociarEmpreendimento(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_requerimento r set r.empreendimento = null where r.id = :id", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion
 
 		#region Obter / Filtrar
@@ -1062,20 +1076,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data
 
 				comando.AdicionarParametroEntrada("requerimento", requerimentoId, DbType.Int32);
 				return Convert.ToString(bancoDeDados.ExecutarScalar(comando));
-			}
-		}
-
-		internal bool RequerimentoDeclaratorio(int requerimentoId, BancoDeDados banco = null)
-		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) 
-				from tab_requerimento_atividade ra, tab_requerimento_ativ_finalida rf
-				where rf.requerimento_ativ = ra.id and rf.modelo in (select m.id from tab_titulo_modelo m where m.documento = 2)
-				and ra.requerimento = :requerimento");
-
-				comando.AdicionarParametroEntrada("requerimento", requerimentoId, DbType.Int32);
-				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
 

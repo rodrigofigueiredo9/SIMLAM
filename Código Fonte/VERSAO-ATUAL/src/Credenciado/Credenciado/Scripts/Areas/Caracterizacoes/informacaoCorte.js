@@ -28,6 +28,7 @@ InformacaoCorte = {
 		InformacaoCorte.container.delegate('.btnAdicionarInformacao', 'click', InformacaoCorte.adicionarInformacao);
 		InformacaoCorte.container.delegate('.btnExcluirInformacao', 'click', InformacaoCorte.excluirInformacao);
 		InformacaoCorte.container.delegate('.ddlDestinacaoMaterial', 'change', InformacaoCorte.carregarProdutos);
+		InformacaoCorte.container.delegate('.tipoCorte', 'change', InformacaoCorte.onChangeTipoCorte);
 
 		Aux.setarFoco(InformacaoCorte.container);
 
@@ -108,14 +109,27 @@ InformacaoCorte = {
 		$(this).closest('tr').remove();
 	},
 
+	onChangeTipoCorte: function () {
+		var container = InformacaoCorte.container;
+
+		if ($(this).val() == 1) { //Corte Raso
+			$('.divAreaCorte', container).show();
+			$('.divNumArvores', container).hide();
+		} else { //Corte Seletivo
+			$('.divAreaCorte', container).hide();
+			$('.divNumArvores', container).show();
+		}
+	},
+
 	adicionarTipo: function () {
 		var container = InformacaoCorte.container;
+		var containerArea = $('.divAreaCorte', container).css('display') == 'none' ? $('.divNumArvores', container) : $('.divAreaCorte', container);
 		Mensagem.limpar(container);
 
 		var objeto = {
 			TipoCorte: $('.tipoCorte option:selected', container).val(),
 			Especie: $('.especieInformada option:selected', container).val(),
-			AreaCorte: $('.areaCorte', container).val(),
+			AreaCorte: $('.areaCorte', containerArea).val(),
 			IdadePlantio: $('.idadePlantio', container).val()
 		};
 
@@ -151,6 +165,7 @@ InformacaoCorte = {
 
 	limparTipo: function () {
 		var container = InformacaoCorte.container;
+		var containerArea = $('.divAreaCorte', container).css('display') == 'none' ? $('.divNumArvores', container) : $('.divAreaCorte', container);
 		$('.adicionarTipo', container).show();
 		$('.limparTipo', container).hide();
 
@@ -159,7 +174,7 @@ InformacaoCorte = {
 
 		$('.tipoCorte', container).val('0');
 		$('.especieInformada', container).val('0');
-		$('.areaCorte', container).val('');
+		$('.areaCorte', containerArea).val('');
 		$('.idadePlantio', container).val('');
 		$('.ddlDestinacaoMaterial', container).val('');
 		$('.ddlProduto', container).val('');
@@ -168,20 +183,21 @@ InformacaoCorte = {
 
 	configurarTipo: function (disabled) {
 		var container = InformacaoCorte.container;
+		var containerArea = $('.divAreaCorte', container).css('display') == 'none' ? $('.divNumArvores', container) : $('.divAreaCorte', container);
 		$('.tipoCorte', container).toggleClass('disabled', disabled);
 		$('.especieInformada', container).toggleClass('disabled', disabled);
-		$('.areaCorte', container).toggleClass('disabled', disabled);
+		$('.areaCorte', containerArea).toggleClass('disabled', disabled);
 		$('.idadePlantio', container).toggleClass('disabled', disabled);
 		$('.btnAdicionarInformacao', container).button({ disabled: true });
 		if (disabled) {
 			$('.tipoCorte', container).attr('disabled', disabled);
 			$('.especieInformada', container).attr('disabled', disabled);
-			$('.areaCorte', container).attr('disabled', disabled);
+			$('.areaCorte', containerArea).attr('disabled', disabled);
 			$('.idadePlantio', container).attr('disabled', disabled);
 		} else {
 			$('.tipoCorte', container).removeAttr('disabled');
 			$('.especieInformada', container).removeAttr('disabled');
-			$('.areaCorte', container).removeAttr('disabled');
+			$('.areaCorte', containerArea).removeAttr('disabled');
 			$('.idadePlantio', container).removeAttr('disabled');
 		}
 	},
@@ -261,6 +277,7 @@ InformacaoCorte = {
 
 	adicionarInformacao: function () {
 		var container = InformacaoCorte.container;
+		var containerArea = $('.divAreaCorte', container).css('display') == 'none' ? $('.divNumArvores', container) : $('.divAreaCorte', container);
 		$('.btnAdicionarInformacao', container).button({ disabled: true });
 
 		var objeto = {
@@ -269,7 +286,7 @@ InformacaoCorte = {
 			TipoCorteTexto: $('.tipoCorte option:selected', container).text(),
 			Especie: $('.especieInformada option:selected', container).val(),
 			EspecieTexto: $('.especieInformada option:selected', container).text(),
-			AreaCorte: $('.areaCorte', container).val(),
+			AreaCorte: $('.areaCorte', containerArea).val(),
 			IdadePlantio: $('.idadePlantio', container).val(),
 			DestinacaoId: 0,
 			DestinacaoMaterial: '',

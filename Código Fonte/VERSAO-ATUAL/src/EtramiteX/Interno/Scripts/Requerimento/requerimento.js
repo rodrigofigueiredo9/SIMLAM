@@ -100,7 +100,7 @@ Requerimento = {
 					objeto.params.requerimentoId = Requerimento.ReqInterEmp.requerimentoId;
 					Requerimento.onObterStep(RequerimentoEmpreendimento.urlObterEmpreendimentosInteressado, objeto.params, RequerimentoEmpreendimento.callBackObterEmpreendimento);
 					MasterPage.grid();
-					Requerimento.botoes({ btnEmpAvancar:true });
+					Requerimento.botoes({ btnEmpAssNovo: true, btnEmpAvancar:true });
 					$(".btnEmpAssNovo", Requerimento.container).unbind('click');
 					$(".btnEmpAssNovo", Requerimento.container).click(RequerimentoEmpreendimento.onBuscarNovoToCorte);
 				}
@@ -684,6 +684,11 @@ RequerimentoInteressado = {
 
 			Mensagem.gerar(Requerimento.containerMensagem, new Array(Requerimento.Mensagens.InteressadoEditado));
 		}
+
+		if (Requerimento.ReqInterEmp != null) {
+			Requerimento.ReqInterEmp.empreendimentoId = 0;
+		}
+
 		return interessadoValido;
 	},
 

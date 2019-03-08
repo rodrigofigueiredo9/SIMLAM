@@ -255,7 +255,5 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		#endregion
-
-		public Mensagem AssociarDeclaratorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O requerimento não deve possuir solicitação de Título Declaratório." }; } }
 	}
 }

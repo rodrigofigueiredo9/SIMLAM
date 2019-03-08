@@ -139,14 +139,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProcesso.Business
 			}
 
 			if (processo.Requerimento.Id > 0)
-			{
 				ResponsavelTecnico(processo.Responsaveis);
-
-				if (_requerimentoValidar.RequerimentoDeclaratorio(processo.Requerimento.Id))
-				{
-					Validacao.Add(Mensagem.Processo.AssociarDeclaratorio);
-				}
-			}
 
 			#endregion
 

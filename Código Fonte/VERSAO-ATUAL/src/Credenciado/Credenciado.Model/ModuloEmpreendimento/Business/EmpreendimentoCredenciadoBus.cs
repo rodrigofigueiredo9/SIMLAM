@@ -69,11 +69,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			{
 				if (_validar.Salvar(empreendimento, isInfCorte))
 				{
-					Mensagem erros = VerificarLocalizacaoEmpreendimento(empreendimento.Coordenada.EastingUtmTexto, empreendimento.Coordenada.NorthingUtmTexto, empreendimento.Enderecos[0].EstadoId, empreendimento.Enderecos[0].MunicipioId);
-					if (erros.Texto != null)
+					if (!isInfCorte)
 					{
-						Validacao.Add(erros);
-						return Validacao.EhValido;
+						Mensagem erros = VerificarLocalizacaoEmpreendimento(empreendimento.Coordenada.EastingUtmTexto, empreendimento.Coordenada.NorthingUtmTexto, empreendimento.Enderecos[0].EstadoId, empreendimento.Enderecos[0].MunicipioId);
+						if (erros.Texto != null)
+						{
+							Validacao.Add(erros);
+							return Validacao.EhValido;
+						}
 					}
 
 					empreendimento.CredenciadoId = User.FuncionarioId;

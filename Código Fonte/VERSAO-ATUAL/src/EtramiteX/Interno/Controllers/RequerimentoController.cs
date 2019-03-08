@@ -309,6 +309,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			requerimento.Interessado.Id = interessadoId;
 
 			_bus.AssociarInteressado(requerimento);
+			_bus.DesassociarEmpreendimento(requerimentoId);
 
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros });
 		}
