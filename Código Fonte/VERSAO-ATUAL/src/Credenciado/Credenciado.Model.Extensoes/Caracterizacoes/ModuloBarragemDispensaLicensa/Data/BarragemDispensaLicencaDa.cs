@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
@@ -1074,7 +1074,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select valor from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select cast(valor as number) from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
 
