@@ -162,5 +162,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MotivoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Motivo", Texto = "Motivo é obrigatório." }; } }
 		public Mensagem AutorDiferenteExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O funcionário logado deve ser o autor do título declaratório." }; } }
 		public Mensagem ProjetoDigitalSituacaoInvalida { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O projeto digital deve estar na situação \"Aguardando importação\" para associá-lo." }; } }
+
+		public Mensagem PeriodoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Por favor preencha o período de início e de fim." }; } }
+		public Mensagem PeriodoFormato { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A data não está no formato correto." }; } }
+		public Mensagem PeriodoInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A data não é uma data válida." }; } }
 	}
 }

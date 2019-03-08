@@ -321,15 +321,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal void AreaAlagadaValida(decimal area)
 		{
-			var valorMax = _da.AreaAlagadaConfiguracao(area);
+			var valorMax = _da.ObterConfiguracao("area_alagada");
 			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.AreaAlagada(valorMax));
 		}
 
 		internal void VolumeArmazenadoValida(decimal area)
 		{
-			var valorMax = _da.VolumeArmazenadoConfiguracao(area);
-			if(area < Convert.ToDecimal(0.01) || area > valorMax)
+			var valorMax = _da.ObterConfiguracao("volume_armazenado");
+			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
 		} 
 			
