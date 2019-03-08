@@ -44,5 +44,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			return null;
 		}
+
+		public void AlterarSituacao(int? tituloId)
+		{
+		}
 	}
 }

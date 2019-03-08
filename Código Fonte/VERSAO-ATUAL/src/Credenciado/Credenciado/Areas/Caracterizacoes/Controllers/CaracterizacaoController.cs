@@ -181,7 +181,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 				x.PodeExcluir = (User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString())) && (x.Tipo == eCaracterizacao.UnidadeConsolidacao || x.Tipo == eCaracterizacao.UnidadeProducao));
 
-				x.PodeCopiar = cadastradasInterno.Exists(y => y.Tipo == x.Tipo);
+				x.PodeCopiar = cadastradasInterno.Exists(y => y.Tipo == x.Tipo && y.Tipo != eCaracterizacao.BarragemDispensaLicenca);
 				x.PodeAssociar = !caracterizacoesAssociadas.Exists(y => y.Tipo == x.Tipo);
 
 				x.ProjetoGeograficoId = cadastradas.SingleOrDefault(y => y.Tipo == x.Tipo).ProjetoId;

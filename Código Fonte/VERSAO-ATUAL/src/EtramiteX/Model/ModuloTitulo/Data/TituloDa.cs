@@ -1163,8 +1163,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				#region Quantidade de registro do resultado
 
 				comando.DbCommand.CommandText = String.Format(@"
-				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt + 
-				"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				select count(*) quantidade from lst_titulo l where l.credenciado is null " + comandtxt +
+				"union all select count(*) quantidade from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 " +
+				"and exists (select 1 from tab_requerimento r where r.numero = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+
 
 				comando.DbCommand.CommandText = "select sum(d.quantidade) from (" + comando.DbCommand.CommandText + ") d ";
 
@@ -1180,7 +1182,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				@" union all 
 				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
 					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
-					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.numero = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
 				comando.DbCommand.CommandText = @"select * from (select a.*, rownum rnum from ( " + comandtxt + @") a " + DaHelper.Ordenar(colunas, ordenar) + ") where rnum <= :maior and rnum >= :menor";
 
@@ -2502,6 +2504,298 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
             return retorno;
         }
+
+		internal List<List<string>> GerarRelatorio(TituloRelatorioFiltro filtro, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				List<List<string>> retorno = new List<List<string>>();
+				string comandtxt = string.Empty;
+				Comando comando = bancoDeDados.CriarComando("");
+
+				#region Adicionando Filtros
+
+				if(filtro.modelo > 0)
+					comandtxt += comando.FiltroAnd("tm.id", "modelo", filtro.modelo);
+
+				if(filtro.municipio > 0)
+					comandtxt += comando.FiltroAnd("mp.id", "municipio", filtro.municipio);
+
+				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo) && !string.IsNullOrWhiteSpace(filtro.fimPeriodo))
+					comandtxt += $@"tt.data_criacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND OR
+									tt.data_situacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND";
+
+
+				if (!string.IsNullOrWhiteSpace(filtro.nomeRazaoSocial))
+					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial);
+								
+				if (!string.IsNullOrWhiteSpace(filtro.cpfCnpj))
+					comandtxt += comando.FiltroAnd("pc.cpf", "cpfCnpj", filtro.cpfCnpj);
+
+				#endregion
+
+				#region colunas
+				List<string> colunas = new List<string>() {
+					"numeto_titulo",
+					"requerimento",
+					"autor_nome",
+					"autor_cpf",
+					"setor_nome",
+					"setor_sigla",
+					"modelo_nome",
+					"modelo_sigla",
+					"situacao",
+					"situacao_motivo",
+					"local_emissao",
+					"codigo_empreendimento",
+					"empreendimento",
+					"prazo",
+					"prazo_unidade",
+					"dias_prorrogados",
+					"data_criacao",
+					"data_inicio",
+					"data_emissao",
+					"data_assinatura",
+					"data_vencimento",
+					"data_encerramento",
+					"email",
+					"motivo_suspensao",
+					"fase_barragem",
+					"tipo_barragem",
+					"area_alagada",
+					"volume_armazenado",
+					"altura_barramento",
+					"largura_base_barramento",
+					"comprimento_barramento",
+					"largura_crista_barramento",
+					"coordenada_barramento",
+					"coordenada_area_bota_fora",
+					"coordenada_area_emprestimo",
+					"curso_hidrico",
+					"area_bacia_contribuicao",
+					"precipitacao",
+					"fonte_precipitacao",
+					"periodo_retorno",
+					"coeficiente_escoamento",
+					"fonte_coeficiente_escoamento",
+					"tempo_concentracao",
+					"equacao_tempo_concentracao",
+					"vazao_enchente",
+					"fonte_vazao_enchente",
+					"supressao_app_implant_barragem",
+					"fx_demarc_app_entorno_reserv",
+					"largura_demarcada",
+					"largura_demarcada_legislacao",
+					"faixa_cercada",
+					"descricao_estagio_desenv",
+					"barragem_dentro_das_normas",
+					"barramento_adequacoes",
+					"vazao_min_tipo",
+					"vazao_min_diametro",
+					"vazao_min_instalado",
+					"vazao_min_normas",
+					"vazao_min_adequacoes",
+					"vazao_max_tipo",
+					"vazao_max_larg_alt_diametro",
+					"vazao_max_instalado",
+					"vazao_max_normas",
+					"vazao_max_adequacoes",
+					"supressao_app_implant_barragem",
+					"vazao_min_tipo",
+					"vazao_min_diametro",
+					"vazao_max_tipo",
+					"vazao_max_larg_alt_diametro",
+					"periodo_inicio_obra",
+				   "periodo_termino_obra" };
+				retorno.Add(colunas);
+				#endregion
+
+				#region consulta
+				comando.DbCommand.CommandText = String.Format(@"
+				select  
+						tn.numero || '/' || tn.ano numeto_titulo,
+						tt.requerimento,
+						pc.nome autor_nome,
+						pc.cpf autor_cpf,
+						se.nome setor_nome,
+						se.sigla setor_sigla,
+						tm.nome modelo_nome,
+						tm.sigla modelo_sigla,
+						ls.texto situacao,
+						lm.texto situacao_motivo,
+						mp.texto local_emissao,
+						ee.codigo codigo_empreendimento,
+						ee.denominador empreendimento,
+						tt.prazo,
+						tt.prazo_unidade,
+						tt.dias_prorrogados,
+						tt.data_criacao,
+						tt.data_inicio,
+						tt.data_emissao,
+						tt.data_assinatura,
+						tt.data_vencimento,
+						tt.data_encerramento, 
+						tt.email, 
+						tt.motivo_suspensao,
+						lf.texto fase_barragem,
+						lt.texto tipo_barragem,
+						bd.area_alagada,
+						bd.volume_armazenado,
+						bd.altura_barramento,
+						bd.largura_base_barramento,
+						bd.comprimento_barramento,
+						bd.largura_crista_barramento,
+						(select 'N: ' || c1.northing || '  E: ' || c1.easting from crt_barragem_coordenada c1 where c1.barragem = bd.id and c1.tipo = 1) coordenada_barramento,
+						(select 'N: ' || c1.northing || '  E: ' || c1.easting from crt_barragem_coordenada c1 where c1.barragem = bd.id and c1.tipo = 2) coordenada_area_bota_fora,
+						(select 'N: ' || c1.northing || '  E: ' || c1.easting from crt_barragem_coordenada c1 where c1.barragem = bd.id and c1.tipo = 3) coordenada_area_emprestimo,
+						bd.curso_hidrico,
+						bd.area_bacia_contribuicao,
+						bd.precipitacao,
+						bd.fonte_precipitacao,
+						bd.periodo_retorno,
+						bd.coeficiente_escoamento,
+						bd.fonte_coeficiente_escoamento,
+						bd.tempo_concentracao,
+						bd.equacao_calculo equacao_tempo_concentracao,
+						bd.vazao_enchente,
+						bd.fonte_vazao_enchente,
+						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						(case bc.demarcacao_app when 1 then 'Sim' when 0 then 'Não' else 'Não se aplica' end) fx_demarc_app_entorno_reserv,
+						bc.largura_demarcada,
+						(case bc.largura_demarcada_legislacao when 1 then 'Sim'when 0 then 'Não' else '' end) largura_demarcada_legislacao,
+						(case bc.faixa_cercada when 1 then 'Sim' when 0 then 'Não' else 'Parcialmente' end) faixa_cercada,
+						bc.descricao_desen_app descricao_estagio_desenv,
+						(case bc.barramento_normas when 1 then 'Sim'when 0 then 'Não' else '' end) barragem_dentro_das_normas,
+						bc.barramento_adequacoes,
+						li.texto vazao_min_tipo,
+						bc.vazao_min_diametro,
+						(case bc.vazao_min_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_instalado,
+						(case bc.vazao_min_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_normas,
+						bc.vazao_min_adequacoes,
+						la.texto vazao_max_tipo,
+						bc.vazao_max_diametro vazao_max_larg_alt_diametro,
+						(case bc.vazao_max_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_instalado,
+						(case bc.vazao_max_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_normas,
+						bc.vazao_max_adequacoes,
+						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						li.texto vazao_min_tipo,
+						bc.vazao_min_diametro,
+						la.texto vazao_max_tipo,
+						bc.vazao_max_diametro vazao_max_larg_alt_diametro,
+						bc.periodo_inicio_obra,
+						bc.periodo_termino_obra
+        
+        
+				from tab_titulo tt 
+					inner join tab_titulo_modelo                    tm on tm.id = tt.modelo
+					left join  tab_setor                            se on tt.setor = se.id
+					left join  tab_credenciado                      cr on tt.autor = cr.id
+					left join  idafcredenciado.tab_pessoa           pc on cr.pessoa = pc.id 
+					left join  lov_titulo_situacao                  ls on ls.id = tt.situacao
+					left join  lov_titulo_situacao_motivo           lm on tt.situacao_motivo = lm.id
+					inner join lov_municipio                        mp on mp.id = tt.local_emissao
+					inner join idafcredenciado.tab_empreendimento   ee on ee.id = tt.empreendimento
+					inner join tab_titulo_numero                    tn on tt.id = tn.titulo
+					inner join tab_requerimento                     rq on rq.numero = tt.requerimento
+					inner join tab_requerimento_barragem            rb on rq.id = rb.requerimento
+					inner join crt_barragem_dispensa_lic            bd on bd.id = rb.barragem
+					inner join lov_crt_bdla_fase                    lf on lf.id = bd.fase
+					inner join lov_crt_bdla_barragem_tipo           lt on lt.id = bd.tipo_barragem
+					inner join crt_barragem_construida_con          bc on bd.id = bc.barragem
+					inner join LOV_CRT_BDLA_MONGE_TIPO              li on li.id = bc.vazao_min_tipo
+					inner join LOV_CRT_BDLA_VERTEDOURO_TIPO         la on la.id = bc.vazao_max_tipo 
+    
+				where 1 = 1  " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				#endregion
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						#region campos
+						List<string> resultados = new List<string>();
+						resultados.Add(reader.GetValue<string>("requerimento"));
+						resultados.Add(reader.GetValue<string>("autor_nome"));
+						resultados.Add(reader.GetValue<string>("autor_cpf"));
+						resultados.Add(reader.GetValue<string>("setor_nome"));
+						resultados.Add(reader.GetValue<string>("setor_sigla"));
+						resultados.Add(reader.GetValue<string>("modelo_nome"));
+						resultados.Add(reader.GetValue<string>("modelo_sigla"));
+						resultados.Add(reader.GetValue<string>("situacao"));
+						resultados.Add(reader.GetValue<string>("situacao_motivo"));
+						resultados.Add(reader.GetValue<string>("local_emissao"));
+						resultados.Add(reader.GetValue<string>("codigo_empreendimento"));
+						resultados.Add(reader.GetValue<string>("empreendimento"));
+						resultados.Add(reader.GetValue<string>("prazo"));
+						resultados.Add(reader.GetValue<string>("prazo_unidade"));
+						resultados.Add(reader.GetValue<string>("dias_prorrogados"));
+						resultados.Add(reader.GetValue<string>("data_criacao"));
+						resultados.Add(reader.GetValue<string>("data_inicio"));
+						resultados.Add(reader.GetValue<string>("data_emissao"));
+						resultados.Add(reader.GetValue<string>("data_assinatura"));
+						resultados.Add(reader.GetValue<string>("data_vencimento"));
+						resultados.Add(reader.GetValue<string>("data_encerramento"));
+						resultados.Add(reader.GetValue<string>("email"));
+						resultados.Add(reader.GetValue<string>("motivo_suspensao"));
+						resultados.Add(reader.GetValue<string>("fase_barragem"));
+						resultados.Add(reader.GetValue<string>("tipo_barragem"));
+						resultados.Add(reader.GetValue<string>("area_alagada"));
+						resultados.Add(reader.GetValue<string>("volume_armazenado"));
+						resultados.Add(reader.GetValue<string>("altura_barramento"));
+						resultados.Add(reader.GetValue<string>("largura_base_barramento"));
+						resultados.Add(reader.GetValue<string>("comprimento_barramento"));
+						resultados.Add(reader.GetValue<string>("largura_crista_barramento"));
+						resultados.Add(reader.GetValue<string>("coordenada_barramento"));
+						resultados.Add(reader.GetValue<string>("coordenada_area_bota_fora"));
+						resultados.Add(reader.GetValue<string>("coordenada_area_emprestimo"));
+						resultados.Add(reader.GetValue<string>("curso_hidrico"));
+						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
+						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
+						resultados.Add(reader.GetValue<string>("precipitacao"));
+						resultados.Add(reader.GetValue<string>("fonte_precipitacao"));
+						resultados.Add(reader.GetValue<string>("periodo_retorno"));
+						resultados.Add(reader.GetValue<string>("coeficiente_escoamento"));
+						resultados.Add(reader.GetValue<string>("fonte_coeficiente_escoamento"));
+						resultados.Add(reader.GetValue<string>("tempo_concentracao"));
+						resultados.Add(reader.GetValue<string>("equacao_tempo_concentracao"));
+						resultados.Add(reader.GetValue<string>("vazao_enchente"));
+						resultados.Add(reader.GetValue<string>("fonte_vazao_enchente"));
+						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
+						resultados.Add(reader.GetValue<string>("fx_demarc_app_entorno_reserv"));
+						resultados.Add(reader.GetValue<string>("largura_demarcada"));
+						resultados.Add(reader.GetValue<string>("largura_demarcada_legislacao"));
+						resultados.Add(reader.GetValue<string>("faixa_cercada"));
+						resultados.Add(reader.GetValue<string>("descricao_estagio_desenv"));
+						resultados.Add(reader.GetValue<string>("barragem_dentro_das_normas"));
+						resultados.Add(reader.GetValue<string>("barramento_adequacoes"));
+						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_min_instalado"));
+						resultados.Add(reader.GetValue<string>("vazao_min_normas"));
+						resultados.Add(reader.GetValue<string>("vazao_min_adequacoes"));
+						resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_max_instalado"));
+						resultados.Add(reader.GetValue<string>("vazao_max_normas"));
+						resultados.Add(reader.GetValue<string>("vazao_max_adequacoes"));
+						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
+						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
+						resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
+						resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
+						retorno.Add(resultados);
+						#endregion
+					}
+
+					reader.Close();
+				}
+				return retorno;
+			}
+		}
 
 		#endregion
 

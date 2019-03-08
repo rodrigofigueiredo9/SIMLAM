@@ -340,6 +340,7 @@
     <Compile Include="ViewModels\VMFiscalizacao\InfracaoVM.cs" />
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ConfigurarVM.cs" />
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ListarVM.cs" />
+    <Compile Include="ViewModels\VMTitulo\RelatorioVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -359,6 +360,12 @@
     <Content Include="Areas\Caracterizacoes\Views\Avicultura\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\Avicultura\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\BarragemDispensaLicencaPartial.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescAContruir.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescContruida.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\DescricaoGeralBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ListagemBarragem.ascx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Listar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\ResponsabilidadeTecnica.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Visualizar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Editar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\BarragemDispensaLicenca\Criar.aspx" />
@@ -485,6 +492,7 @@
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\configurar.js" />
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\listar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
@@ -493,6 +501,10 @@
     <Content Include="Views\TituloDeclaratorioConfiguracao\ListarResultados.ascx" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\RelatorioAlteracaoTitulo.aspx" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\Index.aspx" />
+    <Content Include="Views\TituloDeclaratorioConfiguracao\Configurar.aspx" />
+    <Content Include="Views\TituloDeclaratorio\Relatorio.aspx" />
+    <Content Include="Views\TituloDeclaratorio\RelatorioListarFiltros.ascx" />
+    <Content Include="Views\TituloDeclaratorio\TituloListarResultados.ascx" />
     <Content Include="Views\Titulo\TituloLaudoVistoriaFlorestal.ascx" />
     <Content Include="Views\Titulo\TituloAutorizacaoExploracaoFlorestal.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoAuditoriaFomentoFlorestal.ascx" />
@@ -2483,7 +2495,6 @@
     <Content Include="Views\TituloDeclaratorio\Index.aspx" />
     <Content Include="Views\TituloDeclaratorio\TituloCamposModelo.ascx" />
     <Content Include="Views\TituloDeclaratorio\TituloListarFiltros.ascx" />
-    <Content Include="Views\TituloDeclaratorio\TituloListarResultados.ascx" />
     <Content Include="Views\Shared\Anexo.ascx" />
     <Content Include="Views\Documento\ConverterDocumento.aspx" />
     <Content Include="Views\Documento\ConverterDocumentoDadosPartial.ascx" />

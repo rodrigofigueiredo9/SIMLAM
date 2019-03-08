@@ -410,10 +410,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			//Para o caso da coluna da atividade estar na tabela principal
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
-
-		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
-			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
-
+		
 		public List<BarragemRT> ObterResponsavelTecnicoRequerimento(List<BarragemRT> rtLst, int projetoDigital, BancoDeDados banco = null)
 		{
 			BarragemRT rt = new BarragemRT();
@@ -432,6 +429,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 					rtLst[1].id = id2;
 					rtLst[1].proprioDeclarante = true;
+					rtLst[1].numeroART = String.Empty;
 				}
 
 				if (rtElaboracao == 2 || rtElaboracao == 3)
@@ -441,6 +439,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					rtLst[3].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 					rtLst[3].id = id2;
 					rtLst[3].proprioDeclarante = true;
+					rtLst[3].numeroART = String.Empty;
 				}
 			}
 			catch (Exception exc)
@@ -516,6 +515,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return 0;
 		}
+
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
 
 		#endregion
 	}
