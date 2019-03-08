@@ -56,7 +56,7 @@
 				<% foreach (var informacao in Model.Resultados){ %>
 					<tr>
 						<td>
-							<span class="codigo" title="<%: String.Concat(informacao.Id.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%>"><%:String.Concat(informacao.Id.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%></span>
+							<span class="codigo" title="<%: String.Concat(informacao.Codigo.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%>"><%:String.Concat(informacao.Codigo.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%></span>
 						</td>
 						<td>
 							<span class="dataInformacao" title="<%:informacao.DataInformacao.DataTexto%>"><%:informacao.DataInformacao.DataTexto%></span>

@@ -67,14 +67,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				#region Informação Corte
 
+				var codigo = this.ObterProximoCodigo(caracterizacao.Empreendimento.Id, bancoDeDados);
+
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte
-				(id, tid, empreendimento, data_informacao, area_flor_plantada) values
-				(seq_crt_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada)
+				(id, tid, empreendimento, data_informacao, area_flor_plantada, codigo) values
+				(seq_crt_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, :codigo)
 				returning id into :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento_id", caracterizacao.Empreendimento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("data_informacao", caracterizacao.DataInformacao.Data, DbType.Date);
 				comando.AdicionarParametroEntrada("area_flor_plantada", caracterizacao.AreaFlorestaPlantada, DbType.Decimal);
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroSaida("id", DbType.Int32);
 
@@ -427,7 +430,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada
 				from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -437,6 +440,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
+						caracterizacao.Codigo = reader.GetValue<int>("codigo");
 						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
@@ -706,7 +710,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, 
+				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, 
 				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
 				from {0}crt_informacao_corte c where c.empreendimento = :id", EsquemaBanco);
 
@@ -719,6 +723,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 						caracterizacao.Add(new InformacaoCorte()
 						{
 							Id = reader.GetValue<int>("id"),
+							Codigo = reader.GetValue<int>("codigo"),
 							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
 							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
 							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
@@ -744,8 +749,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				/*SELECT id, concat(concat(lpad(id, 4, '0'), '-'), data_informacao) informacaoCorte FROM crt_informacao_corte;*/
-					SELECT ID, (LPAD(ID, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
+					SELECT ID, (LPAD(codigo, 4, '0') || ' - ' || DATA_INFORMACAO) informacaoCorte
 						FROM {0}CRT_INFORMACAO_CORTE CRT WHERE EMPREENDIMENTO = :empreendimento
 					AND ID NOT IN (
 						SELECT C.INFORMACAO_CORTE FROM ESP_OUT_INFORMACAO_CORTE
@@ -1204,6 +1208,33 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
+		private int ObterProximoCodigo(int empreendimento, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				BEGIN
+					UPDATE {0}crt_inf_corte_codigo
+						SET codigo = codigo + 1
+						WHERE empreendimento = :empreendimento
+						returning codigo into :codigo;
+					IF ( sql%rowcount = 0 )
+						THEN
+						INSERT INTO {0}crt_inf_corte_codigo (id, codigo, empreendimento)
+							VALUES (seq_inf_corte_codigo.nextval, 1, :empreendimento)
+							returning codigo into :codigo;					
+					END IF;
+				END;", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+				comando.AdicionarParametroSaida("codigo", DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				return Convert.ToInt32(comando.ObterValorParametro("codigo"));
 			}
 		}
 	}

@@ -140,7 +140,8 @@
 	    <div class="block">
             <div class="coluna20 append1">
                 <label>Código</label>
-                <%= Html.TextBox("codigoInformacaoCorte", Model.Id > 0 ? Model.Id.ToString() : "Preenchido automaticamente", ViewModelHelper.SetaDisabled(true, new { @class = "text codigoInformacaoCorte"}))%>
+                <%= Html.TextBox("codigo", Model.Codigo > 0 ? Model.Codigo.ToString() : "Preenchido automaticamente", ViewModelHelper.SetaDisabled(true, new { @class = "text codigo"}))%>
+                <%= Html.Hidden("codigoInformacaoCorte", Model.Id.ToString(), ViewModelHelper.SetaDisabled(true, new { @class = "text codigoInformacaoCorte"}))%>
             </div>
 
             <div class="coluna20">

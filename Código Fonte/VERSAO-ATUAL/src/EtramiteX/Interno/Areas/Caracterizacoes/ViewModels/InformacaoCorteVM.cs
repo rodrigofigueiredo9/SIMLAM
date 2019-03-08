@@ -23,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			if (caracterizacao != null)
 			{
 				this.Id = caracterizacao.Id;
+				this.Codigo = caracterizacao.Codigo;
 				this.DataInformacao = caracterizacao.DataInformacao;
 				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
 				this.InformacaoCorteLicencaList = caracterizacao.InformacaoCorteLicenca;
@@ -95,6 +96,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		#region Properties
 
 		public int? Id { get; set; }
+		public int? Codigo { get; set; }
 		public DateTecno DataInformacao { get; set; } = new DateTecno { Data = DateTime.Now };
 		public Decimal AreaPlantada { get; set; }
 
