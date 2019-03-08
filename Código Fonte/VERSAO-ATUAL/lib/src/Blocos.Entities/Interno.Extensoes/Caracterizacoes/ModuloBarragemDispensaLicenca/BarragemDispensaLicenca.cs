@@ -92,7 +92,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public BarragemConstruidaAConstruir construidaConstruir { get; set; }
 		public List<BarragemRT> responsaveisTecnicos { get; set; }
 
-		public string SecaoConstruida { get; set; }
+		
 
 		public BarragemDispensaLicenca()
 		{

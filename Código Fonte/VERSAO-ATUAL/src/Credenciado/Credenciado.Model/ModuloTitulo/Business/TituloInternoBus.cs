@@ -123,6 +123,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			titulo.Especificidade = busEspecificiade.Obter(titulo.Id) as Especificidade;
 			titulo.ToEspecificidade();
+
 			IConfiguradorPdf configurador = busEspecificiade.ObterConfiguradorPdf(titulo.Especificidade) ?? new ConfiguracaoDefault();
 
 			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
@@ -181,15 +182,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
 				}
-
-				string caminhoRelatorio = @"~/Content/_pdfAspose/Relatorio_Caracterizacao_Barragem_Dispensada.docx";
-				FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(caminhoRelatorio));
-				Arquivo templatePdfRelatorio = new Arquivo();
-				templatePdfRelatorio.Buffer = (Stream)file;
-
-				MemoryStream relatorioCarac = gerador.Pdf(templatePdfRelatorio, dataSource);
-				relatorioCarac.CopyTo(msPdf);   //isso anexa  relatorioCarac no final de msPdf
-				msPdf = relatorioCarac;
 			}
 
 			return msPdf;

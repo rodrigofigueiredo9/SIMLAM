@@ -21,6 +21,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBar
 using System.ComponentModel;
 using System.Configuration;
 using System.Net.Http;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -103,6 +104,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				CertidaoDispensaLicenciamentoAmbientalPDF certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
 				DataEmissaoPorExtenso(certidao.Titulo);
 
+				certidao.SecaoConstruida = AsposeData.Empty;
+
 				foreach (var c in certidao.Caracterizacao.barragemEntity.coordenadas)
 				{
 					if (c.tipo == eTipoCoordenadaBarragem.barramento)
@@ -160,6 +163,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			conf.AddLoadAcao((doc, dataSource) =>
 			{
 				List<Table> itenRemover = new List<Table>();
+
+				//itenRemover.Add(doc.LastTable("«SecaoConstruida»"));
+				doc.Find<Row>("«SecaoConstruida»").Remove();
+
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 
 				AsposeExtensoes.RemoveTables(itenRemover);
