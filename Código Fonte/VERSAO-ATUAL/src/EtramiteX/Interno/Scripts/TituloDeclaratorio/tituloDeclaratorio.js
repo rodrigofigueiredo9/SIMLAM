@@ -1,6 +1,7 @@
 /// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
+/// <reference path="../moment.min.js" />
 /// <reference path="../mensagem.js" />
 
 TituloDeclaratorio = {
@@ -48,6 +49,7 @@ TituloDeclaratorio = {
 		container.delegate('.btnExcluirAssinante', 'click', TituloDeclaratorio.onExcluirAssinante);
 
 		container.delegate('.btnTituloSalvar', 'click', TituloDeclaratorio.onSalvarClick);
+		container.delegate('.radioCpfCnpj', 'change', TituloDeclaratorio.onChangeCpfCnpj);
 		container.delegate('.btnGerar', 'click', TituloDeclaratorio.gerarRelatorio);
 
 		if (TituloDeclaratorio.settings.isVisualizar || TituloDeclaratorio.settings.carregarEspecificidade) {
@@ -432,6 +434,16 @@ TituloDeclaratorio = {
 	},
 
 	//Relatorio
+	onChangeCpfCnpj: function () {
+		if ($('.radioCpfCnpj:checked').val() == 1)
+			$('.filterCpfCnpj').removeClass('maskCnpj').addClass('maskCpf');
+		else
+			$('.filterCpfCnpj').removeClass('maskCpf').addClass('maskCnpj');
+
+		$('.filterCpfCnpj').val('');
+		Mascara.load(TituloDeclaratorio.container);
+	},
+
 	gerarRelatorio: function () {
 		filtro = {
 			modelo: $('.filterModelo:visible').val(),
@@ -442,38 +454,24 @@ TituloDeclaratorio = {
 			municipio: $('.filterMunicipio:visible').val()
 		};
 
-		//MasterPage.redireciona(TituloDeclaratorio.settings.urls.urlGerar);
+		if (!filtro.inicioPeriodo.isNullOrWhitespace() && filtro.fimPeriodo.isNullOrWhitespace() ||
+			filtro.inicioPeriodo.isNullOrWhitespace() && !filtro.fimPeriodo.isNullOrWhitespace()) {
+			Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoObrigatorio]);
+			return;
+		}
 
-		$.ajax({
-			url: TituloDeclaratorio.settings.urls.urlGerar,
-			data: JSON.stringify(filtro),
-			cache: false,
-			async: false,
-			type: 'POST',
-			dataType: 'application/txt',
-			contentType: 'application/txt; charset=utf-8',
-			error: function (XMLHttpRequest, textStatus, erroThrown) {
-				Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloDeclaratorio.container);
-				MasterPage.carregando(false);
-			},
-			success: function (data, response, file, pdf, textStatus, XMLHttpRequest) {
-				debugger;
-				window.downloadFile = data
-				//window.location = 'Relatorio.xslx';
-
-
-				//if (response.EhValido) {
-				//	MasterPage.redireciona(response.UrlSucesso);
-				//} else if (response.Msg && response.Msg.length > 0) {
-				//	Mensagem.gerar(MasterPage.getContent(TituloDeclaratorio.container), response.Msg);
-
-				//	if (TituloDeclaratorio.settings.especificidadeErroSalvarCallback && typeof TituloDeclaratorio.settings.especificidadeErroSalvarCallback == 'function') {
-				//		TituloDeclaratorio.settings.especificidadeErroSalvarCallback(response.Msg);
-				//	}
-				//}
-
-				MasterPage.carregando(false);
+		if (!filtro.inicioPeriodo.isNullOrWhitespace() && !filtro.fimPeriodo.isNullOrWhitespace()) {
+			if (filtro.inicioPeriodo.length < 10 || filtro.fimPeriodo.length < 10) {
+				Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoFormato]);
+				return;
 			}
-		});
+
+			if (!moment(filtro.inicioPeriodo).isValid() || !moment(filtro.fimPeriodo).isValid()) {
+				Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoInvalido]);
+				return;
+			}
+		}
+
+		window.open(TituloDeclaratorio.settings.urls.urlGerar + '?paramsJson=' + JSON.stringify(filtro));
 	}
 }

@@ -7,6 +7,7 @@
 	<script src="<%= Url.Content("~/Scripts/TituloDeclaratorio/tituloDeclaratorio.js") %>"></script>
 	<script src="<%= Url.Content("~/Scripts/Requerimento/requerimentoListar.js") %>"></script>
 	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/moment.min.js") %>"></script>
 
 	<script>
 		$(function () {
@@ -14,8 +15,7 @@
 				urls: {
 					urlGerar: '<%= Url.Action("GerarRelatorio", "TituloDeclaratorio") %>'
 				},
-				<%--Mensagens: <%= Model.Mensagens %>,
-				carregarEspecificidade: <%= Model.CarregarEspecificidade.ToString().ToLower() %>--%>
+				Mensagens: <%= Model.Mensagens %>
 			});
 
 		});

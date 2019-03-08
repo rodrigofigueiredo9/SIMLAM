@@ -26,11 +26,11 @@
 				<div class="block">
 					<div class="coluna23">
 						<label for="Filtros_Numero">Início período</label>
-						<%= Html.TextBox("Filtros.Numero", null, new { @class = "text filterInicioPeriodo", @maxlength="20" })%>
+						<%= Html.TextBox("Filtros.Numero", null, new { @class = "text maskData filterInicioPeriodo", @maxlength="20" })%>
 					</div>
 					<div class="coluna23">
 						<label for="Filtros_RequerimentoID">Fim período</label>
-						<%= Html.TextBox("Filtros.RequerimentoID", null, new { @class = "text filterFImPeriodo", @maxlength="20" })%>
+						<%= Html.TextBox("Filtros.RequerimentoID", null, new { @class = "text maskData filterFImPeriodo", @maxlength="20" })%>
 					</div>
 					<div class="coluna23">
 						<label for="Filtros_EmpreendimentoCodigo">Nome/Razao social do interessado</label>
@@ -41,7 +41,7 @@
 					<div class="coluna27">
 						<label for="Filtros_InteressadoCPFCNPJ"><%= Html.RadioButton("RadioCPFCNPJ", 1, true, new { @class = "radio radioCpfCnpj radioCPF" })%>CPF</label>
 						<label for="Filtros_InteressadoCPFCNPJ"><%= Html.RadioButton("RadioCPFCNPJ", 2, false, new { @class = "radio radioCpfCnpj" })%>CNPJ do interessado</label>
-						<%= Html.TextBox("Filtros.InteressadoCPFCNPJ", null, new { @class = "text filterCpfCnpj" })%>
+						<%= Html.TextBox("Filtros.InteressadoCPFCNPJ", null, new { @class = "text maskCpf filterCpfCnpj" })%>
 					</div>
 					<div class="coluna25">
 						<label for="Filtros_OrigemID">Município</label>

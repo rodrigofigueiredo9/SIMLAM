@@ -2519,12 +2519,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				if(filtro.municipio > 0)
 					comandtxt += comando.FiltroAnd("mp.id", "municipio", filtro.municipio);
 
-				//if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo))
-				//	comandtxt += comando.FiltroAnd("l.inicioPeriodo", "inicioPeriodo", filtro.inicioPeriodo);
+				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo) && !string.IsNullOrWhiteSpace(filtro.fimPeriodo))
+					comandtxt += $@"tt.data_criacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND OR
+									tt.data_situacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND";
 
-				//if (!string.IsNullOrWhiteSpace(filtro.fimPeriodo))
-				//	comandtxt += comando.FiltroAnd("l.fimPeriodo", "fimPeriodo", filtro.fimPeriodo);
-				
+
 				if (!string.IsNullOrWhiteSpace(filtro.nomeRazaoSocial))
 					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial);
 								
@@ -2706,90 +2707,90 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
     
 				where 1 = 1  " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 				#endregion
-				
-				//using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				//{
-				//	while (reader.Read())
-				//	{
-				//		#region campos
-				//		List<string> resultados = new List<string>();
-				//		resultados.Add(reader.GetValue<string>("requerimento"));
-				//		resultados.Add(reader.GetValue<string>("autor_nome"));
-				//		resultados.Add(reader.GetValue<string>("autor_cpf"));
-				//		resultados.Add(reader.GetValue<string>("setor_nome"));
-				//		resultados.Add(reader.GetValue<string>("setor_sigla"));
-				//		resultados.Add(reader.GetValue<string>("modelo_nome"));
-				//		resultados.Add(reader.GetValue<string>("modelo_sigla"));
-				//		resultados.Add(reader.GetValue<string>("situacao"));
-				//		resultados.Add(reader.GetValue<string>("situacao_motivo"));
-				//		resultados.Add(reader.GetValue<string>("local_emissao"));
-				//		resultados.Add(reader.GetValue<string>("codigo_empreendimento"));
-				//		resultados.Add(reader.GetValue<string>("empreendimento"));
-				//		resultados.Add(reader.GetValue<string>("prazo"));
-				//		resultados.Add(reader.GetValue<string>("prazo_unidade"));
-				//		resultados.Add(reader.GetValue<string>("dias_prorrogados"));
-				//		resultados.Add(reader.GetValue<string>("data_criacao"));
-				//		resultados.Add(reader.GetValue<string>("data_inicio"));
-				//		resultados.Add(reader.GetValue<string>("data_emissao"));
-				//		resultados.Add(reader.GetValue<string>("data_assinatura"));
-				//		resultados.Add(reader.GetValue<string>("data_vencimento"));
-				//		resultados.Add(reader.GetValue<string>("data_encerramento"));
-				//		resultados.Add(reader.GetValue<string>("email"));
-				//		resultados.Add(reader.GetValue<string>("motivo_suspensao"));
-				//		resultados.Add(reader.GetValue<string>("fase_barragem"));
-				//		resultados.Add(reader.GetValue<string>("tipo_barragem"));
-				//		resultados.Add(reader.GetValue<string>("area_alagada"));
-				//		resultados.Add(reader.GetValue<string>("volume_armazenado"));
-				//		resultados.Add(reader.GetValue<string>("altura_barramento"));
-				//		resultados.Add(reader.GetValue<string>("largura_base_barramento"));
-				//		resultados.Add(reader.GetValue<string>("comprimento_barramento"));
-				//		resultados.Add(reader.GetValue<string>("largura_crista_barramento"));
-				//		resultados.Add(reader.GetValue<string>("coordenada_barramento"));
-				//		resultados.Add(reader.GetValue<string>("coordenada_area_bota_fora"));
-				//		resultados.Add(reader.GetValue<string>("coordenada_area_emprestimo"));
-				//		resultados.Add(reader.GetValue<string>("curso_hidrico"));
-				//		resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
-				//		resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
-				//		resultados.Add(reader.GetValue<string>("precipitacao"));
-				//		resultados.Add(reader.GetValue<string>("fonte_precipitacao"));
-				//		resultados.Add(reader.GetValue<string>("periodo_retorno"));
-				//		resultados.Add(reader.GetValue<string>("coeficiente_escoamento"));
-				//		resultados.Add(reader.GetValue<string>("fonte_coeficiente_escoamento"));
-				//		resultados.Add(reader.GetValue<string>("tempo_concentracao"));
-				//		resultados.Add(reader.GetValue<string>("equacao_tempo_concentracao"));
-				//		resultados.Add(reader.GetValue<string>("vazao_enchente"));
-				//		resultados.Add(reader.GetValue<string>("fonte_vazao_enchente"));
-				//		resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
-				//		resultados.Add(reader.GetValue<string>("fx_demarc_app_entorno_reserv"));
-				//		resultados.Add(reader.GetValue<string>("largura_demarcada"));
-				//		resultados.Add(reader.GetValue<string>("largura_demarcada_legislacao"));
-				//		resultados.Add(reader.GetValue<string>("faixa_cercada"));
-				//		resultados.Add(reader.GetValue<string>("descricao_estagio_desenv"));
-				//		resultados.Add(reader.GetValue<string>("barragem_dentro_das_normas"));
-				//		resultados.Add(reader.GetValue<string>("barramento_adequacoes"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_instalado"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_normas"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_adequacoes"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_instalado"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_normas"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_adequacoes"));
-				//		resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
-				//		resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
-				//		resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
-				//		resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
-				//		resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
-				//		retorno.Add(resultados);
-				//		#endregion
-				//	}
 
-				//	reader.Close();
-				//}
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						#region campos
+						List<string> resultados = new List<string>();
+						resultados.Add(reader.GetValue<string>("requerimento"));
+						resultados.Add(reader.GetValue<string>("autor_nome"));
+						resultados.Add(reader.GetValue<string>("autor_cpf"));
+						resultados.Add(reader.GetValue<string>("setor_nome"));
+						resultados.Add(reader.GetValue<string>("setor_sigla"));
+						resultados.Add(reader.GetValue<string>("modelo_nome"));
+						resultados.Add(reader.GetValue<string>("modelo_sigla"));
+						resultados.Add(reader.GetValue<string>("situacao"));
+						resultados.Add(reader.GetValue<string>("situacao_motivo"));
+						resultados.Add(reader.GetValue<string>("local_emissao"));
+						resultados.Add(reader.GetValue<string>("codigo_empreendimento"));
+						resultados.Add(reader.GetValue<string>("empreendimento"));
+						resultados.Add(reader.GetValue<string>("prazo"));
+						resultados.Add(reader.GetValue<string>("prazo_unidade"));
+						resultados.Add(reader.GetValue<string>("dias_prorrogados"));
+						resultados.Add(reader.GetValue<string>("data_criacao"));
+						resultados.Add(reader.GetValue<string>("data_inicio"));
+						resultados.Add(reader.GetValue<string>("data_emissao"));
+						resultados.Add(reader.GetValue<string>("data_assinatura"));
+						resultados.Add(reader.GetValue<string>("data_vencimento"));
+						resultados.Add(reader.GetValue<string>("data_encerramento"));
+						resultados.Add(reader.GetValue<string>("email"));
+						resultados.Add(reader.GetValue<string>("motivo_suspensao"));
+						resultados.Add(reader.GetValue<string>("fase_barragem"));
+						resultados.Add(reader.GetValue<string>("tipo_barragem"));
+						resultados.Add(reader.GetValue<string>("area_alagada"));
+						resultados.Add(reader.GetValue<string>("volume_armazenado"));
+						resultados.Add(reader.GetValue<string>("altura_barramento"));
+						resultados.Add(reader.GetValue<string>("largura_base_barramento"));
+						resultados.Add(reader.GetValue<string>("comprimento_barramento"));
+						resultados.Add(reader.GetValue<string>("largura_crista_barramento"));
+						resultados.Add(reader.GetValue<string>("coordenada_barramento"));
+						resultados.Add(reader.GetValue<string>("coordenada_area_bota_fora"));
+						resultados.Add(reader.GetValue<string>("coordenada_area_emprestimo"));
+						resultados.Add(reader.GetValue<string>("curso_hidrico"));
+						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
+						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
+						resultados.Add(reader.GetValue<string>("precipitacao"));
+						resultados.Add(reader.GetValue<string>("fonte_precipitacao"));
+						resultados.Add(reader.GetValue<string>("periodo_retorno"));
+						resultados.Add(reader.GetValue<string>("coeficiente_escoamento"));
+						resultados.Add(reader.GetValue<string>("fonte_coeficiente_escoamento"));
+						resultados.Add(reader.GetValue<string>("tempo_concentracao"));
+						resultados.Add(reader.GetValue<string>("equacao_tempo_concentracao"));
+						resultados.Add(reader.GetValue<string>("vazao_enchente"));
+						resultados.Add(reader.GetValue<string>("fonte_vazao_enchente"));
+						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
+						resultados.Add(reader.GetValue<string>("fx_demarc_app_entorno_reserv"));
+						resultados.Add(reader.GetValue<string>("largura_demarcada"));
+						resultados.Add(reader.GetValue<string>("largura_demarcada_legislacao"));
+						resultados.Add(reader.GetValue<string>("faixa_cercada"));
+						resultados.Add(reader.GetValue<string>("descricao_estagio_desenv"));
+						resultados.Add(reader.GetValue<string>("barragem_dentro_das_normas"));
+						resultados.Add(reader.GetValue<string>("barramento_adequacoes"));
+						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_min_instalado"));
+						resultados.Add(reader.GetValue<string>("vazao_min_normas"));
+						resultados.Add(reader.GetValue<string>("vazao_min_adequacoes"));
+						resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_max_instalado"));
+						resultados.Add(reader.GetValue<string>("vazao_max_normas"));
+						resultados.Add(reader.GetValue<string>("vazao_max_adequacoes"));
+						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
+						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
+						resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
+						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
+						resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
+						resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
+						retorno.Add(resultados);
+						#endregion
+					}
+
+					reader.Close();
+				}
 				return retorno;
 			}
 		}

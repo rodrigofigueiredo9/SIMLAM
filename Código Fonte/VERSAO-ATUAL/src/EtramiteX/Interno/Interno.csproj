@@ -485,6 +485,7 @@
     <Content Include="Areas\Especificidades\Views\Escritura\EscrituraPublicaDoacao.ascx" />
     <Content Include="Areas\Especificidades\Views\Laudo\LaudoVistoriaFlorestal.ascx" />
     <Content Include="Scripts\Areas\Especificidades\Laudo\laudoVistoriaFlorestal.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\configurar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />

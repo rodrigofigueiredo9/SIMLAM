@@ -35,15 +35,9 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 			{
 				return ViewModelHelper.Json(new
 				{
-					ProcDocSemEmpAssociado = Mensagem.Titulo.ProcDocSemEmpAssociado,
-					ArquivoObrigatorio = Mensagem.Titulo.ArquivoObrigatorio,
-					ArquivoTipoPdf = Mensagem.Titulo.ArquivoTipoPdf,
-					AssinanteJaAdicionado = Mensagem.Titulo.AssinanteJaAdicionado,
-					AssinanteObrigatorio = Mensagem.Titulo.AssinanteObrigatorio,
-					AssinanteSetorObrigatorio = Mensagem.Titulo.AssinanteSetorObrigatorio,
-					AssinanteFuncionarioObrigatorio = Mensagem.Titulo.AssinanteFuncionarioObrigatorio,
-					AssinanteCargoObrigatorio = Mensagem.Titulo.AssinanteCargoObrigatorio,
-					RequerimentoSemEmpreendimento = Mensagem.Titulo.RequerimentoSemEmpreendimento,
+					@PeriodoObrigatorio = Mensagem.Titulo.PeriodoObrigatorio,
+					@PeriodoFormato = Mensagem.Titulo.PeriodoFormato,
+					@PeriodoInvalido = Mensagem.Titulo.PeriodoInvalido
 				});
 			}
 		}
