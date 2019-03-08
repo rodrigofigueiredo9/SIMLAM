@@ -16,8 +16,9 @@ namespace Tecnomapas.Blocos.Entities.Model.Business
 			StreamWriter arquivo = new StreamWriter(memStream);
 
 				linhas.ForEach(x => {
-				arquivo.Write(String.Join(" ; ", x));
-			});
+					arquivo.Write(String.Join(" ; ", x));
+					arquivo.Write("\n");
+				});
 
 			arquivo.Flush(); 
 			memStream.Seek(0, SeekOrigin.Begin);

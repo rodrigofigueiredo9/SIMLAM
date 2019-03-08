@@ -15,6 +15,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 {
@@ -2507,6 +2508,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
+				BarragemDispensaLicencaBus _barragemBus = new BarragemDispensaLicencaBus();
 				List<List<string>> retorno = new List<List<string>>();
 				string comandtxt = string.Empty;
 				Comando comando = bancoDeDados.CriarComando("");
@@ -2659,25 +2661,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						bd.equacao_calculo equacao_tempo_concentracao,
 						bd.vazao_enchente,
 						bd.fonte_vazao_enchente,
-						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						(case bc.supressao_app when 1 then 'Sim' when 0 then 'Não' else 'null' end) supressao_app_implant_barragem,
 						(case bc.demarcacao_app when 1 then 'Sim' when 0 then 'Não' else 'Não se aplica' end) fx_demarc_app_entorno_reserv,
 						bc.largura_demarcada,
-						(case bc.largura_demarcada_legislacao when 1 then 'Sim'when 0 then 'Não' else '' end) largura_demarcada_legislacao,
+						(case bc.largura_demarcada_legislacao when 1 then 'Sim' when 0 then 'Não' else '' end) largura_demarcada_legislacao,
 						(case bc.faixa_cercada when 1 then 'Sim' when 0 then 'Não' else 'Parcialmente' end) faixa_cercada,
 						bc.descricao_desen_app descricao_estagio_desenv,
-						(case bc.barramento_normas when 1 then 'Sim'when 0 then 'Não' else '' end) barragem_dentro_das_normas,
+						(case bc.barramento_normas when 1 then 'Sim'when 0 then 'Não' else 'null' end) barragem_dentro_das_normas,
 						bc.barramento_adequacoes,
 						li.texto vazao_min_tipo,
 						bc.vazao_min_diametro,
-						(case bc.vazao_min_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_instalado,
-						(case bc.vazao_min_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_normas,
+						(case bc.vazao_min_instalado when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_min_instalado,
+						(case bc.vazao_min_normas when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_min_normas,
 						bc.vazao_min_adequacoes,
 						la.texto vazao_max_tipo,
 						bc.vazao_max_diametro vazao_max_larg_alt_diametro,
-						(case bc.vazao_max_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_instalado,
-						(case bc.vazao_max_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_normas,
+						(case bc.vazao_max_instalado when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_instalado,
+						(case bc.vazao_max_normas when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_normas,
 						bc.vazao_max_adequacoes,
-						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else 'null' end) supressao_app_implant_barragem,
 						li.texto vazao_min_tipo,
 						bc.vazao_min_diametro,
 						la.texto vazao_max_tipo,
@@ -2693,9 +2695,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					left join  idafcredenciado.tab_pessoa           pc on cr.pessoa = pc.id 
 					left join  lov_titulo_situacao                  ls on ls.id = tt.situacao
 					left join  lov_titulo_situacao_motivo           lm on tt.situacao_motivo = lm.id
+					left join tab_titulo_numero                    tn on tt.id = tn.titulo
 					inner join lov_municipio                        mp on mp.id = tt.local_emissao
 					inner join idafcredenciado.tab_empreendimento   ee on ee.id = tt.empreendimento
-					inner join tab_titulo_numero                    tn on tt.id = tn.titulo
 					inner join tab_requerimento                     rq on rq.numero = tt.requerimento
 					inner join tab_requerimento_barragem            rb on rq.id = rb.requerimento
 					inner join crt_barragem_dispensa_lic            bd on bd.id = rb.barragem
@@ -2714,6 +2716,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					{
 						#region campos
 						List<string> resultados = new List<string>();
+						resultados.Add(reader.GetValue<string>("numeto_titulo"));
 						resultados.Add(reader.GetValue<string>("requerimento"));
 						resultados.Add(reader.GetValue<string>("autor_nome"));
 						resultados.Add(reader.GetValue<string>("autor_cpf"));
@@ -2785,6 +2788,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
 						resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
 						resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
+
+						_barragemBus.ObterAtividadesCaracterizacao()
+
+						Comando cmd = bancoDeDados.CriarComando("");
+						using (IDataReader rd = bancoDeDados.ExecutarReader(cmd))
+						{
+							while (rd.Read())
+							{
+							}
+						}
 						retorno.Add(resultados);
 						#endregion
 					}
