@@ -600,7 +600,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			throw new NotImplementedException();
 		}
 
-		internal List<string> ObterListaFinalidadeAtividade(int id, BancoDeDados banco = null)
+		public List<string> ObterListaFinalidadeAtividade(int id, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
