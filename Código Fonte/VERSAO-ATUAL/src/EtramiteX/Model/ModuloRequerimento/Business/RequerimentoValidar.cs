@@ -496,11 +496,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 				Validacao.Add(Msg.EmpreendimentoNaoAssociadoAoResponsavel);
 		}
 
-		public bool RequerimentoDeclaratorio(int requerimentoId)
-		{
-			return _requerimentoDa.RequerimentoDeclaratorio(requerimentoId);
-		}
-
 		private void PodeEditar(Requerimento requerimento)
 		{
 			if (Validacao.EhValido)

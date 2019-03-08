@@ -1065,20 +1065,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Data
 			}
 		}
 
-		internal bool RequerimentoDeclaratorio(int requerimentoId, BancoDeDados banco = null)
-		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select count(*) 
-				from tab_requerimento_atividade ra, tab_requerimento_ativ_finalida rf
-				where rf.requerimento_ativ = ra.id and rf.modelo in (select m.id from tab_titulo_modelo m where m.documento = 2)
-				and ra.requerimento = :requerimento");
-
-				comando.AdicionarParametroEntrada("requerimento", requerimentoId, DbType.Int32);
-				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
-			}
-		}
-
 		internal bool Existe(int requerimentoId, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
