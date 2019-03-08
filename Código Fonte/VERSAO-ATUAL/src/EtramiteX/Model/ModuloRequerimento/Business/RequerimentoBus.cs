@@ -170,6 +170,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 			return false;
 		}
 
+		public void DesassociarEmpreendimento(int requerimentoId) => _da.DesassociarEmpreendimento(requerimentoId);
+
 		public void SalvarResponsavelTecnico(Requerimento requerimento)
 		{
 			try
