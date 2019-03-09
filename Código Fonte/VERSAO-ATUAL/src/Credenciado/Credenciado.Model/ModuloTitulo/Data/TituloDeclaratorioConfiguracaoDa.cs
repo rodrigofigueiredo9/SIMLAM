@@ -97,23 +97,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando(@"
-				update {0}tab_titulo_configuracao t
-					set t.arquivo_sem_app	 = :arquivo_sem_app,
-						t.arquivo_com_app	 = :arquivo_com_app,
-						t.tid				 = :tid, 
-						t.area_alagada		 = (case when :area_alagada > 0 then :area_alagada else t.area_alagada end),
-						t.volume_armazenado  = (case when :volume_armazenado > 0 then :volume_armazenado else t.volume_armazenado end)
-					where t.id = :id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("id", configuracao.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("area_alagada", configuracao.MaximoAreaAlagada, DbType.Decimal);
-				comando.AdicionarParametroEntrada("volume_armazenado", configuracao.MaximoVolumeArmazenado, DbType.Decimal);
-				comando.AdicionarParametroEntrada("arquivo_sem_app", configuracao.BarragemSemAPP.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("arquivo_com_app", configuracao.BarragemComAPP.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-				bancoDeDados.ExecutarNonQuery(comando);
+				if(configuracao.MaximoAreaAlagada > 0)
+					AtualizarConfiguracao("area_alagada", configuracao.MaximoAreaAlagada.ToString(), bancoDeDados);
+				if (configuracao.MaximoVolumeArmazenado > 0)
+					AtualizarConfiguracao("volume_armazenado", configuracao.MaximoVolumeArmazenado.ToString(), bancoDeDados);
+				if (configuracao.BarragemSemAPP.Id > 0)
+					AtualizarConfiguracao("arquivo_sem_app", configuracao.BarragemSemAPP.Id.ToString(), bancoDeDados);
+				if (configuracao.BarragemComAPP.Id > 0)
+					AtualizarConfiguracao("arquivo_com_app", configuracao.BarragemComAPP.Id.ToString(), bancoDeDados);
 
 				#endregion
 
@@ -127,6 +118,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			}
 		}
 
+		internal void AtualizarConfiguracao(string codigo, string valor, BancoDeDados banco = null)
+		{
+			String sql = @" update {0}tab_titulo_configuracao t
+					set t.valor	 = :valor where t.codigo = :codigo";
+
+			Comando comando = banco.CriarComando(sql, EsquemaBanco);
+			comando.AdicionarParametroEntrada("valor", valor, DbType.String);
+			comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
+
+			banco.ExecutarNonQuery(comando);
+		}
+
 		#endregion
 
 		#region Obter / Filtrar
@@ -136,44 +139,46 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			var configuracao = new TituloDeclaratorioConfiguracao();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select c.id,
-						c.tid, c.area_alagada, c.volume_armazenado, 
-						c.arquivo_sem_app, c.arquivo_com_app,
-						ta_sem_app.nome nome_sem_app,
-						ta_com_app.nome nome_com_app
-					from {0}tab_titulo_configuracao c
-					left join {0}tab_arquivo ta_sem_app
-						on ta_sem_app.id = c.arquivo_sem_app
-					left join {0}tab_arquivo ta_com_app
-						on ta_com_app.id = c.arquivo_com_app " +
-					(id > 0 ? "where c.id = :id" : ""), EsquemaBanco);
-
-				if(id > 0) comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				Comando comando = bancoDeDados.CriarComando(@"
+					select c.id, c.codigo, c.valor
+					from {0}tab_titulo_configuracao c ", EsquemaBanco);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					if (reader.Read())
+					while (reader.Read())
 					{
 						configuracao.Id = reader.GetValue<int>("id");
-						configuracao.Tid = reader["tid"].ToString();
-						configuracao.MaximoAreaAlagada = reader.GetValue<decimal>("area_alagada");
-						configuracao.MaximoVolumeArmazenado = reader.GetValue<decimal>("volume_armazenado");
-						
-						if (reader["arquivo_sem_app"] != null && !Convert.IsDBNull(reader["arquivo_sem_app"]))
+						switch (configuracao.Id)
 						{
-							configuracao.BarragemSemAPP.Id = Convert.ToInt32(reader["arquivo_sem_app"]);
-							configuracao.BarragemSemAPP.Nome = reader["nome_sem_app"].ToString();
-						}
+							case 1:
+								if (reader["valor"] != null && !Convert.IsDBNull(reader["valor"]))
+									configuracao.MaximoAreaAlagada = reader.GetValue<decimal>("valor");
+								break;
+							case 2:
+								if (reader["valor"] != null && !Convert.IsDBNull(reader["valor"]))
+									configuracao.MaximoVolumeArmazenado = reader.GetValue<decimal>("valor");
+								break;
+							case 3:
+								if (reader["valor"] != null && !Convert.IsDBNull(reader["valor"]))
+								{
+									configuracao.BarragemSemAPP.Id = Convert.ToInt32(reader["valor"]);
+									configuracao.BarragemSemAPP.Nome = ObterNomeArquivo(configuracao.BarragemSemAPP.Id ?? 0, bancoDeDados);
+								}
+								break;
+							case 4:
+								if (reader["valor"] != null && !Convert.IsDBNull(reader["valor"]))
+								{
+									configuracao.BarragemComAPP.Id = Convert.ToInt32(reader["valor"]);
+									configuracao.BarragemComAPP.Nome = ObterNomeArquivo(configuracao.BarragemSemAPP.Id ?? 0, bancoDeDados);
+								}
+								break;
 
-						if (reader["arquivo_com_app"] != null && !Convert.IsDBNull(reader["arquivo_com_app"]))
-						{
-							configuracao.BarragemComAPP.Id = Convert.ToInt32(reader["arquivo_com_app"]);
-							configuracao.BarragemComAPP.Nome = reader["nome_com_app"].ToString();
 						}
-
 					}
 					reader.Close();
 				}
+
+
 			}
 
 			return configuracao;
@@ -311,6 +316,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 			}
 
 			return retorno;
+		}
+
+		internal string ObterNomeArquivo(int id, BancoDeDados banco = null)
+		{
+			Comando comando = banco.CriarComando(@" select nome from tab_arquivo where id = :id ", EsquemaBanco);
+			comando.AdicionarParametroEntrada("id", id, DbType.String);
+
+			return banco.ExecutarScalar<string>(comando);
 		}
 
 		#endregion

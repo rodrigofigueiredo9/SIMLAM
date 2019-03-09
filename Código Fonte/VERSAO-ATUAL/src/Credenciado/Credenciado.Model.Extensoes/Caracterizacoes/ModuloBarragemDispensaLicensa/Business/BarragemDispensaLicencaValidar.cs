@@ -130,7 +130,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (!caracterizacao.construidaConstruir.faixaCercada.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFaixaCercada);
 
-					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP))
+					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDescricaoApp);
 				}
 
@@ -321,15 +321,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal void AreaAlagadaValida(decimal area)
 		{
-			var valorMax = _da.AreaAlagadaConfiguracao(area);
+			var valorMax = _da.ObterConfiguracao("area_alagada");
 			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.AreaAlagada(valorMax));
 		}
 
 		internal void VolumeArmazenadoValida(decimal area)
 		{
-			var valorMax = _da.VolumeArmazenadoConfiguracao(area);
-			if(area < Convert.ToDecimal(0.01) || area > valorMax)
+			var valorMax = _da.ObterConfiguracao("volume_armazenado");
+			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
 		} 
 			

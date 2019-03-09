@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
@@ -15,13 +17,12 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
-using Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
-using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
+using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 {
@@ -32,7 +33,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		GerenciadorConfiguracao<ConfiguracaoSistema> _configSys;
 		TituloInternoDa _da;
 		private TituloModeloInternoBus _busModelo;
-
+		TituloDeclaratorioConfiguracaoBus _busTituloDeclaratorio;
 		public String UsuarioInterno
 		{
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioInterno); }
@@ -45,10 +46,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			_configSys = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 			_da = new TituloInternoDa(UsuarioInterno);
 			_busModelo = new TituloModeloInternoBus();
+			_busTituloDeclaratorio = new TituloDeclaratorioConfiguracaoBus();
 		}
 
 		public Arquivo GerarPdf(int id)
 		{
+			ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 			Titulo titulo = _da.ObterSimplificado(id);
 			titulo.Modelo = ObterModelo(titulo.Modelo.Id);
 			titulo.Anexos = _da.ObterAnexos(id);
@@ -61,7 +64,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			if (titulo.ArquivoPdf.Id > 0)
 			{
-				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 				titulo.ArquivoPdf = busArquivo.Obter(titulo.ArquivoPdf.Id.Value);
 				string auxiliar = string.Empty;
 
@@ -93,7 +95,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				return titulo.ArquivoPdf;
 			}
 
-			titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos();
+			titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos() + ".pdf";
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
@@ -121,6 +123,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			titulo.Especificidade = busEspecificiade.Obter(titulo.Id) as Especificidade;
 			titulo.ToEspecificidade();
+
 			IConfiguradorPdf configurador = busEspecificiade.ObterConfiguradorPdf(titulo.Especificidade) ?? new ConfiguracaoDefault();
 
 			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
@@ -153,6 +156,32 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			{
 				Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf dataAnexos = dataSource as Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf;
 				msPdf = GeradorAspose.AnexarPdf(msPdf, dataAnexos.AnexosPdfs);
+			}
+
+			//Inclusão de arquivos de condicionante específicos para títulos cujo modelo seja
+			//Declaração de Dispensa de Licenciamento Ambiental de Barragem
+			if (titulo.Modelo.Id == 72)
+			{
+				CertidaoDispensaLicenciamentoAmbientalPDF pdfBarragemDisp = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
+				bool semApp = false;
+				if (pdfBarragemDisp.Caracterizacao.barragemEntity.areaAlagada < 1 && pdfBarragemDisp.Caracterizacao.barragemEntity.construidaConstruir.isSupressaoAPP == false)
+				{
+					semApp = true;
+				}
+
+				titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
+
+				if (titulo.CondicionantesBarragem != null)
+				{
+					titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
+					titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+					List<Arquivo> listaCondBarragem = new List<Arquivo>();
+
+					if (semApp) listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
+					else listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
+
+					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
+				}
 			}
 
 			return msPdf;

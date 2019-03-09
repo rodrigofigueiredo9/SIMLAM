@@ -45,7 +45,7 @@
 		</div>
 		<div class="coluna86">
 			<label for="DescricaoDesenvolvimento">Descreva o estágio de desenvolvimento, a caracterização da vegetação na faixa de APP e as medidas necessárias para atendimento à legislação. *</label>
-			<%= Html.TextBox("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "300" })) %>
+			<%= Html.TextBox("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "300" })) %>
 		</div>
 	</div>
 

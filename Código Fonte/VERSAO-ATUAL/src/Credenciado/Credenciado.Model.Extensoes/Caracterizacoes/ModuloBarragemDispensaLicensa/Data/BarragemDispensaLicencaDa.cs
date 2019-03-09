@@ -124,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
-				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);
+				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, DbType.String);
 				comando.AdicionarParametroEntrada("demarcacao_app", caracterizacao.construidaConstruir.isDemarcacaoAPP, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_normas", caracterizacao.construidaConstruir.barramentoNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_adequacoes", caracterizacao.construidaConstruir.barramentoAdequacoes, DbType.String);
@@ -187,7 +187,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Finalidade Atividade
 				caracterizacao.finalidade.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
-					insert into CRT_BARRAGEM_FINALIDADE_ATIV(id, barragem, atividade)
+					insert into crt_barragem_finalidade_ativ(id, barragem, atividade)
 						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
@@ -265,7 +265,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
-				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);
+				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, DbType.String);
 				comando.AdicionarParametroEntrada("demarcacao_app", caracterizacao.construidaConstruir.isDemarcacaoAPP, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_normas", caracterizacao.construidaConstruir.barramentoNormas, DbType.Int32);
 				comando.AdicionarParametroEntrada("barramento_adequacoes", caracterizacao.construidaConstruir.barramentoAdequacoes, DbType.String);
@@ -287,13 +287,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#endregion
 
 				#region Finalidade Atividade
-				comando = bancoDeDados.CriarComando(@" delete CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :barragem", EsquemaCredenciadoBanco);
+				comando = bancoDeDados.CriarComando(@" delete crt_barragem_finalidade_ativ where barragem = :barragem", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				caracterizacao.finalidade.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
-					insert into CRT_BARRAGEM_FINALIDADE_ATIV(id, barragem, atividade)
+					insert into crt_barragem_finalidade_ativ(id, barragem, atividade)
 						values(seq_crt_barragem_final_ativ.nextval, :barragem, :atividade) ", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
@@ -392,7 +392,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
-					delete from CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :id;
+					delete from crt_barragem_finalidade_ativ where barragem = :id;
 					delete from crt_barragem_coordenada where barragem = :id;
 					delete from crt_barragem_responsavel where barragem = :id;
 					delete from crt_barragem_construida_con where barragem = :id;
@@ -714,7 +714,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.construidaConstruir.larguraDemarcada = reader.GetValue<decimal>("largura_demarcada");
 						caracterizacao.construidaConstruir.larguraDemarcadaLegislacao = reader.GetValue<bool>("largura_demarcada_legislacao");
 						caracterizacao.construidaConstruir.faixaCercada = reader.GetValue<int>("faixa_cercada");
-						caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
+						caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP = reader.GetValue<string>("descricao_desen_app");
 						caracterizacao.construidaConstruir.isDemarcacaoAPP = reader.GetValue<int>("demarcacao_app");
 						caracterizacao.construidaConstruir.barramentoNormas = reader.GetValue<bool>("barramento_normas");
 						caracterizacao.construidaConstruir.barramentoAdequacoes = reader.GetValue<string>("barramento_adequacoes");
@@ -782,7 +782,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				#region Finalidade Atividade
 				comando = bancoDeDados.CriarComando(@"
-					select  f.atividade from CRT_BARRAGEM_FINALIDADE_ATIV f where f.barragem = :barragem", EsquemaCredenciadoBanco);
+					select  f.atividade from crt_barragem_finalidade_ativ f where f.barragem = :barragem", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
 
@@ -1012,7 +1012,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select a.texto from CRT_BARRAGEM_FINALIDADE_ATIV f
+					select a.texto from crt_barragem_finalidade_ativ f
 						inner join lov_crt_bdla_finalidade_atv a on f.atividade = a.id
 					where f.barragem = :barragem", EsquemaCredenciadoBanco);
 
@@ -1069,25 +1069,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Validações
 
-		internal decimal AreaAlagadaConfiguracao(decimal area, BancoDeDados banco = null)
+		internal decimal ObterConfiguracao(string codigo, BancoDeDados banco = null)
 		{
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select area_alagada from tab_titulo_configuracao", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select valor from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
 
-				return bancoDeDados.ExecutarScalar<decimal>(comando);
-			}
-		}
+				comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
 
-		internal decimal VolumeArmazenadoConfiguracao(decimal area, BancoDeDados banco = null)
-		{
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select volume_armazenado from tab_titulo_configuracao", EsquemaCredenciadoBanco);
-
-				return bancoDeDados.ExecutarScalar<decimal>(comando);
+				return 10;// bancoDeDados.ExecutarScalar<decimal>(comando);
 			}
 		}
 

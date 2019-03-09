@@ -30,6 +30,7 @@ using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
@@ -54,6 +55,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		TituloModeloBus _busModelo = new TituloModeloBus(null);
 		ProjetoGeograficoBus _busProjetoGeografico = new ProjetoGeograficoBus();
 		GerenciadorConfiguracao<ConfiguracaoTituloModelo> _configTituloModelo = new GerenciadorConfiguracao<ConfiguracaoTituloModelo>(new ConfiguracaoTituloModelo());
+		TituloDeclaratorioConfiguracaoBus _busTituloDeclaratorio;
 
 		ProtocoloBus _busProtocolo = new ProtocoloBus();
 		public ProtocoloBus BusProtocolo
@@ -451,6 +453,32 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			{
 				Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf dataAnexos = dataSource as Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.IAnexoPdf;
 				msPdf = GeradorAspose.AnexarPdf(msPdf, dataAnexos.AnexosPdfs);
+			}
+
+			//Inclusão de arquivos de condicionante específicos para títulos cujo modelo seja
+			//Declaração de Dispensa de Licenciamento Ambiental de Barragem
+			if (titulo.Modelo.Id == 72)
+			{
+				CertidaoDispensaLicenciamentoAmbientalPDF pdfBarragemDisp = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
+				bool semApp = false;
+				if (pdfBarragemDisp.Caracterizacao.barragemEntity.areaAlagada < 1 && pdfBarragemDisp.Caracterizacao.barragemEntity.construidaConstruir.isSupressaoAPP == false)
+				{
+					semApp = true;
+				}
+
+				titulo.CondicionantesBarragem = _busTituloDeclaratorio.Obter();
+
+				if (titulo.CondicionantesBarragem != null)
+				{
+					titulo.CondicionantesBarragem.BarragemComAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemComAPP.Id.Value);
+					titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
+					List<Arquivo> listaCondBarragem = new List<Arquivo>();
+
+					if (semApp) listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
+					else listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
+
+					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
+				}
 			}
 
 			return msPdf;

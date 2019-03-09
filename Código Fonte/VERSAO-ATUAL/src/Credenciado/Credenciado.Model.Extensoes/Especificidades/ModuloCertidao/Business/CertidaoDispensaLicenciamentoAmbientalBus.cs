@@ -18,8 +18,10 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertida
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
+using System.ComponentModel;
 using System.Configuration;
 using System.Net.Http;
+using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -102,13 +104,40 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				CertidaoDispensaLicenciamentoAmbientalPDF certidao = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
 				DataEmissaoPorExtenso(certidao.Titulo);
 
-				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
+				certidao.SecaoConstruida = AsposeData.Empty;
+				certidao.SecaoAConstruir = AsposeData.Empty;
+
+				foreach (var c in certidao.Caracterizacao.barragemEntity.coordenadas)
 				{
-					certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
+					if (c.tipo == eTipoCoordenadaBarragem.barramento)
+					{
+						c.tipoTexto = "Barramento";
+					}
+					if (c.tipo == eTipoCoordenadaBarragem.areaBotaFora)
+					{
+						c.tipoTexto = "Área de bota-fora";
+					}
+					if (c.tipo == eTipoCoordenadaBarragem.areaEmprestimo)
+					{
+						c.tipoTexto = "Área de empréstimo";
+					}
 				}
 
-				certidao.Caracterizacao = new BarragemDispensaLicencaPDF(new BarragemDispensaLicencaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
+				certidao.Caracterizacao.finalidades = _da.ObterFinalidadesTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
+				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
+				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMaxTipoTexto = _da.ObterVazaoMaximaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
 
+				foreach(var rt in certidao.Caracterizacao.barragemEntity.responsaveisTecnicos)
+				{
+					rt.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.Id, (int)rt.tipo);
+				}
+
+				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoDeclaracao);
+				//certidao.ResponsavelTecnico.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.CredenciadoID);
+
+				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
+						certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
+				
 				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 				List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
 
@@ -125,12 +154,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			return null;
 		}
 
+
 		public override IConfiguradorPdf ObterConfiguradorPdf(IEspecificidade especificidade)
 		{
 			ConfiguracaoDefault conf = new ConfiguracaoDefault();
 			conf.AddLoadAcao((doc, dataSource) =>
 			{
 				List<Table> itenRemover = new List<Table>();
+				CertidaoDispensaLicenciamentoAmbientalPDF ds = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
+
+				if (ds.Caracterizacao.barragemEntity.faseInstalacao != eFase.Construida)
+					itenRemover.Add(doc.LastTable("«SecaoConstruida»"));
+				if (ds.Caracterizacao.barragemEntity.faseInstalacao != eFase.AConstruir)
+					itenRemover.Add(doc.LastTable("«SecaoAConstruir»"));
+				//doc.Find<Row>("«SecaoConstruida»").Remove();
+
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 
 				AsposeExtensoes.RemoveTables(itenRemover);
