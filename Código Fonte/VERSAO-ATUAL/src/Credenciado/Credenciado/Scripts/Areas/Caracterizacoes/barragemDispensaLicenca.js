@@ -572,10 +572,9 @@ BarragemDispensaLicenca = {
 	
 	desassociar: function () {
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
-		//dependenciaTipos.TipoCaracterizacao
-		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();
+		var possuiAssociacaoExterna = $(this).closest('tr').find('.dependencias').val() == 'True';
 
-		if (possuiAssociacaoExterna == "True")
+		if (possuiAssociacaoExterna)
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',
