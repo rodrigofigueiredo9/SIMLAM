@@ -138,7 +138,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna30">
+			<div class="coluna33">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do estudo ambiental *</label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[3].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoEstudoAmbientalNumero", maxlength = "14" })) %>
 			</div>

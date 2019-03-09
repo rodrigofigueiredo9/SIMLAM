@@ -215,8 +215,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				using (BancoDeDados bd = BancoDeDados.ObterInstancia(EsquemaCredenciadoBanco))
 				{
 					int interno = 0;
-					Comando comando = bd.CriarComando(@"select id from crt_barragem_dispensa_lic where interno_id = :interno");
-					comando.AdicionarParametroEntrada("interno", id, DbType.Int32);
+					Comando comando = bd.CriarComando(@"select id from crt_barragem_dispensa_lic where id = :id");
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					interno = bd.ExecutarScalar<int>(comando);
 					Excluir(interno, bd);
 				}

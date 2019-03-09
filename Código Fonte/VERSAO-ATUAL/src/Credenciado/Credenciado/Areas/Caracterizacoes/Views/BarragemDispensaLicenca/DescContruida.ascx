@@ -43,7 +43,7 @@
 		</div>
 		<div class="coluna60">
 			<label for="DescricaoDesenvolvimento">Descreva o estágio de desenvolvimento, a caracterização da vegetação na faixa de APP e as medidas necessárias para atendimento à legislação. *</label>
-			<%= Html.TextArea("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento" })) %>
+			<%= Html.TextArea("DescricaoDesenvolvimento", Model.Caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtDescricaoDesenvolvimento", maxlength = "8000" })) %>
 		</div>
 	</div>
 
@@ -57,7 +57,7 @@
 	<div class="block">
 		<div class="coluna60 AdequacoesDimensionamentoBarramento  <%= (Model.Caracterizacao.construidaConstruir.barramentoNormas == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoBarramento">Quais adequações serão realizadas? *</label>
-			<%= Html.TextArea("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento ", width ="200" })) %>
+			<%= Html.TextArea("AdequacoesDimensionamentoBarramento", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoBarramento ", width ="200", maxlength = "8000" })) %>
 		</div>
 		<br />
 	</div>
@@ -92,7 +92,7 @@
 	<div class="block">		
 		<div class="coluna60 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false || Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
-			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin " })) %>
+			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin ", maxlength = "8000" })) %>
 		</div>
 		<br />
 	</div>
@@ -123,7 +123,7 @@
 		</div>
 		<div class="coluna60 AdequacoesDimensionamentoVazaoMax <%= (Model.Caracterizacao.construidaConstruir.vazaoMaxNormas == false || Model.Caracterizacao.construidaConstruir.vazaoMaxInstalado == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoVazaoMax">Quais adequações serão realizadas? *</label>
-			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax ", @width ="200%" })) %>
+			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMax", Model.Caracterizacao.construidaConstruir.vazaoMaxAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMax ", @width ="200%", maxlength = "8000" })) %>
 		</div>
 	</div>
 </fieldset>

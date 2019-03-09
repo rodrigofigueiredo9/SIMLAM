@@ -120,15 +120,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-		public ActionResult Excluir(int id, int empreeendimento)
+		public ActionResult Excluir(int barragemId, int empreendimento)
 		{
-			string urlRedireciona = string.Empty;
-			if (_bus.Excluir(id))
+			string urlRedirecionar = string.Empty;
+			if (_bus.Excluir(barragemId))
 			{
-				urlRedireciona = Url.Action("Listar", "BarragemDispensaLicenca", new { id = empreeendimento, Msg = Validacao.QueryParam() });
+				urlRedirecionar = Url.Action("Listar", "BarragemDispensaLicenca", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
 
-			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedirecionar = urlRedirecionar }, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
@@ -138,19 +138,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
 		public ActionResult Listar(int id, bool isVisualizar = false)
 		{
-			if (!_caracterizacaoValidar.Basicas(id))
-			{
-				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
 			caracterizacao.EmpreendimentoID = id;
-
-			if (!_validar.Acessar(caracterizacao.EmpreendimentoID))
-			{
-				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
 
 			AtividadeBus atividadeBus = new AtividadeBus();
 
