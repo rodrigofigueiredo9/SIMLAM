@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Exiges.Negocios.Library;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,12 +10,14 @@ using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 {
@@ -2509,6 +2512,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
+				BarragemDispensaLicencaDa _barragemBus = new BarragemDispensaLicencaDa();
 				List<List<string>> retorno = new List<List<string>>();
 				string comandtxt = string.Empty;
 				Comando comando = bancoDeDados.CriarComando("");
@@ -2522,14 +2526,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					comandtxt += comando.FiltroAnd("mp.id", "municipio", filtro.municipio);
 
 				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo) && !string.IsNullOrWhiteSpace(filtro.fimPeriodo))
-					comandtxt += $@"tt.data_criacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
-										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND OR
-									tt.data_situacao BETWEEN TO_DATE ({filtro.inicioPeriodo}, 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
-										AND TO_DATE ({filtro.fimPeriodo}, 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND";
+					comandtxt += $@"AND tt.data_criacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ('{filtro.fimPeriodo}', 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND OR
+									tt.data_situacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+										AND TO_DATE ('{filtro.fimPeriodo}', 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND";
 
 
 				if (!string.IsNullOrWhiteSpace(filtro.nomeRazaoSocial))
-					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial);
+					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial, upper: true, likeInicio: true);
 								
 				if (!string.IsNullOrWhiteSpace(filtro.cpfCnpj))
 					comandtxt += comando.FiltroAnd("pc.cpf", "cpfCnpj", filtro.cpfCnpj);
@@ -2608,13 +2612,45 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					"vazao_max_tipo",
 					"vazao_max_larg_alt_diametro",
 					"periodo_inicio_obra",
-				   "periodo_termino_obra" };
+				   "periodo_termino_obra",
+					"atividades",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_numero_art",
+
+					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_numero_art",
+
+					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_nome",
+					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_profissao",
+					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_numero_art",
+
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_numero_art",
+
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_numero_art",
+
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_nome",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_profissao",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_registro_crea",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_numero_art"
+				};
 				retorno.Add(colunas);
 				#endregion
 
 				#region consulta
 				comando.DbCommand.CommandText = String.Format(@"
-				select  
+				select
+						bd.id barragem_id,
 						tn.numero || '/' || tn.ano numeto_titulo,
 						tt.requerimento,
 						pc.nome autor_nome,
@@ -2661,25 +2697,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						bd.equacao_calculo equacao_tempo_concentracao,
 						bd.vazao_enchente,
 						bd.fonte_vazao_enchente,
-						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						(case bc.supressao_app when 1 then 'Sim' when 0 then 'Não' else 'null' end) supressao_app_implant_barragem,
 						(case bc.demarcacao_app when 1 then 'Sim' when 0 then 'Não' else 'Não se aplica' end) fx_demarc_app_entorno_reserv,
 						bc.largura_demarcada,
-						(case bc.largura_demarcada_legislacao when 1 then 'Sim'when 0 then 'Não' else '' end) largura_demarcada_legislacao,
+						(case bc.largura_demarcada_legislacao when 1 then 'Sim' when 0 then 'Não' else '' end) largura_demarcada_legislacao,
 						(case bc.faixa_cercada when 1 then 'Sim' when 0 then 'Não' else 'Parcialmente' end) faixa_cercada,
 						bc.descricao_desen_app descricao_estagio_desenv,
-						(case bc.barramento_normas when 1 then 'Sim'when 0 then 'Não' else '' end) barragem_dentro_das_normas,
+						(case bc.barramento_normas when 1 then 'Sim'when 0 then 'Não' else 'null' end) barragem_dentro_das_normas,
 						bc.barramento_adequacoes,
 						li.texto vazao_min_tipo,
 						bc.vazao_min_diametro,
-						(case bc.vazao_min_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_instalado,
-						(case bc.vazao_min_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_min_normas,
+						(case bc.vazao_min_instalado when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_min_instalado,
+						(case bc.vazao_min_normas when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_min_normas,
 						bc.vazao_min_adequacoes,
 						la.texto vazao_max_tipo,
 						bc.vazao_max_diametro vazao_max_larg_alt_diametro,
-						(case bc.vazao_max_instalado when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_instalado,
-						(case bc.vazao_max_normas when 1 then 'Sim'when 0 then 'Não' else '' end) vazao_max_normas,
+						(case bc.vazao_max_instalado when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_instalado,
+						(case bc.vazao_max_normas when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_normas,
 						bc.vazao_max_adequacoes,
-						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else '' end) supressao_app_implant_barragem,
+						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else 'null' end) supressao_app_implant_barragem,
 						li.texto vazao_min_tipo,
 						bc.vazao_min_diametro,
 						la.texto vazao_max_tipo,
@@ -2695,9 +2731,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					left join  idafcredenciado.tab_pessoa           pc on cr.pessoa = pc.id 
 					left join  lov_titulo_situacao                  ls on ls.id = tt.situacao
 					left join  lov_titulo_situacao_motivo           lm on tt.situacao_motivo = lm.id
+					left join tab_titulo_numero                    tn on tt.id = tn.titulo
 					inner join lov_municipio                        mp on mp.id = tt.local_emissao
 					inner join idafcredenciado.tab_empreendimento   ee on ee.id = tt.empreendimento
-					inner join tab_titulo_numero                    tn on tt.id = tn.titulo
 					inner join tab_requerimento                     rq on rq.numero = tt.requerimento
 					inner join tab_requerimento_barragem            rb on rq.id = rb.requerimento
 					inner join crt_barragem_dispensa_lic            bd on bd.id = rb.barragem
@@ -2716,6 +2752,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					{
 						#region campos
 						List<string> resultados = new List<string>();
+						int barragemId = reader.GetValue<int>("barragem_id");
+						BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
+
+						resultados.Add(reader.GetValue<string>("numeto_titulo"));
 						resultados.Add(reader.GetValue<string>("requerimento"));
 						resultados.Add(reader.GetValue<string>("autor_nome"));
 						resultados.Add(reader.GetValue<string>("autor_cpf"));
@@ -2752,7 +2792,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("coordenada_area_emprestimo"));
 						resultados.Add(reader.GetValue<string>("curso_hidrico"));
 						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
-						resultados.Add(reader.GetValue<string>("area_bacia_contribuicao"));
 						resultados.Add(reader.GetValue<string>("precipitacao"));
 						resultados.Add(reader.GetValue<string>("fonte_precipitacao"));
 						resultados.Add(reader.GetValue<string>("periodo_retorno"));
@@ -2787,7 +2826,46 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
 						resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
 						resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
+
+						var atividades = String.Join(" / ", _barragemBus.ObterListaFinalidadeAtividade(barragemId));
+						if (String.IsNullOrWhiteSpace(atividades))
+							resultados.Add("(null)");
+						else
+							resultados.Add(atividades);
+
+						#region Responsaveis Tecnicos
+						Comando cmd = bancoDeDados.CriarComando(@"
+						select r.id, r.tipo, r.nome, p.texto profissao, r.registro_crea, r.numero_art, r.autorizacao_crea, r.proprio_declarante
+							from crt_barragem_responsavel r  inner join tab_profissao p on p.id = r.profissao
+						where r.barragem = :barragem");
+
+						cmd.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
+
+						using (IDataReader rd = bancoDeDados.ExecutarReader(cmd))
+						{
+							while (rd.Read())
+							{
+								var obj = caracterizacao.responsaveisTecnicos.FirstOrDefault(x => (int)x.tipo == rd.GetValue<int>("tipo"));
+								obj.id = rd.GetValue<int>("id");
+								obj.tipo = (eTipoRT)rd.GetValue<int>("tipo");
+								obj.nome = rd.GetValue<string>("nome");
+								obj.profissao.Texto = rd.GetValue<string>("profissao");
+								obj.registroCREA = rd.GetValue<string>("registro_crea");
+								obj.numeroART = rd.GetValue<string>("numero_art");
+								if (obj.tipo == eTipoRT.ElaboracaoProjeto)
+									obj.autorizacaoCREA.Id = rd.GetValue<int>("autorizacao_crea");
+								obj.proprioDeclarante = rd.GetValue<bool>("proprio_declarante");
+							}
+						}
+						caracterizacao.responsaveisTecnicos.ForEach(x => {
+							resultados.Add(x.nome);
+							resultados.Add(x.profissao.Texto);
+							resultados.Add(x.registroCREA);
+							resultados.Add(x.numeroART);
+						});
 						retorno.Add(resultados);
+						#endregion
+
 						#endregion
 					}
 

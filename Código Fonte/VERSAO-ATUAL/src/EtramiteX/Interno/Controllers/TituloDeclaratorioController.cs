@@ -337,7 +337,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Relatorio()
 		{
 			RelatorioVM vm = new RelatorioVM(
-				_busModelo.ObterModelosDeclaratorios().Where(x => x.Id == 92).ToList(),
+				_busModelo.ObterModelosDeclaratorios().Where(x => x.Id == 72).ToList(),
 				_busLista.Municipios("ES"));
 			
 			return View(vm);
@@ -348,6 +348,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			TituloRelatorioFiltro filtro = ViewModelHelper.JsSerializer.Deserialize<TituloRelatorioFiltro>(paramsJson);
 			var relatorio = _bus.GerarRelatorio(filtro);
+			
 			return ViewModelHelper.GerarArquivo("Relatorio.csv", relatorio, "application/vnd.ms-excel");
 		}
 

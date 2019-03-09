@@ -594,8 +594,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			try
 			{
-				var a = _da.GerarRelatorio(filtro);
-				return Excel.GerarPlanilha(a);
+				var consulta = _da.GerarRelatorio(filtro);
+				return Excel.GerarPlanilha(consulta);
 			}
 			catch(Exception ex)
 			{
