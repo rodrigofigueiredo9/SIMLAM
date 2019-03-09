@@ -24,7 +24,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMinAConstruir", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMinAConstruir", maxlength = "10" })) %>
 		</div>
 	</div>
 

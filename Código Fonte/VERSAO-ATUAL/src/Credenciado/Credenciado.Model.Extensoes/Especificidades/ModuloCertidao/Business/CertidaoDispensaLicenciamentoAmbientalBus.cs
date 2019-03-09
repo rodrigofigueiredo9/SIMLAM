@@ -111,6 +111,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				certidao.Caracterizacao = new BarragemDispensaLicencaPDF(new BarragemDispensaLicencaBus().ObterPorEmpreendimento(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault()));
 
+				foreach(var rt in certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Where(x => x.id > 0).ToList())
+				{
+					rt.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.Id, (int)rt.tipo);
+				}
+
+				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoDeclaracao);
+
+				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
+						certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
+				
 				GerenciadorConfiguracao<ConfiguracaoCaracterizacao> configCaracterizacao = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 				List<Lista> finalidades = configCaracterizacao.Obter<List<Lista>>(ConfiguracaoCaracterizacao.KeyBarragemDispensaLicencaFinalidadeAtividade);
 

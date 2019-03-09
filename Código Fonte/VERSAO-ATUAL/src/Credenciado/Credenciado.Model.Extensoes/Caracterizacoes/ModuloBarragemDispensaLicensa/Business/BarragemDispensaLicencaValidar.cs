@@ -104,9 +104,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
 
 			caracterizacao.coordenadas.ForEach(x => {
-				if (x.northing <= 0)
+				if (!x.northing.HasValue || x.northing <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.Description()));
-				if (x.easting <= 0)
+				if (!x.easting.HasValue || x.easting <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
 
