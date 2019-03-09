@@ -13,12 +13,14 @@
 			<%= Html.RadioButton("isSupressaoAPP", true, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Sim
 			<%= Html.RadioButton("isSupressaoAPP", false, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Não
 		</div>
-		<div class="coluna90">
-			<label for="isDemarcacaoAPP">Há faixa demarcada como Área de Preservação Permanente (APP) no entorno do reservatório? *</label>
-			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
-			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
-			<div class="isDemarcacaoAPPNaoSeAplica">
-				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.Dispensado, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não se aplica (somente para barragens menores que 1 hectare de lâmina d’água onde não houve supressão de vegetação em APP para sua implantação).
+		<div class="coluna100">
+			<div class="coluna58">
+				<label for="isDemarcacaoAPP">Há faixa demarcada como Área de Preservação Permanente (APP) no entorno do reservatório? *</label>
+			</div>
+			<div class="coluna35">
+				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
+				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
+				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.Dispensado, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP isDemarcacaoAPPNaoSeAplica" })) %> Não se aplica (somente para barragens menores que 1 hectare de lâmina d’água onde não houve supressão de vegetação em APP para sua implantação).
 			</div>
 		</div>
 	</div>
@@ -72,7 +74,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "22" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
 		</div>
 		<br />
 	</div>
@@ -86,7 +88,7 @@
 	<br />
 	<div class="block">
 		<div class="coluna80 vazaoMinNormas <%= (Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == true) ? "" : "hide"%>">
-			<label for="VazaoMinNormas">O dispositivo de vazão máxima está dimensionado de acordo com as normas técnicas e legais? *</label>
+			<label for="VazaoMinNormas">O dispositivo de vazão mínima está dimensionado de acordo com as normas técnicas e legais? *</label>
 			<%= Html.RadioButton("VazaoMinNormas", ConfiguracaoSistema.SIM,  Model.Caracterizacao.construidaConstruir.vazaoMinNormas == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinNormas" })) %> Sim
 			<%= Html.RadioButton("VazaoMinNormas", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbVazaoMinNormas" })) %> Não
 		</div>

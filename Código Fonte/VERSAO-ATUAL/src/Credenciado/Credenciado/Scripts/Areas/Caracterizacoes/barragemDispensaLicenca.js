@@ -338,7 +338,7 @@ BarragemDispensaLicenca = {
 				larguraDemarcada: $('.txtLarguraDemarcada').val(),
 				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true : false,
 				faixaCercada: $('.rbFaixaCercada:checked').val(),
-				descricacaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
+				descricaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
 				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
 				barramentoAdequacoes: $('.txtAdequacoesDimensionamentoBarramento').val(),
 				vazaoMinTipo: ($('.rbFase:checked')).val() == 1 ?
@@ -572,10 +572,9 @@ BarragemDispensaLicenca = {
 	
 	desassociar: function () {
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
-		//dependenciaTipos.TipoCaracterizacao
-		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();
+		var possuiAssociacaoExterna = $(this).closest('tr').find('.dependencias').val() == 'True';
 
-		if (possuiAssociacaoExterna == "True")
+		if (possuiAssociacaoExterna)
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',

@@ -295,8 +295,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (caracterizacao.responsaveisTecnicos.Exists(x =>
 						 !String.IsNullOrWhiteSpace(x.numeroART) &&
 						 (
-							(x.numeroART == caracterizacao.responsaveisTecnicos[2].numeroART && x != caracterizacao.responsaveisTecnicos[2]) ||
-							(x.numeroART == caracterizacao.responsaveisTecnicos[5].numeroART && x != caracterizacao.responsaveisTecnicos[5])
+							(x.numeroART == caracterizacao.responsaveisTecnicos[2].numeroART && x != caracterizacao.responsaveisTecnicos[2] && x != caracterizacao.responsaveisTecnicos[5]) ||
+							(x.numeroART == caracterizacao.responsaveisTecnicos[5].numeroART && x != caracterizacao.responsaveisTecnicos[5] && x != caracterizacao.responsaveisTecnicos[2])
 						 )))
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
 

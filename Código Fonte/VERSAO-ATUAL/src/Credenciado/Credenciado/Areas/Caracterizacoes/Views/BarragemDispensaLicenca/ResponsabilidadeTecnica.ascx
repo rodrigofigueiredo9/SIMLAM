@@ -85,7 +85,7 @@
 			</div>
 			<div class="coluna100">
 				<div class="coluna55">
-					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico/laudo de barragem construída *</label>
+					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico / laudo de barragem construída *</label>
 				</div><br />
 				<div class="coluna30">
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
