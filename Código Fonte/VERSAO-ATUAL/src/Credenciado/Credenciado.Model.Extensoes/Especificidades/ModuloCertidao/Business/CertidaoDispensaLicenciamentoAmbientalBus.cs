@@ -105,6 +105,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				DataEmissaoPorExtenso(certidao.Titulo);
 
 				certidao.SecaoConstruida = AsposeData.Empty;
+				certidao.SecaoAConstruir = AsposeData.Empty;
 
 				foreach (var c in certidao.Caracterizacao.barragemEntity.coordenadas)
 				{
@@ -122,20 +123,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					}
 				}
 
-				//if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.AConstruir)
-				//{
-				//	certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "A construir";
-				//}
-				//if (certidao.Caracterizacao.barragemEntity.faseInstalacao == eFase.Construida)
-				//{
-				//	certidao.Caracterizacao.barragemEntity.faseInstalacaoTexto = "Contruída";
-				//}
-
 				certidao.Caracterizacao.finalidades = _da.ObterFinalidadesTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
-				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
-				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMaxTipoTexto = _da.ObterVazaoMaximaTipoTexto(certidao.Caracterizacao.barragemEntity.CredenciadoID);
+				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
+				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMaxTipoTexto = _da.ObterVazaoMaximaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
+
+				foreach(var rt in certidao.Caracterizacao.barragemEntity.responsaveisTecnicos)
+				{
+					rt.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.Id, (int)rt.tipo);
+				}
+
 				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoDeclaracao);
-				certidao.ResponsavelTecnico.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.CredenciadoID);
+				//certidao.ResponsavelTecnico.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 
 				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
 						certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;
@@ -163,9 +161,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			conf.AddLoadAcao((doc, dataSource) =>
 			{
 				List<Table> itenRemover = new List<Table>();
+				CertidaoDispensaLicenciamentoAmbientalPDF ds = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
 
-				//itenRemover.Add(doc.LastTable("«SecaoConstruida»"));
-				doc.Find<Row>("«SecaoConstruida»").Remove();
+				if (ds.Caracterizacao.barragemEntity.faseInstalacao != eFase.Construida)
+					itenRemover.Add(doc.LastTable("«SecaoConstruida»"));
+				if (ds.Caracterizacao.barragemEntity.faseInstalacao != eFase.AConstruir)
+					itenRemover.Add(doc.LastTable("«SecaoAConstruir»"));
+				//doc.Find<Row>("«SecaoConstruida»").Remove();
 
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 

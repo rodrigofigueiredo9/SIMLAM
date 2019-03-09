@@ -490,7 +490,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select mt.texto from CRT_BARRAGEM_CONSTRUIDA_CON b " +
-					"inner join LOV_CRT_BDLA_VERTEDOURO_TIPO mt on b.VAZAO_MIN_TIPO = mt.id " +
+					"inner join LOV_CRT_BDLA_VERTEDOURO_TIPO mt on b.VAZAO_MAX_TIPO = mt.id " +
 					"where b.BARRAGEM = :barragem", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
@@ -499,7 +499,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			}
 			return vazao;
 		}
-		internal string ObterTextoProfissao(int barragemId, BancoDeDados banco= null)
+		internal string ObterTextoProfissao(int barragemId, int tipoRT = 1, BancoDeDados banco= null)
 		{
 			string TextoProfissao;
 
@@ -508,9 +508,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				Comando comando = bancoDeDados.CriarComando(@"select p.texto from CRT_BARRAGEM_DISPENSA_LIC b
 					inner join CRT_BARRAGEM_RESPONSAVEL br on b.ID = br.BARRAGEM
 					inner join TAB_PROFISSAO p on br.PROFISSAO = p.id
-					where b.id = :barragem and br.tipo = 1");
+					where b.id = :barragem and br.tipo = :tipoRT");
 
 				comando.AdicionarParametroEntrada("barragem", barragemId, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipoRT", tipoRT, DbType.Int32);
 
 				TextoProfissao = bancoDeDados.ExecutarScalar<string>(comando);
 			}

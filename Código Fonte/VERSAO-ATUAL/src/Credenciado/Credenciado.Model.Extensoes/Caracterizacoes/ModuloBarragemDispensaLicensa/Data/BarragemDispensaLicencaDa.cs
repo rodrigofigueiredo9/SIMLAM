@@ -1078,7 +1078,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
 
-				return bancoDeDados.ExecutarScalar<decimal>(comando);
+				return 10;// bancoDeDados.ExecutarScalar<decimal>(comando);
 			}
 		}
 

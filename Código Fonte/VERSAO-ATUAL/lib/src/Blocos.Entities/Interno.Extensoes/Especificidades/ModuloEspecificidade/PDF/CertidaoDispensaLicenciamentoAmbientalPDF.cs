@@ -19,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public TituloPDF Titulo { get; set; }
 		public BarragemDispensaLicencaPDF Caracterizacao { get; set; }
 		public string SecaoConstruida { get; set; }
+		public string SecaoAConstruir { get; set; }
 
 		public CertidaoDispensaLicenciamentoAmbientalPDF()
 		{
