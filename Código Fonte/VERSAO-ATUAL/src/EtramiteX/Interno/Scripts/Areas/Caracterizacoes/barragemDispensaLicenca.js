@@ -445,7 +445,7 @@ BarragemDispensaLicenca = {
 
 		$.ajax({
 			url: BarragemDispensaLicenca.settings.urls.excluir,
-			data: JSON.stringify({ id: id, empreendimento: $('.hdnEmpreendimentoId').val() }),
+			data: JSON.stringify({ barragemId: id, empreendimento: $('.hdnEmpreendimentoId').val() }),
 			cache: false,
 			async: false,
 			type: 'POST',
@@ -453,8 +453,9 @@ BarragemDispensaLicenca = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
+				debugger;
 				if (response.EhValido) {
-					MasterPage.redireciona(response.UrlRedirecionar);
+					MasterPage.redireciona(response.urlRedirecionar);
 				}
 
 				if (response.Msg && response.Msg.length > 0) {
