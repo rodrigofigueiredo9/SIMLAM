@@ -18,7 +18,7 @@
 	<div class="block">
 		
 			<div class="coluna80">
-			<label for="TipoBarragem">Tipo da barramento: *</label>
+			<label for="TipoBarragem">Tipo do barramento: *</label>
 			<% foreach (var item in Model.BarragemTiposLst) { %>
 			<label><%= Html.RadioButton("TipoBarragem", item.Id, item.IsAtivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
 			<% } %>

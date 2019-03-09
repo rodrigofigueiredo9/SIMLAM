@@ -108,6 +108,6 @@
 		public Mensagem InformeAutorizacaoCREA(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A autorização do CREA do responsável técnico {0} é obrigatória.", tipo) }; }
 		public Mensagem InformeRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Se alguma informação do Responsável técnico for preenchida, todas as outras precisam ser preenchidas." }; } }
 
-		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "Não é possivel prosseguir com o mesmo número de ART do responsável técnico de elaboração e execução." }; } }
+		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "O número de ART de RTs de elaboração e de execução não pode ser o mesmo." }; } }
 	}
 }
