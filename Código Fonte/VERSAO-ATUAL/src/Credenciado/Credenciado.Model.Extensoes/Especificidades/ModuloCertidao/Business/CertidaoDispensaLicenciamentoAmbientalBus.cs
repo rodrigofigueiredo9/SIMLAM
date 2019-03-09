@@ -21,6 +21,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBar
 using System.Configuration;
 using System.Net.Http;
 using System.Net;
+using System.Text;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -148,8 +149,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				var token = ConfigurationManager.AppSettings["tokenInstitucional"];
 				HttpClient _client = new HttpClient();
 				_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+				var stringContent = new StringContent("", UnicodeEncoding.UTF8, "application/json");
 
-				HttpResponseMessage response = _client.GetAsync($"{apiUri}/Titulo/{tituloId}/ImportacaoBarragem").Result;
+				HttpResponseMessage response = _client.PostAsync($"{apiUri}Titulo/{tituloId}/ImportacaoBarragem", stringContent).Result;
 
 				if (!response.IsSuccessStatusCode)
 					throw new Exception("Não foi possível conectar no servidor");

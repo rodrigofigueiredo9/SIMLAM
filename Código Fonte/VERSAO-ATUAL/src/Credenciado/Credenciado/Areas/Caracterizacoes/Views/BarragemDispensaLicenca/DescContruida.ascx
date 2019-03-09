@@ -13,12 +13,10 @@
 			<%= Html.RadioButton("isSupressaoAPP", true, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Sim
 			<%= Html.RadioButton("isSupressaoAPP", false, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbSupressaoAPP" })) %> Não
 		</div>
-		<div class="coluna66">
+		<div class="coluna90">
 			<label for="isDemarcacaoAPP">Há faixa demarcada como Área de Preservação Permanente (APP) no entorno do reservatório? *</label>
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
-		</div>
-		<div class="coluna29  isDemarcacaoAPPNaoSeAplica">
 			<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.Dispensado, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não se aplica (somente para barragens menores que 1 hectare de lâmina d’água onde não houve supressão de vegetação em APP para sua implantação).
 		</div>
 	</div>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
@@ -121,7 +121,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("supressao_app", caracterizacao.construidaConstruir.isSupressaoAPP, DbType.Int32);
-				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
+				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP, DbType.String);

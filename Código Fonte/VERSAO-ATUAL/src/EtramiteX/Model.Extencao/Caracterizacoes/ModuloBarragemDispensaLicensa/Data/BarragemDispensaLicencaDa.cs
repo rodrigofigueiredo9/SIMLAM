@@ -331,7 +331,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 		}
 
 
-		public List<BarragemDispensaLicenca> ObterLista(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		public List<BarragemDispensaLicenca> ObterLista(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
 			List<BarragemDispensaLicenca> ListaDeBarragens = new List<BarragemDispensaLicenca>();
 			BarragemDispensaLicenca caracterizacao;
