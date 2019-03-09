@@ -129,13 +129,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMinTipoTexto = _da.ObterVazaoMinimaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
 				certidao.Caracterizacao.barragemEntity.construidaConstruir.vazaoMaxTipoTexto = _da.ObterVazaoMaximaTipoTexto(certidao.Caracterizacao.barragemEntity.Id);
 
-				foreach(var rt in certidao.Caracterizacao.barragemEntity.responsaveisTecnicos)
+				foreach(var rt in certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Where(x => x.id > 0).ToList())
 				{
 					rt.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.Id, (int)rt.tipo);
 				}
 
 				certidao.ResponsavelTecnico = certidao.Caracterizacao.barragemEntity.responsaveisTecnicos.Find(x => x.tipo == eTipoRT.ElaboracaoDeclaracao);
-				//certidao.ResponsavelTecnico.profissao.Texto = _da.ObterTextoProfissao(certidao.Caracterizacao.barragemEntity.CredenciadoID);
 
 				if (!string.IsNullOrEmpty(certidao.VinculoPropriedadeOutro))
 						certidao.VinculoPropriedade = certidao.VinculoPropriedadeOutro;

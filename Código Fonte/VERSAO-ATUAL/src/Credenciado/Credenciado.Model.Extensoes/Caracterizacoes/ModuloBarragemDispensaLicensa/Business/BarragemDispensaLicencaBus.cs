@@ -422,17 +422,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				rtLst[0] = rt;
 				rtLst[0].id = id1;
+
 				if (rtElaboracao == 1 || rtElaboracao == 3)
 				{
-					var id2 = rtLst[1].id;
-					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
-					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
-					rtLst[1].id = id2;
-					rtLst[1].proprioDeclarante = true;
-					rtLst[1].numeroART = String.Empty;
+					if(rtLst[1].id <= 0)
+					{
+						var id2 = rtLst[1].id;
+						rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
+						rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
+						rtLst[1].id = id2;
+						rtLst[1].proprioDeclarante = true;
+						rtLst[1].numeroART = String.Empty;
+					}else
+						rtLst[1].proprioDeclarante = true;
 				}
 
-				if (rtElaboracao == 2 || rtElaboracao == 3)
+				if (rtElaboracao == 2 || rtElaboracao == 3 && rtLst[3].id <= 0)
 				{
 					var id2 = rtLst[3].id;
 					rtLst[3] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
