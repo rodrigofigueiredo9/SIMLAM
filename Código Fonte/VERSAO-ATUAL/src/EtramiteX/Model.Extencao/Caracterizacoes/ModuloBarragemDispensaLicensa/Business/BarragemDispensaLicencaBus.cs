@@ -201,13 +201,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
             return barragem;
 		}
 
-		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, int projetoDigitalId, bool simplificado = false, BancoDeDados banco = null)
+		public List<BarragemDispensaLicenca> ObterListar(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
 		{
 			List<BarragemDispensaLicenca> Barragens = new List<BarragemDispensaLicenca>();
 
 			try
 			{
-				Barragens = _da.ObterLista(empreendimentoId, projetoDigitalId, simplificado, banco);
+				Barragens = _da.ObterLista(empreendimentoId, simplificado, banco);
 			}
 			catch (Exception exc)
 			{

@@ -121,7 +121,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("supressao_app", caracterizacao.construidaConstruir.isSupressaoAPP, DbType.Int32);
-				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Int32);
+				comando.AdicionarParametroEntrada("largura_demarcada", caracterizacao.construidaConstruir.larguraDemarcada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("largura_demarcada_legislacao", caracterizacao.construidaConstruir.larguraDemarcadaLegislacao, DbType.Decimal);
 				comando.AdicionarParametroEntrada("faixa_cercada", caracterizacao.construidaConstruir.faixaCercada, DbType.Decimal);
 				comando.AdicionarParametroEntrada("descricao_desen_app", caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP, DbType.String);
@@ -1074,7 +1074,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select valor from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select cast(valor as number) from tab_titulo_configuracao where codigo = :codigo", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("codigo", codigo, DbType.String);
 

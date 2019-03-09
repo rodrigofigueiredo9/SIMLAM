@@ -22,6 +22,8 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Net.Http;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
+using System.Net;
+using System.Text;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -181,16 +183,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			try
 			{
-				var apiUri = ConfigurationManager.AppSettings["api"];
-				var token = ConfigurationManager.AppSettings["tokenCredenciado"];
+				var apiUri = ConfigurationManager.AppSettings["apiInstitucional"];
+				var token = ConfigurationManager.AppSettings["tokenInstitucional"];
 				HttpClient _client = new HttpClient();
 				_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+				var stringContent = new StringContent("", UnicodeEncoding.UTF8, "application/json");
 
-				HttpResponseMessage response = _client.GetAsync($"{apiUri}Titulo/ImportacaoBarragem/Titulo/{tituloId}").Result;
+				HttpResponseMessage response = _client.PostAsync($"{apiUri}Titulo/{tituloId}/ImportacaoBarragem", stringContent).Result;
+
+				if (!response.IsSuccessStatusCode)
+					throw new Exception("Não foi possível conectar no servidor");
+				if(response.StatusCode != HttpStatusCode.OK)
+					throw new Exception("Mensagem não esperada");
+
 				var json = response.Content.ReadAsStringAsync().Result;
 			}
 			catch(Exception ex)
 			{
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.ImportacaoErro);
 				Validacao.AddErro(ex);
 			}
 			

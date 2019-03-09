@@ -27,7 +27,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna58">
+			<div class="coluna65">
 				<label for="RTNum">Número da ART de elaboração da Declaração de Dispensa de Licenciamento Ambiental de Barragem *</label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[0].numeroART, ViewModelHelper.SetaDisabled(true, new { @class = "text txtRTElaboracaoDeclaracaoNumero", maxlength = "14" })) %>
 			</div>
@@ -80,9 +80,9 @@
 				</div>
 			</div>
 
-			<div class="coluna46">
+			<div class="coluna55">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico/laudo de barragem construída *</label>
-				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[1].proprioDeclarante, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
+				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
 			</div>
 		</div>
 	</fieldset>
@@ -112,7 +112,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna30">
+			<div class="coluna35">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de execução da barragem </label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[2].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[2].proprioDeclarante, new { @class = "text rtNumero txtRTExecucaoBarragemNumero", maxlength = "14" })) %>
 			</div>
@@ -170,7 +170,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna46">
+			<div class="coluna50">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Plano de Recuperação de Área Degradada</label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[4].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[4].proprioDeclarante, new { @class = "text rtNumero txtRTElaboracaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
 			</div>
@@ -202,7 +202,7 @@
 			</div>
 		</div>
 		<div class="block">
-			<div class="coluna46">
+			<div class="coluna50">
 				<label for="DiametroTubulacaoVazaoMin">Número da ART de execução do Plano de Recuperação de Área Degradada</label>
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[5].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[5].proprioDeclarante, new { @class = "text rtNumero txtRTExecucaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
 			</div>

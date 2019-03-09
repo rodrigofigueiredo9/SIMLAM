@@ -46,7 +46,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
 			AtividadeBus atividadeBus = new AtividadeBus();
 
-			var rtElaborador = _bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, caracterizacao.RequerimentoId)[1].proprioDeclarante;
+			//var rtElaborador = _bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, caracterizacao.RequerimentoId)[1].proprioDeclarante;
 
 			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
 				caracterizacao,
@@ -166,7 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_listaBus.Profissoes
 			);
 
-			vm.CaracterizacoesCadastradas = _bus.ObterListar(id, 0);
+			vm.CaracterizacoesCadastradas = _bus.ObterListar(id);
 			vm.IsVisualizar = isVisualizar;
 			return View(vm);
 		}
