@@ -110,6 +110,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
 
+			if (!Validacao.EhValido) return false;
+
 			ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
 
 			if (!caracterizacao.Fase.HasValue)
