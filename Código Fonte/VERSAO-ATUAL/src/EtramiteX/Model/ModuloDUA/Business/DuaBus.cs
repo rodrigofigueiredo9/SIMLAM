@@ -65,8 +65,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 				HttpClient _client = new HttpClient();
 
 				var apiUri = ConfigurationManager.AppSettings["api"];
-				
-				HttpResponseMessage response = _client.GetAsync($"SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
+				var token = ConfigurationManager.AppSettings["token"];
+
+				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
+				HttpResponseMessage response = _client.GetAsync($"{apiUri}SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
 				if(response.IsSuccessStatusCode)
 					Validacao.Add(Mensagem.Dua.Sucesso);
 				else
@@ -90,8 +92,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 				HttpClient _client = new HttpClient();
 
 				var apiUri = ConfigurationManager.AppSettings["api"];
+				var token = ConfigurationManager.AppSettings["token"];
 
-				HttpResponseMessage response = _client.GetAsync($"SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;
+				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
+				HttpResponseMessage response = _client.GetAsync($"{apiUri}SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;
 				response.EnsureSuccessStatusCode();
 
 				string responseBody = response.Content.ReadAsStringAsync().Result;
