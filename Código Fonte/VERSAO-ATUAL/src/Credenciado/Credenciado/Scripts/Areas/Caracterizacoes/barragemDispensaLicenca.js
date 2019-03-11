@@ -300,7 +300,8 @@ BarragemDispensaLicenca = {
 		Mensagem.limpar(BarragemDispensaLicenca.container);
         var objeto = {
             Id: $('.hdnCaracterizacaoId', BarragemDispensaLicenca.container).val(),
-            EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
+			EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
+			ProjetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val(),
             AtividadeID: $('.ddlAtividade', BarragemDispensaLicenca.container).val(),
             BarragemTipo: $('.rbBarragemTipo:checked', BarragemDispensaLicenca.container).val(),
 			fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),

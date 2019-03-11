@@ -20,9 +20,9 @@
 			<div class="coluna40">
 				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
 				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
-				<div class="isDemarcacaoAPPNaoSeAplica">
+				<span class="isDemarcacaoAPPNaoSeAplica <%= (Model.Caracterizacao.areaAlagada <= 1) ? "" : "hide" %> ">
 					<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.Dispensado, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 2, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não se aplica (somente para barragens menores que 1 hectare de lâmina d’água onde não houve supressão de vegetação em APP para sua implantação).
-				</div>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -76,7 +76,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMin", maxlength = "10" })) %>
 		</div>
 		<br />
 	</div>
