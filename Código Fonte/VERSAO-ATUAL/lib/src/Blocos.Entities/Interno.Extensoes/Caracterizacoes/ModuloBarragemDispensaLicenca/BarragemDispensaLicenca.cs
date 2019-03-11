@@ -15,6 +15,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string Tid { get; set; }
 		public int EmpreendimentoID { get; set; }
 		public int EmpreendimentoCodigo { get; set; }
+		public int ProjetoDigitalId { get; set; }
 		public int RequerimentoId { get; set; }
 		public string TituloNumero { get; set; }
 		public int TituloId { get; set; }
@@ -46,6 +47,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public decimal vazaoEnchente { get; set; }
 		public string fonteDadosVazaoEnchente { get; set; }
 
+		//
 		public string EquacaoCalculo { get; set; }
 		public int? Fase { get; set; }
 		public int? PossuiMonge { get; set; }

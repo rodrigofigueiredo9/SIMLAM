@@ -197,6 +197,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				});
 				#endregion
 
+				#region Requerimneto Barragem
+
+				comando = bancoDeDados.CriarComando(@"
+				update tab_requerimento_barragem b set b.barragem = :barragem 
+				where b.requerimento in (
+						select requerimento from tab_projeto_digital where id = :proj)", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("proj", caracterizacao.ProjetoDigitalId, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				#endregion
+
 				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -334,19 +347,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (x.id > 0)
 						{
 							comando = bancoDeDados.CriarComando(@"
-						update crt_barragem_responsavel set
- 							nome = :nome, profissao = :profissao, registro_crea = :registro_crea,
-							numero_art = :numero_art, autorizacao_crea = :autorizacao_crea, proprio_declarante = :proprio_declarante
-						where id = :id", EsquemaCredenciadoBanco);
+							update crt_barragem_responsavel set
+ 								nome = :nome, profissao = :profissao, registro_crea = :registro_crea,
+								numero_art = :numero_art, autorizacao_crea = :autorizacao_crea, proprio_declarante = :proprio_declarante
+							where id = :id", EsquemaCredenciadoBanco);
 							comando.AdicionarParametroEntrada("id", x.id, DbType.Int32);
 						}
 						else
 						{
 							comando = bancoDeDados.CriarComando(@"
-						insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
-							numero_art, autorizacao_crea, proprio_declarante)
-						values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
-							:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
+							insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, registro_crea,
+								numero_art, autorizacao_crea, proprio_declarante)
+							values (seq_crt_barragem_responsavel.nextval, :barragem, :tipo, :nome, :profissao, :registro_crea,
+								:numero_art, :autorizacao_crea, :proprio_declarante) ", EsquemaCredenciadoBanco);
 							comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
 							comando.AdicionarParametroEntrada("tipo", (int)x.tipo, DbType.Int32);
 						}
@@ -362,6 +375,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						bancoDeDados.ExecutarNonQuery(comando);
 					}
 				});
+				#endregion
+
+				#region Requerimneto Barragem
+
+				comando = bancoDeDados.CriarComando(@"
+				update tab_requerimento_barragem b set b.barragem = :barragem 
+				where b.requerimento in (
+						select requerimento from tab_projeto_digital where id = :proj)", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", caracterizacao.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("proj", caracterizacao.ProjetoDigitalId, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				#endregion
 
 				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.atualizar, bancoDeDados);
@@ -392,6 +418,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
+					update tab_requerimento_barragem set barragem = 0 where barragem = :id;
 					delete from CRT_BARRAGEM_FINALIDADE_ATIV where barragem = :id;
 					delete from crt_barragem_coordenada where barragem = :id;
 					delete from crt_barragem_responsavel where barragem = :id;
