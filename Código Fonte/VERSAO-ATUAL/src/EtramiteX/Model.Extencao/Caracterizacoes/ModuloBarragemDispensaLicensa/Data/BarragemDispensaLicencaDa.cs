@@ -72,17 +72,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("atividade", caracterizacao.AtividadeID, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo_barragem", caracterizacao.BarragemTipo, DbType.Int32);
-				//comando.adicionarparametroentrada("finalidade_atividade", caracterizacao.finalidadeatividade, dbtype.int32);
-				//comando.adicionarparametroentrada("curso_hidrico", caracterizacao.cursohidrico, dbtype.string);
-				//comando.adicionarparametroentrada("vazao_enchente", caracterizacao.vazaoenchente, dbtype.decimal);
-				//comando.adicionarparametroentrada("area_bacia_contribuicao", caracterizacao.areabaciacontribuicao, dbtype.decimal);
-				//comando.adicionarparametroentrada("precipitacao", caracterizacao.precipitacao, dbtype.decimal);
-				//comando.adicionarparametroentrada("periodo_retorno", caracterizacao.periodoretorno, dbtype.int32);
-				//comando.adicionarparametroentrada("coeficiente_escoamento", caracterizacao.coeficienteescoamento, dbtype.string);
-				//comando.adicionarparametroentrada("tempo_concentracao", caracterizacao.tempoconcentracao, dbtype.string);
-				//comando.adicionarparametroentrada("equacao_calculo", caracterizacao.equacaocalculo, dbtype.string);
-				//comando.adicionarparametroentrada("area_alagada", caracterizacao.areaalagada, dbtype.decimal);
-				//comando.adicionarparametroentrada("volume_armazenado", caracterizacao.volumearmazanado, dbtype.decimal);
 				comando.AdicionarParametroEntrada("fase", caracterizacao.Fase, DbType.Int32);
 				comando.AdicionarParametroEntrada("possui_monge", caracterizacao.PossuiMonge, DbType.Int32);//TODO
 				comando.AdicionarParametroEntrada("tipo_monge", caracterizacao.MongeTipo, DbType.Int32);
@@ -135,17 +124,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 				comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoID, DbType.Int32);
 				comando.AdicionarParametroEntrada("atividade", caracterizacao.AtividadeID, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo_barragem", caracterizacao.BarragemTipo, DbType.Int32);
-				//comando.AdicionarParametroEntrada("finalidade_atividade", caracterizacao.FinalidadeAtividade, DbType.Int32);
-				//comando.AdicionarParametroEntrada("curso_hidrico", caracterizacao.CursoHidrico, DbType.String);
-				//comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.VazaoEnchente, DbType.Decimal);
-				//comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.AreaBaciaContribuicao, DbType.Decimal);
-				//comando.AdicionarParametroEntrada("precipitacao", caracterizacao.Precipitacao, DbType.Decimal);
-				//comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.PeriodoRetorno, DbType.Int32);
-				//comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.CoeficienteEscoamento, DbType.String);
-				//comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.TempoConcentracao, DbType.String);
-				//comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.EquacaoCalculo, DbType.String);
-				//comando.AdicionarParametroEntrada("area_alagada", caracterizacao.AreaAlagada, DbType.Decimal);
-				//comando.AdicionarParametroEntrada("volume_armazenado", caracterizacao.VolumeArmazanado, DbType.Decimal);
 				comando.AdicionarParametroEntrada("fase", caracterizacao.Fase, DbType.Int32);
 				comando.AdicionarParametroEntrada("possui_monge", caracterizacao.PossuiMonge, DbType.Int32);//TODO
 				comando.AdicionarParametroEntrada("tipo_monge", caracterizacao.MongeTipo, DbType.Int32);
