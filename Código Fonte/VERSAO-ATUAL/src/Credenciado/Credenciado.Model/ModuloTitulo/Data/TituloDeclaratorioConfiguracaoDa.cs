@@ -169,7 +169,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 								if (reader["valor"] != null && !Convert.IsDBNull(reader["valor"]))
 								{
 									configuracao.BarragemComAPP.Id = Convert.ToInt32(reader["valor"]);
-									configuracao.BarragemComAPP.Nome = ObterNomeArquivo(configuracao.BarragemSemAPP.Id ?? 0, bancoDeDados);
+									configuracao.BarragemComAPP.Nome = ObterNomeArquivo(configuracao.BarragemComAPP.Id ?? 0, bancoDeDados);
 								}
 								break;
 
