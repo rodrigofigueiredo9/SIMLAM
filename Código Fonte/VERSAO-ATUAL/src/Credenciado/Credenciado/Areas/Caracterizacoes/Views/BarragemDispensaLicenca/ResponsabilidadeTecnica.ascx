@@ -84,7 +84,7 @@
 				</div>
 			</div>
 			<div class="coluna100">
-				<div class="coluna55">
+				<div class="coluna65">
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico / laudo de barragem construída *</label>
 				</div><br />
 				<div class="coluna30">
@@ -120,7 +120,7 @@
 		</div>
 		<div class="block">
 			<div class="coluna100">
-				<div class="coluna35">
+				<div class="coluna65">
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de execução da barragem </label>
 				</div><br />
 				<div class="coluna30">
@@ -150,7 +150,7 @@
 		</div>
 		<div class="block">
 			<div class="coluna100">
-				<div class="coluna33">
+				<div class="coluna65">
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do estudo ambiental *</label>
 				</div><br />
 				<div class="coluna30">
@@ -186,7 +186,7 @@
 		</div>
 		<div class="block">
 			<div class="coluna100">
-				<div class="coluna50">
+				<div class="coluna65">
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Plano de Recuperação de Área Degradada</label>
 				</div><br />
 				<div class="coluna30">
@@ -222,7 +222,7 @@
 		</div>
 		<div class="block">
 			<div class="coluna100">
-				<div class="coluna50">
+				<div class="coluna65">
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de execução do Plano de Recuperação de Área Degradada</label>
 				</div> <br />
 				<div class="coluna30">

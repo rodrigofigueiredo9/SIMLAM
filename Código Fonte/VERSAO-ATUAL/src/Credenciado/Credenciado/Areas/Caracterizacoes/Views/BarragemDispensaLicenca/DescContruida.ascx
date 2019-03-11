@@ -17,7 +17,7 @@
 			<div class="coluna58">
 				<label for="isDemarcacaoAPP">Há faixa demarcada como Área de Preservação Permanente (APP) no entorno do reservatório? *</label>
 			</div>
-			<div class="coluna35">
+			<div class="coluna40">
 				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 1, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Sim
 				<%= Html.RadioButton("isDemarcacaoAPP", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isDemarcacaoAPP == 0, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbDemarcaoAPP" })) %> Não
 				<div class="isDemarcacaoAPPNaoSeAplica">
