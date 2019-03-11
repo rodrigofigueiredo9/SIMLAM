@@ -446,6 +446,11 @@
 			<siteMapNode url="~/ConfiguracaoDocumentoFitossanitario/Configurar" title="Configurar Numeração CFO/CFOC/PTV" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 		</siteMapNode>
 
+		<siteMapNode url="~/TituloDeclaratorioConfiguracao" title="Configuração de Título Declaratório"  description="linkMenu conf_tit_decl" roles="ConfigDocumentoFitossanitario">
+			<siteMapNode url="~/TituloDeclaratorioConfiguracao/Index" title="Configuração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+			<siteMapNode url="~/TituloDeclaratorioConfiguracao/RelatorioAlteracaoTitulo" title="Relatório de Alteração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
+		</siteMapNode>
+
 		<siteMapNode url="~/PTV/" title="PTV"  description="linkMenu ptv" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar,DestinatarioPTVListar,DestinatarioPTVEditar,DestinatarioPTVExcluir,DestinatarioPTVVisualizar">
 			<siteMapNode url="~/PTV/Index" title="PTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
 				<siteMapNode url="~/PTV" description="linkMenu" roles="PTVListar" />
@@ -493,12 +498,6 @@
 				<siteMapNode url="~/CFOC" title="CFOCs" description="linkMenu" roles="CFOCListar"></siteMapNode>
 				<siteMapNode url="~/CFOC/Visualizar" title="Visualizar CFOC" description="linkMenu" roles="CFOCVisualizar"></siteMapNode>
 			</siteMapNode>
-		</siteMapNode>
-		
-		<!--<siteMapNode url="~/TituloDeclaratorioConfiguracao/Configurar" title="Configuração de Título Declaratório"  description="linkMenu num_cfo_cfoc_ptv" roles="ConfigDocumentoFitossanitario"></siteMapNode>-->
-		<siteMapNode url="~/TituloDeclaratorioConfiguracao" title="Configuração de Título Declaratório"  description="linkMenu conf_tit_decl" roles="ConfigDocumentoFitossanitario">
-			<siteMapNode url="~/TituloDeclaratorioConfiguracao/Index" title="Configuração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
-			<siteMapNode url="~/TituloDeclaratorioConfiguracao/RelatorioAlteracaoTitulo" title="Relatório de Alteração de Título Declaratório" description="linkMenu" roles="ConfigDocumentoFitossanitario"></siteMapNode>
 		</siteMapNode>
 		
 	</siteMapNode>

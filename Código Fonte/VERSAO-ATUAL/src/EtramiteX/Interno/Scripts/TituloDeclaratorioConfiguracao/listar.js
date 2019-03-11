@@ -6,11 +6,12 @@ TituloDeclaratorioConfiguracaoListar = {
 	container: null,
 
 	load: function (container) {
+		$($('.itemMenu')[0]).removeClass('ativo');	//para resolver o problema do menu que ficava selecionado
 		container.listarAjax();
 		TituloDeclaratorioConfiguracaoListar.container = MasterPage.getContent(container);
 		
 		TituloDeclaratorioConfiguracaoListar.container.delegate('.radioCpfCnpjInteressado', 'change', Aux.onChangeRadioCpfCnpjMask);
-		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpjInteressado', FiscalizacaoListar.container));
+		Aux.onChangeRadioCpfCnpjMask($('.radioCpfCnpjInteressado', TituloDeclaratorioConfiguracaoListar.container));
 		Aux.setarFoco(container);
 	}
 }
