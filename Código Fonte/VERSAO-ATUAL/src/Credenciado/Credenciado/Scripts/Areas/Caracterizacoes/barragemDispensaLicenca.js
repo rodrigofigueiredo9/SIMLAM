@@ -51,11 +51,6 @@ BarragemDispensaLicenca = {
 		container.delegate('.txtAreaAlagada', 'blur', BarragemDispensaLicenca.onChangeAreaAlagada);
 
 		BarragemDispensaLicenca.bloquearCriar();
-        //BarragemDispensaLicenca.changeBarragemTipo();
-        //BarragemDispensaLicenca.changeFase();
-        //BarragemDispensaLicenca.changeMongeVertedouroTipo();
-        //BarragemDispensaLicenca.changeFormacaoRT($('.cbFormacaoRT', BarragemDispensaLicenca.container));
-
         BarragemDispensaLicenca.configurarTela();
     },
 

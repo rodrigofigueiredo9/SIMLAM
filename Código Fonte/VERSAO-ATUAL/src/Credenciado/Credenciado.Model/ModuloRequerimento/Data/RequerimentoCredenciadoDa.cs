@@ -228,35 +228,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
 				{
 					comando = bancoDeDados.CriarComando(@"
-					select id from tab_requerimento_barragem where requerimento = :requerimento", UsuarioCredenciado);
+					select coalesce(id, 0) id_barragem from tab_requerimento_barragem where requerimento = :requerimento", UsuarioCredenciado);
 
 					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
 
-					int? idBarragem = bancoDeDados.ExecutarScalar<int?>(comando);
-
-					if (idBarragem != null && idBarragem > 0)
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{
-						comando = bancoDeDados.CriarComando(@"
-						update tab_requerimento_barragem
-							set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
-						where requerimento = :requerimento", UsuarioCredenciado);
+						if (reader.Read())
+						{
+							comando = bancoDeDados.CriarComando(@"
+							update tab_requerimento_barragem
+								set rt_elaboracao = :rt_elaboracao, possui_barragem_contigua = :possui_barragem_contigua
+							where requerimento = :requerimento", UsuarioCredenciado);
 
-						comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
-						comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+							comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+							comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+						}
+						else
+						{
+							comando = bancoDeDados.CriarComando(@"
+							insert into tab_requerimento_barragem 
+								(id, requerimento, rt_elaboracao, possui_barragem_contigua)      
+								values(seq_requerimento_barragem.nextval, :requerimento, :rt_elaboracao, :possui_barragem_contigua)", UsuarioCredenciado);
+
+							comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
+							comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
+						}
 					}
-					else
-					{
-						comando = bancoDeDados.CriarComando(@"
-						insert into tab_requerimento_barragem 
-							(id, requerimento, rt_elaboracao, possui_barragem_contigua)      
-							values(seq_requerimento_barragem.nextval, :requerimento, :rt_elaboracao, :possui_barragem_contigua)", UsuarioCredenciado);
-
-						comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
-						comando.AdicionarParametroEntrada("rt_elaboracao", requerimento.ResponsabilidadeRT, DbType.Int32);
-						comando.AdicionarParametroEntrada("possui_barragem_contigua", requerimento.BarragensContiguas, DbType.Int32);
-					}
-
 					bancoDeDados.ExecutarNonQuery(comando);
 				}
 				#endregion
@@ -721,7 +721,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 					CredenciadoPessoa usuarioLogado = _busCredenciado.Obter(User.EtramiteIdentity.FuncionarioId);
 					usuarioLogado.Pessoa = _busCredenciado.ObterPessoaCredenciado(usuarioLogado.Pessoa.Id);
 
-					if  (requerimento.Responsaveis.Count() > 1 || requerimento.Responsaveis.Count() == 0 || requerimento.Responsaveis.FirstOrDefault(x => x.Id == usuarioLogado.Pessoa.Id) == null)
+					if (requerimento.Responsaveis.Count() > 1 || requerimento.Responsaveis.Count() == 0 || requerimento.Responsaveis.FirstOrDefault(x => x.Id == usuarioLogado.Pessoa.Id) == null)
 					{
 						requerimento.Responsaveis = new List<ResponsavelTecnico>();
 
@@ -791,11 +791,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 					comando.AdicionarParametroEntrada("denominador", filtros.Dados.EmpreendimentoDenominador, DbType.String);
 				}
 
-                if (filtros.Dados.IsRemoverTituloDeclaratorio)
-                { 
-                    comandtxt += String.Format(@" and e.id not in (select ra.requerimento from tab_requerimento_atividade ra, tab_requerimento_ativ_finalida rf
+				if (filtros.Dados.IsRemoverTituloDeclaratorio)
+				{
+					comandtxt += String.Format(@" and e.id not in (select ra.requerimento from tab_requerimento_atividade ra, tab_requerimento_ativ_finalida rf
                                                                    where rf.requerimento_ativ = ra.id and rf.modelo in (select m.id from tab_titulo_modelo m where m.documento = 2))", esquema);
-                }
+				}
 
 				List<String> ordenar = new List<String>();
 				List<String> colunas = new List<String>() { "numero", "interessado_nome_razao", "empreendimento_denominador", "situacao_texto" };
@@ -1042,8 +1042,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 							reader.Close();
 						}
 
-						retorno.Where(x => x.IsJuridica).ToList().ForEach(x =>
-						{
+						retorno.Where(x => x.IsJuridica).ToList().ForEach(x => {
 							x.Juridica.Representantes = retorno.Where(y => y.IdRelacionamento == x.Id).ToList();
 						});
 					}
@@ -1121,7 +1120,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 			return retorno;
 		}
 
-		public List<int> ObterResponsavelTecnico (int requerimento)
+		public List<int> ObterResponsavelTecnico(int requerimento)
 		{
 			List<int> responsaveis = new List<int>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
