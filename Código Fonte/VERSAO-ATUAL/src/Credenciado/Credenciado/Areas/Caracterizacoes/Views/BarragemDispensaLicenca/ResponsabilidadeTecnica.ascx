@@ -124,7 +124,7 @@
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de execução da barragem </label>
 				</div><br />
 				<div class="coluna30">
-					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[2].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[2].proprioDeclarante, new { @class = "text rtNumero txtRTExecucaoBarragemNumero", maxlength = "14" })) %>
+					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[2].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text rtNumero txtRTExecucaoBarragemNumero", maxlength = "14" })) %>
 				</div>
 			</div>
 		</div>
@@ -190,7 +190,7 @@
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Plano de Recuperação de Área Degradada</label>
 				</div><br />
 				<div class="coluna30">
-					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[4].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[4].proprioDeclarante, new { @class = "text rtNumero txtRTElaboracaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
+					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[4].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text rtNumero txtRTElaboracaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
 				</div>
 			</div>
 		</div>
@@ -226,7 +226,7 @@
 					<label for="DiametroTubulacaoVazaoMin">Número da ART de execução do Plano de Recuperação de Área Degradada</label>
 				</div> <br />
 				<div class="coluna30">
-					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[5].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Caracterizacao.responsaveisTecnicos[5].proprioDeclarante, new { @class = "text rtNumero txtRTExecucaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
+					<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[5].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text rtNumero txtRTExecucaoPlanoRecuperacaoNumero", maxlength = "14" })) %>
 				</div>
 			</div>
 		</div>
