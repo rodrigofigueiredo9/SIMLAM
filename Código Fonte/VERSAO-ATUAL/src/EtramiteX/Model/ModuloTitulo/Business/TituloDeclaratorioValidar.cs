@@ -389,11 +389,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				case eTituloSituacao.Valido:
 					if (titulo.Modelo.Id == 72)   //Declaração de Dispensa de Licenciamento Ambiental de Barragem
 					{
-						if (tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso && tituloAux.Situacao.Id != (int)eTituloSituacao.Encerrado)
+						if (tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso && tituloAux.Situacao.Id != (int)eTituloSituacao.EncerradoDeclaratorio)
 						{
 							Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Suspenso ou encerrado"));
 						}
-						else if (tituloAux.Situacao.Id == (int)eTituloSituacao.Encerrado)
+						else if (tituloAux.Situacao.Id == (int)eTituloSituacao.EncerradoDeclaratorio)
 						{
 							BarragemDispensaLicencaBus _bus = new BarragemDispensaLicencaBus();
 							bool possuiCaracterizacao = _bus.PossuiCaracterizacao(titulo.RequerimetoId);
