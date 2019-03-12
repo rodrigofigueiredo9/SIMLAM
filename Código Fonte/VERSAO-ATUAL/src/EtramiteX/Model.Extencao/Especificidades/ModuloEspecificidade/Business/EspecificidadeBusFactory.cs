@@ -166,6 +166,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 				case eEspecificidade.TermoCPFARLCR:
 					return new TermoCPFARLCRBus();
 
+				//Declaração de Dispensa de Licenciamento Ambiental de Barragem
 				case eEspecificidade.CertidaoDispensaLicenciamentoAmbiental:
 					return new CertidaoDispensaLicenciamentoAmbientalBus();
 
