@@ -378,7 +378,21 @@ nav.navRec { width: 45px; }
 	left: -788px;
 	top: 6px;
 }
-.menu .itemMenu .linkMenu.num_cfo_cfoc_ptv span { margin-top: -7px; }
+.menu .itemMenu .linkMenu.num_cfo_cfoc_ptv span {
+		margin-top: -7px;
+	}
+
+
+.menu .itemMenu .linkMenu.conf_tit_decl img {
+	clip: rect(0px 824px 30px 799px);
+	left: -788px;
+	top: 6px;
+}
+
+.menu .itemMenu .linkMenu.conf_tit_decl span {
+	margin-top: -7px;
+}
+
 .menu .itemMenu .linkMenu.titulo_declaratorio img {
 	clip: rect(0px 844px 30px 824px);
 	left: -813px;
