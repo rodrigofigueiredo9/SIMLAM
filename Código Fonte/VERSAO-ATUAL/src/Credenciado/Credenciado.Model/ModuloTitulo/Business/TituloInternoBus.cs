@@ -91,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 						break;
 				}
 
-				titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos();
+				titulo.ArquivoPdf.Nome = titulo.Modelo.Nome.RemoverAcentos() + ".pdf";
 				return titulo.ArquivoPdf;
 			}
 
