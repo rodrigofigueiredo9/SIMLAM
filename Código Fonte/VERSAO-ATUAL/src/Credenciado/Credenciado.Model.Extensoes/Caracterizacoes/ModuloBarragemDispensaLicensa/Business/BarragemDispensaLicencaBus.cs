@@ -183,31 +183,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
-		public bool ExcluirPorId(int projetoDigitalId, BancoDeDados banco = null, bool validarDependencias = true)
-		{
-			try
-			{
-				
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
-				{
-					bancoDeDados.IniciarTransacao();
-
-					_da.ExcluirPorId(projetoDigitalId, bancoDeDados);
-
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
-
-					bancoDeDados.Commit();
-				}
-
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return Validacao.EhValido;
-		}
-
 		public bool CopiarDadosInstitucional(int empreendimentoID, int empreendimentoInternoID, BancoDeDados banco)
 		{
 			if (banco == null)

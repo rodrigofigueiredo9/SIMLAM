@@ -393,7 +393,7 @@ BarragemDispensaLicenca = {
 	obterRT: function () {
 
 		var retorno = [];
-		var arquivo = null;
+		
 		var tipo = [
 			{ codigo: '1', nome: 'ElaboracaoDeclaracao' },
 			{ codigo: '2', nome: 'ElaboracaoProjeto' },
@@ -405,6 +405,8 @@ BarragemDispensaLicenca = {
 
 
 		for (var i = 0; i < 6; i++) {
+			var arquivo = null;
+
 			if (tipo[i].codigo == 2 && !BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRT' + tipo[i].nome + 'Profissao').val())) {
 				arquivo = $('.hdnArquivo').val();
 				if (arquivo.isNullOrWhitespace()) {

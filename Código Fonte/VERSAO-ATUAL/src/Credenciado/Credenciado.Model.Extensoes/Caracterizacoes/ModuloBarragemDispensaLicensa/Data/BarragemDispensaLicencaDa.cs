@@ -434,39 +434,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public void ExcluirPorId(int id, BancoDeDados banco = null)
-		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
-			{
-				bancoDeDados.IniciarTransacao();
-				
-				#region Histórico
-
-				//Atualizar o tid para a nova ação
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.excluir, bancoDeDados, null);
-
-				#endregion
-
-				#region Apaga os dados da caracterização
-
-				comando = bancoDeDados.CriarComandoPlSql(
-				@"begin 
-					delete from crt_barragem_dispensa_lic where id = :id;
-				end;", EsquemaCredenciadoBanco);
-
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-				bancoDeDados.Commit();
-
-				#endregion
-			}
-		}
-
 		internal void CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao, BancoDeDados banco)
         {
 

@@ -317,7 +317,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					select  r.numero requerimento, 
+					select  rb.requerimento, 
 							n.numero || '/' || n.ano numero_titulo,
 							t.id titulo_id,
 							b.id, 
@@ -325,15 +325,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 							b.area_alagada, 
 							b.volume_armazenado
 					from tab_titulo t 
-					inner join tab_titulo_numero n on t.id = n.titulo
-					inner join idafcredenciado.tab_requerimento r on r.id = t.requerimento
-					inner join tab_requerimento ri on ri.numero = r.id
-					inner join tab_requerimento_barragem rb on rb.requerimento = ri.id
+					left join tab_titulo_numero n on t.id = n.titulo
+					inner join tab_requerimento_barragem rb on rb.requerimento = t.requerimento
 					inner join crt_barragem_dispensa_lic b on b.id = rb.barragem
 
-					where t.empreendimento in ( select id from idafcredenciado.tab_empreendimento e
-									where interno = :empreendimento ) 
-						and t.modelo = 72 and t.credenciado is not null ");
+					where b.empreendimento = :empreendimento");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
