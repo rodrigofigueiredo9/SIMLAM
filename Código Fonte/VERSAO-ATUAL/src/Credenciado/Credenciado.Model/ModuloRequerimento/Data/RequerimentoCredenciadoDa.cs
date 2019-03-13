@@ -400,7 +400,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 						comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("responsavel", responsavel.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("funcao", responsavel.Funcao, DbType.Int32);
-						comando.AdicionarParametroEntrada("numero_art", responsavel.NumeroArt, DbType.String);
+						comando.AdicionarParametroEntrada("numero_art", responsavel.NumeroArt ?? "", DbType.String);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
 
