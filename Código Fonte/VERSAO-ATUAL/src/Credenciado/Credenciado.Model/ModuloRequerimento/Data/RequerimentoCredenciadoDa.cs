@@ -190,8 +190,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 
 				#region Requerimento
 
-				bancoDeDados.IniciarTransacao();
-
 				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_requerimento r set r.interessado = :interessado, r.empreendimento = :empreendimento, 
 				r.situacao = :situacao, r.tid = :tid, r.agendamento = :agendamento, r.informacoes = :informacoes where r.id = :id", UsuarioCredenciado);
 
@@ -227,12 +225,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data
 				#region Barragem
 				if (requerimento.ResponsabilidadeRT != null || requerimento.ResponsabilidadeRT > 0)
 				{
-					comando = bancoDeDados.CriarComando(@"
+					Comando cmd = bancoDeDados.CriarComando(@"
 					select coalesce(id, 0) id_barragem from tab_requerimento_barragem where requerimento = :requerimento", UsuarioCredenciado);
 
-					comando.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
+					cmd.AdicionarParametroEntrada("requerimento", requerimento.Id, DbType.Int32);
 
-					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					using (IDataReader reader = bancoDeDados.ExecutarReader(cmd))
 					{
 						if (reader.Read())
 						{
