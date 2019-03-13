@@ -1061,6 +1061,28 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		}
 		#endregion
 
+		internal bool PossuiDadosCaracterizacao(int requerimento, BancoDeDados banco = null)
+		{
+			bool possui = false;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				string EsquemaBanco = "default";
+				Comando comando = bancoDeDados.CriarComando(@"
+				select count(1) qtd
+				from tab_requerimento_barragem trb
+				where trb.requerimento = :idrequerimento", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("idrequerimento", requerimento, DbType.Int32);
+
+				possui = bancoDeDados.ExecutarScalar<int>(comando) > 0;
+
+			}
+
+			return possui;
+		}
+		#endregion
+
 		#region Validações
 
 		internal decimal ObterConfiguracao(string codigo, BancoDeDados banco = null)
