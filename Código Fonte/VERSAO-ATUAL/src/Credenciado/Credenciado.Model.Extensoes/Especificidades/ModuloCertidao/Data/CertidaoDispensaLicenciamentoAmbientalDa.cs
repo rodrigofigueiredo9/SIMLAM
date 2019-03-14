@@ -499,6 +499,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			}
 			return vazao;
 		}
+
 		internal string ObterTextoProfissao(int barragemId, int tipoRT = 1, BancoDeDados banco= null)
 		{
 			string TextoProfissao;

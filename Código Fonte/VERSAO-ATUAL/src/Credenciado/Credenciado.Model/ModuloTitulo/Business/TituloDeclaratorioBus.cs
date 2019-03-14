@@ -25,6 +25,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEsp
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloCredenciado.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
@@ -287,6 +288,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 								atividadeBus.AlterarSituacao(atividade, bancoDeDados);
 							}
 						}
+					}
+
+					if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
+					{
+						ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
+
+						var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
+						projetoDigital.Situacao = 11; /*Finalizado*/
+						_proj.AlterarSituacao(projetoDigital);
 					}
 				}
 

@@ -27,7 +27,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 		BarragemDispensaLicencaDa _da = new BarragemDispensaLicencaDa();
 		CaracterizacaoBus _busCaracterizacao = new CaracterizacaoBus();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
-        ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
+        ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
 
         private static EtramiteIdentity User
         {
