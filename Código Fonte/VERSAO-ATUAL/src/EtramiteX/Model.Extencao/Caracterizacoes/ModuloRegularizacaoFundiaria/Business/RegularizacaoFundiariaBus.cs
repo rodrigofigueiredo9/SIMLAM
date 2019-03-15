@@ -171,6 +171,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					x.Zona = zona;
 				});
 
+				caracterizacao.Posses = caracterizacao.Posses.OrderBy(x => x.Identificacao).ToList();
 				caracterizacao.Matriculas = _busDominialidade.ObterPorEmpreendimento(empreendimento).Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 			}
 			catch (Exception exc)
