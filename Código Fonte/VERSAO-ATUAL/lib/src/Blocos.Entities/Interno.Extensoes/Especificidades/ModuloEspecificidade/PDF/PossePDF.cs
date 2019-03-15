@@ -51,7 +51,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 
 		/*Dominio*/
 		public long? NumeroCCIR { get; set; }
-		public String AreaCCIR { get; set; }
+		public String AreaCCIR { get { return AreaCCIRDecimal.ToStringTrunc(); } set { AreaCCIRDecimal = Decimal.Parse(value); } }
+		public Decimal AreaCCIRDecimal { get; set; }
 		public String DataAtualizacao { get; set; }
 		public String ConfrontacaoNorte { get; set; }
 		public String ConfrontacaoLeste { get; set; }
@@ -192,7 +193,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			Identificacao = posse.Identificacao;
 			NumeroCCIR = posse.NumeroCCIR;
 			//ComprovacaoTexto = posse.DescricaoComprovacao;
-			AreaCCIR = posse.AreaCCIR.ToString();
+			AreaCCIRDecimal = posse.AreaCCIR;
 			DataAtualizacao = posse.DataUltimaAtualizacaoCCIR.DataTexto;
 			ConfrontacaoNorte = posse.ConfrontacoesNorte;
 			ConfrontacaoSul = posse.ConfrontacoesSul;
