@@ -1,4 +1,4 @@
-import arcgisscripting
+import arcpy
 import gc
 import zipfile
 import os
@@ -12,48 +12,46 @@ def timeticks():
         raise
 
 try:    
-    gp = arcgisscripting.create(9.3)
+    
+    arcpy.AddMessage("Iniciado")
 
-    gp.AddMessage("Iniciado")
-
-    ids = gp.GetParameterAsText(0)
-    table = gp.GetParameterAsText(1)    
+    ids = arcpy.GetParameterAsText(0)
+    table = arcpy.GetParameterAsText(1)    
 
     fileName = timeticks()
     
     TEMP_GEOM = "in_memory\\" + fileName
 
-    path = "D:/arcgisserver/toolboxes/GetShape/"
+    path = "C:/Users/userdefault/Desktop/"
 
-    gp.AddMessage("Abrindo workspace")
-    
-    gp.Workspace = path + "IDAFGEO.sde"
+    arcpy.AddMessage("Abrindo workspace")
 
-    gp.MakeFeatureLayer_management("IDAFGEO." + table,TEMP_GEOM, "ID IN (" + ids + ")")
+    arcpy.env.workspace = path + "IDAFGEO - M.sde"
 
-    gp.AddMessage("Gerando centroids")
+    arcpy.MakeFeatureLayer_management("IDAFGEO." + table,TEMP_GEOM, "ID IN (" + ids + ")")
 
-    rows = gp.SearchCursor(TEMP_GEOM)
+    arcpy.AddMessage("Gerando centroids")
 
-    row = rows.next()
-
+    s_cursor = arcpy.SearchCursor(TEMP_GEOM)
+    cursor = s_cursor.next()
     returnCentroid = "["
-
-    while row:
-        returnCentroid += "{"+str(row.geometry.Centroid).split()[0].replace(",",".") + "," + str(row.geometry.Centroid).split()[1].replace(",",".")+"}"
-        row = rows.next()
-        if row != None:
+    
+    while cursor:
+        print cursor.geometry
+        returnCentroid += "{"+str(cursor.geometry.centroid).split()[0].replace(",",".") + "," + str(cursor.geometry.centroid).split()[1].replace(",",".")+"}"
+        cursor = s_cursor.next()
+        if cursor != None:
             returnCentroid += ","
 
     returnCentroid += "]"
 
-    gp.FeatureClassToShapefile(TEMP_GEOM, path)
+    arcpy.FeatureClassToShapefile_conversion(TEMP_GEOM, path)
 
-    gp.AddMessage("Criando zip")
+    arcpy.AddMessage("Criando zip")
     
     zf = zipfile.ZipFile(path + fileName + '.zip', mode='w')
 
-    gp.AddMessage("Adicionando arquivos")
+    arcpy.AddMessage("Adicionando arquivos")
     
     zf.write(path + fileName + '.shp', fileName + '.shp')
     zf.write(path + fileName + '.dbf', fileName + '.dbf')
@@ -62,6 +60,7 @@ try:
     zf.write(path + fileName + '.shp.xml', fileName + '.shp.xml')
     zf.write(path + fileName + '.sbx', fileName + '.sbx')
     zf.write(path + fileName + '.shx', fileName + '.shx')
+    zf.write(path + fileName + '.cpg', fileName + '.cpg')
     zf.close()
 
     os.remove(path + fileName + ".shp")
@@ -71,6 +70,7 @@ try:
     os.remove(path + fileName + ".shp.xml")
     os.remove(path + fileName + ".sbx")
     os.remove(path + fileName + ".shx")
+    os.remove(path + fileName + ".cpg")
 
     in_file = open(path + fileName + ".zip", "rb")
     data = in_file.read()
@@ -78,8 +78,8 @@ try:
 
     os.remove(path + fileName + ".zip")
     
-    gp.SetParameterAsText(2, binascii.b2a_base64(data))
-    gp.SetParameterAsText(3, returnCentroid)
+    arcpy.SetParameterAsText(2, binascii.b2a_base64(data))
+    arcpy.SetParameterAsText(3, returnCentroid)
     
     
 except Exception:
