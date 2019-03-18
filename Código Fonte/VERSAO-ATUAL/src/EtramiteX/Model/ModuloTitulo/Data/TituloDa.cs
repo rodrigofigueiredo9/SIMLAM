@@ -2806,19 +2806,31 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("largura_demarcada"));
 						resultados.Add(reader.GetValue<string>("largura_demarcada_legislacao"));
 						resultados.Add(reader.GetValue<string>("faixa_cercada"));
-						resultados.Add(reader.GetValue<string>("descricao_estagio_desenv"));
+						var descricao_estagio_desenv = reader.GetValue<string>("descricao_estagio_desenv");
+						descricao_estagio_desenv = String.IsNullOrWhiteSpace(descricao_estagio_desenv) ?
+							descricao_estagio_desenv : descricao_estagio_desenv.Replace("\n", String.Empty).Replace("\r", String.Empty);
+						resultados.Add(descricao_estagio_desenv);
 						resultados.Add(reader.GetValue<string>("barragem_dentro_das_normas"));
-						resultados.Add(reader.GetValue<string>("barramento_adequacoes"));
+						var barramento_adequacoes  = reader.GetValue<string>("barramento_adequacoes");
+						barramento_adequacoes = String.IsNullOrWhiteSpace(barramento_adequacoes) ?
+							barramento_adequacoes : barramento_adequacoes.Replace("\n", String.Empty).Replace("\r", String.Empty);
+							resultados.Add(barramento_adequacoes);
 						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
 						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));
 						resultados.Add(reader.GetValue<string>("vazao_min_instalado"));
 						resultados.Add(reader.GetValue<string>("vazao_min_normas"));
-						resultados.Add(reader.GetValue<string>("vazao_min_adequacoes"));
+						var vazao_min_adequacoes = reader.GetValue<string>("vazao_min_adequacoes");
+						vazao_min_adequacoes = String.IsNullOrWhiteSpace(vazao_min_adequacoes) ?
+							vazao_min_adequacoes : vazao_min_adequacoes.Replace("\n", String.Empty).Replace("\r", String.Empty);
+							resultados.Add(vazao_min_adequacoes);
 						resultados.Add(reader.GetValue<string>("vazao_max_tipo"));
 						resultados.Add(reader.GetValue<string>("vazao_max_larg_alt_diametro"));
 						resultados.Add(reader.GetValue<string>("vazao_max_instalado"));
 						resultados.Add(reader.GetValue<string>("vazao_max_normas"));
-						resultados.Add(reader.GetValue<string>("vazao_max_adequacoes"));
+						var vazao_max_adequacoes  = reader.GetValue<string>("vazao_max_adequacoes");
+						vazao_max_adequacoes = String.IsNullOrWhiteSpace(vazao_max_adequacoes) ?
+							vazao_max_adequacoes : vazao_max_adequacoes.Replace("\n", String.Empty).Replace("\r", String.Empty);
+						resultados.Add(vazao_max_adequacoes);
 						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
 						resultados.Add(reader.GetValue<string>("vazao_min_tipo"));
 						resultados.Add(reader.GetValue<string>("vazao_min_diametro"));

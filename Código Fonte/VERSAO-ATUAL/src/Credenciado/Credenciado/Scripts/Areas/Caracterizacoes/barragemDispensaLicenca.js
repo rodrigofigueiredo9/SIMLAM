@@ -725,6 +725,7 @@ BarragemDispensaLicenca = {
 		$('.txtDescricaoDesenvolvimento').val('');
 		$('.rbBarramentoNormas:checked').prop('checked', false);
 		$('.txtAdequacoesDimensionamentoBarramento').val('');
+		$('.AdequacoesDimensionamentoBarramento').addClass('hide');
 
 		$('.ddlTipoDispositivoVazaoMin').val(0);
 		$('.txtDiametroTubulacaoVazaoMin').val('');
@@ -752,6 +753,7 @@ BarragemDispensaLicenca = {
 		$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
 		$('.vazaoMaxNormas').addClass('hide');
 		$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		
 		//$('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
 	},
 	//-------------------------  --------------------//

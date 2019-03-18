@@ -1320,6 +1320,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+		internal bool ProjetoEmPosse(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(p.id) retorno from {0}tab_projeto_digital p where p.id = :id and p.credenciado = :credenciado", EsquemaBancoCredenciado);
+
+				comando.AdicionarParametroEntrada("id", projetoDigital, DbType.Int32);
+				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
 		#endregion
 
 		#region Auxiliares

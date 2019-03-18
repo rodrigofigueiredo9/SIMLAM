@@ -318,7 +318,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		}
 
 		public bool Acessar(int empreendimentoId, int projetoDigitalId) =>
-			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca);
+			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca)
+			&& _caracterizacaoValidar.ProjetoDigitalEmPosse(projetoDigitalId);
 
 		internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
 		{
@@ -341,7 +342,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
 		}
 
-		internal void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
+		public void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
 		{
 			try
 			{

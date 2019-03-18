@@ -154,7 +154,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCer
 				and
 					tta.titulo = tt.id(+)
 				and
-					tr.interessado = tp.id
+					tr.interessado = tp.id(+)
 				and
 					e.titulo = :titulo", EsquemaBanco);
 

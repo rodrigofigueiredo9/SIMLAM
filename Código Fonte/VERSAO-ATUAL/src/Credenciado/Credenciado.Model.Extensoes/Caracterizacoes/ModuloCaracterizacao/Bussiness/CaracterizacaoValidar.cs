@@ -256,5 +256,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return string.Empty;
 		}
+
+		public bool ProjetoDigitalEmPosse(int projetoDigital)
+		{
+			try
+			{
+				if (!_da.ProjetoEmPosse(projetoDigital))
+					Validacao.Add(Mensagem.Caracterizacao.PosseProjetoDigital);
+
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
 	}
 }
