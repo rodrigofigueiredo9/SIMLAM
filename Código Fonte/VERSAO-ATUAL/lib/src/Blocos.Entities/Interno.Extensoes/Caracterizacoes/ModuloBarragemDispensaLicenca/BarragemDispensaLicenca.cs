@@ -21,6 +21,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public int TituloId { get; set; }
 		public int AtividadeID { get; set; }
 		public string Atividade { get; set; }
+		public int Associado { get; set; }
 
 		public eBarragemTipo BarragemTipo { get; set; }
 		public eRTElabocarao rtElaboracao { get; set; }

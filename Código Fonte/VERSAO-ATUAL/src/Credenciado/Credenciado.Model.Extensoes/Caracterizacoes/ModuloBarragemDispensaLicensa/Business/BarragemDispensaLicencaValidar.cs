@@ -112,7 +112,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			if (!Validacao.EhValido) return false;
 
-			ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
+			//ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
 
 			if (!caracterizacao.Fase.HasValue)
 			{
@@ -349,8 +349,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				RequestJson requestJson = new RequestJson();
 				EmpreendimentoCaracterizacao empreendimento = new EmpreendimentoCaracterizacao();
-				var apiUri = ConfigurationManager.AppSettings["apiGeo"];
-				var token = ConfigurationManager.AppSettings["tokenCredenciadoGeo"];
+				var apiUri = ConfigurationManager.AppSettings["apiInstitucionalGeo"];
+				var token = ConfigurationManager.AppSettings["tokenInstitucionalGeo"];
 
 				empreendimento = _da.ObterEmpreendimentoAtpEMunicipio(empreendimentoId);
 

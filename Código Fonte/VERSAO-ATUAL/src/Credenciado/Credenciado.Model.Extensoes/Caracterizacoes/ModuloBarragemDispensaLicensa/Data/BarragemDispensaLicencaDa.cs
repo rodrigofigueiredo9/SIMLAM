@@ -55,7 +55,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal int Criar(BarragemDispensaLicenca caracterizacao, BancoDeDados banco = null)
 		{
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				bancoDeDados.IniciarTransacao();
 
@@ -220,7 +220,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		internal void Editar(BarragemDispensaLicenca caracterizacao, BancoDeDados banco = null)
 		{
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				bancoDeDados.IniciarTransacao();
 
@@ -315,7 +315,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					bancoDeDados.ExecutarNonQuery(comando);
 				});
 				#endregion
-				
+
 				#region Coordenadas
 				caracterizacao.coordenadas.ForEach(x => {
 					comando = bancoDeDados.CriarComando(@"
@@ -341,7 +341,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 
 				caracterizacao.responsaveisTecnicos.ForEach(x => {
-					int ?arquivo = null;
+					int? arquivo = null;
 					if (!String.IsNullOrWhiteSpace(x.nome))
 					{
 						if (x.id > 0)
@@ -398,14 +398,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		public void Excluir(int id, BancoDeDados banco = null)
 		{
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
-				bancoDeDados.IniciarTransacao(); 
+				bancoDeDados.IniciarTransacao();
 
 				#region Histórico
 
 				//Atualizar o tid para a nova ação
-                Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_barragem_dispensa_lic c set c.tid = :tid where c.id = :id", EsquemaCredenciadoBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -435,16 +435,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		}
 
 		internal void CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao, BancoDeDados banco)
-        {
+		{
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
-            {
-                bancoDeDados.IniciarTransacao();
-                Comando comando;
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando;
 
-                if (caracterizacao.Id <= 0)
-                {
-                    comando = bancoDeDados.CriarComando(@"
+				if (caracterizacao.Id <= 0)
+				{
+					comando = bancoDeDados.CriarComando(@"
 				    insert into crt_barragem_dispensa_lic (id, tid, empreendimento, atividade, tipo_barragem, finalidade_atividade, curso_hidrico, vazao_enchente, area_bacia_contribuicao, 
 				    precipitacao, periodo_retorno, coeficiente_escoamento, tempo_concentracao, equacao_calculo, area_alagada, volume_armazenado, fase, possui_monge, tipo_monge, especificacao_monge, 
 				    possui_vertedouro, tipo_vertedouro, especificacao_vertedouro, possui_estrutura_hidrau, adequacoes_realizada, data_inicio_obra, data_previsao_obra, easting, northing, formacao_resp_tec, 
@@ -454,12 +454,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				    :possui_vertedouro, :tipo_vertedouro, :especificacao_vertedouro, :possui_estrutura_hidrau, :adequacoes_realizada, :data_inicio_obra, :data_previsao_obra, :easting, :northing, :formacao_resp_tec, 
 				    :especificacao_rt, :autorizacao, :numero_art_elaboracao, :numero_art_execucao, :interno_id, :interno_tid) returning id into :id", EsquemaCredenciadoBanco);
 
-                    comando.AdicionarParametroSaida("id", DbType.Int32); 
-                    comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoID, DbType.Int32);
-                }
-                else
-                {
-                    comando = bancoDeDados.CriarComando(@"update crt_barragem_dispensa_lic c set c.tid = :tid, c.atividade = :atividade, c.tipo_barragem = :tipo_barragem, 
+					comando.AdicionarParametroSaida("id", DbType.Int32);
+					comando.AdicionarParametroEntrada("empreendimento", caracterizacao.EmpreendimentoID, DbType.Int32);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"update crt_barragem_dispensa_lic c set c.tid = :tid, c.atividade = :atividade, c.tipo_barragem = :tipo_barragem, 
 				    c.finalidade_atividade = :finalidade_atividade, c.curso_hidrico = :curso_hidrico, c.vazao_enchente = :vazao_enchente, c.area_bacia_contribuicao = :area_bacia_contribuicao, c.precipitacao = :precipitacao, 
 				    c.periodo_retorno = :periodo_retorno, c.coeficiente_escoamento = :coeficiente_escoamento, c.tempo_concentracao = :tempo_concentracao, c.equacao_calculo = :equacao_calculo, c.area_alagada = :area_alagada, 
 				    c.volume_armazenado = :volume_armazenado, c.fase = :fase, c.possui_monge = :possui_monge, c.tipo_monge = :tipo_monge, c.especificacao_monge = :especificacao_monge, c.possui_vertedouro = :possui_vertedouro, 
@@ -468,83 +468,170 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				    c.autorizacao = :autorizacao, c.numero_art_elaboracao = :numero_art_elaboracao, c.numero_art_execucao = :numero_art_execucao, c.interno_id = :interno_id, c.interno_tid = :interno_tid
                     where c.id = :id", EsquemaCredenciadoBanco);
 
-                    comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
-                }
+					comando.AdicionarParametroEntrada("id", caracterizacao.Id, DbType.Int32);
+				}
 
-                comando.AdicionarParametroEntrada("atividade", caracterizacao.AtividadeID, DbType.Int32);
-                comando.AdicionarParametroEntrada("tipo_barragem", caracterizacao.BarragemTipo, DbType.Int32);
-                //comando.AdicionarParametroEntrada("finalidade_atividade", caracterizacao.FinalidadeAtividade, DbType.Int32);
-                comando.AdicionarParametroEntrada("curso_hidrico", caracterizacao.cursoHidrico, DbType.String);
-                comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
-                comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
-                comando.AdicionarParametroEntrada("precipitacao", caracterizacao.precipitacao, DbType.Decimal);
-                comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Decimal);
-                comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.String);
-                comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.String);
-                comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.EquacaoCalculo, DbType.String);
-                comando.AdicionarParametroEntrada("area_alagada", caracterizacao.areaAlagada, DbType.Decimal);
-                comando.AdicionarParametroEntrada("volume_armazenado", caracterizacao.volumeArmazanado, DbType.Decimal);
-                comando.AdicionarParametroEntrada("fase", caracterizacao.Fase, DbType.Int32);
-                comando.AdicionarParametroEntrada("possui_monge", caracterizacao.PossuiMonge, DbType.Int32);//TODO
-                comando.AdicionarParametroEntrada("tipo_monge", caracterizacao.MongeTipo, DbType.Int32);
-                comando.AdicionarParametroEntrada("especificacao_monge", caracterizacao.EspecificacaoMonge, DbType.String);
-                comando.AdicionarParametroEntrada("possui_vertedouro", caracterizacao.PossuiVertedouro, DbType.Int32);//TODO
-                comando.AdicionarParametroEntrada("tipo_vertedouro", caracterizacao.VertedouroTipo, DbType.Int32);
-                comando.AdicionarParametroEntrada("especificacao_vertedouro", caracterizacao.EspecificacaoVertedouro, DbType.String);
-                comando.AdicionarParametroEntrada("possui_estrutura_hidrau", caracterizacao.PossuiEstruturaHidraulica, DbType.Int32);//TODO
-                comando.AdicionarParametroEntrada("adequacoes_realizada", caracterizacao.AdequacoesRealizada, DbType.String);
-                comando.AdicionarParametroEntrada("data_inicio_obra", caracterizacao.DataInicioObra, DbType.String);
-                comando.AdicionarParametroEntrada("data_previsao_obra", caracterizacao.DataPrevisaoTerminoObra, DbType.String);
-                comando.AdicionarParametroEntrada("easting", caracterizacao.Coordenada.EastingUtmTexto, DbType.Int64);
-                comando.AdicionarParametroEntrada("northing", caracterizacao.Coordenada.NorthingUtmTexto, DbType.Int64);
-                comando.AdicionarParametroEntrada("formacao_resp_tec", caracterizacao.FormacaoRT, DbType.Int32);
-                comando.AdicionarParametroEntrada("especificacao_rt", caracterizacao.EspecificacaoRT, DbType.String);
-                comando.AdicionarParametroEntrada("autorizacao", caracterizacao.Autorizacao.Id, DbType.Int32);
-                comando.AdicionarParametroEntrada("numero_art_elaboracao", caracterizacao.NumeroARTElaboracao, DbType.String);
-                comando.AdicionarParametroEntrada("numero_art_execucao", caracterizacao.NumeroARTExecucao, DbType.String);
+				comando.AdicionarParametroEntrada("atividade", caracterizacao.AtividadeID, DbType.Int32);
+				comando.AdicionarParametroEntrada("tipo_barragem", caracterizacao.BarragemTipo, DbType.Int32);
+				//comando.AdicionarParametroEntrada("finalidade_atividade", caracterizacao.FinalidadeAtividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("curso_hidrico", caracterizacao.cursoHidrico, DbType.String);
+				comando.AdicionarParametroEntrada("vazao_enchente", caracterizacao.vazaoEnchente, DbType.Decimal);
+				comando.AdicionarParametroEntrada("area_bacia_contribuicao", caracterizacao.areaBaciaContribuicao, DbType.Decimal);
+				comando.AdicionarParametroEntrada("precipitacao", caracterizacao.precipitacao, DbType.Decimal);
+				comando.AdicionarParametroEntrada("periodo_retorno", caracterizacao.periodoRetorno, DbType.Decimal);
+				comando.AdicionarParametroEntrada("coeficiente_escoamento", caracterizacao.coeficienteEscoamento, DbType.String);
+				comando.AdicionarParametroEntrada("tempo_concentracao", caracterizacao.tempoConcentracao, DbType.String);
+				comando.AdicionarParametroEntrada("equacao_calculo", caracterizacao.EquacaoCalculo, DbType.String);
+				comando.AdicionarParametroEntrada("area_alagada", caracterizacao.areaAlagada, DbType.Decimal);
+				comando.AdicionarParametroEntrada("volume_armazenado", caracterizacao.volumeArmazanado, DbType.Decimal);
+				comando.AdicionarParametroEntrada("fase", caracterizacao.Fase, DbType.Int32);
+				comando.AdicionarParametroEntrada("possui_monge", caracterizacao.PossuiMonge, DbType.Int32);//TODO
+				comando.AdicionarParametroEntrada("tipo_monge", caracterizacao.MongeTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("especificacao_monge", caracterizacao.EspecificacaoMonge, DbType.String);
+				comando.AdicionarParametroEntrada("possui_vertedouro", caracterizacao.PossuiVertedouro, DbType.Int32);//TODO
+				comando.AdicionarParametroEntrada("tipo_vertedouro", caracterizacao.VertedouroTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("especificacao_vertedouro", caracterizacao.EspecificacaoVertedouro, DbType.String);
+				comando.AdicionarParametroEntrada("possui_estrutura_hidrau", caracterizacao.PossuiEstruturaHidraulica, DbType.Int32);//TODO
+				comando.AdicionarParametroEntrada("adequacoes_realizada", caracterizacao.AdequacoesRealizada, DbType.String);
+				comando.AdicionarParametroEntrada("data_inicio_obra", caracterizacao.DataInicioObra, DbType.String);
+				comando.AdicionarParametroEntrada("data_previsao_obra", caracterizacao.DataPrevisaoTerminoObra, DbType.String);
+				comando.AdicionarParametroEntrada("easting", caracterizacao.Coordenada.EastingUtmTexto, DbType.Int64);
+				comando.AdicionarParametroEntrada("northing", caracterizacao.Coordenada.NorthingUtmTexto, DbType.Int64);
+				comando.AdicionarParametroEntrada("formacao_resp_tec", caracterizacao.FormacaoRT, DbType.Int32);
+				comando.AdicionarParametroEntrada("especificacao_rt", caracterizacao.EspecificacaoRT, DbType.String);
+				comando.AdicionarParametroEntrada("autorizacao", caracterizacao.Autorizacao.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("numero_art_elaboracao", caracterizacao.NumeroARTElaboracao, DbType.String);
+				comando.AdicionarParametroEntrada("numero_art_execucao", caracterizacao.NumeroARTExecucao, DbType.String);
 
-                comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
-                comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
-                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());                
+				comando.AdicionarParametroEntrada("interno_id", caracterizacao.InternoID, DbType.Int32);
+				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, caracterizacao.InternoTID);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-                bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.ExecutarNonQuery(comando);
 
-                if (caracterizacao.Id <= 0)
-                {
-                    caracterizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-                }
+				if (caracterizacao.Id <= 0)
+				{
+					caracterizacao.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+				}
 
-                Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.copiar, bancoDeDados, null);
+				Historico.Gerar(caracterizacao.Id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.copiar, bancoDeDados, null);
 
-                bancoDeDados.Commit();
-            }
-        }
+				bancoDeDados.Commit();
+			}
+		}
 
-        internal void AtualizarInternoIdTid(int barragemDispensaLicencaId, int barragemDispensaLicencaInternoId, string barragemDispensaLicencaInternoTid, BancoDeDados banco = null)
-        {
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-            {
-                bancoDeDados.IniciarTransacao();
+		internal void AtualizarInternoIdTid(int barragemDispensaLicencaId, int barragemDispensaLicencaInternoId, string barragemDispensaLicencaInternoTid, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
 
-                #region Atualização do Tid
+				#region Atualização do Tid
 
-                Comando comando = bancoDeDados.CriarComandoPlSql(@"update crt_barragem_dispensa_lic set tid = :tid, interno_id = :interno_id, interno_tid = :interno_tid where id = :barragem_id", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"update crt_barragem_dispensa_lic set tid = :tid, interno_id = :interno_id, interno_tid = :interno_tid where id = :barragem_id", EsquemaCredenciadoBanco);
 
-                comando.AdicionarParametroEntrada("barragem_id", barragemDispensaLicencaId, DbType.Int32);
-                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-                comando.AdicionarParametroEntrada("interno_id", barragemDispensaLicencaInternoId, DbType.Int32);
-                comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, barragemDispensaLicencaInternoTid);
+				comando.AdicionarParametroEntrada("barragem_id", barragemDispensaLicencaId, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("interno_id", barragemDispensaLicencaInternoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("interno_tid", DbType.String, 36, barragemDispensaLicencaInternoTid);
 
-                bancoDeDados.ExecutarNonQuery(comando);
+				bancoDeDados.ExecutarNonQuery(comando);
 
-                #endregion
+				#endregion
 
-                Historico.Gerar(barragemDispensaLicencaId, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.atualizaridtid, bancoDeDados);
+				Historico.Gerar(barragemDispensaLicencaId, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.atualizaridtid, bancoDeDados);
 
-                bancoDeDados.Commit();
+				bancoDeDados.Commit();
 
-            }
-        }
+			}
+		}
+
+		internal int AssociarNovaCaracterizacao(int barragemId, int projetoDigital)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(null, EsquemaCredenciadoBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_dispensa_lic 
+				(id, tid, empreendimento, atividade, tipo_barragem, curso_hidrico, 
+					vazao_enchente, area_bacia_contribuicao, precipitacao, periodo_retorno, coeficiente_escoamento,
+					tempo_concentracao, equacao_calculo, area_alagada, volume_armazenado, fase, interno_id, interno_tid,
+					possui_barragem_contigua, altura_barramento, comprimento_barramento, largura_base_barramento,
+					largura_crista_barramento, fonte_precipitacao, fonte_coeficiente_escoamento, fonte_vazao_enchente, associado)
+				select seq_crt_barragem_dispensa_lic.nextval, :tid, empreendimento, atividade, tipo_barragem, curso_hidrico, 
+					vazao_enchente, area_bacia_contribuicao, precipitacao, periodo_retorno, coeficiente_escoamento,
+					tempo_concentracao, equacao_calculo, area_alagada, volume_armazenado, fase, interno_id, interno_tid,
+					possui_barragem_contigua, altura_barramento, comprimento_barramento, largura_base_barramento,
+					largura_crista_barramento, fonte_precipitacao, fonte_coeficiente_escoamento, fonte_vazao_enchente, :id 
+					from crt_barragem_dispensa_lic ba where ba.id =:id", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("id", barragemId, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				comando = bancoDeDados.CriarComando(@"select max(id) from crt_barragem_dispensa_lic ", EsquemaCredenciadoBanco);
+				int id = bancoDeDados.ExecutarScalar<int>(comando);
+
+				// CONSTRUIDO / A CONSTRUIR
+				comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_construida_con (id, barragem, supressao_app, largura_demarcada, largura_demarcada_legislacao,
+					faixa_cercada, descricao_desen_app, demarcacao_app, barramento_normas, barramento_adequacoes, vazao_min_tipo,
+					vazao_min_diametro, vazao_min_instalado, vazao_min_normas, vazao_min_adequacoes, vazao_max_tipo,
+					vazao_max_diametro, vazao_max_instalado, vazao_max_normas, vazao_max_adequacoes, periodo_inicio_obra, periodo_termino_obra )
+				select seq_crt_barragem_const.nextval, :barragem, supressao_app, largura_demarcada, largura_demarcada_legislacao,
+					faixa_cercada, descricao_desen_app, demarcacao_app, barramento_normas, barramento_adequacoes, vazao_min_tipo,
+					vazao_min_diametro, vazao_min_instalado, vazao_min_normas, vazao_min_adequacoes, vazao_max_tipo,
+					vazao_max_diametro, vazao_max_instalado, vazao_max_normas, vazao_max_adequacoes, periodo_inicio_obra, periodo_termino_obra 
+				 FROM crt_barragem_construida_con WHERE barragem = :id  ", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", barragemId, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				//COORDENADAS
+				comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_coordenada (id, barragem, tipo, northing, easting)
+				select seq_crt_barragem_coordenada.nextval, :barragem, tipo, northing, easting 
+				FROM crt_barragem_coordenada WHERE barragem = :id", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", barragemId, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				// RESPONSAVEL TECNICO
+				comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_responsavel (id, barragem, tipo, nome, profissao, 
+						registro_crea, numero_art, autorizacao_crea, proprio_declarante)
+				select seq_crt_barragem_responsavel.nextval, :barragem, tipo, nome, profissao, 
+						registro_crea, numero_art, autorizacao_crea, proprio_declarante
+				FROM crt_barragem_responsavel WHERE barragem = :id", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", barragemId, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				//FINALIDADES
+				comando = bancoDeDados.CriarComando(@"
+				insert into crt_barragem_finalidade_ativ (id, barragem, atividade)
+				select seq_crt_barragem_final_ativ.nextval, :barragem, f.atividade
+				FROM crt_barragem_finalidade_ativ f WHERE f.barragem = :id", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", barragemId, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				// REQUERIMENTO_BARRAGEM
+				comando = bancoDeDados.CriarComando(@"
+				update tab_requerimento_barragem b set b.barragem = :barragem 
+				where b.requerimento in (
+						select requerimento from tab_projeto_digital where id = :proj)", EsquemaCredenciadoBanco);
+				comando.AdicionarParametroEntrada("barragem", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("proj", projetoDigital, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(id, eHistoricoArtefatoCaracterizacao.barragemdispensalicenca, eHistoricoAcao.criar, bancoDeDados);
+
+				bancoDeDados.Commit();
+
+				return id;
+			}
+		}
 
 		#endregion
 
@@ -554,9 +641,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
-                Comando comando = bancoDeDados.CriarComando(@"select id from {0}crt_barragem_dispensa_lic where empreendimento = :empreendimento", EsquemaCredenciadoBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select id from {0}crt_barragem_dispensa_lic where empreendimento = :empreendimento", EsquemaCredenciadoBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
@@ -579,7 +666,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento,
-					c.area_alagada, c.volume_armazenado
+					c.area_alagada, c.volume_armazenado, c.associado
                 from crt_barragem_dispensa_lic c, lov_crt_bdla_barragem_tipo lt
 					where exists
 					(
@@ -619,7 +706,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
-					while(reader.Read())
+					while (reader.Read())
 					{
 						caracterizacao = new BarragemDispensaLicenca();
 
@@ -628,6 +715,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.Tid = reader.GetValue<string>("tid");
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
+						caracterizacao.Associado = reader.GetValue<int>("associado");
 
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
@@ -641,7 +729,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					reader.Close();
 				}
 			}
-			
+
 
 			return ListaDeBarragens;
 		}
@@ -767,7 +855,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						obj.profissao.Id = reader.GetValue<int>("profissao");
 						obj.registroCREA = reader.GetValue<string>("registro_crea");
 						obj.numeroART = reader.GetValue<string>("numero_art");
-						if(obj.tipo == eTipoRT.ElaboracaoProjeto)
+						if (obj.tipo == eTipoRT.ElaboracaoProjeto)
 							obj.autorizacaoCREA.Id = reader.GetValue<int>("autorizacao_crea");
 						obj.proprioDeclarante = reader.GetValue<bool>("proprio_declarante");
 					}
@@ -810,7 +898,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				retornoComando = dependenciaCaracterizacao.DependenciaId;
 
 				comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento,
-					c.area_alagada, c.volume_armazenado, 
+					c.area_alagada, c.volume_armazenado, c.associado, 
 				(select count(*) from TAB_PROJ_DIGITAL_DEPENDENCIAS d
 				where d.DEPENDENCIA_ID = c.id
 				and d.DEPENDENCIA_TIPO = :dependencia_tipo
@@ -837,6 +925,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						caracterizacao.Tid = reader.GetValue<string>("tid");
 						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
 						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
+						caracterizacao.Associado = reader.GetValue<int>("associado");
 
 						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento");
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
@@ -855,12 +944,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		}
 
 		public BarragemDispensaLicenca ObterHistorico(int id, string tid, BancoDeDados banco = null)
-        {
-            BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
+		{
+			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 
-            using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
-            {
-                Comando comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento_id, c.atividade_id, 
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select c.id, c.tid, c.interno_id, c.interno_tid, c.empreendimento_id, c.atividade_id, 
                 c.tipo_barragem_id, c.tipo_barragem_texto, c.finalidade_atividade, c.curso_hidrico, c.vazao_enchente, c.area_bacia_contribuicao, 
                 c.precipitacao, c.periodo_retorno, c.coeficiente_escoamento, c.tempo_concentracao, c.equacao_calculo, c.area_alagada, 
                 c.volume_armazenado, c.fase_id, c.possui_monge, c.tipo_monge_id, c.especificacao_monge, c.possui_vertedouro, c.tipo_vertedouro_id, 
@@ -868,60 +957,60 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
                 c.easting, c.northing, c.formacao_resp_tec, c.especificacao_rt, c.autorizacao_id, c.numero_art_elaboracao, c.numero_art_execucao 
                 from hst_crt_barragem_dispe_lic c where c.tid = :tid and c.caracterizacao_id = :id", EsquemaCredenciadoBanco);
 
-                comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-                comando.AdicionarParametroEntrada("tid", tid, DbType.String);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", tid, DbType.String);
 
-                using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                {
-                    if (reader.Read())
-                    {
-                        caracterizacao.Id = reader.GetValue<int>("id");
-                        caracterizacao.CredenciadoID = id;
-                        caracterizacao.Tid = reader.GetValue<string>("tid");
-                        caracterizacao.InternoID = reader.GetValue<int>("interno_id");
-                        caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						caracterizacao.Id = reader.GetValue<int>("id");
+						caracterizacao.CredenciadoID = id;
+						caracterizacao.Tid = reader.GetValue<string>("tid");
+						caracterizacao.InternoID = reader.GetValue<int>("interno_id");
+						caracterizacao.InternoTID = reader.GetValue<string>("interno_tid");
 
-                        caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento_id");
-                        caracterizacao.AtividadeID = reader.GetValue<int>("atividade_id");
-                        //caracterizacao.BarragemTipo = reader.GetValue<int>("tipo_barragem_id");
-                        //caracterizacao.BarragemTipoTexto = reader.GetValue<string>("tipo_barragem_texto");
-                        //caracterizacao.FinalidadeAtividade = reader.GetValue<int>("finalidade_atividade");
-                        caracterizacao.cursoHidrico = reader.GetValue<string>("curso_hidrico");
-                        caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
-                        caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
-                        caracterizacao.precipitacao = reader.GetValue<decimal>("precipitacao");
-                        caracterizacao.periodoRetorno = reader.GetValue<decimal>("periodo_retorno");
-                        caracterizacao.coeficienteEscoamento = reader.GetValue<decimal>("coeficiente_escoamento");
-                        caracterizacao.tempoConcentracao = reader.GetValue<decimal>("tempo_concentracao");
-                        caracterizacao.EquacaoCalculo = reader.GetValue<string>("equacao_calculo");
-                        caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
-                        caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
-                        caracterizacao.Fase = reader.GetValue<int?>("fase_id");
-                        caracterizacao.PossuiMonge = reader.GetValue<int?>("possui_monge");
-                        caracterizacao.MongeTipo = reader.GetValue<int>("tipo_monge_id");
-                        caracterizacao.EspecificacaoMonge = reader.GetValue<string>("especificacao_monge");
-                        caracterizacao.PossuiVertedouro = reader.GetValue<int?>("possui_vertedouro");
-                        caracterizacao.VertedouroTipo = reader.GetValue<int>("tipo_vertedouro_id");
-                        caracterizacao.EspecificacaoVertedouro = reader.GetValue<string>("especificacao_vertedouro");
-                        caracterizacao.PossuiEstruturaHidraulica = reader.GetValue<int?>("possui_estrutura_hidrau");
-                        caracterizacao.AdequacoesRealizada = reader.GetValue<string>("adequacoes_realizada");
-                        caracterizacao.DataInicioObra = reader.GetValue<string>("data_inicio_obra");
-                        caracterizacao.DataPrevisaoTerminoObra = reader.GetValue<string>("data_previsao_obra");
-                        caracterizacao.Coordenada.EastingUtmTexto = reader.GetValue<string>("easting");
-                        caracterizacao.Coordenada.NorthingUtmTexto = reader.GetValue<string>("northing");
-                        caracterizacao.FormacaoRT = reader.GetValue<int>("formacao_resp_tec");
-                        caracterizacao.EspecificacaoRT = reader.GetValue<string>("especificacao_rt");
-                        caracterizacao.Autorizacao.Id = reader.GetValue<int>("autorizacao_id");
-                        caracterizacao.NumeroARTElaboracao = reader.GetValue<string>("numero_art_elaboracao");
-                        caracterizacao.NumeroARTExecucao = reader.GetValue<string>("numero_art_execucao");
-                    }
+						caracterizacao.EmpreendimentoID = reader.GetValue<int>("empreendimento_id");
+						caracterizacao.AtividadeID = reader.GetValue<int>("atividade_id");
+						//caracterizacao.BarragemTipo = reader.GetValue<int>("tipo_barragem_id");
+						//caracterizacao.BarragemTipoTexto = reader.GetValue<string>("tipo_barragem_texto");
+						//caracterizacao.FinalidadeAtividade = reader.GetValue<int>("finalidade_atividade");
+						caracterizacao.cursoHidrico = reader.GetValue<string>("curso_hidrico");
+						caracterizacao.vazaoEnchente = reader.GetValue<decimal>("vazao_enchente");
+						caracterizacao.areaBaciaContribuicao = reader.GetValue<decimal>("area_bacia_contribuicao");
+						caracterizacao.precipitacao = reader.GetValue<decimal>("precipitacao");
+						caracterizacao.periodoRetorno = reader.GetValue<decimal>("periodo_retorno");
+						caracterizacao.coeficienteEscoamento = reader.GetValue<decimal>("coeficiente_escoamento");
+						caracterizacao.tempoConcentracao = reader.GetValue<decimal>("tempo_concentracao");
+						caracterizacao.EquacaoCalculo = reader.GetValue<string>("equacao_calculo");
+						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
+						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
+						caracterizacao.Fase = reader.GetValue<int?>("fase_id");
+						caracterizacao.PossuiMonge = reader.GetValue<int?>("possui_monge");
+						caracterizacao.MongeTipo = reader.GetValue<int>("tipo_monge_id");
+						caracterizacao.EspecificacaoMonge = reader.GetValue<string>("especificacao_monge");
+						caracterizacao.PossuiVertedouro = reader.GetValue<int?>("possui_vertedouro");
+						caracterizacao.VertedouroTipo = reader.GetValue<int>("tipo_vertedouro_id");
+						caracterizacao.EspecificacaoVertedouro = reader.GetValue<string>("especificacao_vertedouro");
+						caracterizacao.PossuiEstruturaHidraulica = reader.GetValue<int?>("possui_estrutura_hidrau");
+						caracterizacao.AdequacoesRealizada = reader.GetValue<string>("adequacoes_realizada");
+						caracterizacao.DataInicioObra = reader.GetValue<string>("data_inicio_obra");
+						caracterizacao.DataPrevisaoTerminoObra = reader.GetValue<string>("data_previsao_obra");
+						caracterizacao.Coordenada.EastingUtmTexto = reader.GetValue<string>("easting");
+						caracterizacao.Coordenada.NorthingUtmTexto = reader.GetValue<string>("northing");
+						caracterizacao.FormacaoRT = reader.GetValue<int>("formacao_resp_tec");
+						caracterizacao.EspecificacaoRT = reader.GetValue<string>("especificacao_rt");
+						caracterizacao.Autorizacao.Id = reader.GetValue<int>("autorizacao_id");
+						caracterizacao.NumeroARTElaboracao = reader.GetValue<string>("numero_art_elaboracao");
+						caracterizacao.NumeroARTExecucao = reader.GetValue<string>("numero_art_execucao");
+					}
 
-                    reader.Close();
-                }
-            }
+					reader.Close();
+				}
+			}
 
-            return caracterizacao;
-        }
+			return caracterizacao;
+		}
 
 		internal CaracterizacaoPDF ObterDadosPdfTitulo(int empreendimento, int atividade, BancoDeDados banco)
 		{
