@@ -68,8 +68,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 				var token = ConfigurationManager.AppSettings["token"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
-				HttpResponseMessage response = _client.GetAsync($"{apiUri}SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
-				if(response.IsSuccessStatusCode)
+				HttpResponseMessage response = _client.GetAsync($"{apiUri}/SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
+				if (response.IsSuccessStatusCode)
 					Validacao.Add(Mensagem.Dua.Sucesso);
 				else
 					Validacao.Add(Mensagem.Dua.Falha);

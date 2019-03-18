@@ -154,12 +154,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				foreach (var item in dependenciasBanco)
 				{
-					caracterizacoes.Add(new CaracterizacaoLst()
+					if (caracterizacaoTipo != (int)eCaracterizacao.InformacaoCorte)
 					{
-						IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
-						IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
-						Texto = caracterizacoesLst.SingleOrDefault(x => x.Id == item.DependenciaCaracterizacao).Texto
-					});
+						caracterizacoes.Add(new CaracterizacaoLst()
+						{
+							IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
+							IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
+							Texto = caracterizacoesLst.SingleOrDefault(x => x.Id == item.DependenciaCaracterizacao).Texto
+						});
+					}
 
 					if (caracterizacoes.Count > 0)
 					{
@@ -238,11 +241,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			foreach (var item in caracterizacoesCredenciado)
 			{
-				Caracterizacao caracterizacao = caracterizacoesInterno.SingleOrDefault(x => x.Tipo == item.Tipo);
+				var caracterizacoes = caracterizacoesInterno.Where(x => x.Tipo == item.Tipo);
 
-				if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
+				foreach (var caracterizacao in caracterizacoes)
 				{
-					lista.Add(item);
+					if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
+						lista.Add(item);
 				}
 			}
 
