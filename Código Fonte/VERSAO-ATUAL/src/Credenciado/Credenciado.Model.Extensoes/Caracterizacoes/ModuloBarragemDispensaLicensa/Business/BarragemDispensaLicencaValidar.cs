@@ -229,7 +229,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInvalido("início"));
 				}
 
-				if (mesInicio < DateTime.Now.Month && anoInicio <= DateTime.Now.Year)
+				if (anoInicio < DateTime.Now.Year || (mesInicio < DateTime.Now.Month && anoInicio == DateTime.Now.Year))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
 
 				if (mesFim <= 0)
