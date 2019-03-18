@@ -20,6 +20,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem EmpreendimentoNaoEncontrado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento não cadastrado no sistema." }; } }
 		public Mensagem Posse { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a posse do empreendimento." }; } }
 		public Mensagem PosseProjetoDigital { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É preciso ter a posse do projeto digital." }; } }
+		public Mensagem CaracterizacaoNaoAssociada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterização não está associada ao projeto digital." }; } }
 		public Mensagem IdIvalido { get { return new Mensagem() { Texto = "Id do empreendimento inválido" }; } }
 		public Mensagem EmpreendimentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "", Texto = "Empreendimento é obrigatório." }; } }
 		public Mensagem EmpreendimentoCaracterizacaoJaCriada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Empreendimento já possui este tipo de caracterização cadastrada." }; } }

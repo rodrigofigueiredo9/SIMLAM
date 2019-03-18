@@ -317,9 +317,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
-		public bool Acessar(int empreendimentoId, int projetoDigitalId) =>
+		public bool Acessar(int empreendimentoId, int projetoDigitalId, int caracterizacaoId = 0) =>
 			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca)
-			&& _caracterizacaoValidar.ProjetoDigitalEmPosse(projetoDigitalId);
+			&& _caracterizacaoValidar.ProjetoDigitalEmPosse(projetoDigitalId)
+			&& _caracterizacaoValidar.CaracterizacaoAssociadaProjDigi(projetoDigitalId, caracterizacaoId);
 
 		internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
 		{

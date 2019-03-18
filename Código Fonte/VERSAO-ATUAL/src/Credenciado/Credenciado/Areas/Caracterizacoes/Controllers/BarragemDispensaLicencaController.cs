@@ -103,7 +103,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
                 return RedirectToAction("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { empreendimentoId = projetoDigitalId, area = "" }));
             }
 
-            if (!_validar.Acessar(empreendimentoId, projetoDigitalId))
+            if (!_validar.Acessar(empreendimentoId, projetoDigitalId, id))
             {
                 return RedirectToAction("", "Caracterizacao", new { id = empreendimentoId, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() });
             }

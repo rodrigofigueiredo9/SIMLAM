@@ -272,5 +272,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return Validacao.EhValido;
 		}
+
+		public bool CaracterizacaoAssociadaProjDigi(int projetoDigital, int caracterizacao)
+		{
+			try
+			{
+				if (caracterizacao == 0) return true;
+
+				if (!_da.CaracterizacaoAssociadaProjDigi(projetoDigital, caracterizacao))
+					Validacao.Add(Mensagem.Caracterizacao.CaracterizacaoNaoAssociada);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
 	}
 }
