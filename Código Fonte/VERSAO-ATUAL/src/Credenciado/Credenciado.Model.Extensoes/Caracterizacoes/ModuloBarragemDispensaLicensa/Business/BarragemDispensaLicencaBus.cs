@@ -122,6 +122,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+
 		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
@@ -260,6 +261,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		public void AtualizarInternoIdTid(int caracterizacaoId, int internoId, string tid, BancoDeDados banco)
 		{
 			_da.AtualizarInternoIdTid(caracterizacaoId, internoId, tid, banco);
+		}
+
+		public int AssociarNovaCaracterizacao(int barragemId, int projetoDigital)
+		{
+			try
+			{
+				return _da.AssociarNovaCaracterizacao(barragemId, projetoDigital);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return 0;
 		}
 
 		#endregion
