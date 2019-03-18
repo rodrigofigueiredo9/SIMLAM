@@ -162,7 +162,9 @@ TituloAlterarSituacao = {
 						$.ajax({
 							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
 								'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
-							headers: { 'Authorization': 'Bearer ' + TituloAlterarSituacao.settings.token },
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('Authorization', 'Bearer ' + TituloAlterarSituacao.settings.token);
+							},
 							type: "POST",
 							success: function (msg) {
 								console.info(msg);
