@@ -6,7 +6,7 @@ ExploracaoFlorestalExploracao = {
 	settings: {
 		mensagens: null,
 		idsTela: null,
-		apiInstitucional: null,
+		api: null,
 		token: null
 	},
 	container: null,
@@ -280,8 +280,10 @@ ExploracaoFlorestalExploracao = {
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: ExploracaoFlorestalExploracao.settings.apiInstitucional + "/Especie",
-					headers: { 'Authorization': 'Bearer ' + ExploracaoFlorestalExploracao.settings.token },
+					url: ExploracaoFlorestalExploracao.settings.api + "/Especie",
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Authorization', 'Bearer ' + ExploracaoFlorestalExploracao.settings.token);
+					},
 					data: { "Search": request.term, "PageSize": 20 },
 					type: 'GET',
 					dataType: 'json',
