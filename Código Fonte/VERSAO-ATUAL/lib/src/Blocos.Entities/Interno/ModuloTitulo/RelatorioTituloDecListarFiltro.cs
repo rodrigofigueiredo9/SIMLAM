@@ -25,7 +25,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 			}
 			set
 			{
-				_login = value.Trim().ToUpper();
+				_login = value.Trim();
 			}
 		}
 
