@@ -274,8 +274,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				vm.CaracterizacoesAssociadas = _bus.ObterBarragemAssociada(projetoDigitalId);
 
 			// Retira as barragens cadastradas que foram associadas a esse projeto digital
-			vm.CaracterizacoesCadastradas = vm.CaracterizacoesCadastradas
-							.Where(x => x.Id != vm.CaracterizacoesAssociadas.FirstOrDefault().Associado).ToList();
+			if(vm.CaracterizacoesAssociadas.Count > 0 && vm.CaracterizacoesCadastradas.Count > 0)
+				vm.CaracterizacoesCadastradas = vm.CaracterizacoesCadastradas
+								.Where(x => x.Id != vm.CaracterizacoesAssociadas.FirstOrDefault().Associado).ToList();
 			return View(vm);
 		}
 
