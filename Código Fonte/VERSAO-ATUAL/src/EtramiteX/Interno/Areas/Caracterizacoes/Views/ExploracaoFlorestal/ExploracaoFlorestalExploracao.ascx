@@ -6,7 +6,7 @@
 
 <script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
-	ExploracaoFlorestalExploracao.settings.apiInstitucional = '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString() %>';
+	ExploracaoFlorestalExploracao.settings.api = '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString() %>';
 	ExploracaoFlorestalExploracao.settings.token = '<%= System.Configuration.ConfigurationManager.AppSettings["token"].ToString() %>';
 </script>
 
@@ -63,11 +63,11 @@
 		<%}else{%>
 				<div class="coluna22 append2">
 					<label for="ExploracaoFlorestal_Exploracoes_ArvoresRequeridas<%: Model.ExploracaoFlorestal.Identificacao%>">N° de árvores requeridas *</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "8" }))%>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.ArvoresRequeridas" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.ArvoresRequeridas, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtArvoresRequeridas maskInteger", @maxlength = "10" }))%>
 				</div>
 				<div class="coluna24 append2 divNumArvores">
 					<label for="ExploracaoFlorestal_Exploracoes_QuantidadeArvores">N° de árvores</label>
-					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "8" }))%>
+					<%= Html.TextBox("ExploracaoFlorestal.Exploracoes.QuantidadeArvores" + Model.ExploracaoFlorestal.Identificacao, Model.ExploracaoFlorestal.QuantidadeArvores, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtQuantidadeArvores maskInteger", @maxlength = "10" }))%>
 				</div>
 		<%}%>
 

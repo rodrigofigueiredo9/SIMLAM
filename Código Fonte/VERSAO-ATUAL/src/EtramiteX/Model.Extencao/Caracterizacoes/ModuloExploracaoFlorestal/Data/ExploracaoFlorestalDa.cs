@@ -815,6 +815,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'CULTURAS-ANUAIS') > 0		then 9/*aa - CULTURAS-ANUAIS*/
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'PASTAGEM') > 0			then 7/*aa - PASTAGEM*/								
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'OUTRO') > 0				then 8/*aa - OUTRO*/
+								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'Em Recuperação') > 0		then 10/*aa - Em Recuperação*/
 								when tab.avn = '[x]' then 5 /*Arvores isoladas->Linha*/
 						   end) class_vegetal
 					  from (select a.id, a.atividade,
