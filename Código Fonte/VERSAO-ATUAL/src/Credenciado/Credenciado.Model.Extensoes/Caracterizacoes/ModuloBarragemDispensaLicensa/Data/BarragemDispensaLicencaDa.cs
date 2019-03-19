@@ -1109,13 +1109,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			EmpreendimentoCaracterizacao retorno = new EmpreendimentoCaracterizacao();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					SELECT A.ID FROM IDAFCREDENCIADOGEO.GEO_ATP A 
-						WHERE A.PROJETO IN ( SELECT P.ID FROM TAB_EMPREENDIMENTO E 
+					SELECT A.ID FROM IDAFGEO.GEO_ATP A 
+						WHERE A.PROJETO IN ( SELECT P.ID FROM IDAFCREDENCIADO.TAB_EMPREENDIMENTO E 
 												INNER JOIN CRT_PROJETO_GEO P ON E.ID = P.EMPREENDIMENTO 
-												WHERE E.ID = :empreendimento)", EsquemaCredenciadoBanco);
+												WHERE E.INTERNO = :empreendimento)");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -1130,7 +1130,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando = bancoDeDados.CriarComando(@"
 					SELECT e.municipio, m.ibge FROM tab_empreendimento_endereco e 
 						inner join lov_municipio m on m.id = e.municipio
-					WHERE correspondencia = 0 and empreendimento = :empreendimento", EsquemaCredenciadoBanco);
+                        INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO EC ON EC.INTERNO = E.ID
+					WHERE E.correspondencia = 0 and EC.ID = :empreendimento");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
