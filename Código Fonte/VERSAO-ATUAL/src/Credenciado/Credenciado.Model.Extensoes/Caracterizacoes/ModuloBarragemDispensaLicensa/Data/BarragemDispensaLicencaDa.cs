@@ -1114,8 +1114,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Comando comando = bancoDeDados.CriarComando(@"
 					SELECT A.ID FROM IDAFGEO.GEO_ATP A 
 						WHERE A.PROJETO IN ( SELECT P.ID FROM IDAFCREDENCIADO.TAB_EMPREENDIMENTO E 
-												INNER JOIN CRT_PROJETO_GEO P ON E.ID = P.EMPREENDIMENTO 
-												WHERE E.INTERNO = :empreendimento)");
+												INNER JOIN CRT_PROJETO_GEO P ON E.INTERNO = P.EMPREENDIMENTO 
+												WHERE E.ID = :empreendimento)");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
@@ -1130,7 +1130,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				comando = bancoDeDados.CriarComando(@"
 					SELECT e.municipio, m.ibge FROM tab_empreendimento_endereco e 
 						inner join lov_municipio m on m.id = e.municipio
-                        INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO EC ON EC.INTERNO = E.ID
+                        INNER JOIN IDAFCREDENCIADO.TAB_EMPREENDIMENTO EC ON EC.INTERNO = E.EMPREENDIMENTO
 					WHERE E.correspondencia = 0 and EC.ID = :empreendimento");
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);

@@ -51,7 +51,7 @@ namespace Tests.Controllers
 			coord.tipo = eTipoCoordenadaBarragem.barramento;
 			lstCoord.Add(coord);
 
-			_validar.ValidarCoordenadas(2, lstCoord);
+			_validar.ValidarCoordenadas(60262, lstCoord);
 			Assert.AreEqual(1, 1);
 		}
 

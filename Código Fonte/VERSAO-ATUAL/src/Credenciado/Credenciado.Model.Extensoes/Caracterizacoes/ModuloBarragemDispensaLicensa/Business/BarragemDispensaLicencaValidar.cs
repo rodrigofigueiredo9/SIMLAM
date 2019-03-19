@@ -1,6 +1,7 @@
 ﻿using Exiges.Negocios.Library;
 using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -363,6 +364,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (x.tipo == eTipoCoordenadaBarragem.barramento)
 						{
 							HttpResponseMessage response = _client.GetAsync($"{apiUri}geoatp/coordenada/latitude/{x.easting}/longitude/{x.northing}").Result;
+
+							if (!response.IsSuccessStatusCode)
+								throw new Exception("Não foi possível conectar no servidor");
+							if (response.StatusCode != HttpStatusCode.OK)
+								throw new Exception("Mensagem não esperada");
+
 							var json = response.Content.ReadAsStringAsync().Result;
 							var atpCoordenada = JsonConvert.DeserializeObject<List<int>>(json);
 
