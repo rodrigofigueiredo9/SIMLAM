@@ -623,10 +623,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								produto.Id = Convert.ToInt32(readerAux["id"]);
 								produto.Tid = readerAux["tid"].ToString();
 
-								if(exploracao.GeometriaTipoId == (int)eTipoGeometria.Ponto)
-									produto.Quantidade = Convert.ToInt32(readerAux["quantidade"]).ToString();
-								else
-									produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
+								produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
 
 								if (readerAux["produto"] != null && !Convert.IsDBNull(readerAux["produto"]))
 								{

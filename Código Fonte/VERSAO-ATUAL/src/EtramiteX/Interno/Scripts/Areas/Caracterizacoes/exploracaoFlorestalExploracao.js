@@ -107,7 +107,7 @@ ExploracaoFlorestalExploracao = {
 			$('.txtQuantidade', container).removeClass('disabled').removeAttr('disabled');
 
 			if (produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoMouroesEstacas ||
-				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoEscoras ||
+				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoMudaPlanta ||
 				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoPalmito) {
 
 				$('.txtQuantidade', container).addClass('maskInteger').removeClass('maskDecimalPonto').attr('maxlength', '9');
