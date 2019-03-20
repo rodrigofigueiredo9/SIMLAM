@@ -413,30 +413,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				if (rtElaboracao == 1 || rtElaboracao == 3)
 				{
-					//if(rtLst[1].id <= 0)
-					//{
 					var id2 = rtLst[1].id;
-					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
 					rtLst[1].nome = rt.nome;
 					rtLst[1].profissao = rt.profissao;
 					rtLst[1].registroCREA = rt.registroCREA;
 					rtLst[1].id = id2;
 					rtLst[1].proprioDeclarante = true;
-					//rtLst[1].numeroART = String.Empty;
-				//}else
-					//rtLst[1].proprioDeclarante = true;
 				}
 
 				if (rtElaboracao == 2 || rtElaboracao == 3 )
 				{
 					var id2 = rtLst[3].id;
-					//rtLst[3] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
 					rtLst[3].nome = rt.nome;
 					rtLst[3].profissao = rt.profissao;
 					rtLst[3].registroCREA = rt.registroCREA;
 					rtLst[3].id = id2;
 					rtLst[3].proprioDeclarante = true;
-					//rtLst[3].numeroART = String.Empty;
 				}
 			}
 			catch (Exception exc)
