@@ -131,5 +131,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 			return conf;
 		}
+
+		public void AlterarSituacao(int? titulo)
+		{
+
+		}
 	}
 }
