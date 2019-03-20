@@ -780,12 +780,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var laudoBus = new LaudoVistoriaFlorestalBus();
 			var busExploracao = new ExploracaoFlorestalBus();
 			var exploracoesLst = busExploracao.ObterPorEmpreendimentoList(empreendimento)?.Where(x => x.DataConclusao.IsEmpty);
-			var caracterizacaoLst = exploracoesLst.Select(x => new CaracterizacaoLst
+			var caracterizacaoLst = exploracoesLst?.Select(x => new CaracterizacaoLst
 			{
 				Id = x.Id,
 				Texto = x.CodigoExploracaoTexto ?? "",
-				ParecerFavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == true).Select(y => y.Identificacao)?.ToList()),
-				ParecerDesfavoravel = String.Join(", ", x.Exploracoes.Where(w => w.ParecerFavoravel == false).Select(y => y.Identificacao)?.ToList()),
+				ParecerFavoravel = String.Join(", ", x.Exploracoes?.Where(w => w.ParecerFavoravel == true)?.Select(y => y.Identificacao)?.ToList()),
+				ParecerDesfavoravel = String.Join(", ", x.Exploracoes?.Where(w => w.ParecerFavoravel == false)?.Select(y => y.Identificacao)?.ToList()),
 				IsAtivo = true
 			});
 

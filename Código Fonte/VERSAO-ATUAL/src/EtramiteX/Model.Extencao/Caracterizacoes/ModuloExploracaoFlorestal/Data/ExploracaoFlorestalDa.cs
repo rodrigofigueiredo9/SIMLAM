@@ -580,11 +580,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (!Convert.IsDBNull(reader["parecer_favoravel"]))
 							exploracao.ParecerFavoravel = Convert.ToBoolean(reader["parecer_favoravel"]);
 						exploracao.FinalidadeExploracao = Convert.IsDBNull(reader["finalidade"]) ? 0 : Convert.ToInt32(reader["finalidade"]);
-						exploracao.FinalidadeEspecificar = reader["finalidade_outros"].ToString();
-						exploracao.Tid = reader["tid"].ToString();
-						exploracao.Identificacao = reader["identificacao"].ToString();
-						exploracao.ArvoresRequeridas = reader["arvores_requeridas"].ToString();
-						exploracao.QuantidadeArvores = reader["quantidade_arvores"].ToString();
+						exploracao.FinalidadeEspecificar = reader["finalidade_outros"]?.ToString();
+						exploracao.Tid = reader["tid"]?.ToString();
+						exploracao.Identificacao = reader["identificacao"]?.ToString();
+						exploracao.ArvoresRequeridas = reader["arvores_requeridas"]?.ToString();
+						exploracao.QuantidadeArvores = reader["quantidade_arvores"]?.ToString();
 
 						exploracao.AreaCroqui = reader.GetValue<decimal>("area_croqui");
 						exploracao.AreaRequerida = reader.GetValue<decimal>("area_requerida");
@@ -621,7 +621,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							{
 								produto = new ExploracaoFlorestalProduto();
 								produto.Id = Convert.ToInt32(readerAux["id"]);
-								produto.Tid = readerAux["tid"].ToString();
+								produto.Tid = readerAux["tid"]?.ToString();
 
 								produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
 
