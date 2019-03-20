@@ -312,8 +312,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			var projetoDigital = projetoDigitalBus.Obter(projetoDigitalId);
 			projetoDigitalBus.DesassociarDependencias(projetoDigital);
-			if (!_bus.PossuiAssociacaoExterna(projetoDigital.EmpreendimentoId.GetValueOrDefault(0), projetoDigital.Id))
-					_bus.Excluir(caracterizacao);
+			_bus.Excluir(caracterizacao);
 
 			return Json(new
 			{
