@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
 
 namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF
@@ -17,12 +18,15 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public decimal? AreaAlagada { get; set; }
 		public decimal? VolumeArmazanado { get; set; }
 		public int FinalidadeAtividade { get; set; }
-
+		public BarragemDispensaLicenca barragemEntity { get; set; }
+		public List<Lista> finalidades { get; set; }
 		public string CampoNome { get; set; }
 		public string CampoValor { get; set; }
+		public bool? HaSupresVegetApp { get; set; }
 
 		public BarragemDispensaLicencaPDF(BarragemDispensaLicenca caracterizacao)
 		{
+			barragemEntity = caracterizacao;
 			Id = caracterizacao.Id;
 			NorthingLatitude = caracterizacao.Coordenada.NorthingUtmTexto;
 			EastingLongitude = caracterizacao.Coordenada.EastingUtmTexto;
@@ -30,6 +34,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 			NumeroARTExecucao = caracterizacao.NumeroARTExecucao;
 			AreaAlagada = caracterizacao.areaAlagada;
 			VolumeArmazanado = caracterizacao.volumeArmazanado;
+			HaSupresVegetApp = caracterizacao.construidaConstruir.isSupressaoAPP;
 		}
 	}
 }

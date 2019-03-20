@@ -95,6 +95,7 @@
     <Compile Include="Etx\ModuloExtensao\StringExt.cs" />
     <Compile Include="Etx\ModuloRelatorio\AsposeEtx\AsposeData.cs" />
     <Compile Include="Etx\ModuloRelatorio\IAnexoPdf.cs" />
+    <Compile Include="Excel\Excel.cs" />
     <Compile Include="Home\Log.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemConstruidaAConstruir.cs" />
     <Compile Include="Interno.Extensoes\Caracterizacoes\ModuloBarragemDispensaLicenca\BarragemRT.cs" />
@@ -400,9 +401,12 @@
     <Compile Include="Interno\ModuloSetor\eCargo.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloModeloTipoDocumento.cs" />
     <Compile Include="Interno\ModuloTitulo\eTituloMotivoEncerramento.cs" />
+    <Compile Include="Interno\ModuloTitulo\RelatorioTituloDecListarResultado.cs" />
+    <Compile Include="Interno\ModuloTitulo\RelatorioTituloDecListarFiltro.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloDeclaratorioConfiguracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestalExploracao.cs" />
     <Compile Include="Interno\ModuloTitulo\TituloExploracaoFlorestal.cs" />
+    <Compile Include="Interno\ModuloTitulo\TituloRelatorioFiltro.cs" />
     <Compile Include="Interno\ModuloVegetal\ConfiguracaoVegetalItem.cs" />
     <Compile Include="Interno\ModuloVegetal\Cultura\CultivarConfiguracao.cs" />
     <Compile Include="Interno\ModuloVegetal\DeclaracaoAdicional\DeclaracaoAdicional.cs" />

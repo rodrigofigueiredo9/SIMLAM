@@ -51,11 +51,6 @@ BarragemDispensaLicenca = {
 		container.delegate('.txtAreaAlagada', 'blur', BarragemDispensaLicenca.onChangeAreaAlagada);
 
 		BarragemDispensaLicenca.bloquearCriar();
-        //BarragemDispensaLicenca.changeBarragemTipo();
-        //BarragemDispensaLicenca.changeFase();
-        //BarragemDispensaLicenca.changeMongeVertedouroTipo();
-        //BarragemDispensaLicenca.changeFormacaoRT($('.cbFormacaoRT', BarragemDispensaLicenca.container));
-
         BarragemDispensaLicenca.configurarTela();
     },
 
@@ -305,7 +300,8 @@ BarragemDispensaLicenca = {
 		Mensagem.limpar(BarragemDispensaLicenca.container);
         var objeto = {
             Id: $('.hdnCaracterizacaoId', BarragemDispensaLicenca.container).val(),
-            EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
+			EmpreendimentoID: $('.hdnEmpreendimentoId', BarragemDispensaLicenca.container).val(),
+			ProjetoDigitalId: $('.hdnProjetoDigitalId', BarragemDispensaLicenca.container).val(),
             AtividadeID: $('.ddlAtividade', BarragemDispensaLicenca.container).val(),
             BarragemTipo: $('.rbBarragemTipo:checked', BarragemDispensaLicenca.container).val(),
 			fase: $('.rbFase:checked', BarragemDispensaLicenca.container).val(),
@@ -338,7 +334,7 @@ BarragemDispensaLicenca = {
 				larguraDemarcada: $('.txtLarguraDemarcada').val(),
 				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true : false,
 				faixaCercada: $('.rbFaixaCercada:checked').val(),
-				descricacaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
+				descricaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
 				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
 				barramentoAdequacoes: $('.txtAdequacoesDimensionamentoBarramento').val(),
 				vazaoMinTipo: ($('.rbFase:checked')).val() == 1 ?
@@ -360,9 +356,10 @@ BarragemDispensaLicenca = {
 				
 			},
 		};
-		objeto.construidaConstruir.isSupressaoAPP = objeto.construidaConstruir.isSupressaoAPP ?
-			objeto.construidaConstruir.isSupressaoAPP : $('.rbPerguntaSupressaoAContruir:checked').val();
+
 		if (objeto.fase == 2) {
+			objeto.construidaConstruir.isSupressaoAPP = $('.rbPerguntaSupressaoAConstruir:checked').val();
+
 			if (objeto.construidaConstruir.periodoInicioObra.length < 7) {
 				Mensagem.gerar(BarragemDispensaLicenca.container, [BarragemDispensaLicenca.settings.mensagens.PeriodoInicioRequired]);
 				return false;
@@ -372,6 +369,7 @@ BarragemDispensaLicenca = {
 				return false;
 			}
 		}
+
         $('.cbFinalidadeAtividade').each(function (index, item) {
 			if ($(item).is(':checked')) {
 				objeto.finalidade.push($(item).val());
@@ -395,7 +393,7 @@ BarragemDispensaLicenca = {
 	obterRT: function () {
 
 		var retorno = [];
-		var arquivo = null;
+		
 		var tipo = [
 			{ codigo: '1', nome: 'ElaboracaoDeclaracao' },
 			{ codigo: '2', nome: 'ElaboracaoProjeto' },
@@ -407,6 +405,8 @@ BarragemDispensaLicenca = {
 
 
 		for (var i = 0; i < 6; i++) {
+			var arquivo = null;
+
 			if (tipo[i].codigo == 2 && !BarragemDispensaLicenca.settings.profissoesSemAutorizacao.contains($('.ddlRT' + tipo[i].nome + 'Profissao').val())) {
 				arquivo = $('.hdnArquivo').val();
 				if (arquivo.isNullOrWhitespace()) {
@@ -570,10 +570,9 @@ BarragemDispensaLicenca = {
 	
 	desassociar: function () {
 		var caracterizacao = $(this).closest('tr').find('.hdnId').val();		
-		//dependenciaTipos.TipoCaracterizacao
-		var possuiAssociacaoExterna = $('.associacaoExterna', BarragemDispensaLicenca.container).val();
+		var possuiAssociacaoExterna = $(this).closest('tr').find('.dependencias').val() == 'True';
 
-		if (possuiAssociacaoExterna == "True")
+		if (possuiAssociacaoExterna)
 		{
 			Modal.confirma({
 				btnOkLabel: 'Confirmar',
@@ -675,11 +674,14 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMinInstalado: function () {
 		if ($('.rbVazaoMinInstalado:checked').val() == 1) {
 			$('.vazaoMinNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
 		} else {
 			$('.vazaoMinNormas').addClass('hide');
 			$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMin').removeClass('hide');
 		}
 		$('.rbVazaoMinNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMin').val('');
 	},
 
 	onChangeVazaoMinNormas: function () {
@@ -695,11 +697,13 @@ BarragemDispensaLicenca = {
 	onChangeVazaoMaxInstalado: function () {
 		if ($('.rbVazaoMaxInstalado:checked').val() == 1) {
 			$('.vazaoMaxNormas').removeClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
 		} else {
 			$('.vazaoMaxNormas').addClass('hide');
-			$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+			$('.AdequacoesDimensionamentoVazaoMax').removeClass('hide');
 		}
 		$('.rbVazaoMaxNormas:checked').prop('checked', false);
+		$('.txtAdequacoesDimensionamentoVazaoMax').val('');
 	},
 
 	onChangeVazaoMaxNormas: function () {
@@ -721,6 +725,7 @@ BarragemDispensaLicenca = {
 		$('.txtDescricaoDesenvolvimento').val('');
 		$('.rbBarramentoNormas:checked').prop('checked', false);
 		$('.txtAdequacoesDimensionamentoBarramento').val('');
+		$('.AdequacoesDimensionamentoBarramento').addClass('hide');
 
 		$('.ddlTipoDispositivoVazaoMin').val(0);
 		$('.txtDiametroTubulacaoVazaoMin').val('');
@@ -748,6 +753,7 @@ BarragemDispensaLicenca = {
 		$('.AdequacoesDimensionamentoVazaoMin').addClass('hide');
 		$('.vazaoMaxNormas').addClass('hide');
 		$('.AdequacoesDimensionamentoVazaoMax').addClass('hide');
+		
 		//$('.rbPossuiMonge, .rbPossuiVertedouro, .rbPossuiEstruturaHidraulica', BarragemDispensaLicenca.container).removeAttr('checked');
 	},
 	//-------------------------  --------------------//

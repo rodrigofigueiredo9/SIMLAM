@@ -1330,6 +1330,43 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+		internal bool ProjetoEmPosse(int projetoDigital, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select count(p.id) retorno from {0}tab_projeto_digital p where p.id = :id and p.credenciado = :credenciado", EsquemaBancoCredenciado);
+
+				comando.AdicionarParametroEntrada("id", projetoDigital, DbType.Int32);
+				comando.AdicionarParametroEntrada("credenciado", User.FuncionarioId, DbType.Int32);
+
+				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
+		internal bool CaracterizacaoAssociadaProjDigi(int projetoDigital, int caracterizacao, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBancoCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select dependencia_id from tab_proj_digital_dependencias where projeto_digital_id = :projeto", EsquemaBancoCredenciado);
+
+				comando.AdicionarParametroEntrada("projeto", projetoDigital, DbType.Int32);
+
+				int idDependencia = 0;
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						idDependencia = reader.GetValue<int>("dependencia_id");
+					}
+
+					reader.Close();
+				}
+
+				return idDependencia == caracterizacao;
+			}
+		}
+
 		#endregion
 
 		#region Auxiliares

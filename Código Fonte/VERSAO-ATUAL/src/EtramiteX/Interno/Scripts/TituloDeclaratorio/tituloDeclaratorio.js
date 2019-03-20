@@ -1,6 +1,7 @@
 /// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
+/// <reference path="../moment.min.js" />
 /// <reference path="../mensagem.js" />
 
 TituloDeclaratorio = {
@@ -48,6 +49,8 @@ TituloDeclaratorio = {
 		container.delegate('.btnExcluirAssinante', 'click', TituloDeclaratorio.onExcluirAssinante);
 
 		container.delegate('.btnTituloSalvar', 'click', TituloDeclaratorio.onSalvarClick);
+		container.delegate('.radioCpfCnpj', 'change', TituloDeclaratorio.onChangeCpfCnpj);
+		container.delegate('.btnGerar', 'click', TituloDeclaratorio.gerarRelatorio);
 
 		if (TituloDeclaratorio.settings.isVisualizar || TituloDeclaratorio.settings.carregarEspecificidade) {
 			var params = {
@@ -428,5 +431,47 @@ TituloDeclaratorio = {
 			}
 		});
 
+	},
+
+	//Relatorio
+	onChangeCpfCnpj: function () {
+		if ($('.radioCpfCnpj:checked').val() == 1)
+			$('.filterCpfCnpj').removeClass('maskCnpj').addClass('maskCpf');
+		else
+			$('.filterCpfCnpj').removeClass('maskCpf').addClass('maskCnpj');
+
+		$('.filterCpfCnpj').val('');
+		Mascara.load(TituloDeclaratorio.container);
+	},
+
+	gerarRelatorio: function () {
+		filtro = {
+			modelo: $('.filterModelo:visible').val(),
+			inicioPeriodo: $('.filterInicioPeriodo').val(),
+			fimPeriodo: $('.filterFImPeriodo').val(),
+			nomeRazaoSocial: $('.filterNome').val(),
+			cpfCnpj: $('.filterCpfCnpj').val(),
+			municipio: $('.filterMunicipio:visible').val()
+		};
+
+		if (!filtro.inicioPeriodo.isNullOrWhitespace() && filtro.fimPeriodo.isNullOrWhitespace() ||
+			filtro.inicioPeriodo.isNullOrWhitespace() && !filtro.fimPeriodo.isNullOrWhitespace()) {
+			Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoObrigatorio]);
+			return;
+		}
+
+		if (!filtro.inicioPeriodo.isNullOrWhitespace() && !filtro.fimPeriodo.isNullOrWhitespace()) {
+			if (filtro.inicioPeriodo.length < 10 || filtro.fimPeriodo.length < 10) {
+				Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoFormato]);
+				return;
+			}
+
+			if (!moment(filtro.inicioPeriodo).isValid() || !moment(filtro.fimPeriodo).isValid()) {
+				Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoInvalido]);
+				return;
+			}
+		}
+
+		window.open(TituloDeclaratorio.settings.urls.urlGerar + '?paramsJson=' + JSON.stringify(filtro));
 	}
 }

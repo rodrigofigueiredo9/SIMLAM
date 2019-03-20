@@ -16,6 +16,7 @@ using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloProjetoDigital;
 using BarragemDispensaLicencaCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business.BarragemDispensaLicencaBus;
+using System.Collections.Generic;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -31,99 +32,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		#region Criar
-
-		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
-		public ActionResult Criar(int id)
-		{
-			if (!_caracterizacaoValidar.Basicas(id))
-			{
-				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-			}
-
-			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
-			caracterizacao.EmpreendimentoID = id;
-			AtividadeBus atividadeBus = new AtividadeBus();
-
-			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
-				caracterizacao,
-				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
-				_listaBus.BarragemDispensaLicencaFinalidadeAtividade,
-				_listaBus.BarragemDispensaLicencaFormacaoRT,
-				_listaBus.BarragemDispensaLicencaBarragemTipo,
-				_listaBus.BarragemDispensaLicencaFase,
-				_listaBus.BarragemDispensaLicencaMongeTipo,
-				_listaBus.BarragemDispensaLicencaVertedouroTipo
-			);
-
-			return View(vm);
-		}
-
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
-		public ActionResult Criar(BarragemDispensaLicenca caracterizacao)
-		{
-			_bus.Salvar(caracterizacao);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoID, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
-		#endregion
-
-		#region Editar
-
-		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaEditar })]
-		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizar, Artefato = (int)eHistoricoArtefatoCaracterizacao.barragemdispensalicenca)]
-		public ActionResult Editar(int id)
-		{
-			if (!_caracterizacaoValidar.Basicas(id))
-			{
-				return RedirectToAction("Index", "../Empreendimento", Validacao.QueryParamSerializer());
-			}
-
-			if (!_validar.Acessar(id))
-			{
-				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
-			}
-
-			BarragemDispensaLicenca caracterizacao = _bus.ObterPorEmpreendimento(id);
-			AtividadeBus atividadeBus = new AtividadeBus();
-
-			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
-				caracterizacao,
-				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
-				_listaBus.BarragemDispensaLicencaFinalidadeAtividade,
-				_listaBus.BarragemDispensaLicencaFormacaoRT,
-				_listaBus.BarragemDispensaLicencaBarragemTipo,
-				_listaBus.BarragemDispensaLicencaFase,
-				_listaBus.BarragemDispensaLicencaMongeTipo,
-				_listaBus.BarragemDispensaLicencaVertedouroTipo
-			);
-
-			return View(vm);
-		}
-
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaEditar })]
-		public ActionResult Editar(BarragemDispensaLicenca caracterizacao)
-		{
-			_bus.Salvar(caracterizacao);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoID, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
-		#endregion
-
 		#region Visualizar
 
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaVisualizar })]
@@ -134,9 +42,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
 			}
-
-			BarragemDispensaLicenca caracterizacao = _bus.ObterPorEmpreendimento(id);
+			
+			BarragemDispensaLicenca caracterizacao = _bus.Obter(id);
 			AtividadeBus atividadeBus = new AtividadeBus();
+
+			//var rtElaborador = _bus.ObterResponsavelTecnicoRequerimento(caracterizacao.responsaveisTecnicos, caracterizacao.RequerimentoId)[1].proprioDeclarante;
 
 			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
 				caracterizacao,
@@ -146,7 +56,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				_listaBus.BarragemDispensaLicencaBarragemTipo,
 				_listaBus.BarragemDispensaLicencaFase,
 				_listaBus.BarragemDispensaLicencaMongeTipo,
-				_listaBus.BarragemDispensaLicencaVertedouroTipo
+				_listaBus.BarragemDispensaLicencaVertedouroTipo,
+				_listaBus.Profissoes
 			);
 
 			vm.IsVisualizar = true;
@@ -176,8 +87,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
                 _listaBus.BarragemDispensaLicencaBarragemTipo,
                 _listaBus.BarragemDispensaLicencaFase,
                 _listaBus.BarragemDispensaLicencaMongeTipo,
-                _listaBus.BarragemDispensaLicencaVertedouroTipo
-            );
+                _listaBus.BarragemDispensaLicencaVertedouroTipo,
+				_listaBus.Profissoes
+			);
 
             vm.ProtocoloId = protocoloId;
             vm.ProjetoDigitalId = projeto.Id;
@@ -191,29 +103,63 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Excluir
 
-		[HttpGet]
+		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-		public ActionResult ExcluirConfirm(int id)
+		public ActionResult ExcluirConfirm(int titulo)
 		{
-			ExcluirVM vm = new ExcluirVM();
-			vm.Id = id;
-			vm.Mensagem = Mensagem.BarragemDispensaLicenca.ExcluirMensagem;
-			vm.Titulo = "Excluir Barragem para Dispensa de Licença Ambiental";
+			_validar.Excluir(titulo);
 
-			return PartialView("Excluir", vm);
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Titulo = "Excluir Barragem para Dispensa de Licença Ambiental",
+				@Conteudo = Mensagem.BarragemDispensaLicenca.ExcluirMensagem.Texto,
+				@Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaExcluir })]
-		public ActionResult Excluir(int id)
+		public ActionResult Excluir(int barragemId, int empreendimento)
 		{
-			string urlRedireciona = string.Empty;
-			if (_bus.Excluir(id))
+			string urlRedirecionar = string.Empty;
+			if (_bus.Excluir(barragemId))
 			{
-				urlRedireciona = Url.Action("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
+				urlRedirecionar = Url.Action("Listar", "BarragemDispensaLicenca", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
 
-			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedireciona = urlRedireciona }, JsonRequestBehavior.AllowGet);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, urlRedirecionar = urlRedirecionar }, JsonRequestBehavior.AllowGet);
+		}
+
+		#endregion
+
+		#region Listar
+
+		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
+		public ActionResult Listar(int id, bool isVisualizar = false)
+		{
+			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
+			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
+			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();
+			caracterizacao.EmpreendimentoID = id;
+
+			AtividadeBus atividadeBus = new AtividadeBus();
+
+			BarragemDispensaLicencaVM vm = new BarragemDispensaLicencaVM(
+				caracterizacao,
+				atividadeBus.ObterAtividadePorCodigo((int)eAtividadeCodigo.BarragemDeAte1HaLâminaDaguaAte10000M3DeVolumeArmazenado),
+				_listaBus.BarragemDispensaLicencaFinalidadeAtividade,
+				_listaBus.BarragemDispensaLicencaFormacaoRT,
+				_listaBus.BarragemDispensaLicencaBarragemTipo,
+				_listaBus.BarragemDispensaLicencaFase,
+				_listaBus.BarragemDispensaLicencaMongeTipo,
+				_listaBus.BarragemDispensaLicencaVertedouroTipo,
+				_listaBus.Profissoes
+			);
+
+			vm.CaracterizacoesCadastradas = _bus.ObterListar(id);
+			vm.IsVisualizar = isVisualizar;
+			return View(vm);
 		}
 
 		#endregion

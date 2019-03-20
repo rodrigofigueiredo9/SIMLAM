@@ -110,19 +110,26 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeCriar.ToString()) &&
 					!User.IsInRole(ePermissao.DescricaoLicenciamentoAtividadeEditar.ToString());
 
-				if (x.Tipo == eCaracterizacao.ExploracaoFlorestal)
+				switch (x.Tipo)
 				{
-					var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
-					if (exploracao.Id > 0)
-					{
-						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
-						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
-					}
-				}				
-				else
-				{
-					x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
-					x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
+					case eCaracterizacao.ExploracaoFlorestal:
+						var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
+						if (exploracao.Id > 0)
+						{
+							x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+							x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
+						}
+						break;
+
+					case eCaracterizacao.BarragemDispensaLicenca:
+						x.UrlVisualizar = Url.Action("Listar", x.Tipo.ToString());
+						break;
+
+					default:
+						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
+						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString())) && x.Tipo != eCaracterizacao.BarragemDispensaLicenca;
+						x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
+						break;
 				}
 				x.PodeVisualizar = User.IsInRole(String.Format("{0}Visualizar", x.Tipo.ToString()));
 
@@ -136,7 +143,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				x.DscLicAtividadeId = cadastrada.DscLicAtividadeId;
 
 				x.UrlEditar = Url.Action("Editar", x.Tipo.ToString());
-				x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 				x.UrlExcluirConfirm = Url.Action("ExcluirConfirm", x.Tipo.ToString());
 				x.UrlExcluir = Url.Action("Excluir", x.Tipo.ToString());
 

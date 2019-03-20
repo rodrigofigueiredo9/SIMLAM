@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOutros.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business;
@@ -396,7 +397,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 #region Valido
 
 				case eTituloSituacao.Valido:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (titulo.Modelo.Id == 72)   //Declaração de Dispensa de Licenciamento Ambiental de Barragem
+					{
+						if (tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso && tituloAux.Situacao.Id != (int)eTituloSituacao.EncerradoDeclaratorio)
+						{
+							Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Suspenso ou encerrado"));
+						}
+						else if (tituloAux.Situacao.Id == (int)eTituloSituacao.EncerradoDeclaratorio)
+						{
+							BarragemDispensaLicencaBus _bus = new BarragemDispensaLicencaBus();
+							bool possuiCaracterizacao = _bus.PossuiCaracterizacao(titulo.RequerimetoId);
+
+							if (!possuiCaracterizacao)
+							{
+								Validacao.Add(Mensagem.TituloAlterarSituacao.CaracterizacaoExcluida("Válido"));
+							}
+						}
+					}
+					else if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Em cadastro ou Suspenso"));
 					}

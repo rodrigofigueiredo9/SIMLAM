@@ -64,6 +64,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Controllers\BarragemTest.cs" />
     <Compile Include="Enums\ePermissaoTest.cs" />
     <Compile Include="Fakes\FakeBuggyFormsAuthenticationService.cs" />
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
@@ -80,6 +81,10 @@
     <ProjectReference Include="..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
       <Project>{7f898e80-f828-4618-b27b-2d039dcb461e}</Project>
       <Name>Blocos.Etx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Credenciado\Credenciado.Model.Extensoes\Credenciado.Model.Extensoes.csproj">
+      <Project>{9c7af4af-6757-41fc-953b-5752d5f57b4c}</Project>
+      <Name>Credenciado.Model.Extensoes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Credenciado\Credenciado.Model\Credenciado.Model.csproj">
       <Project>{60f1014b-fbcc-42c2-95f1-38b6c123c425}</Project>

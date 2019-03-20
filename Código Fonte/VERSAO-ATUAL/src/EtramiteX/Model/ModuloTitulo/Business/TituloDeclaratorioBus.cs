@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Model.Business;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno.Extensoes;
 using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
@@ -25,6 +26,7 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloAtividade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data;
+using System.IO;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 {
@@ -601,6 +603,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 
 			return lstAssinantes;
+		}
+
+		public MemoryStream GerarRelatorio(TituloRelatorioFiltro filtro)
+		{
+			try
+			{
+				var consulta = _da.GerarRelatorio(filtro);
+				return Excel.GerarPlanilha(consulta);
+			}
+			catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return null;
 		}
 
 		#endregion

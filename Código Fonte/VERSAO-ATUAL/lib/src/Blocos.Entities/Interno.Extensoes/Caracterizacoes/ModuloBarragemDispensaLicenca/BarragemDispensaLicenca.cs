@@ -15,15 +15,38 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string Tid { get; set; }
 		public int EmpreendimentoID { get; set; }
 		public int EmpreendimentoCodigo { get; set; }
+		public int ProjetoDigitalId { get; set; }
+		public int RequerimentoId { get; set; }
+		public string TituloNumero { get; set; }
+		public int TituloId { get; set; }
 		public int AtividadeID { get; set; }
 		public string Atividade { get; set; }
+		public int Associado { get; set; }
 
 		public eBarragemTipo BarragemTipo { get; set; }
 		public eRTElabocarao rtElaboracao { get; set; }
 		public eFase ?faseInstalacao { get; set; }
+		public string faseInstalacaoTexto
+		{
+			get
+			{
+				if (faseInstalacao == eFase.Construida) return "Construída";
+				else if (faseInstalacao == eFase.AConstruir) return "A construir";
+				else return string.Empty;
+			}
+		}
 		public List<BarragemCoordenada> coordenadas { get; set; }
 
 		public bool barragemContiguaMesmoNivel { get; set; }
+		public string barragemContiguaMesmoNivelTexto
+		{
+			get
+			{
+				if (barragemContiguaMesmoNivel == true) return "Sim";
+				else if (barragemContiguaMesmoNivel == false) return "Não";
+				else return string.Empty;
+			}
+		}
 		public decimal areaAlagada { get; set; }
 		public decimal volumeArmazanado { get; set; }
 		public decimal alturaBarramento { get; set; }
@@ -42,9 +65,12 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public string tempoConcentracaoEquacaoUtilizada { get; set; }
 		public decimal vazaoEnchente { get; set; }
 		public string fonteDadosVazaoEnchente { get; set; }
+		//public bool? haSupresVegetApp { get; set; }
 
+		//
 		public string EquacaoCalculo { get; set; }
 		public int? Fase { get; set; }
+		public string FaseTexto { get; set; }
 		public int? PossuiMonge { get; set; }
 		public int? MongeTipo { get; set; }
 		public string EspecificacaoMonge { get; set; }
@@ -68,6 +94,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 
 		public BarragemConstruidaAConstruir construidaConstruir { get; set; }
 		public List<BarragemRT> responsaveisTecnicos { get; set; }
+
+		
 
 		public BarragemDispensaLicenca()
 		{

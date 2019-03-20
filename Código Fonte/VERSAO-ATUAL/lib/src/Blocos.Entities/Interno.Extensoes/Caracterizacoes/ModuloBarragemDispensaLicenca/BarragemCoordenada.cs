@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 	{
 		public int id { get; set; }
 		public eTipoCoordenadaBarragem tipo { get; set; }
+		public string tipoTexto { get; set; }
 		public int ?northing { get; set; }
 		public int ?easting { get; set; }
 

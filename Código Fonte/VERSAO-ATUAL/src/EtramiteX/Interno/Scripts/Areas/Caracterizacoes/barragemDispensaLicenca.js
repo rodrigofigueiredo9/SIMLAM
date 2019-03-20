@@ -1,4 +1,4 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../mensagem.js" />
 /// <reference path="../../jquery.ddl.js" />
@@ -29,6 +29,8 @@ BarragemDispensaLicenca = {
 		BarragemDispensaLicenca.container.delegate('.btnBuscarCoordenada', 'click', BarragemDispensaLicenca.buscarCoordenada);
 		BarragemDispensaLicenca.container.delegate(".btnArqLimpar", 'click', BarragemDispensaLicenca.onLimparArquivoClick);
 		BarragemDispensaLicenca.container.delegate('.btnSalvar', 'click', BarragemDispensaLicenca.salvar);
+		BarragemDispensaLicenca.container.delegate('.btnVisualizar', 'click', BarragemDispensaLicenca.visualizar);
+		BarragemDispensaLicenca.container.delegate('.btnExcluir', 'click', BarragemDispensaLicenca.excluirConfirm);
 
 		//BarragemDispensaLicenca.changeBarragemTipo();
 		//BarragemDispensaLicenca.changeFase();
@@ -355,6 +357,105 @@ BarragemDispensaLicenca = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
 					MasterPage.redireciona(response.UrlRedirecionar);
+				}
+
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+				}
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
+
+	visualizar: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		var container = $(this).closest('tr');
+		var id = $('.hdnId', container).val();
+
+		MasterPage.redireciona(BarragemDispensaLicenca.settings.urls.visualizar + '/' + id);
+		//$.ajax({
+		//	url: BarragemDispensaLicenca.settings.urls.visualizar,
+		//	data: JSON.stringify({ id }),
+		//	cache: false,
+		//	async: false,
+		//	type: 'POST',
+		//	dataType: 'json',
+		//	contentType: 'application/json; charset=utf-8',
+		//	error: Aux.error,
+		//	success: function (response, textStatus, XMLHttpRequest) {
+		//			//if (response.EhValido) {
+		//			//	MasterPage.redireciona(response.UrlRedirecionar);
+		//			//}
+
+		//		if (response.Msg && response.Msg.length > 0) {
+		//			Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+		//		}
+		//	}
+		//});
+
+		MasterPage.carregando(false);
+	},
+
+	excluirConfirm: function () {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		var container = $(this).closest('tr');
+		var titulo = $('.hdnTit', container).val();
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.excluirConfirm,
+			data: JSON.stringify({ titulo: titulo }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(BarragemDispensaLicenca.container, response.Msg);
+					return;
+				} else {
+					Modal.confirma({
+						btnOkLabel: 'Sim',
+						btCancelLabel: "Cancelar",
+						titulo: response.Titulo,
+						conteudo: '<b>' + response.Conteudo + '</b>',
+						btnOkCallback: function (conteudoModal) {
+							Modal.fechar(conteudoModal);
+							BarragemDispensaLicenca.excluir(container);
+						}
+					});
+				}				
+			}
+		});
+
+		MasterPage.carregando(false);
+	},
+
+	excluir: function (container) {
+		Mensagem.limpar(BarragemDispensaLicenca.container);
+		MasterPage.carregando(true);
+
+		var id = $('.hdnId', container).val();
+
+		$.ajax({
+			url: BarragemDispensaLicenca.settings.urls.excluir,
+			data: JSON.stringify({ barragemId: id, empreendimento: $('.hdnEmpreendimentoId').val() }),
+			cache: false,
+			async: false,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			error: Aux.error,
+			success: function (response, textStatus, XMLHttpRequest) {
+				debugger;
+				if (response.EhValido) {
+					MasterPage.redireciona(response.urlRedirecionar);
 				}
 
 				if (response.Msg && response.Msg.length > 0) {

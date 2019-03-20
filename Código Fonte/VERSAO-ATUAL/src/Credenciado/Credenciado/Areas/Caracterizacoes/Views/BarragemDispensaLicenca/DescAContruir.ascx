@@ -10,8 +10,8 @@
 	<div class="block">
 		<div class="coluna80">
 			<label for="PerguntaSupressaoAConstruir">Haverá supressão de vegetação em Área de Preservação Permanente (APP) para implantação da barragem? *</label>
-			<%= Html.RadioButton("PerguntaSupressaoAConstruir", ConfiguracaoSistema.SIM, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Sim
-			<%= Html.RadioButton("PerguntaSupressaoAConstruir", ConfiguracaoSistema.NAO, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Não
+			<%= Html.RadioButton("PerguntaSupressaoAConstruir", true, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == true, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Sim
+			<%= Html.RadioButton("PerguntaSupressaoAConstruir", false, Model.Caracterizacao.construidaConstruir.isSupressaoAPP == false, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbPerguntaSupressaoAConstruir" })) %> Não
 		</div>
 	</div>
 	<div class="block">
@@ -24,7 +24,7 @@
 		</div>
 		<div class="coluna40">
 			<label for="DiametroTubulacaoVazaoMin">Diâmetro da tubulação (m) *</label>
-			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMinAConstruir", maxlength = "14" })) %>
+			<%= Html.TextBox("DiametroTubulacaoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinDiametro, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtDiametroTubulacaoVazaoMinAConstruir", maxlength = "10" })) %>
 		</div>
 	</div>
 

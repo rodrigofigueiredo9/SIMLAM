@@ -294,6 +294,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				case eTituloSituacao.Suspenso:
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					break;
+				case eTituloSituacao.EncerradoDeclaratorio:
+					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
+					break;
 				default:
 					break;
 			}
@@ -328,6 +331,28 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				return Json(new { @EhValido = false, @Msg = Validacao.Erros });
 			}
+		}
+
+		#endregion
+
+		#region Relatorio
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioRelatorio })]
+		public ActionResult Relatorio()
+		{
+			RelatorioVM vm = new RelatorioVM(
+				_busModelo.ObterModelosDeclaratorios().Where(x => x.Id == 72).ToList(),
+				_busLista.Municipios("ES"));
+			
+			return View(vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioRelatorio })]
+		public ActionResult GerarRelatorio(string paramsJson)
+		{
+			TituloRelatorioFiltro filtro = ViewModelHelper.JsSerializer.Deserialize<TituloRelatorioFiltro>(paramsJson);
+			var relatorio = _bus.GerarRelatorio(filtro);
+			
+			return ViewModelHelper.GerarArquivo("Relatorio.csv", relatorio, "application/vnd.ms-excel");
 		}
 
 		#endregion

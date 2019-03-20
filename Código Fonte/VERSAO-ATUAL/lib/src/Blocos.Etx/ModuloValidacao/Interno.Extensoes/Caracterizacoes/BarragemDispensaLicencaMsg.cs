@@ -14,8 +14,10 @@
     {
         public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização de Barragem para Dispensa de Licença Ambiental salva com sucesso" }; } }
         public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização de Barragem para Dispensa de Licença Ambiental excluída com sucesso" }; } }
-        public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Deseja realmente excluir a caracterização de Barragem para Dispensa de Licença Ambiental deste empreendimento?" }; } }
+        public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Essa ação apagará a caracterização do tipo Barragem Dispensada de Licenciamento Ambiental selecionada. Deseja continuar?" }; } }
+        public Mensagem NaoEpossivelExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia,  Texto = "Não é possível excluir a caracterização, pois existem títulos válidos associados a ela." }; } }
         public Mensagem FormacaoRTOutros { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Texto = "O IDAF (Instituto de Defesa Agropecuária e Florestal) informa que por orientação do CREA/ES, só são aptos a serem responsáveis técnicos de barragens de terra, os engenheiros agrônomos, engenheiros agrícolas e engenheiros civis, e apenas engenheiros civis no caso de barragens de concreto ou mista. Demais profissionais só serão aceitos com a apresentação de uma autorização específica do conselho de classe." }; } }
+        public Mensagem ImportacaoErro { get { return new Mensagem() { Tipo = eTipoMensagem.Erro, Texto = "Não foi possível realizar a importação das informações." }; } }
 
         public Mensagem SelecioneAtividade { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Atividade", Texto = "Selecione a atividade." }; } }
         public Mensagem SelecioneTipoBarragem { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "TipoBarragem", Texto = "Selecione o tipo de barragem." }; } }
@@ -40,7 +42,7 @@
         public Mensagem InformePossuiEstruturaHidraulica { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PossuiEstruturaHidraulica", Texto = "Informe se as estruturas (monge e vertedouro) e o corpo do barramento estão funcionando de acordo com as normas de segurança." }; } }
         public Mensagem InformeAdequacoesRealizada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AdequacoesRealizada", Texto = "Informe quais adequações serão realizadas para a barragem." }; } }
 
-		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida. Maior que 0.01 e menor que {0}.", valor) }; }
+		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida. Maior que 0.01 e menor ou igual que {0}.", valor) }; }
 		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o volume armazenado (m³) válida. Maior que 0.01 e menor que {0}.", valor) }; }
 
         public Mensagem InformeDataInicioObra { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano)." }; } }
@@ -52,8 +54,8 @@
 		// Validações Coordenadas
 		public Mensagem InformeCoordEasting(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a coordenada easting do {0}.", tipo) }; }
 		public Mensagem InformeCoordNorthing(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a coordenada northing do {0}.", tipo) }; }
-		public Mensagem CoordenadaForaATP(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora da ATP.", tipo) }; }
-		public Mensagem CoordenadaForaMunicipio(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora do município.", tipo) }; }
+		public Mensagem CoordenadaForaATP(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora da ATP do empreendimento.", tipo) }; }
+		public Mensagem CoordenadaForaMunicipio(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A coordenada do {0} está fora do município do empreendimento.", tipo) }; }
 
 		public Mensagem InformeFormacaoRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "FormacaoRT", Texto = "Informe a formação do responsável técnico." }; } }
         public Mensagem InformativoFormacaoRTOutro { get { return new Mensagem() { Tipo = eTipoMensagem.Informacao, Campo = "EspecificacaoRT", Texto = "O IDAF (Instituto de Defesa Agropecuária e Florestal) informa que por orientação do CREA/ES, só são aptos a serem responsáveis técnicos de barragens de terra, os engenheiros agrônomos, engenheiros agrícolas e engenheiros civis, e apenas engenheiros civis no caso de barragens de concreto ou mista. Demais profissionais só serão aceitos com a apresentação de uma autorização específica do conselho de classe." }; } }
@@ -77,8 +79,8 @@
 		public Mensagem InformeSupressaoApp { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "barramentoNormas", Texto = "Informe as adequações do barramento." }; } }
 
 		// Validações DATA
-		public Mensagem InformePeriodoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoInicio", Texto = "Informe o período de início." }; } }
-		public Mensagem InformePeriodoTermino { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoTermino", Texto = "Informe o período de término." }; } }
+		public Mensagem InformePeriodoInicio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoInicio", Texto = "Informe o período de início (MM/YYYY)." }; } }
+		public Mensagem InformePeriodoTermino { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PeriodoTermino", Texto = "Informe o período de término (MM/YYYY)." }; } }
 		public Mensagem InformeMes (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o mês do período de {0}.", periodo) }; }
 		public Mensagem MesInvalido (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Mês do período {0} inválido.", periodo) }; }
 		public Mensagem InformeAno (string periodo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o ano do período de {0}.", periodo) }; }
@@ -104,7 +106,8 @@
 		public Mensagem InformeCREART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o registro do CREA do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeNumeroART(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o número do ART do responsável técnico {0}.", tipo) }; }
 		public Mensagem InformeAutorizacaoCREA(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A autorização do CREA do responsável técnico {0} é obrigatória.", tipo) }; }
-
 		public Mensagem InformeRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Se alguma informação do Responsável técnico for preenchida, todas as outras precisam ser preenchidas." }; } }
+
+		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "O número de ART de RTs de elaboração e de execução não pode ser o mesmo." }; } }
 	}
 }

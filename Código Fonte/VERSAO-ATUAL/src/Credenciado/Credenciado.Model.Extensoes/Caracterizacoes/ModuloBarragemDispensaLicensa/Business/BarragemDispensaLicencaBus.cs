@@ -122,6 +122,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
+
 		public bool Excluir(int id, BancoDeDados banco = null, bool validarDependencias = true)
 		{
 			try
@@ -170,31 +171,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
 					caracterizacaoBus.ConfigurarEtapaExcluirCaracterizacao(empreendimento, bancoDeDados);
-
-					bancoDeDados.Commit();
-				}
-
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-
-			return Validacao.EhValido;
-		}
-
-		public bool ExcluirPorId(int projetoDigitalId, BancoDeDados banco = null, bool validarDependencias = true)
-		{
-			try
-			{
-				
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
-				{
-					bancoDeDados.IniciarTransacao();
-
-					_da.ExcluirPorId(projetoDigitalId, bancoDeDados);
-
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.Excluir);
 
 					bancoDeDados.Commit();
 				}
@@ -285,6 +261,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		public void AtualizarInternoIdTid(int caracterizacaoId, int internoId, string tid, BancoDeDados banco)
 		{
 			_da.AtualizarInternoIdTid(caracterizacaoId, internoId, tid, banco);
+		}
+
+		public int AssociarNovaCaracterizacao(int barragemId, int projetoDigital)
+		{
+			try
+			{
+				return _da.AssociarNovaCaracterizacao(barragemId, projetoDigital);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return 0;
 		}
 
 		#endregion
@@ -410,27 +398,37 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			//Para o caso da coluna da atividade estar na tabela principal
 			return _busCaracterizacao.ObterAtividades(empreendimento, Caracterizacao.Tipo);
 		}
-
-		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
-			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
-
+		
 		public List<BarragemRT> ObterResponsavelTecnicoRequerimento(List<BarragemRT> rtLst, int projetoDigital, BancoDeDados banco = null)
 		{
 			BarragemRT rt = new BarragemRT();
 			try
 			{
+				var rtElaboracao = VerificarElaboracaoRT(projetoDigital);
 				rt = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
 				var id1 = rtLst[0].id;
 
 				rtLst[0] = rt;
 				rtLst[0].id = id1;
-				if (VerificarElaboracaoRT(projetoDigital))
+
+				if (rtElaboracao == 1 || rtElaboracao == 3)
 				{
 					var id2 = rtLst[1].id;
-					rtLst[1] = _da.ObterResponsavelTecnicoRequerimento(projetoDigital);
-					rtLst[1].autorizacaoCREA = new Blocos.Arquivo.Arquivo();
+					rtLst[1].nome = rt.nome;
+					rtLst[1].profissao = rt.profissao;
+					rtLst[1].registroCREA = rt.registroCREA;
 					rtLst[1].id = id2;
 					rtLst[1].proprioDeclarante = true;
+				}
+
+				if (rtElaboracao == 2 || rtElaboracao == 3 )
+				{
+					var id2 = rtLst[3].id;
+					rtLst[3].nome = rt.nome;
+					rtLst[3].profissao = rt.profissao;
+					rtLst[3].registroCREA = rt.registroCREA;
+					rtLst[3].id = id2;
+					rtLst[3].proprioDeclarante = true;
 				}
 			}
 			catch (Exception exc)
@@ -454,6 +452,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return false;
 		}
+
+		public bool PossuiCaracterizacao(int? requerimentoId)
+		{
+			bool possui = false;
+			try
+			{
+				possui = _da.PossuiDadosCaracterizacao(requerimentoId ?? 0);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return possui;
+		}
+
 		#endregion
 
 		#region Auxilizares
@@ -493,7 +507,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			}
 		}
 
-		public bool VerificarElaboracaoRT(int projetoDigital)
+		public int VerificarElaboracaoRT(int projetoDigital)
 		{
 			try
 			{
@@ -504,8 +518,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				Validacao.AddErro(exc);
 			}
 
-			return false;
+			return 0;
 		}
+
+		public bool PossuiAssociacaoExterna(int empreendimento, int projetoDigitalId, BancoDeDados banco = null) =>
+			_da.PossuiAssociacaoExterna(empreendimento, projetoDigitalId, banco);
+
 
 		#endregion
 	}

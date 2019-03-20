@@ -253,12 +253,45 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			desatualizadas = new List<int>();
 			desatualizadas.AddRange(lista.Select(x => (int)x.Tipo));
 
-			if (lista.Count > 0)
+			if (lista.Count > 0 && !lista.Exists(x => x.Tipo == eCaracterizacao.BarragemDispensaLicenca))
 			{
 				return Mensagem.Caracterizacao.CopiarCaracterizacaoDesatualizada(lista.Select(x => x.Nome).ToList()).Texto;
 			}
 
 			return string.Empty;
+		}
+
+		public bool ProjetoDigitalEmPosse(int projetoDigital)
+		{
+			try
+			{
+				if (!_da.ProjetoEmPosse(projetoDigital))
+					Validacao.Add(Mensagem.Caracterizacao.PosseProjetoDigital);
+
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public bool CaracterizacaoAssociadaProjDigi(int projetoDigital, int caracterizacao)
+		{
+			try
+			{
+				if (caracterizacao == 0) return true;
+
+				if (!_da.CaracterizacaoAssociadaProjDigi(projetoDigital, caracterizacao))
+					Validacao.Add(Mensagem.Caracterizacao.CaracterizacaoNaoAssociada);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
 		}
 	}
 }

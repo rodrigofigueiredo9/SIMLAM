@@ -16,5 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		areaBotaFora,
 		[Description("Área de empréstimo")]
 		areaEmprestimo,
+
 	}
+
 }

@@ -1,6 +1,7 @@
 ﻿using Exiges.Negocios.Library;
 using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -103,15 +104,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (string.IsNullOrWhiteSpace(caracterizacao.cursoHidrico))
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCursoHidrico);
 
-			caracterizacao.coordenadas.ForEach(x =>
-			{
-				if (x.northing <= 0)
+			caracterizacao.coordenadas.ForEach(x => {
+				if (!x.northing.HasValue || x.northing <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.Description()));
-				if (x.easting <= 0)
+				if (!x.easting.HasValue || x.easting <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
 			});
 
-			ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
+			if (!Validacao.EhValido) return false;
+
+			//ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
 
 			if (!caracterizacao.Fase.HasValue)
 			{
@@ -130,7 +132,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (!caracterizacao.construidaConstruir.faixaCercada.HasValue)
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeFaixaCercada);
 
-					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricacaoDesenvolvimentoAPP))
+					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.descricaoDesenvolvimentoAPP))
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeDescricaoApp);
 				}
 
@@ -228,7 +230,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.AnoInvalido("início"));
 				}
 
-				if (mesInicio < DateTime.Now.Month && anoInicio <= DateTime.Now.Year)
+				if (anoInicio < DateTime.Now.Year || (mesInicio < DateTime.Now.Month && anoInicio == DateTime.Now.Year))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.PeriodoMaior("início"));
 
 				if (mesFim <= 0)
@@ -259,9 +261,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			if (!Validacao.EhValido) return false;
 			var profissoesSemAutorizacao = new List<int>() { 15, 37, 38 };
+			List<BarragemRT> rtsBarragemCopia = new List<BarragemRT>();
 
-			caracterizacao.responsaveisTecnicos.ForEach(x =>
+			for (int i = 0; i < caracterizacao.responsaveisTecnicos.Count(); i++)
 			{
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoDeclaracao)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoEstudoAmbiental)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoPlanoRecuperacao)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+				if (caracterizacao.responsaveisTecnicos[i].tipo == eTipoRT.ElaboracaoProjeto)
+					rtsBarragemCopia.Add(caracterizacao.responsaveisTecnicos[i]);
+			}
+
+
+
+			caracterizacao.responsaveisTecnicos.ForEach(x => {
 				if (x.tipo == eTipoRT.ElaboracaoDeclaracao || x.tipo == eTipoRT.ElaboracaoProjeto || x.tipo == eTipoRT.ElaboracaoEstudoAmbiental)
 				{
 					if (String.IsNullOrWhiteSpace(x.nome))
@@ -279,41 +295,63 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
 			});
 
+			if (caracterizacao.responsaveisTecnicos.Exists(x =>
+						 !String.IsNullOrWhiteSpace(x.numeroART) &&
+						 (
+							(x.numeroART == caracterizacao.responsaveisTecnicos[2].numeroART && x != caracterizacao.responsaveisTecnicos[2] && x != caracterizacao.responsaveisTecnicos[5]) ||
+							(x.numeroART == caracterizacao.responsaveisTecnicos[5].numeroART && x != caracterizacao.responsaveisTecnicos[5] && x != caracterizacao.responsaveisTecnicos[2])
+						 )))
+				Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+
+			//for (int i = 0; i < rtsBarragemCopia.Count(); i++)
+			//{
+			//	if (caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
+			//	{
+			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+			//	}
+			//	if (caracterizacao.responsaveisTecnicos[5].numeroART == rtsBarragemCopia[i].numeroART)
+			//	{
+			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
+			//	}
+			//}
+
 			return Validacao.EhValido;
 		}
 
-		public bool Acessar(int empreendimentoId, int projetoDigitalId) =>
-			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca);
+		public bool Acessar(int empreendimentoId, int projetoDigitalId, int caracterizacaoId = 0) =>
+			_caracterizacaoValidar.Dependencias(empreendimentoId, projetoDigitalId, (int)eCaracterizacao.BarragemDispensaLicenca)
+			&& _caracterizacaoValidar.ProjetoDigitalEmPosse(projetoDigitalId)
+			&& _caracterizacaoValidar.CaracterizacaoAssociadaProjDigi(projetoDigitalId, caracterizacaoId);
 
 		internal bool CopiarDadosInstitucional(BarragemDispensaLicenca caracterizacao)
 		{
-			if (caracterizacao.InternoID <= 0) 
+			if (caracterizacao.InternoID <= 0)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.CopiarCaractizacaoCadastrada);
 			return Validacao.EhValido;
 		}
 
 		internal void AreaAlagadaValida(decimal area)
 		{
-			var valorMax = _da.AreaAlagadaConfiguracao(area);
+			var valorMax = _da.ObterConfiguracao("area_alagada");
 			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.AreaAlagada(valorMax));
 		}
 
 		internal void VolumeArmazenadoValida(decimal area)
 		{
-			var valorMax = _da.VolumeArmazenadoConfiguracao(area);
-			if(area < Convert.ToDecimal(0.01) || area > valorMax)
+			var valorMax = _da.ObterConfiguracao("volume_armazenado");
+			if (area < Convert.ToDecimal(0.01) || area > valorMax)
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.VolumeArmazenado(valorMax));
-		} 
-			
-		internal void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
+		}
+
+		public void ValidarCoordenadas(int empreendimentoId, List<BarragemCoordenada> coordenadas)
 		{
 			try
 			{
 				RequestJson requestJson = new RequestJson();
 				EmpreendimentoCaracterizacao empreendimento = new EmpreendimentoCaracterizacao();
-				var apiUri = ConfigurationManager.AppSettings["apiGeo"];
-				var token = ConfigurationManager.AppSettings["tokenCredenciadoGeo"];
+				var apiUri = ConfigurationManager.AppSettings["apiInstitucionalGeo"];
+				var token = ConfigurationManager.AppSettings["tokenInstitucionalGeo"];
 
 				empreendimento = _da.ObterEmpreendimentoAtpEMunicipio(empreendimentoId);
 
@@ -326,6 +364,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (x.tipo == eTipoCoordenadaBarragem.barramento)
 						{
 							HttpResponseMessage response = _client.GetAsync($"{apiUri}geoatp/coordenada/latitude/{x.easting}/longitude/{x.northing}").Result;
+
+							if (!response.IsSuccessStatusCode)
+								throw new Exception("Não foi possível conectar no servidor");
+							if (response.StatusCode != HttpStatusCode.OK)
+								throw new Exception("Mensagem não esperada");
+
 							var json = response.Content.ReadAsStringAsync().Result;
 							var atpCoordenada = JsonConvert.DeserializeObject<List<int>>(json);
 

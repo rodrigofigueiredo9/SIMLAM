@@ -18,7 +18,7 @@
 	<div class="block">
 		
 			<div class="coluna80">
-			<label for="TipoBarragem">Tipo da barramento: *</label>
+			<label for="TipoBarragem">Tipo do barramento: *</label>
 			<% foreach (var item in Model.BarragemTiposLst) { %>
 			<label><%= Html.RadioButton("TipoBarragem", item.Id, item.IsAtivo, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio rbBarragemTipo" })) %><%= item.Texto %></label>
 			<% } %>
@@ -175,7 +175,7 @@
 		</div>
 		<div class="block">
 			<div class="coluna40">
-				<label for="vazaoEnchente">Vazão máxima de cheia (vazão de enchente) (m³) *</label>
+				<label for="vazaoEnchente">Vazão máxima de cheia (vazão de enchente) (m³/s) *</label>
 				<%= Html.TextBox("vazaoEnchente", Model.Caracterizacao.vazaoEnchente, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text maskDecimalPonto txtVazaoEnchente", maxlength = "14" })) %>
 			</div>
 			<div class="coluna40">

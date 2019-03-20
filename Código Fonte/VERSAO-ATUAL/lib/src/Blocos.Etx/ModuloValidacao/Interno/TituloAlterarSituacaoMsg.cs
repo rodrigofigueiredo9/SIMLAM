@@ -59,7 +59,12 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem SituacaoInvalida(string situacaoNova, string situacaoNecessaria)
 		{
-			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, so é possivel mudar o titulo para {0} com a situação {1}.", situacaoNova, situacaoNecessaria) };
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, só é possivel mudar o titulo para {0} com a situação {1}.", situacaoNova, situacaoNecessaria) };
+		}
+
+		public Mensagem CaracterizacaoExcluida(string situacaoNova)
+		{
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, só é possivel mudar o titulo para {0} se a caracterização não tiver sido excluída do sistema.", situacaoNova) };
 		}
 
 		public Mensagem DataDeveSerSuperior(string campo, string dataValidar, string dataInferior)
