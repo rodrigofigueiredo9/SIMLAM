@@ -470,7 +470,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento and s.tipo_exploracao is not null", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
