@@ -268,7 +268,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			if (Validacao.EhValido)
 			{
-				return Json(new { @EhValido = true, @Msg = Validacao.QueryParam(), @AcaoId = titulo.Id });
+				return Json(new { @EhValido = true, @Msg = Validacao.QueryParam(), @AcaoId = titulo.Id, modelo = titulo.Modelo.Codigo });
 			}
 			else
 			{
