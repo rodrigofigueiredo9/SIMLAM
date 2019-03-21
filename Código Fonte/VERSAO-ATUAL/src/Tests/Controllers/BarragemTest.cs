@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicenca;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Controllers;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
 using Tests.Fakes;
@@ -46,13 +47,13 @@ namespace Tests.Controllers
 
 			//_validar.ValidarCoordenadas(10, lstCoord);
 
-			coord.easting = 421491;
-			coord.northing = 7964974;
+			coord.easting = 337582;
+			coord.northing = 7724056;
 			coord.tipo = eTipoCoordenadaBarragem.barramento;
 			lstCoord.Add(coord);
 
-			_validar.ValidarCoordenadas(60262, lstCoord);
-			Assert.AreEqual(1, 1);
+			_validar.ValidarCoordenadas(60252, lstCoord);
+			Assert.IsTrue(Validacao.EhValido);
 		}
 
 		#endregion
