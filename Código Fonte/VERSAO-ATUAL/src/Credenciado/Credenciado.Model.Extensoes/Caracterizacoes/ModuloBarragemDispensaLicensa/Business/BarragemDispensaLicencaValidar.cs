@@ -113,7 +113,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			if (!Validacao.EhValido) return false;
 
-			//ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
+			ValidarCoordenadas(caracterizacao.EmpreendimentoID, caracterizacao.coordenadas);
 
 			if (!caracterizacao.Fase.HasValue)
 			{
@@ -302,18 +302,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							(x.numeroART == caracterizacao.responsaveisTecnicos[5].numeroART && x != caracterizacao.responsaveisTecnicos[5] && x != caracterizacao.responsaveisTecnicos[2])
 						 )))
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
-
-			//for (int i = 0; i < rtsBarragemCopia.Count(); i++)
-			//{
-			//	if (caracterizacao.responsaveisTecnicos[2].numeroART == rtsBarragemCopia[i].numeroART)
-			//	{
-			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
-			//	}
-			//	if (caracterizacao.responsaveisTecnicos[5].numeroART == rtsBarragemCopia[i].numeroART)
-			//	{
-			//		Validacao.Add(Mensagem.BarragemDispensaLicenca.NumeroARTIgual);
-			//	}
-			//}
 
 			return Validacao.EhValido;
 		}
