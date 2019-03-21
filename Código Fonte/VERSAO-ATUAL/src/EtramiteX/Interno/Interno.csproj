@@ -529,7 +529,6 @@
     <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />
-    <Content Include="Views\TituloDeclaratorioConfiguracao\Configurar.aspx" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\ListarFiltros.ascx" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\ListarResultados.ascx" />
     <Content Include="Views\TituloDeclaratorioConfiguracao\RelatorioAlteracaoTitulo.aspx" />
