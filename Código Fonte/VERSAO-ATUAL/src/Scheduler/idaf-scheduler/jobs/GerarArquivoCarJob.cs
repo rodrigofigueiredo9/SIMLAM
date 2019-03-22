@@ -1602,7 +1602,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					connAux.Close();
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Log.Error($" Obter Documentos ::: Empreendimento - {empreendimentoId} * Dominilidade - {dominialidadeId} * Schema {schema} * DominialidadeOrigem {dominialidadeOrigem}");
 			}
@@ -1623,17 +1623,19 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var resultado = new ReservaLegal();
 			var dadosReceptor = new DadosReserva();
 			var IsValido = false;
+			var bancoGeo = (schema == CarUtils.GetEsquemaInstitucional()) ? "IDAFGEO." : "IDAFCREDENCIADOGEO.";
+
 			using (
 				var cmd = new OracleCommand(
-						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
-						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
-                         */
-
-						@"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
-                          FROM CRT_DOMINIALIDADE_RESERVA t
-                              INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
-                              INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ", conn))
+						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(G.AREA_M2, 0) ARL_DOCUMENTO, G.CODIGO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
+									t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
+										FROM CRT_DOMINIALIDADE_RESERVA				t
+											INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
+											INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
+											LEFT JOIN crt_projeto_geo				p  ON p.empreendimento = d.empreendimento and p.caracterizacao = 1
+											LEFT JOIN {bancoGeo}geo_apmp			a  ON p.id = a.projeto
+											LEFT JOIN {bancoGeo}geo_arl				g  ON a.id = g.COD_APMP and t.IDENTIFICACAO = g.codigo
+										WHERE t.DOMINIO = :dominio_id ", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
