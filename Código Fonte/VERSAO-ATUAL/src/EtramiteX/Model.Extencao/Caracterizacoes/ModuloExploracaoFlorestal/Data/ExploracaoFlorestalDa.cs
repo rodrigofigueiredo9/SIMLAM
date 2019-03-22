@@ -470,7 +470,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select s.id from {0}crt_exploracao_florestal s where s.empreendimento = :empreendimento and s.tipo_exploracao is not null", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -580,11 +580,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						if (!Convert.IsDBNull(reader["parecer_favoravel"]))
 							exploracao.ParecerFavoravel = Convert.ToBoolean(reader["parecer_favoravel"]);
 						exploracao.FinalidadeExploracao = Convert.IsDBNull(reader["finalidade"]) ? 0 : Convert.ToInt32(reader["finalidade"]);
-						exploracao.FinalidadeEspecificar = reader["finalidade_outros"].ToString();
-						exploracao.Tid = reader["tid"].ToString();
-						exploracao.Identificacao = reader["identificacao"].ToString();
-						exploracao.ArvoresRequeridas = reader["arvores_requeridas"].ToString();
-						exploracao.QuantidadeArvores = reader["quantidade_arvores"].ToString();
+						exploracao.FinalidadeEspecificar = reader["finalidade_outros"]?.ToString();
+						exploracao.Tid = reader["tid"]?.ToString();
+						exploracao.Identificacao = reader["identificacao"]?.ToString();
+						exploracao.ArvoresRequeridas = reader["arvores_requeridas"]?.ToString();
+						exploracao.QuantidadeArvores = reader["quantidade_arvores"]?.ToString();
 
 						exploracao.AreaCroqui = reader.GetValue<decimal>("area_croqui");
 						exploracao.AreaRequerida = reader.GetValue<decimal>("area_requerida");
@@ -621,12 +621,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							{
 								produto = new ExploracaoFlorestalProduto();
 								produto.Id = Convert.ToInt32(readerAux["id"]);
-								produto.Tid = readerAux["tid"].ToString();
+								produto.Tid = readerAux["tid"]?.ToString();
 
-								if(exploracao.GeometriaTipoId == (int)eTipoGeometria.Ponto)
-									produto.Quantidade = Convert.ToInt32(readerAux["quantidade"]).ToString();
-								else
-									produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
+								produto.Quantidade = Convert.ToDecimal(readerAux["quantidade"]).ToStringTrunc(2);
 
 								if (readerAux["produto"] != null && !Convert.IsDBNull(readerAux["produto"]))
 								{
@@ -1129,7 +1126,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						(select 1 from tab_titulo_exp_florestal t
 							where t.exploracao_florestal = c.id
 							and t.titulo = :titulo_id)
-						order by c.tipo_exploracao, c.codigo_exploracao", EsquemaBanco);
+						order by lv.chave, c.codigo_exploracao", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo_id", tituloId, DbType.Int32);
 
