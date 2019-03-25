@@ -369,7 +369,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				else
 				{
 					var resposta = requestJson.Executar<dynamic>(_configCoordenada.Obter<String>(ConfiguracaoCoordenada.KeyUrlObterMunicipioCoordenada) + "?easting=" + coordenadas[0].easting + "&northing=" + coordenadas[0].northing);
-					if (resposta.Data["Municipio"]["IBGE"] != empreendimento.MunicipioIBGE.ToString())
+					if (resposta.Erros != null && resposta.Erros.Count() > 0)
+						resposta.Erros.ForEach(x => {
+							Validacao.Add(x);
+						});
+
+					if (resposta.Data != null && resposta.Data.Count > 0 &&
+						resposta.Data["Municipio"]["IBGE"] != empreendimento.MunicipioIBGE.ToString())
 						Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaMunicipio(eTipoCoordenadaBarragem.barramento.Description()));
 				}
 			}
