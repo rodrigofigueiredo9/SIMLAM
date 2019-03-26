@@ -115,15 +115,8 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
-    </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Perfil">
-      <HintPath>..\..\..\lib\src\Perfil\obj\Release\Tecnomapas.EtramiteX.Perfil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +399,7 @@
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\ConsumoPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\RegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominioPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Shared\TituloAdicionar.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Editar.aspx" />

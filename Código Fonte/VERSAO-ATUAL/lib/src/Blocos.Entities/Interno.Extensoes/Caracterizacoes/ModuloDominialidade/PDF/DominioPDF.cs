@@ -21,7 +21,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 		public String Registro { get; set; }
 		public String AreaDocumento { get { return AreaDocumentoDecimal.ToStringTrunc(); } }
 		public Decimal AreaDocumentoDecimal { get; set; }
-		public String AreaCCIR { get { return AreaCCIRDecimal.ToStringTrunc(); } }
+		public String AreaCCIR { get { return AreaCCIRDecimal.ToStringTrunc(); } set { AreaCCIRDecimal = Decimal.Parse(value); } }
 		public Decimal AreaCCIRDecimal { get; set; }
 		public String APPCroqui { get { return APPCroquiDecimal.ToStringTrunc(); } }
 		public Decimal APPCroquiDecimal { get; set; }
