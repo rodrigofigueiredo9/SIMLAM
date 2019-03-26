@@ -973,7 +973,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Retificação NF Caixa
 		[HttpGet]
-		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar })]
+		[Permite(RoleArray = new Object[] { ePermissao.Praga })]
 		public ActionResult RetificacaoNotaFiscalDeCaixa()
 		{
 			RetificacaoNFCaixaVM vm = new RetificacaoNFCaixaVM();
@@ -981,7 +981,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View("RetificacaoNFCaixa", vm);
 		}
 
-		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
+		[Permite(RoleArray = new Object[] { ePermissao.Praga })]
 		public ActionResult FiltrarNFCaixa(RetificacaoNFCaixaVM vm, Paginacao paginacao)
 		{
 			if (!String.IsNullOrEmpty(vm.UltimaBusca))
@@ -1015,7 +1015,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 
-		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		[Permite(RoleArray = new Object[] { ePermissao.Praga })]
 		public ActionResult RetificacaoNFCaixaExcluirConfirm(int id)
 		{
 			ConfirmarVM vm = new ConfirmarVM();
@@ -1027,14 +1027,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return PartialView("Confirmar", vm);
 		}
 
-		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		[Permite(RoleArray = new Object[] { ePermissao.Praga })]
 		public ActionResult RetificacaoNFCaixaExcluir(int id)
 		{
 			_busPTV.ExcluirNFCaixa(id);
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
 		}
 
-		[Permite(RoleArray = new Object[] { ePermissao.DestinatarioPTVExcluir })]
+		[Permite(RoleArray = new Object[] { ePermissao.Praga })]
 		public ActionResult RetificacaoNFCaixaEditar(int id)
 		{
 			RetificacaoNFCaixaEditarVM vm = new RetificacaoNFCaixaEditarVM();
