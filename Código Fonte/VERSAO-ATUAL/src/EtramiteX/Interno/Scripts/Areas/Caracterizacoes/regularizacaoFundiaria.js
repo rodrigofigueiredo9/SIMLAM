@@ -1,4 +1,5 @@
-﻿/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
+
+/// <reference path="../../JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../../masterpage.js" />
 /// <reference path="../../jquery.ddl.js" />
 
@@ -564,7 +565,7 @@ RegularizacaoFundiaria = {
 			}
 		});
 		MasterPage.carregando(false);
-
+		$('#NumeroCCIR').val(item.NumeroCCIR);
 		$('.cancelarCaixaPrincipal', RegularizacaoFundiaria.container).closest('div').addClass('hide');
 		Listar.atualizarEstiloTable($('.dataGridTable', RegularizacaoFundiaria.container));
 	},
@@ -616,7 +617,7 @@ RegularizacaoFundiaria = {
 			}
 		});
 		MasterPage.carregando(false);
-
+		$('#NumeroCCIR').val(item.NumeroCCIR);
 		$('.txtAreaRequerida', RegularizacaoFundiaria.container).focus();
 		$('.cancelarCaixaPrincipal', RegularizacaoFundiaria.container).closest('div').addClass('hide');
 		Listar.atualizarEstiloTable($('.dataGridTable', RegularizacaoFundiaria.container));
@@ -635,12 +636,14 @@ RegularizacaoFundiaria = {
 		obj.Transmitentes = new Array();
 		obj.Edificacoes = new Array();
 		obj.UsoAtualSolo = new Array();
+		obj.posse = new Array();
 
 		obj.Id = $('.hdnPosseId', RegularizacaoFundiaria.container).val();
 		obj.Dominio = $('.hdnDominioId', RegularizacaoFundiaria.container).val();
 		obj.Zona = $('.hdnZonaLocalizacaoId', RegularizacaoFundiaria.container).val();
 		obj.Identificacao = $('.hdnIdentificacao', RegularizacaoFundiaria.container).val();
-		obj.ComprovacaoTexto = $('.hdnComprovacaoTexto', RegularizacaoFundiaria.container).val();
+		obj.ComprovacaoId = $('.ddlComprovacao', RegularizacaoFundiaria.container).val();
+		obj.ComprovacaoTexto = $('.ddlComprovacao :selected', RegularizacaoFundiaria.container).text();
 		obj.AreaCroqui = Mascara.getFloatMask($('.txtAreaTotalPosse', RegularizacaoFundiaria.container).val());
 		obj.Perimetro = Mascara.getFloatMask($('.txtPerimetro', RegularizacaoFundiaria.container).val());
 		obj.AreaRequerida = Mascara.getFloatMask($('.txtAreaRequerida', RegularizacaoFundiaria.container).val());
@@ -648,6 +651,19 @@ RegularizacaoFundiaria = {
 		obj.Benfeitorias = $('.txtBenfeitorias', RegularizacaoFundiaria.container).val();
 		obj.Observacoes = $('.txtObservacoes', RegularizacaoFundiaria.container).val();
 		obj.RelacaoTrabalho = RegularizacaoFundiaria.somarRelacaoTrabalho();
+
+		obj.DescricaoComprovacao = $('.txtDescricaoComprovacao', RegularizacaoFundiaria.container).val();
+		obj.AreaPosseDocumento = Mascara.getFloatMask($('.txtAreaPosse', RegularizacaoFundiaria.container).val());
+		obj.DataUltimaAtualizacaoCCIR = { DataTexto: $('.txtDataUltimaAtualizacaoCCIR', RegularizacaoFundiaria.container).val() };
+		obj.NumeroCCIR = $('.txtNumeroCCIR', RegularizacaoFundiaria.container).val();
+		obj.AreaCCIR = Mascara.getFloatMask($('.txtAreaCCIR', Dominio.container).val());
+		obj.ConfrontacoesNorte = $('.txtConfrontacoesNorte', RegularizacaoFundiaria.container).val();
+		obj.ConfrontacoesSul = $('.txtConfrontacoesSul', RegularizacaoFundiaria.container).val();
+		obj.ConfrontacoesLeste = $('.txtConfrontacoesLeste', RegularizacaoFundiaria.container).val();
+		obj.ConfrontacoesOeste = $('.txtConfrontacoesOeste', RegularizacaoFundiaria.container).val();
+
+		
+
 
 		obj.PossuiDominioAvulso = $('.radioPossuiDominioAvulso:checked', RegularizacaoFundiaria.container).val();
 		$('.tabAreasAnexadas tbody tr', RegularizacaoFundiaria.container).each(function (i, linha) {

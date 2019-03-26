@@ -164,7 +164,7 @@
 		<div class="block">
 			<div class="coluna100 divRadioFaixaDivisa ">
 				<label for="">Observações</label>
-				<%= Html.TextArea("Caracterizacao.Posse.Observacoes", Model.Caracterizacao.Posse.Observacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtObservacoes", @maxlength = "400" }))%>
+				<%= Html.TextArea("Caracterizacao.Posse.Observacoes", Model.Caracterizacao.Posse.Observacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text media txtObservacoes", @maxlength = "4000" }))%>
 			</div>
 		</div>
 	</div>

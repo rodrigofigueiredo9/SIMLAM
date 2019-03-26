@@ -239,7 +239,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDom
 			try
 			{
 				caracterizacao = _da.ObterPorEmpreendimento(empreendimento, simplificado: simplificado);
-				caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao);
+				 caracterizacao.Dependencias = _busCaracterizacao.ObterDependencias(caracterizacao.Id, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao);
 
 				Dominialidade caracterizacaoGeo = _da.ObterDadosGeo(empreendimento);
 				caracterizacao.ATPCroqui = caracterizacaoGeo.ATPCroqui;
