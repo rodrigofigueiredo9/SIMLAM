@@ -1417,6 +1417,18 @@ input[type=button].icone, .icone {
 		cursor: default !important;
 	}
 
+	input[type=button].icone.comunicador, .icone.comunicador {
+		background-position: -1240px top;
+	}
+
+		input[type=button].icone.comunicador:hover, .icone.comunicador:hover {
+			background-position: -1240px center;
+		}
+
+		input[type=button].icone.comunicador.desativado, .icone.comunicador.desativado {
+			background-position: -1240px bottom;
+		}
+
 /* ICONES IN-LINE */
 .iconeInline {
 	padding-left: 25px;
