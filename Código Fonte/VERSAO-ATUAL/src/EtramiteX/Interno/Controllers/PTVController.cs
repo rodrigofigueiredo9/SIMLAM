@@ -865,7 +865,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("EPTVListar", "PTV") + "?Msg=" + Validacao.QueryParam()
+				@UrlRedirecionar = Url.Action("EPTVListar", "PTV") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + eptv.Id.ToString()
 			});
 		}
 
