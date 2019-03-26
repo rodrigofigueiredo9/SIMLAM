@@ -798,7 +798,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		internal IEnumerable<ExploracaoFlorestal> ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
-			var exploracaoFlorestalList = new List<ExploracaoFlorestal>();
+			var exploracaoFlorestalList = this.ObterPorEmpreendimentoList(empreendimento, false, banco)?.Where(x => x.DataConclusao.IsEmpty)?.ToList();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -876,9 +876,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					ExploracaoFlorestal exploracaoAnterior = new ExploracaoFlorestal();
 					ExploracaoFlorestalExploracao detalhe = null;
 					ExploracaoFlorestalExploracao detalheAnterior = null;
+
 					while (reader.Read())
 					{
-						detalhe = new ExploracaoFlorestalExploracao();
+						if (exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
+							.Exploracoes?.Exists(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32("geometria_tipo")) ?? false)
+						{
+							detalhe = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
+							.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32("geometria_tipo"));
+						}
+						else
+							detalhe = new ExploracaoFlorestalExploracao();
 						detalhe.Identificacao = reader["identificacao"].ToString();
 						detalhe.ClassificacaoVegetacaoId = reader.GetValue<int>("class_vegetal");
 						detalhe.AreaCroqui = reader.GetValue<decimal>("area_croqui");
@@ -890,18 +898,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						if (exploracaoAnterior.TipoExploracao != Convert.ToInt32(reader["tipo_exploracao"]) || detalheAnterior.GeometriaTipoId != detalhe.GeometriaTipoId)
 						{
-							exploracao = new ExploracaoFlorestal();
-							exploracao.EmpreendimentoId = empreendimento;
-							if (exploracaoAnterior.CodigoExploracao > 0 && exploracaoAnterior.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))
-								exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao + 1;
+							if (exploracaoFlorestalList.Exists(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"])))
+								exploracao = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]));
 							else
-								exploracao.CodigoExploracao = this.ObterCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), empreendimento, bancoDeDados);
-							if (!Convert.IsDBNull(reader["tipo_exploracao"]))
-								exploracao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
-							if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
-								exploracao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
-							if (!Convert.IsDBNull(reader["data"]))
-								exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
+							{
+								exploracao = new ExploracaoFlorestal();
+								exploracao.EmpreendimentoId = empreendimento;
+								if (exploracaoAnterior.CodigoExploracao > 0 && exploracaoAnterior.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))
+									exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao + 1;
+								else
+									exploracao.CodigoExploracao = this.ObterCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), empreendimento, bancoDeDados);
+								if (!Convert.IsDBNull(reader["tipo_exploracao"]))
+									exploracao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+								if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
+									exploracao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
+								if (!Convert.IsDBNull(reader["data"]))
+									exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
+							}
 						}
 
 						detalhe.ExploracaoFlorestalGeo = new ExploracaoFlorestalGeo();						
