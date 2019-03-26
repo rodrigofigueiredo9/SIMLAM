@@ -249,26 +249,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Filtrar
 
-		[Permite(Tipo=ePermiteTipo.Logado)]
-		public ActionResult Visualizar(int id)
+		private ActionResult CarregarListarVM(int id, bool isVisualizar = false)
 		{
 			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
-			vm.Filtros.IsVisualizar = true;
+			vm.Filtros.IsVisualizar = isVisualizar;
 			vm.Filtros.EmpreendimentoId = id;
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
 			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
+
+			EmpreendimentoCaracterizacao empreendimento = _caracterizacaoBus.ObterEmpreendimentoSimplificado(id);
+			vm.Caracterizacao = new CaracterizacaoVM(empreendimento);
 			return PartialView(vm);
 		}
 
-		public ActionResult Editar(int id)
-		{
-			ListarVM vm = new ListarVM(_listaBus.QuantPaginacao);
-			vm.Filtros.IsVisualizar = false;
-			vm.Filtros.EmpreendimentoId = id;
-			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
-			vm.SetListItens(_listaBus.TipoExploracaoFlorestal, _listaBus.QuantPaginacao, vm.Paginacao.QuantPaginacao);
-			return PartialView(vm);
-		}
+		[Permite(Tipo = ePermiteTipo.Logado)]
+		public ActionResult Visualizar(int id) => CarregarListarVM(id, isVisualizar: true);
+
+		[Permite(Tipo = ePermiteTipo.Logado)]
+		public ActionResult Editar(int id) => CarregarListarVM(id);
 
 		[Permite(Tipo=ePermiteTipo.Logado)]
 		public ActionResult Filtrar(ListarVM vm, Paginacao paginacao)

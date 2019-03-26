@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 
@@ -7,7 +7,8 @@ AtividadeEspecificidade = {
 		urls: {
 			obterProcessosDocumentos: '',
 			obterAtividades: '',
-			pdfRequerimento: ''
+			pdfRequerimento: '',
+			obterResponsaveis: ''
 		},
 		afterChangeProcDoc: null,
 		Mensagens: null
@@ -101,6 +102,14 @@ AtividadeEspecificidade = {
 
 		if (AtividadeEspecificidade.settings.changeAtividade) {
 			AtividadeEspecificidade.settings.changeAtividade();
+		}
+		
+		var requerimento = AtividadeEspecificidade.obterRequerimento();
+		if (requerimento > 0) {
+
+			$.get(AtividadeEspecificidade.settings.urls.obterResponsaveis, { id: requerimento }, function (response) {
+				$('.ddlResponsaveisTecnico', AtividadeEspecificidade.container).ddlLoad(response);
+			});
 		}
 	},
 

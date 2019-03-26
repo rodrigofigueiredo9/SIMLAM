@@ -55,6 +55,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMProjet
 		}
 
 		public bool IsDominialidade { get { return Projeto != null && Projeto.CaracterizacaoId == (int)eCaracterizacao.Dominialidade; } }
+		public bool ExibirBotaoNovo { get; set; }
 
 		private int _delayProcessamento = 1;
 		public int DelayRequisicao

@@ -7,9 +7,11 @@ TituloAlterarSituacao = {
 		urls: {
 			pdfTitulo: '',
 			validarObterSituacao: '',
+			validarAlterarSituacao: '',
 			salvar: '',
 			redirecionar: '',
-			integracaoSinaflor: null
+			api: null,
+			token: null
 		},
 		gerouPdf: false
 	},
@@ -123,47 +125,77 @@ TituloAlterarSituacao = {
 		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 		var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
-		if (situacao == 4)
-			situacao = 6;
+		if (situacao == 4) situacao = 6;
+		var realizarIntegracao = modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8);
+		if (situacao != 1 && realizarIntegracao) {
+			var codigoIntegracao = $('.txtCodigoSinaflor', TituloAlterarSituacao.container).val();
+			if (codigoIntegracao == "") realizarIntegracao = false;
+		}
 
-		if (modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8) && TituloAlterarSituacao.settings.gerouPdf == true) {
-			$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
-			MasterPage.carregando(true);
-			var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
-			if (situacao == 5 || situacao == 8) //Cancelar ou Suspender
-				data = $('.txtDataEncerramento', TituloAlterarSituacao.container).val();
-			var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
-			var prazo = objeto.Prazo;
-			if (situacao == 6)
-				prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
+		if (realizarIntegracao) {
+			var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 
 			$.ajax({
-				type: "POST",
-				url: TituloAlterarSituacao.settings.urls.integracaoSinaflor + '/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
-					'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
-				success: function (msg) {
-					console.info(msg);
-					$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
-					TituloAlterarSituacao.alterarSituacao(objeto);
-				},
-				error: function (XMLHttpRequest, textStatus, errorThrown) {
+				url: TituloAlterarSituacao.settings.urls.validarAlterarSituacao,
+				data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
+				cache: false,
+				async: false,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json; charset=utf-8',
+				error: function (XMLHttpRequest, textStatus, erroThrown) {
+					Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
 					MasterPage.carregando(false);
-					$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
-					if (XMLHttpRequest.response != "") {
-						var data = JSON.parse(XMLHttpRequest.response);
-						console.log(data);
-						var msg = "";
-						if (typeof (data.message) == "string") {
-							msg = data.message;
-						}
-						else {
-							if (data.message[0].description) {
-								msg = data.message[0].description[0];
-							} else {
-								msg = data.message[0];
+				},
+				success: function (retorno, textStatus, XMLHttpRequest) {
+					if (retorno.EhValido) {
+						$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
+						MasterPage.carregando(true);
+						var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
+						if (situacao == 5 || situacao == 8) //Cancelar ou Suspender
+							data = $('.txtDataEncerramento', TituloAlterarSituacao.container).val();
+						var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
+						var prazo = objeto.Prazo;
+						if (situacao == 6)
+							prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
+
+						$.ajax({
+							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
+								'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+							beforeSend: function (xhr) {
+								xhr.setRequestHeader('Authorization', 'Bearer ' + TituloAlterarSituacao.settings.token);
+							},
+							type: "POST",
+							success: function (msg) {
+								console.info(msg);
+								$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
+								TituloAlterarSituacao.alterarSituacao(objeto);
+							},
+							error: function (XMLHttpRequest, textStatus, errorThrown) {
+								MasterPage.carregando(false);
+								$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
+								if (XMLHttpRequest.response != "") {
+									var data = JSON.parse(XMLHttpRequest.response);
+									console.log(data);
+									var msg = "";
+									if (typeof (data.message) == "string") {
+										msg = data.message;
+									}
+									else {
+										if (data.message[0].description) {
+											msg = data.message[0].description[0];
+										} else {
+											msg = data.message[0];
+										}
+									}
+									ExibirMensagemValidacao(msg);
+								}
 							}
+						});
+					} else {
+						if (retorno.Msg && retorno.Msg.length > 0) {
+							Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), retorno.Msg);
 						}
-						ExibirMensagemValidacao(msg);
 					}
 				}
 			});
