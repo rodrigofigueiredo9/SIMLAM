@@ -290,9 +290,6 @@
 					<th>Tipo da caixa</th>
 					<th style="width: 10%">Saldo atual</th>
 					<th style="width: 16%">N° de caixas utilizadas</th>
-					<% if (!Model.IsVisualizar)
-						{ %><th style="width: 7%">Ação</th>
-					<% } %>
 				</tr>
 			</thead>
 			<tbody>
@@ -305,13 +302,6 @@
 					<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
 					<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
 					<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
-					<%if (!Model.IsVisualizar)
-						{ %>
-					<td>
-						<a class="icone excluir btnExcluirCaixa"></a>
-						<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
-					</td>
-					<%} %>
 				</tr>
 				<% } %>
 
