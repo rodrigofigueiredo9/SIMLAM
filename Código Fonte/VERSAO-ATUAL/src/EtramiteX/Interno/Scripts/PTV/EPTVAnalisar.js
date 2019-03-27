@@ -81,6 +81,7 @@ EPTVAnalisar = {
 			contentType: 'application/json; charset=utf-8',
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
+				debugger;
 				if (response.EhValido) {
 					MasterPage.redireciona(response.UrlRedirecionar);
 				} else if (response.Msg && response.Msg.length > 0) {

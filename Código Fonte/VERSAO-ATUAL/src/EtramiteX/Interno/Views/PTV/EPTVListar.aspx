@@ -21,6 +21,19 @@
 					urlValidarAcessoAnalisarDesbloqueio: '<%= Url.Action("ValidarAcessoAnalisarDesbloqueio", "PTV") %>',
 				}
 			});
+
+			
+			<% if (!String.IsNullOrEmpty(Request.Params["acaoGerarPdfId"])) { %>
+			PTVListar.gerarPDFLoad(<%= Request.Params["acaoGerarPdfId"] %>);
+			<% } %>
+
+			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>
+				ContainerAcoes.load($(".containerAcoes"), {
+					botoes: [
+						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "PTV", new {id = Request.Params["acaoId"].ToString() }) %>' }
+					]
+				});
+			<% } %>
 		});
 	</script>
 </asp:Content>
