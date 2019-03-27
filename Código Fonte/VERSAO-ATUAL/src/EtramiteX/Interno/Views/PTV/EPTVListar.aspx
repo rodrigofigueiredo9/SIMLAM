@@ -30,7 +30,7 @@
 			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>
 				ContainerAcoes.load($(".containerAcoes"), {
 					botoes: [
-						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "PTV", new {id = Request.Params["acaoId"].ToString() }) %>' }
+						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdfEPTV", "PTV", new {id = Request.Params["acaoId"].ToString() }) %>' }
 					]
 				});
 			<% } %>
