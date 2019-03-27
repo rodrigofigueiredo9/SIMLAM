@@ -32,6 +32,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem EnviadoSucesso { get { return new Mensagem() { Texto = "PTV enviado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
 
+		public Mensagem AnaliseEPTVSucesso { get { return new Mensagem() { Texto = "EPTV analisado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
+
 		public Mensagem CancelarEnvioSituacaoInvalida { get { return new Mensagem() { Texto = "A situação da EPTV deve ser \"Aguardando análise\".", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem CanceladoSucesso { get { return new Mensagem() { Texto = "PTV cancelado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
