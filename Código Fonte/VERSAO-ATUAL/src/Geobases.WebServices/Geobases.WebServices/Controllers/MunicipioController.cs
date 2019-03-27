@@ -30,16 +30,17 @@ namespace Geobases.WebServices.Controllers
 
 		[HttpGet]
 		public JsonResult ObterMunicipio(Decimal easting, Decimal northing)
-		{
+		{	
 			EstadoBus busEstado = new EstadoBus();
 			MunicipioBus bus = new MunicipioBus();
+			
 			object objRetorno = null;
 			
 			try
 			{
 				objRetorno = new
-				{ 
-					Municipio = bus.ObterMunicipio(easting, northing),
+				{
+					Municipio = bus.GetMunicipioGeobases(easting, northing),
 					EstaNoEstado = busEstado.EstaNoEstado(easting, northing)
 				};
 			}

@@ -42,6 +42,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMExplor
 		public Boolean PodeVisualizar { get; set; }
 		public Boolean PodeEditar { get; set; }
 
+		public CaracterizacaoVM Caracterizacao { get; set; }
+
 		public ListarVM() { }
 
 		public ListarVM(List<QuantPaginacao> quantPaginacao)

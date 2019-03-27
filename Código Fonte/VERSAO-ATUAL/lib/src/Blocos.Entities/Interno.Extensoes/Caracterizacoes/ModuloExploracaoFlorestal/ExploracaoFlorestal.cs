@@ -18,6 +18,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloExp
 		public DateTecno DataCadastro { get; set; } = new DateTecno() { Data = DateTime.Now };
 		public DateTecno DataConclusao { get; set; } = new DateTecno() { Data = DateTime.Now };
 		public String GeometriaPredominanteTexto { get; set; }
+		public String Quantidade { get; set; }
 
 		public List<ExploracaoFlorestalExploracao> Exploracoes { get; set; }
 		public List<Dependencia> Dependencias { get; set; }

@@ -142,7 +142,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
 				from  (select t.titulo_id id, t.modelo_nome, t.modelo_sigla, t.requerimento, 
 				(select tms.hierarquia from tab_titulo_modelo_setores tms, tab_titulo t where t.id = :id and tms.modelo = t.modelo and tms.setor = t.setor) modelo_hierarquia,
-				t.setor_id, t.setor_nome, t.autor_nome, t.situacao_id, t.situacao_texto, nvl(t.protocolo_id, t.protocolo_id) protocolo_id, 
+				t.setor_id, t.setor_nome, t.autor_nome, t.situacao_id, t.situacao_texto,
+				nvl(t.protocolo_id, (select esp.protocolo from esp_laudo_vistoria_florestal esp where esp.titulo = t.titulo_id)) protocolo_id, 
 				(select lp.texto from lov_protocolo lp where lp.id = t.protocolo) protocolo_tipo, t.empreendimento_id from {0}lst_titulo t where t.titulo_id = :id) t,
 				(select (select n.numero||'/'||n.ano from {0}tab_titulo_numero n where n.titulo = :id) numero,
 				ta.local_emissao local_emissao_id, (select m.texto from {0}lov_municipio m where m.id = ta.local_emissao) local_emissao_texto,

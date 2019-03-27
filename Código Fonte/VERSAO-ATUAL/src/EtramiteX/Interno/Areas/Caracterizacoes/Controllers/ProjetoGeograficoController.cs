@@ -157,6 +157,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (vm.Projeto.Id > 0)
 			{
 				vm.CarregarVMs();
+				var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(vm.Projeto.EmpreendimentoId, simplificado: true);
+				if (exploracao.Id > 0)
+					vm.ExibirBotaoNovo = false;
+				else
+					vm.ExibirBotaoNovo = vm.IsFinalizado && !vm.IsVisualizar && vm.CaracterizacaoTipo == (int)eCaracterizacao.ExploracaoFlorestal;
 			}
 
 			return View("ProjetoGeografico", vm);

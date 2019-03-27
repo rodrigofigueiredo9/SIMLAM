@@ -957,6 +957,27 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
 		}
 
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.TituloEmitir, ePermissao.TituloCancelarEmissao, ePermissao.TituloAssinar, ePermissao.TituloProrrogar, ePermissao.TituloEncerrar })]
+		public ActionResult ValidarAlterarSituacaoTela(Titulo titulo, int acao, bool gerouPdf = true)
+		{
+			Titulo tituloAtual = _bus.Obter(titulo.Id);
+			tituloAtual.Modelo = _busModelo.Obter(tituloAtual.Modelo.Id);
+			tituloAtual.Prazo = titulo.Prazo.HasValue ? titulo.Prazo : tituloAtual.Prazo;
+			tituloAtual.DiasProrrogados = titulo.DiasProrrogados.HasValue ? titulo.DiasProrrogados : tituloAtual.DiasProrrogados;
+			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId.HasValue ? titulo.MotivoEncerramentoId : tituloAtual.MotivoEncerramentoId;
+			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
+			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
+			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+			if (tituloAtual.Modelo.Regras == null || tituloAtual.Modelo.Regras.Count == 0)
+				tituloAtual.Modelo = _busModelo.Obter(tituloAtual.Modelo.Id);
+			tituloAtual.Situacao = _tituloSituacaoBus.ObterNovaSituacao(tituloAtual, acao);
+
+			_tituloSituacaoValidar.AlterarSituacao(tituloAtual, acao, gerouPdf);
+
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.TituloEmitir, ePermissao.TituloCancelarEmissao, ePermissao.TituloAssinar, ePermissao.TituloProrrogar, ePermissao.TituloEncerrar })]
 		public ActionResult AlterarSituacao(int id)

@@ -125,6 +125,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloUni
 						return Validacao.EhValido;
 					}
 
+					if (resposta.Data == null)
+						throw new Exception(Mensagem.Empreendimento.ErroConexaoMunicipioGeobases.ToString());
+
 					var objJson = resposta.Data;
 					if (objJson["EstaNoEstado"] && (objJson["Municipio"] == null || Convert.ToInt32(objJson["Municipio"]["IBGE"] ?? 0) == 0))
 					{

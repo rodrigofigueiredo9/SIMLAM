@@ -81,11 +81,6 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			{
 				classificacoesVegetais = classificacoesVegetais.Where(x => x.Id != ((int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas).ToString()).ToList();
 			}
-			else
-			{
-				classificacoesVegetais = classificacoesVegetais.Where(x => x.Id == ((int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas).ToString()).ToList();
-				classifSelecionada = (int)eExploracaoFlorestalClassificacaoVegetacao.ArvoresIsoladas;
-			}
 
 			ClassificacoesVegetais = ViewModelHelper.CriarSelectList(classificacoesVegetais, true, true, classifSelecionada.ToString());
 			Produtos = ViewModelHelper.CriarSelectList(produtos, true, true);
@@ -93,13 +88,6 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			ExploracaoFlorestal = exploracao;
 			this.IsVisualizar = IsVisualizar;
 
-			// passa o item "Outros" para a ultiam posição
-			FinalidadeExploracao finalidade = finalidades.SingleOrDefault(x => x.Texto == "Outros");
-			if (finalidade != null)
-			{
-				finalidades.Remove(finalidade);
-				finalidades.Add(finalidade);
-			}
 			Finalidades = ViewModelHelper.CriarSelectList(finalidades, selecionado: exploracao.FinalidadeExploracao.ToString());
 		}
 	}

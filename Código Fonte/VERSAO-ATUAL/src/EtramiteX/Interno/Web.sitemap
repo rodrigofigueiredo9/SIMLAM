@@ -481,7 +481,7 @@
 			</siteMapNode>
 			<siteMapNode url="~/PTVOutro/Criar" title="Emitir PTV Outro Estado" description="linkMenu" roles="PTVOutroCriar"/>
 			
-			<siteMapNode url="~/PTV/RetificacaoNotaFiscalDeCaixa" title="Retificação de nota fiscal de caixa" description="linkMenu" roles="PTVListar" />
+			<siteMapNode url="~/PTV/RetificacaoNotaFiscalDeCaixa" title="Retificação de nota fiscal de caixa" description="linkMenu" roles="Praga" />
 		</siteMapNode>
 
 		<siteMapNode url="~/CFO/" title="CFO/CFOC"  description="linkMenu num_cfo_cfoc_ptv" roles="CFOListar, CFOCListar">

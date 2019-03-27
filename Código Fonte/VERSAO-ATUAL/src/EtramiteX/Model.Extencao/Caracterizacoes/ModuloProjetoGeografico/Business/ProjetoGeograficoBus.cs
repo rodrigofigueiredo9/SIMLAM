@@ -273,10 +273,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					if (arquivoEnviado.IdRelacionamento == 0)
 					{
 						_da.InserirFila(arquivoEnviado, bancoDeDados);
-
 						ObterSituacao(arquivoEnviado);
-
 						bancoDeDados.Commit();
+					}
+					else
+					{
+						ObterSituacao(arquivoEnviado);
+						if (arquivoEnviado.Situacao == (int)eFilaSituacaoGeo.Erro)
+						{
+							_da.AlterarSituacaoFila(arquivoEnviado, bancoDeDados);
+							bancoDeDados.Commit();
+						}
 					}
 				}
 			}
@@ -426,6 +433,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				if (_validar.Refazer(projeto))
 				{
 					_da.Atualizar(projeto.Id, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
+		public void Reabrir(ProjetoGeografico projeto, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Refazer(projeto))
+				{
+					_da.Reabrir(projeto.Id, titulo, banco);
 					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
 				}
 			}

@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
+/// <reference path="../Lib/JQuery/jquery-1.10.1-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -212,11 +212,16 @@ Empreendimento = {
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
 
-				content.empty();
-				content.append(response);
-				EmpreendimentoSalvar.load();
-				MasterPage.botoes(content);
-				Mascara.load(content);
+				Mensagem.limpar(Empreendimento.settings.container);
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Empreendimento.settings.container, response.Msg);
+				} else {
+					content.empty();
+					content.append(response);
+					EmpreendimentoSalvar.load();
+					MasterPage.botoes(content);
+					Mascara.load(content);
+				}
 			}
 		});
 		MasterPage.carregando(false);
