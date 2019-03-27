@@ -70,8 +70,12 @@
 				<%=Html.TextBox("DataEmissao", !string.IsNullOrEmpty(Model.PTV.DataEmissao.DataTexto)?Model.PTV.DataEmissao.DataTexto:DateTime.Today.ToShortDateString(), ViewModelHelper.SetaDisabled(true, new { @class="text txtDataEmissao maskData"}))%>
 			</div>
 			<div class="coluna20">
-				<label for="Situacao">Situação</label>
-				<%=Html.DropDownList("Situacao", Model.Situacoes, ViewModelHelper.SetaDisabled(true , new { @class="text ddlSituacoes"}))%>
+			<label for="Situacao">Situação</label>
+			<% if (!Model.IsVisualizar) { %>
+				<%=Html.DropDownList("Situacao", Model.Situacoes, ViewModelHelper.SetaDisabled(true, new { @class = "text ddlSituacoes" }))%>
+			<%}  else  { %>
+				<%=Html.TextBox("DataEmissao", Model.PTV.SituacaoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text"}))%>
+			<%} %>
 			</div>
 		</div>
 	
