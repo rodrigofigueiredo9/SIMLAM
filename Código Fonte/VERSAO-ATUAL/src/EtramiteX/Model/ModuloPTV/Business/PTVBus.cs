@@ -375,6 +375,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							try
 							{
 								_da.Importar(eptvBanco, bancoDeDadosInterno);
+								Validacao.Add(Mensagem.PTV.AnaliseEPTVSucesso);
 							}
 							catch (Exception exc)
 							{
