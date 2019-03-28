@@ -207,6 +207,26 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 				comando.AdicionarParametroEntrada("objectId", objectId, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				if(tabela.Contains("des_pativ") || tabela.Contains("des_aativ"))
+				{
+					BancoDeDados banco = BancoDeDadosFactory.CriarBancoDeDados("StringConexao");
+					comando = banco.GetComandoPlSql($@"begin
+					delete from crt_exp_florestal_exploracao c where exists (select 1 from crt_exp_florestal_geo g
+						where g.{(tabela.Contains("des_pativ") ? "tmp_pativ_id" : "tmp_aativ_id")} = :objectId and g.exp_florestal_exploracao = c.id);
+					delete from crt_exp_florestal_geo g
+						where g.tmp_pativ_id = :objectId;
+					delete from tab_titulo_exp_florestal t
+						where exists (select 1 from crt_exploracao_florestal c
+							where not exists (select 1 from crt_exp_florestal_exploracao ce where
+							ce.exploracao_florestal = c.id)
+						and c.id = t.exploracao_florestal);
+					delete from crt_exploracao_florestal c
+						where not exists (select 1 from crt_exp_florestal_exploracao ce where
+						ce.exploracao_florestal = c.id);
+					end;");
+					comando.AdicionarParametroEntrada("objectId", objectId, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+				}
 			}
 			finally
 			{

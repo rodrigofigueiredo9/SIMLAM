@@ -362,52 +362,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					and exists
 					(select 1 from tab_titulo_exp_florestal t
 					where t.exploracao_florestal = e.id);
-				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_pativ_id)
-					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_pativ g 
-					inner join crt_exp_florestal_exploracao cp
-					on(cp.identificacao = g.codigo)
-					where cp.parecer_favoravel = 1
-					and exists
+				update crt_exp_florestal_geo g
+					set g.geo_pativ_id = g.tmp_pativ_id, g.geo_aativ_id = g.tmp_aativ_id
+					where exists
 					(
-						select 1 from crt_exploracao_florestal c
-						where cp.exploracao_florestal = c.id
-						and c.empreendimento = :empreendimento
+						select 1 from crt_exp_florestal_exploracao cp
+						where cp.parecer_favoravel = 1
+						and cp.id = g.exp_florestal_exploracao
 						and exists
 						(
-							select 1 from crt_projeto_geo p
-							where p.id = g.projeto
-							and p.empreendimento = c.empreendimento
+							select 1 from crt_exploracao_florestal c
+							where cp.exploracao_florestal = c.id
+							and c.empreendimento = :empreendimento
+							and exists
+							(select 1 from tab_titulo_exp_florestal t
+							where t.exploracao_florestal = c.id)
 						)
-						and exists
-						(select 1 from tab_titulo_exp_florestal t
-						where t.exploracao_florestal = c.id)
-					)
-					and not exists
-					(select 1 from crt_exp_florestal_geo gp 
-					where gp.geo_pativ_id = g.id);
-				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_aativ_id)
-					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_aativ g 
-					inner join crt_exp_florestal_exploracao cp
-					on(cp.identificacao = g.codigo)
-					where cp.parecer_favoravel = 1
-					and exists
-					(
-						select 1 from crt_exploracao_florestal c
-						where cp.exploracao_florestal = c.id
-						and c.empreendimento = :empreendimento
-						and exists
-						(
-							select * from crt_projeto_geo p
-							where p.id = g.projeto
-							and p.empreendimento = c.empreendimento
-						)
-						and exists
-						(select 1 from tab_titulo_exp_florestal t
-						where t.exploracao_florestal = c.id)
-					)
-					and not exists
-					(select 1 from crt_exp_florestal_geo gp 
-					where gp.geo_aativ_id = g.id);
+					);
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -428,6 +399,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					(select 1 from tab_titulo_exp_florestal t
 					where t.exploracao_florestal = e.id
 					and t.titulo = :titulo);
+				update crt_exp_florestal_geo g
+					set g.geo_pativ_id = null, g.geo_aativ_id = null
+					where exists
+					(
+						select 1 from crt_exp_florestal_exploracao cp
+						where cp.parecer_favoravel = 1
+						and cp.id = g.exp_florestal_exploracao
+						and exists
+						(
+							select 1 from crt_exploracao_florestal c
+							where cp.exploracao_florestal = c.id
+							and c.empreendimento = :empreendimento
+							and exists
+							(select 1 from tab_titulo_exp_florestal t
+							where t.exploracao_florestal = c.id
+							and t.titulo = :titulo)
+						)
+					);
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
