@@ -276,7 +276,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			int barragemId;
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select bdl.id from crt_barragem_dispensa_lic bdl
 																inner join TAB_PROJ_DIGITAL_DEPENDENCIAS pdd on pdd.DEPENDENCIA_ID = bdl.ID
@@ -291,7 +291,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				barragemId = Convert.ToInt32(valor);
 			}
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaCredenciadoBanco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					select  b.id, b.tid, b.empreendimento, b.atividade, b.tipo_barragem, b.curso_hidrico, 

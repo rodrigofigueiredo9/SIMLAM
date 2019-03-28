@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
 
-			Object dataSource = busEspecificiade.ObterDadosPdf(titulo.Especificidade, null);
+			Object dataSource = busEspecificiade.ObterDadosPdf(titulo.Especificidade, banco);
 
 			GeradorAspose gerador = new GeradorAspose(configurador);
 
