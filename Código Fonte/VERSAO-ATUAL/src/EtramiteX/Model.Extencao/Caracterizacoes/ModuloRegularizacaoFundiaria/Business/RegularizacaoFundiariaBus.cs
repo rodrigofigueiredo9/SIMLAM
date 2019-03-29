@@ -171,6 +171,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					x.Zona = zona;
 				});
 
+				caracterizacao.Posses = caracterizacao.Posses.OrderBy(x => x.Identificacao).ToList();
 				caracterizacao.Matriculas = _busDominialidade.ObterPorEmpreendimento(empreendimento).Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 			}
 			catch (Exception exc)
@@ -217,11 +218,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				Dominialidade dominialidade = _busDominialidade.ObterPorEmpreendimento(empreendimento);
 				int zona = (int)_busCaracterizacao.ObterEmpreendimentoSimplificado(empreendimento).ZonaLocalizacao;
 
-				dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Posse).ToList().ForEach(x =>
-				{
-					caracterizacao.Posses.Add(new Posse(x, zona));
-				});
-
+				caracterizacao.Posses = ObterPosses(empreendimento, zona);
 				caracterizacao.Matriculas = dominialidade.Dominios.Where(x => x.Tipo == eDominioTipo.Matricula).ToList();
 				return caracterizacao;
 			}
@@ -231,6 +228,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			}
 
 			return null;
+		}
+
+		public List<Posse> ObterPosses(int empreendimento, int zona, BancoDeDados banco = null)
+		{
+			List<Posse> posses = new List<Posse>();
+
+			try
+			{
+				posses = _da.ObterPosses(empreendimento,zona,banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return posses;
 		}
 
 		public RegularizacaoFundiaria MergiarGeo(RegularizacaoFundiaria caracterizacaoAtual)

@@ -114,7 +114,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				if (x.Tipo == eCaracterizacao.ExploracaoFlorestal)
 				{
 					var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
-					if(exploracao.Id > 0)
+					if(exploracao?.Id > 0)
 					{
 						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
 						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));

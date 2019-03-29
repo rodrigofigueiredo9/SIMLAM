@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.TecnoGeo.Geografico;
 
 namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 {
@@ -27,6 +28,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 		internal const int OPERACAO_BASEREF_FISCAL = 6;
 		internal const int OPERACAO_CAR = 7;
 		internal const int OPERACAO_ATIVIDADE_TITULO = 8;
+		internal const int OPERACAO_REGULARIZACAO = 9;
 
 		private string _esquemaOficial = "";
 		private Dictionary<Int32, String> _lstDiretorio;
@@ -488,6 +490,134 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			}
 
 			return projetoIdDominialidade;
+		}
+
+		internal ClasseFeicao ObterClasseFeicao(string classeFeicao)
+		{
+			ClasseFeicao classeFeicao1 = new ClasseFeicao(classeFeicao);
+
+			try
+			{
+				int length = classeFeicao1.Nome.IndexOf(".");
+				string str1;
+				string str2;
+				if (length < 0)
+				{
+					str1 = "IDAFGEO";
+					str2 = classeFeicao1.Nome;
+				}
+				else
+				{
+					str1 = classeFeicao1.Nome.Substring(0, length);
+					str2 = classeFeicao1.Nome.Substring(length + 1);
+				}
+
+				string sql = "select count(*) from (select m.owner||'.'|| m.table_name tabela from " +
+							"all_sdo_geom_metadata m) x where x.tabela = upper(:tabela)";
+				string result;
+
+				using (Comando comando = this.banco.CriarComando(sql))
+				{
+					comando.AdicionarParametroEntrada("tabela", (str1 + "." + str2), DbType.String);
+
+					result = this.banco.ExecutarScalar(comando).ToString();
+				}
+
+				if (result == "")
+				{
+					throw new Exception("Tabela " + classeFeicao1.Nome + " não encontrada");
+				}
+
+				sql = "select a.column_name, a.data_type, a.char_length, a.data_precision, a.data_scale " +
+						"from all_tab_cols a where a.owner=UPPER(:owner) and a.table_name=UPPER(:tablename) " +
+						 "and a.hidden_column='NO' order by a.column_id";
+
+				Hashtable list = new Hashtable();
+				ClasseFeicao classeFeicao2 = new ClasseFeicao(classeFeicao);
+				using (Comando comando = this.banco.CriarComando(sql))
+				{
+					comando.AdicionarParametroEntrada("owner", str1, DbType.String);
+					comando.AdicionarParametroEntrada("tablename", str2, DbType.String);
+
+					using (IDataReader reader = banco.ExecutarReader(comando))
+					{
+						while (reader.Read())
+						{
+							if (reader["data_type"].ToString() == "SDO_GEOMETRY")
+							{
+								classeFeicao2.CampoGeometrico = reader["column_name"].ToString();
+							}
+							else
+							{
+								Atributo campo = new Atributo();
+								campo.Nome = reader["column_name"].ToString();
+								switch (reader["data_type"].ToString())
+								{
+									case "DATE":
+										campo.Tipo = DbType.DateTime;
+										break;
+									case "NUMBER":
+										campo.Tipo = DbType.Decimal;
+										if (reader["data_precision"] is DBNull || reader["data_precision"] == null)
+										{
+											if (reader["data_scale"] is DBNull || reader["data_scale"] == null)
+											{
+												campo.Tamanho = -1;
+												campo.CasasDecimais = -1;
+												break;
+											}
+											campo.Tamanho = 38;
+											campo.CasasDecimais = int.Parse(reader["data_scale"].ToString());
+											break;
+										}
+										campo.Tamanho = int.Parse(reader["data_precision"].ToString());
+										int num = reader["data_scale"] is DBNull || reader["data_scale"] == null ? 0 : (Convert.ToInt32(reader["data_scale"]) >= 0 ? 1 : 0);
+										campo.CasasDecimais = num != 0 ? int.Parse(reader["data_scale"].ToString()) : 0;
+										break;
+									case "REAL":
+									case "FLOAT":
+										campo.Tipo = DbType.Decimal;
+										campo.Tamanho = -1;
+										campo.CasasDecimais = -1;
+										break;
+									case "INT":
+									case "SMALLINT":
+									case "DECIMAL":
+									case "DEC":
+									case "NUMERIC":
+									case "INTEGER":
+										campo.Tipo = DbType.Decimal;
+										campo.Tamanho = 38;
+										campo.CasasDecimais = 0;
+										break;
+									case "CHAR":
+									case "NCHAR":
+									case "NVARCHAR2":
+									case "STRING":
+									case "VARCHAR2":
+										campo.Tipo = DbType.String;
+										campo.Tamanho = int.Parse(reader["char_length"].ToString());
+										break;
+									case "LONG":
+										campo.Tipo = DbType.String;
+										campo.Tamanho = 32760;
+										break;
+									case "BLOB":
+										break;
+									default:
+										throw new Exception("Tipo de campo não tratado \"" + reader["data_type"].ToString() + "\"");
+								}
+								classeFeicao2.Atributos.Adicionar(campo);
+							}
+						}
+						return classeFeicao2;
+					}
+				}
+			}
+			catch
+			{
+				return null;
+			}
 		}
 	}
 }

@@ -64,6 +64,7 @@ namespace Tecnomapas.Blocos.Entities.Model.Data
 						{
 							Id = Convert.ToInt32(reader["id"]),
 							Texto = reader["texto"].ToString(),
+							Codigo = Convert.ToInt32(reader["codigo"]),
 							IsAtivo = true
 						});
 					}

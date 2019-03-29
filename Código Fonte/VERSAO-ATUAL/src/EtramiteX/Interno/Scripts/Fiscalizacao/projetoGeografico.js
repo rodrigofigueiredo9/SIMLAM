@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/JQuery/jquery.json - 2.2.min.js" />
+/// <reference path="../Lib/JQuery/jquery.json - 2.2.min.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../mensagem.js" />
@@ -1212,7 +1212,7 @@ Desenhador = {
 			Navegador.load(container, {
 			    id: ProjetoGeografico.settings.projetoId,
 			    modo: desenhadorModo,
-				tipo: 5,
+				tipo: ProjetoGeografico.settings.ArquivoEnviadoFilaTipo,
 				onCancelar: Desenhador.onCancelarProcessamento,
 				onProcessar: Desenhador.onProcessar,
 				onBaixarArquivo: Desenhador.onBaixarArquivo,

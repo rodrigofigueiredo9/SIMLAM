@@ -89,7 +89,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCar
 							}
 						}
 
-						if (caracterizacao.ProjetoId <= 0 && caracterizacaoTipo != (int)eCaracterizacao.ExploracaoFlorestal)
+						if (dependencia.DependenteTipo == (int)eCaracterizacao.RegularizacaoFundiaria && caracterizacao.ProjetoId <= 0 && caracterizacaoTipo != (int)eCaracterizacao.RegularizacaoFundiaria)
+						{
+							Validacao.Add(Mensagem.Caracterizacao.DependenciasProjetoGeoSalvar(caracterizacaoTexto, false, caracterizacoesCache.SingleOrDefault(x => x.Id == (int)eCaracterizacao.Dominialidade).Texto));
+							continue;
+						}
+
+						if (dependencia.DependenteTipo == (int)eCaracterizacao.ExploracaoFlorestal && caracterizacao.ProjetoId <= 0 && caracterizacaoTipo != (int)eCaracterizacao.ExploracaoFlorestal)
 						{
 							Validacao.Add(Mensagem.Caracterizacao.DependenciasProjetoGeoSalvar(caracterizacaoTexto, false, caracterizacoesCache.SingleOrDefault(x => x.Id == dependencia.DependenciaTipo).Texto));
 							continue;

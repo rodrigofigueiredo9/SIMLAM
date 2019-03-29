@@ -59,6 +59,13 @@
 		public Mensagem CalcadaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rbCalcada", Texto = @"Calçada é obrigatório." }; } }
 		public Mensagem PavimentacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rbPavimentacao", Texto = @"Pavimentação é obrigatório." }; } }
 		public Mensagem TipoPavimentacaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Pavimentacao_Outro", Texto = @"Tipo de pavimentação é obrigatório." }; } }
+		public Mensagem ComprovacaoObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DominioComprovacaoId", Texto = @"Comprovação é obrigatório." }; } }
+		public Mensagem AreaPosseDocumento { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AreaPosseDocumento", Texto = @"Área de posse do Documento é de preenchimento obrigatório." }; } }
+		public Mensagem ConfrontacoesNorte { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "txtConfrontacoesNorte", Texto = @"Confrontacoes do Norte é de preenchimento obrigatório." }; } }
+		public Mensagem ConfrontacoesSul { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "txtConfrontacoesSul", Texto = @"Confrontacoes do Sul é de preenchimento obrigatório." }; } }
+		public Mensagem ConfrontacoesOeste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "txtConfrontacoesOeste", Texto = @"Confrontacoes do Oeste é de preenchimento obrigatório." }; } }
+		public Mensagem ConfrontacoesLeste { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "txtConfrontacoesLeste", Texto = @"Confrontacoes do Leste é de preenchimento obrigatório." }; } }
+		public Mensagem DescricaoComprovacao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Descricao_Comprovacao", Texto = @"Descrição da comprovação é de preenchimento obrigatório." }; } }
 
 		public Mensagem RegularizacaoInvalida(string identificacao)
 		{

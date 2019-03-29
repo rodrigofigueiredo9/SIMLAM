@@ -85,6 +85,36 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				Validacao.Add(Mensagem.RegularizacaoFundiaria.TipoRegularizacaoObrigatorio);
 			}
+			if(posse.ComprovacaoId == 0)
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.ComprovacaoObrigatoria);
+			}
+			if(posse.AreaPosseDocumento <= 0)
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.AreaPosseDocumento);
+			}
+			if (string.IsNullOrEmpty(posse.ConfrontacoesNorte))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.ConfrontacoesNorte);
+			}
+			if (string.IsNullOrEmpty(posse.ConfrontacoesSul))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.ConfrontacoesSul);
+			}
+			if (string.IsNullOrEmpty(posse.ConfrontacoesLeste))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.ConfrontacoesLeste);
+			}
+			if (string.IsNullOrEmpty(posse.ConfrontacoesOeste))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.ConfrontacoesOeste);
+			}
+			if (string.IsNullOrEmpty(posse.DescricaoComprovacao))
+			{
+				Validacao.Add(Mensagem.RegularizacaoFundiaria.DescricaoComprovacao);
+			}
+			
+
 
 			#region Dominios Avulsos
 
@@ -336,10 +366,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 				return false;
 			}
 
-			if (caracterizacao.Posses == null || caracterizacao.Posses.Count <= 0)
-			{
-				Validacao.Add(Mensagem.RegularizacaoFundiaria.PossesObrigatorio);
-			}
+			//if (caracterizacao.Posses == null || caracterizacao.Posses.Count <= 0)
+			//{
+			//	Validacao.Add(Mensagem.RegularizacaoFundiaria.PossesObrigatorio);
+			//}
 
 			return Validacao.EhValido;
 		}
@@ -446,6 +476,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 		public bool EmpreendimentoZonaAlterada(int empreendimentoId)
 		{
 			return _da.EmpreendimentoZonaAlterada(empreendimentoId);
+		}
+
+		public bool ValidarProjetoGeo(int empreendimento)
+		{
+			RegularizacaoFundiariaBus bus = new RegularizacaoFundiariaBus();
+			RegularizacaoFundiaria caracterizacao = bus.ObterDadosGeo(empreendimento);
+			caracterizacao.EmpreendimentoId = empreendimento;
+			if (Acessar(caracterizacao))
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }

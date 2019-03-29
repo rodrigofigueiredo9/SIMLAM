@@ -54,8 +54,10 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMProjet
 			}
 		}
 
-		public bool IsDominialidade { get { return Projeto != null && Projeto.CaracterizacaoId == (int)eCaracterizacao.Dominialidade; } }
 		public bool ExibirBotaoNovo { get; set; }
+
+		public bool IsDominialidade { get { return Projeto != null && Projeto.CaracterizacaoId == (int)eCaracterizacao.Dominialidade || Projeto.CaracterizacaoId == (int)eCaracterizacao.RegularizacaoFundiaria ; } }
+		public bool IsRegularizacaoFundiaria { get { return Projeto != null && Projeto.CaracterizacaoId == (int)eCaracterizacao.RegularizacaoFundiaria; } }
 
 		private int _delayProcessamento = 1;
 		public int DelayRequisicao
