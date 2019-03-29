@@ -46,8 +46,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			var vmList = new ExploracaoFlorestalListVM();
 			vmList.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(id, eCaracterizacao.ExploracaoFlorestal, eCaracterizacaoDependenciaTipo.Caracterizacao);
-			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(id);
 
 			foreach (var caracterizacao in exploracaoFlorestalList)
 			{
@@ -67,15 +65,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			int empreendimentoId = 0;
 			var exploracao = caracterizacao.FirstOrDefault();
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				exploracao.EmpreendimentoId,
-				(int)eCaracterizacao.ExploracaoFlorestal,
-				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				exploracao.Dependencias);
-
-			if (!string.IsNullOrEmpty(textoMerge))
-				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
-
+			
 			_bus.Salvar(caracterizacao);
 			empreendimentoId = exploracao.EmpreendimentoId;
 
@@ -108,9 +98,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				(int)eCaracterizacao.ExploracaoFlorestal,
 				eCaracterizacaoDependenciaTipo.Caracterizacao,
 				vmList.Dependencias);
-			vmList.TextoMerge = textoMerge;
-			vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-			vmList.TextoAbrirModal = _validar.AbrirModalAcessar(exploracaoFlorestal.EmpreendimentoId);
 
 			if (!string.IsNullOrEmpty(textoMerge))
 				exploracaoFlorestal = _bus.MergiarGeo(exploracaoFlorestal);
@@ -130,15 +117,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			int empreendimentoId = 0;
 			var exploracao = caracterizacao.FirstOrDefault();
-
-			string textoMerge = _caracterizacaoValidar.DependenciasAlteradas(
-				exploracao.EmpreendimentoId,
-				(int)eCaracterizacao.ExploracaoFlorestal,
-				eCaracterizacaoDependenciaTipo.Caracterizacao,
-				exploracao.Dependencias);
-
-			if (!string.IsNullOrEmpty(textoMerge))
-				return Json(new { @TextoMerge = textoMerge }, JsonRequestBehavior.AllowGet);
 
 			_bus.Salvar(caracterizacao);
 			empreendimentoId = exploracao.EmpreendimentoId;
@@ -172,9 +150,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					(int)eCaracterizacao.ExploracaoFlorestal,
 					eCaracterizacaoDependenciaTipo.Caracterizacao,
 					vmList.Dependencias, true);
-				vmList.TextoMerge = textoMerge;
-				vmList.AtualizarDependenciasModalTitulo = Mensagem.Caracterizacao.AtualizarDependenciasModalTitulo.Texto;
-				vmList.TextoAbrirModal = _validar.AbrirModalAcessar(exploracaoFlorestal.EmpreendimentoId);
 
 				if (!string.IsNullOrEmpty(textoMerge))
 					exploracaoFlorestal = _bus.MergiarGeo(exploracaoFlorestal);

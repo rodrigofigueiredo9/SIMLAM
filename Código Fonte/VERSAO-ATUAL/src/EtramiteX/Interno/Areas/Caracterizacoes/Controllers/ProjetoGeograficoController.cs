@@ -149,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
 			}
 
-			if (vm.Projeto.Id > 0 && mostrarModalDependencias)
+			if (vm.Projeto.Id > 0 && mostrarModalDependencias && tipo != eCaracterizacao.ExploracaoFlorestal)
 			{
 				vm.TextoMerge = _caracterizacaoValidar.DependenciasAlteradas(
 						vm.Projeto.EmpreendimentoId,
