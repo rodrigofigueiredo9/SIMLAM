@@ -23,6 +23,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEsp
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
+using iTextSharp.text.pdf;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 {
@@ -162,6 +163,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			//Declaração de Dispensa de Licenciamento Ambiental de Barragem
 			if (titulo.Modelo.Id == 72)
 			{
+				PdfCopyFields copy = new PdfCopyFields(msPdf);
+
+				
+
+
 				CertidaoDispensaLicenciamentoAmbientalPDF pdfBarragemDisp = (CertidaoDispensaLicenciamentoAmbientalPDF)dataSource;
 				bool semApp = false;
 				if (pdfBarragemDisp.Caracterizacao.barragemEntity.areaAlagada < 1 && pdfBarragemDisp.Caracterizacao.barragemEntity.construidaConstruir.isSupressaoAPP == false)
@@ -178,10 +184,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					titulo.CondicionantesBarragem.BarragemSemAPP = busArquivo.Obter(titulo.CondicionantesBarragem.BarragemSemAPP.Id.Value);
 					List<Arquivo> listaCondBarragem = new List<Arquivo>();
 
-					if (semApp) listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
-					else listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
+					//if (semApp) listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemSemAPP);
+					//else listaCondBarragem.Add(titulo.CondicionantesBarragem.BarragemComAPP);
 
-					msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
+					//msPdf = GeradorAspose.AnexarPdf(msPdf, listaCondBarragem);
+
+
+					string caminhoRelatorio = @"~/Content/_pdfAspose/Relatorio_Caracterizacao_Barragem_Dispensada.docx";
+					FileStream file = File.OpenRead(HttpContext.Current.Server.MapPath(caminhoRelatorio));
+					Arquivo templatePdfRelatorio = new Arquivo();
+					templatePdfRelatorio.Buffer = (Stream)file;
+
+					//MemoryStream condicionante = gerador.Pdf(titulo.CondicionantesBarragem.BarragemComAPP, new Object());
+					//condicionante.CopyTo(msPdf);
+					MemoryStream relatorioCarac = gerador.Pdf(templatePdfRelatorio, dataSource);
+					relatorioCarac.Position = 0;
+					copy.AddDocument(new PdfReader(relatorioCarac));
+					copy.Close();
+					//msPdf.Position = msPdf.Length;
+					//relatorioCarac.CopyTo(msPdf);   //isso anexa  relatorioCarac no final de msPdf
+					//msPdf.Write(relatorioCarac.GetBuffer(), 0, (int)relatorioCarac.Length);
 				}
 			}
 

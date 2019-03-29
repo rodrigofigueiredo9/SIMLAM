@@ -178,7 +178,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				int vazaoMaxima;
 
-				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro) &&
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro) ||
 					(Int32.TryParse(caracterizacao.construidaConstruir.vazaoMaxDiametro, out vazaoMaxima) &&
 					vazaoMaxima <= 0))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
@@ -215,7 +215,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (caracterizacao.construidaConstruir.vazaoMaxTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxTipo);
 
-				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro))
+				int vazaoMaxima;
+
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro) ||
+					(Int32.TryParse(caracterizacao.construidaConstruir.vazaoMaxDiametro, out vazaoMaxima) &&
+					vazaoMaxima <= 0))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
 				#region Validações DATA
