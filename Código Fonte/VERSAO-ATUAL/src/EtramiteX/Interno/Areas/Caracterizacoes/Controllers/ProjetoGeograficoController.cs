@@ -24,6 +24,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracte
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDominialidade.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExploracaoFlorestal.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Business;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
@@ -38,12 +39,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		ListaBus _listaBus = new ListaBus();
 		ProjetoGeograficoBus _bus = new ProjetoGeograficoBus();
-
+		
 		EmpreendimentoBus _busEmpreendimento = new EmpreendimentoBus();
 		ProjetoGeograficoValidar _validar = new ProjetoGeograficoValidar();
 		CaracterizacaoValidar _caracterizacaoValidar = new CaracterizacaoValidar();
 		CaracterizacaoBus _caracterizacaoBus = new CaracterizacaoBus();
+		RegularizacaoFundiariaValidar _validarReg = new RegularizacaoFundiariaValidar();
 		ExploracaoFlorestalBus _exploracaoFlorestalBus = new ExploracaoFlorestalBus();
+		PermissaoValidar permissaoValidar = new PermissaoValidar();
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 		GerenciadorConfiguracao<ConfiguracaoSistema> _config = new GerenciadorConfiguracao<ConfiguracaoSistema>(new ConfiguracaoSistema());
 
@@ -52,7 +55,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult Index(int id, int empreendimento, int tipo, bool isCadastrarCaracterizacao = true, bool mostrarModalDependencias = true)
 		{
 			PermissaoValidar permissaoValidar = new PermissaoValidar();
-
+			
 			if (isCadastrarCaracterizacao && permissaoValidar.ValidarAny(new[] { ePermissao.ProjetoGeograficoCriar }, false))
 			{
 				return Criar(empreendimento, tipo, isCadastrarCaracterizacao);
@@ -93,7 +96,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			vm.CaracterizacaoTipo = vm.Projeto.CaracterizacaoId;
 			vm.ArquivoEnviadoTipo = (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado;
-			vm.ArquivoEnviadoFilaTipo = (tipo == eCaracterizacao.Dominialidade) ? (int)eFilaTipoGeo.Dominialidade : (int)eFilaTipoGeo.Atividade;
+
+			if (tipo == eCaracterizacao.Dominialidade)
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.Dominialidade;
+			else if (tipo == eCaracterizacao.RegularizacaoFundiaria)
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.RegularizacaoFundiaria;
+			else
+				vm.ArquivoEnviadoFilaTipo = (int)eFilaTipoGeo.Atividade;
 
 			vm.NiveisPrecisao = ViewModelHelper.CriarSelectList(_bus.ObterNiveisPrecisao());
 			vm.SistemaCoordenada = ViewModelHelper.CriarSelectList(_bus.ObterSistemaCoordenada());
@@ -169,13 +178,20 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[Permite(RoleArray = new Object[] { ePermissao.ProjetoGeograficoCriar })]
 		public ActionResult Criar(int empreendimento, int tipo, bool isCadastrarCaracterizacao = true)
-		{
+		{		
+
 			if (empreendimento <= 0 || empreendimento <= 0)
 			{
 				return RedirectToAction("Index", "../Empreendimento");
 			}
 
 			if (!_validar.Dependencias(empreendimento, tipo))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && (!_validarReg.ValidarProjetoGeo(empreendimento) ||
+				!permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaCriar })))
 			{
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
@@ -200,12 +216,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
 			}
 
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && !permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaEditar }))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
 			ProjetoGeograficoVM vm = new ProjetoGeograficoVM();
 			vm.isCadastrarCaracterizacao = isCadastrarCaracterizacao;
 			vm.IsCredenciado = false;
             vm.UrlVoltar = Url.Action("../Caracterizacao/Index", new { id = empreendimento });
 
-			vm.Projeto = _bus.ObterProjeto(id);
+			vm.Projeto = _bus.ObterProjeto(id, tipo);
 
 			Dominialidade dominialidade = null;
 			if (vm.IsFinalizado)
@@ -227,6 +248,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[ControleAcesso(Acao = (int)eControleAcessoAcao.visualizarprojetogeografico, Artefato = (int)eHistoricoArtefatoCaracterizacao.projetogeografico)]
 		public ActionResult Visualizar(int id, int empreendimento, int tipo, bool isCadastrarCaracterizacao = true, bool mostrarModalDependencias = true)
 		{
+			if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria && !permissaoValidar.ValidarAny(new[] { ePermissao.RegularizacaoFundiariaVisualizar }))
+			{
+				return RedirectToAction("", "Caracterizacao", new { id = empreendimento, Msg = Validacao.QueryParam() });
+			}
+
 			ProjetoGeograficoVM vm = new ProjetoGeograficoVM();
 			vm.isCadastrarCaracterizacao = isCadastrarCaracterizacao;
 			vm.Projeto = _bus.ObterProjeto(id);
@@ -473,12 +499,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult ExcluirRascunho(ProjetoGeografico projeto, bool isCadastrarCaracterizacao)
 		{
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
-			{
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
-			}
 
-			_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
-			if (Validacao.EhValido) Validacao.Erros.Clear();
+			if (projeto.CaracterizacaoId == (int)eCaracterizacao.ExploracaoFlorestal)
+			{
+				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+				if (Validacao.EhValido) Validacao.Erros.Clear();
+			}
 			_bus.ExcluirRascunho(projeto);
 
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = Url.Action("Index", "Caracterizacao", Validacao.QueryParamSerializer(new { id = projeto.EmpreendimentoId })) });

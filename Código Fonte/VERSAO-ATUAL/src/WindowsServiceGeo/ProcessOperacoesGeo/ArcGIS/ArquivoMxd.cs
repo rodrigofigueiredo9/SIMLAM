@@ -8,6 +8,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.ArcGIS
 		MAPA_PECA_TECNICA,
 		MAPA_FISCALIZACAO,
 		MAPA_CAR,
-		MAPA_ATIVIDADE_TITULO
+		MAPA_ATIVIDADE_TITULO,
+		MAPA_REGULARIZACAO
 	}
 }

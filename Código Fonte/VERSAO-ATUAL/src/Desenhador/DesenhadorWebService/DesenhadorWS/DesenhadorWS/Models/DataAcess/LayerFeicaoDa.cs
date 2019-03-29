@@ -152,9 +152,16 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 					comando.Dispose();
 				}
 
-                comando = bancoDeDados.GetComandoSql(@"select f.feicao id_feicao, f.coluna, f.tipo, f.tamanho, f.tabela_referenciada, f.coluna_referenciada, f.alias, 
-                f.is_obrigatorio, f.is_visivel, f.is_editavel, tfco.operacao, tfco.valor, tfco.coluna_obrigada from " + schemaUsuario + @".tab_feicao_colunas f, " 
-                + schemaUsuario + @".tab_feicao_col_obrigator tfco where tfco.feicao(+) = f.feicao and tfco.coluna(+) = f.coluna and f.feicao = :id ");
+				string sql = @"select f.feicao id_feicao, f.coluna, f.tipo, f.tamanho, f.tabela_referenciada, f.coluna_referenciada, f.alias, 
+                f.is_obrigatorio, f.is_visivel, f.is_editavel, tfco.operacao, tfco.valor, tfco.coluna_obrigada from " + schemaUsuario + @".tab_feicao_colunas f, "
+				+ schemaUsuario + @".tab_feicao_col_obrigator tfco where tfco.feicao(+) = f.feicao and tfco.coluna(+) = f.coluna and f.feicao = :id ";
+
+				if (idNavegador == 5)
+				{
+					sql += @" and f.coluna in ('CODIGO','ATIVIDADE') ";
+				}
+
+				comando = bancoDeDados.GetComandoSql(sql);
 
                 comando.AdicionarParametroEntrada("id", DbType.Int32);
                 ColunaLayerFeicao coluna = null;
@@ -393,7 +400,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 					#endregion
                 }
 
-				if (idNavegador == 4)
+				if (idNavegador == 4 || idNavegador == 5)
 				{
 					#region CAR
 					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto union select empreendimento from crt_cad_ambiental_rural pg where pg.projeto_geo_id = :projeto )");

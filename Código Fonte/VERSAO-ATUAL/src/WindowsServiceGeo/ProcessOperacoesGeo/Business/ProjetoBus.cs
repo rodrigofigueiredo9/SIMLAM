@@ -6,6 +6,7 @@ using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data;
 using Tecnomapas.EtramiteX.WindowsService.Utilitarios;
+using Tecnomapas.TecnoGeo.Geografico;
 
 namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 {
@@ -243,6 +244,11 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 		internal int ObterProjetoIdDominialidade(int projetoId)
 		{
 			return _dataAccess.ObterProjetoIdDominialidade(projetoId);
+		}
+
+		internal ClasseFeicao ObterClasseFeicao(string classeFeicao)
+		{
+			return _dataAccess.ObterClasseFeicao(classeFeicao);
 		}
 	}
 }

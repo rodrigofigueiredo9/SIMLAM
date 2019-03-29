@@ -521,7 +521,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
 						c.data_cadastro, c.data_conclusao, c.tid, lv.texto tipo_exploracao_texto,
-						nvl(c.localizador, concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy'))) localizador
+						nvl(c.localizador, concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy'))) localizador,
+						(select count(*) from tab_titulo_exp_florestal t where t.exploracao_florestal = c.id) possui_vinculo
 						from {0}crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
 						where c.id = :id", EsquemaBanco);
@@ -548,6 +549,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
 							caracterizacao.Localizador = reader["localizador"].ToString();
+						if (reader["possui_vinculo"] != null && !Convert.IsDBNull(reader["possui_vinculo"]))
+							caracterizacao.PossuiVinculoComTitulo = Convert.ToBoolean(reader["possui_vinculo"]);
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 

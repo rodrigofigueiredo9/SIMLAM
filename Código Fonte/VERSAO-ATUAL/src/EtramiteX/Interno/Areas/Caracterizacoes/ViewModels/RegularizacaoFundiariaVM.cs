@@ -75,14 +75,15 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public List<SelectListItem> TipoUso { set; get; }
 
 		public RegularizacaoFundiariaVM(RegularizacaoFundiaria regularizacao, bool isVisualizar = false)
-		{
+		{			
 			Caracterizacao = regularizacao;
 			IsVisualizar = isVisualizar;
 		}
 
 		public RegularizacaoFundiariaVM(RegularizacaoFundiaria regularizacao, List<RelacaoTrabalho> relacoesTrabalho, List<Lista> limite,
-			List<Lista> regularizacaoTipo, List<UsoAtualSoloLst> tipoUso, List<Lista> homologacoes, bool isVisualizar = false)
+			List<Lista> regularizacaoTipo, List<UsoAtualSoloLst> tipoUso, List<Lista> homologacoes, List<Lista> comprovacoes, bool isVisualizar = false, int comprovacaoId = 0)
 		{
+			regularizacao.Posse.Comprovacoes = ViewModelHelper.CriarSelectList(comprovacoes, isFiltrarAtivo: true, selecionado: comprovacaoId.ToString());
 			Caracterizacao = regularizacao;
 			IsVisualizar = isVisualizar;
 			Opcao opcaoAux = null;
@@ -100,11 +101,12 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				}
 			}
 
+			regularizacao.Posse.Comprovacoes = ViewModelHelper.CriarSelectList(comprovacoes, isFiltrarAtivo: true, selecionado:Caracterizacao.Posse.ComprovacaoId.ToString());
 			RelacoesTrabalho = relacoesTrabalho;
 			Homologacoes = ViewModelHelper.CriarSelectList(homologacoes, true, selecionado: homologacaoSelecionada);
 			TipoLimite = ViewModelHelper.CriarSelectList(limite, true, selecionado: limiteSelecionado);
 			TipoUso = ViewModelHelper.CriarSelectList(tipoUso, true);
-			TipoRegularizacao = ViewModelHelper.CriarSelectList(regularizacaoTipo, true);
+			TipoRegularizacao = ViewModelHelper.CriarSelectList(regularizacaoTipo, true, selecionado: Caracterizacao.Posse.RegularizacaoTipo.ToString());			
 		}
 
 		public Opcao MontarRadioCheck(eTipoOpcao tipo)
