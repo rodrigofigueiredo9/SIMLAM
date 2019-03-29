@@ -368,7 +368,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
                 if (idNavegador ==2)
                 {
 					#region Atividade
-					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto union select empreendimento from crt_projeto_geo pg where pg.id = :projeto )");
+					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto and pg.empreendimento = a.empreendimento union select empreendimento from crt_projeto_geo pg where pg.id = :projeto and pg.empreendimento = a.empreendimento)");
 					comando.AdicionarParametroEntrada("projeto", idProjeto, DbType.Int32);
 
 					try
@@ -403,7 +403,7 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 				if (idNavegador == 4 || idNavegador == 5)
 				{
 					#region CAR
-					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto union select empreendimento from crt_cad_ambiental_rural pg where pg.projeto_geo_id = :projeto )");
+					comando = bancoDeDados.GetComandoSql(@"select id projeto_associado from crt_projeto_geo a where a.empreendimento = (select empreendimento from tmp_projeto_geo pg where pg.id = :projeto and pg.empreendimento = a.empreendimento union select empreendimento from crt_cad_ambiental_rural pg where pg.projeto_geo_id = :projeto and pg.empreendimento = a.empreendimento)");
 					comando.AdicionarParametroEntrada("projeto", idProjeto, DbType.Int32);
 
 					try
