@@ -145,6 +145,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				certidao.Caracterizacao.CampoNome = "Finalidade";
 				certidao.Caracterizacao.CampoValor = Mensagem.Concatenar(finalidades.Where(x => (int.Parse(x.Codigo) & certidao.Caracterizacao.FinalidadeAtividade) != 0).Select(x => x.Texto).ToList());
 
+				
+
 				return certidao;
 			}
 			catch (Exception exc)
