@@ -3,6 +3,7 @@
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ExploracaoFlorestalExploracaoVM>" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao" %>
 
 <script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
@@ -131,7 +132,18 @@
 								<input type="hidden" class="especieId" value='<%: produto.EspeciePopularId%>' />
 							</td>
 							<td>
-								<span class="quantidade" title="<%:produto.Quantidade%>"><%: produto.Quantidade %></span>
+								<% var qtd = "";
+									if (!String.IsNullOrEmpty(produto.Quantidade)) {
+										qtd = Convert.ToDecimal(produto.Quantidade).ToString("N2");
+
+										if ((Convert.ToDecimal(produto.Quantidade) % 2) == 0)
+										{
+											if (produto.ProdutoId == (int)eProduto.MudaPlanta || produto.ProdutoId == (int)eProduto.Palmito)
+												qtd = Convert.ToDecimal(produto.Quantidade).ToString("N0");
+										}
+									}
+								%>
+								<span class="quantidade" title="<%:qtd%>"><%: qtd %></span>
 							</td>
 							<td>
 								<span class="destinacao" title="<%:produto.DestinacaoMaterialTexto%>"><%: produto.DestinacaoMaterialTexto%></span>

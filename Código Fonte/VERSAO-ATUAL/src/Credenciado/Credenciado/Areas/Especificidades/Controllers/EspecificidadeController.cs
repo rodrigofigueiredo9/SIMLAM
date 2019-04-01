@@ -19,22 +19,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		public ActionResult Salvar(int modeloId)
 		{
 			TituloModelo modelo = _busModelo.ObterSimplificado(modeloId);
-			string url = String.Empty;
+
 			if (modelo == null || !modelo.Codigo.HasValue || !EspecificiadadeBusFactory.Possui(modelo.Codigo.Value))
 			{
 				return Json(new { Possui = false }, JsonRequestBehavior.AllowGet);
 			}
-			try
-			{
-				_bus = EspecificiadadeBusFactory.Criar(modelo.Codigo.Value);
 
-				eEspecificidade eTelaEsp = (eEspecificidade)modelo.Codigo.Value;
-				url = Url.Action(eTelaEsp.ToString(), _bus.Tipo.ToString(), new { Area = "Especificidades" });
+			_bus = EspecificiadadeBusFactory.Criar(modelo.Codigo.Value);
 
-			}catch(Exception e)
-			{
-				var ex = e;
-			}
+			eEspecificidade eTelaEsp = (eEspecificidade)modelo.Codigo.Value;
+			string url = Url.Action(eTelaEsp.ToString(), _bus.Tipo.ToString(), new { Area = "Especificidades" });
+
 			return Json(new { Possui = true, Url = url, Msg = Validacao.Erros }, JsonRequestBehavior.AllowGet);
 		}
 	}

@@ -201,12 +201,43 @@ namespace Tecnomapas.DesenhadorWS.Models.DataAcess
 			Comando comando = null;
 			try
 			{
+				if(tabela.ToUpper().Contains("DES_PATIV") || tabela.ToUpper().Contains("DES_AATIV"))
+				{
+					BancoDeDados banco = BancoDeDadosFactory.CriarBancoDeDados("StringConexao");
+					comando = banco.GetComandoSql($@"select c.id from crt_exp_florestal_exploracao c where exists (select 1 from crt_exp_florestal_geo g
+						where g.exp_florestal_exploracao = c.id
+						and exists (select 1 from idafgeo.{(tabela.ToUpper().Contains("DES_PATIV") ? "des_pativ" : "des_aativ")} d where d.codigo = c.identificacao
+						and d.id = :objectid and exists(select 1 from idafgeo.{(tabela.ToUpper().Contains("DES_PATIV") ? "tmp_pativ" : "tmp_aativ")} t where t.projeto = d.projeto
+						and id = g.{(tabela.ToUpper().Contains("DES_PATIV") ? "tmp_pativ_id" : "tmp_aativ_id")})))");
+
+					comando.AdicionarParametroEntrada("objectId", objectId, DbType.Int32);
+					var id = banco.ExecutarScalar(comando);
+
+					comando = banco.GetComandoPlSql($@"begin
+					delete from crt_exp_florestal_geo g where g.exp_florestal_exploracao = :id;
+					delete from crt_exp_florestal_produto p where p.exp_florestal_exploracao = :id;
+					delete from crt_exp_florestal_exploracao c where c.id = :id;
+
+					delete from tab_titulo_exp_florestal t
+						where exists (select 1 from crt_exploracao_florestal c
+							where not exists (select 1 from crt_exp_florestal_exploracao ce where
+							ce.exploracao_florestal = c.id)
+						and c.id = t.exploracao_florestal);
+
+					delete from crt_exploracao_florestal c
+						where not exists (select 1 from crt_exp_florestal_exploracao ce where
+						ce.exploracao_florestal = c.id);
+
+					end;");
+					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+					banco.ExecutarNonQuery(comando);
+				}
+
 				string schemaUsuario = ConfigurationManager.AppSettings["SchemaUsuarioGeo"].ToUpper();
 				BancoDeDados bancoDeDados = BancoDeDadosFactory.CriarBancoDeDados("StringConexaoGeo");
 				comando = bancoDeDados.GetComandoSql("delete from " + schemaUsuario + "." + tabela + " t where t." + primaryKey + " = :objectId");
 				comando.AdicionarParametroEntrada("objectId", objectId, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
-
 			}
 			finally
 			{

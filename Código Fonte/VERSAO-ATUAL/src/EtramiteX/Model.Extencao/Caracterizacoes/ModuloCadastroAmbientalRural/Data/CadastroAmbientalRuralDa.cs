@@ -281,8 +281,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCad
 
 					delete from {1}tab_fila f where f.projeto = v_projeto_id;
 
-					select (select c.id from tmp_cad_ambiental_rural c where c.empreendimento = :empreendimento 
-					union select c.id from crt_cad_ambiental_rural c where c.empreendimento = :empreendimento) into v_caracterizacao_id from dual;
+					select nvl((select c.id from crt_cad_ambiental_rural c where c.empreendimento = :empreendimento),
+								(select c.id from tmp_cad_ambiental_rural c where c.empreendimento = :empreendimento)) into v_caracterizacao_id from dual;
 
 					delete from {0}tmp_projeto_geo_arquivos r where r.projeto = v_projeto_id;
 					delete from {0}tmp_projeto_geo r where r.id = v_projeto_id;

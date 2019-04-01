@@ -149,7 +149,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
 			}
 
-			if (vm.Projeto.Id > 0 && mostrarModalDependencias)
+			if (vm.Projeto.Id > 0 && mostrarModalDependencias && tipo != eCaracterizacao.ExploracaoFlorestal)
 			{
 				vm.TextoMerge = _caracterizacaoValidar.DependenciasAlteradas(
 						vm.Projeto.EmpreendimentoId,
@@ -499,13 +499,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		public ActionResult ExcluirRascunho(ProjetoGeografico projeto, bool isCadastrarCaracterizacao)
 		{
 			if (!_caracterizacaoValidar.Basicas(projeto.EmpreendimentoId))
-			{
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
-			}
-			if (projeto.CaracterizacaoId != (int)eCaracterizacao.RegularizacaoFundiaria)
-				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
 
-			if (Validacao.EhValido) Validacao.Erros.Clear();
+			if (projeto.CaracterizacaoId == (int)eCaracterizacao.ExploracaoFlorestal)
+			{
+				_exploracaoFlorestalBus.Excluir(projeto.EmpreendimentoId);
+				if (Validacao.EhValido) Validacao.Erros.Clear();
+			}
 			_bus.ExcluirRascunho(projeto);
 
 			return Json(new { EhValido = Validacao.EhValido, Msg = Validacao.Erros, Url = Url.Action("Index", "Caracterizacao", Validacao.QueryParamSerializer(new { id = projeto.EmpreendimentoId })) });

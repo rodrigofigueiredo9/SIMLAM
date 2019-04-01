@@ -52,7 +52,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			}
 
 			bool contemProjGeo = _da.PossuiProjetoGeo(id);
-			if (!contemProjGeo)
+			if (!contemProjGeo && lstCadastroVazio.Exists(x => x.Contains("Projeto Geografico")))
 				lstCadastroVazio.RemoveAll(x => x.Contains("Projeto Geografico"));
 
 			if (lstCadastroVazio.Count > 0)

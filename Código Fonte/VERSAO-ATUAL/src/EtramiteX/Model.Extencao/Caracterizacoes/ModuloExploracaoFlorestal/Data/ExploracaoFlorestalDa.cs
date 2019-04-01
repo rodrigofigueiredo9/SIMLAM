@@ -267,6 +267,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 						}
 
+						#region Exploracao Geo
+
+						if (item.ExploracaoFlorestalGeo != null)
+						{
+							comando = bancoDeDados.CriarComando(@"delete from {0}crt_exp_florestal_geo c where c.exp_florestal_exploracao = :exp_florestal_exploracao", EsquemaBanco);
+							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
+							bancoDeDados.ExecutarNonQuery(comando);
+
+							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_geo c (id, exp_florestal_exploracao, geo_pativ_id,
+							geo_aativ_id, tmp_pativ_id, tmp_aativ_id)
+							values ({0}seq_exp_florestal_geo.nextval, :exp_florestal_exploracao, :geo_pativ_id, :geo_aativ_id,
+							:tmp_pativ_id, :tmp_aativ_id)", EsquemaBanco);
+
+							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_pativ_id", item.ExploracaoFlorestalGeo.GeoPativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_aativ_id", item.ExploracaoFlorestalGeo.GeoAativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("tmp_pativ_id", item.ExploracaoFlorestalGeo.TmpPativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("tmp_aativ_id", item.ExploracaoFlorestalGeo.TmpAativId, DbType.Int32);
+							bancoDeDados.ExecutarNonQuery(comando);
+						}
+
+						#endregion
+
 						#region Produtos
 
 						if (item.Produtos != null && item.Produtos.Count > 0)
@@ -362,52 +385,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					and exists
 					(select 1 from tab_titulo_exp_florestal t
 					where t.exploracao_florestal = e.id);
-				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_pativ_id)
-					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_pativ g 
-					inner join crt_exp_florestal_exploracao cp
-					on(cp.identificacao = g.codigo)
-					where cp.parecer_favoravel = 1
-					and exists
+				update crt_exp_florestal_geo g
+					set g.geo_pativ_id = g.tmp_pativ_id, g.geo_aativ_id = g.tmp_aativ_id
+					where exists
 					(
-						select 1 from crt_exploracao_florestal c
-						where cp.exploracao_florestal = c.id
-						and c.empreendimento = :empreendimento
+						select 1 from crt_exp_florestal_exploracao cp
+						where cp.parecer_favoravel = 1
+						and cp.id = g.exp_florestal_exploracao
 						and exists
 						(
-							select 1 from crt_projeto_geo p
-							where p.id = g.projeto
-							and p.empreendimento = c.empreendimento
+							select 1 from crt_exploracao_florestal c
+							where cp.exploracao_florestal = c.id
+							and c.empreendimento = :empreendimento
+							and exists
+							(select 1 from tab_titulo_exp_florestal t
+							where t.exploracao_florestal = c.id)
 						)
-						and exists
-						(select 1 from tab_titulo_exp_florestal t
-						where t.exploracao_florestal = c.id)
-					)
-					and not exists
-					(select 1 from crt_exp_florestal_geo gp 
-					where gp.geo_pativ_id = g.id);
-				insert into crt_exp_florestal_geo (id, exp_florestal_exploracao, geo_aativ_id)
-					select seq_exp_florestal_geo.nextval, cp.id, g.id from idafgeo.geo_aativ g 
-					inner join crt_exp_florestal_exploracao cp
-					on(cp.identificacao = g.codigo)
-					where cp.parecer_favoravel = 1
-					and exists
-					(
-						select 1 from crt_exploracao_florestal c
-						where cp.exploracao_florestal = c.id
-						and c.empreendimento = :empreendimento
-						and exists
-						(
-							select * from crt_projeto_geo p
-							where p.id = g.projeto
-							and p.empreendimento = c.empreendimento
-						)
-						and exists
-						(select 1 from tab_titulo_exp_florestal t
-						where t.exploracao_florestal = c.id)
-					)
-					and not exists
-					(select 1 from crt_exp_florestal_geo gp 
-					where gp.geo_aativ_id = g.id);
+					);
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -428,6 +422,24 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					(select 1 from tab_titulo_exp_florestal t
 					where t.exploracao_florestal = e.id
 					and t.titulo = :titulo);
+				update crt_exp_florestal_geo g
+					set g.geo_pativ_id = null, g.geo_aativ_id = null
+					where exists
+					(
+						select 1 from crt_exp_florestal_exploracao cp
+						where cp.parecer_favoravel = 1
+						and cp.id = g.exp_florestal_exploracao
+						and exists
+						(
+							select 1 from crt_exploracao_florestal c
+							where cp.exploracao_florestal = c.id
+							and c.empreendimento = :empreendimento
+							and exists
+							(select 1 from tab_titulo_exp_florestal t
+							where t.exploracao_florestal = c.id
+							and t.titulo = :titulo)
+						)
+					);
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
@@ -521,7 +533,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				Comando comando = bancoDeDados.CriarComando(@"select c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,
 						c.data_cadastro, c.data_conclusao, c.tid, lv.texto tipo_exploracao_texto,
-						nvl(c.localizador, concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy'))) localizador
+						nvl(c.localizador, concat(concat(concat(lv.chave, lpad(to_char(c.codigo_exploracao), 3, '0')), '-'), to_char(c.data_cadastro, 'ddMMyyyy'))) localizador,
+						(select count(*) from tab_titulo_exp_florestal t where t.exploracao_florestal = c.id) possui_vinculo
 						from {0}crt_exploracao_florestal c
 						left join idafgeo.lov_tipo_exploracao lv on (c.tipo_exploracao = lv.tipo_atividade)
 						where c.id = :id", EsquemaBanco);
@@ -548,6 +561,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							caracterizacao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + caracterizacao.CodigoExploracao.ToString().PadLeft(3, '0');
 						if (reader["localizador"] != null && !Convert.IsDBNull(reader["localizador"]))
 							caracterizacao.Localizador = reader["localizador"].ToString();
+						if (reader["possui_vinculo"] != null && !Convert.IsDBNull(reader["possui_vinculo"]))
+							caracterizacao.PossuiVinculoComTitulo = Convert.ToBoolean(reader["possui_vinculo"]);
 						caracterizacao.Tid = reader["tid"].ToString();
 					}
 
@@ -795,7 +810,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		internal IEnumerable<ExploracaoFlorestal> ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
-			var exploracaoFlorestalList = new List<ExploracaoFlorestal>();
+			var exploracaoFlorestalList = this.ObterPorEmpreendimentoList(empreendimento, false, banco)?.Where(x => x.DataConclusao.IsEmpty)?.ToList() ?? new List<ExploracaoFlorestal>();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -873,9 +888,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					ExploracaoFlorestal exploracaoAnterior = new ExploracaoFlorestal();
 					ExploracaoFlorestalExploracao detalhe = null;
 					ExploracaoFlorestalExploracao detalheAnterior = null;
+
 					while (reader.Read())
 					{
-						detalhe = new ExploracaoFlorestalExploracao();
+						if (exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
+							.Exploracoes?.Exists(x => x.Identificacao == reader["identificacao"].ToString() &&
+							x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"])) ?? false)
+						{
+							detalhe = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
+							.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"]));
+						}
+						else
+							detalhe = new ExploracaoFlorestalExploracao();
 						detalhe.Identificacao = reader["identificacao"].ToString();
 						detalhe.ClassificacaoVegetacaoId = reader.GetValue<int>("class_vegetal");
 						detalhe.AreaCroqui = reader.GetValue<decimal>("area_croqui");
@@ -887,18 +911,23 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						if (exploracaoAnterior.TipoExploracao != Convert.ToInt32(reader["tipo_exploracao"]) || detalheAnterior.GeometriaTipoId != detalhe.GeometriaTipoId)
 						{
-							exploracao = new ExploracaoFlorestal();
-							exploracao.EmpreendimentoId = empreendimento;
-							if (exploracaoAnterior.CodigoExploracao > 0 && exploracaoAnterior.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))
-								exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao + 1;
+							if (exploracaoFlorestalList.Exists(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"])))
+								exploracao = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]));
 							else
-								exploracao.CodigoExploracao = this.ObterCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), empreendimento, bancoDeDados);
-							if (!Convert.IsDBNull(reader["tipo_exploracao"]))
-								exploracao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
-							if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
-								exploracao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
-							if (!Convert.IsDBNull(reader["data"]))
-								exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
+							{
+								exploracao = new ExploracaoFlorestal();
+								exploracao.EmpreendimentoId = empreendimento;
+								if (exploracaoAnterior.CodigoExploracao > 0 && exploracaoAnterior.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))
+									exploracao.CodigoExploracao = exploracaoAnterior.CodigoExploracao + 1;
+								else
+									exploracao.CodigoExploracao = this.ObterCodigoExploracao(Convert.ToInt32(reader["tipo_exploracao"]), empreendimento, bancoDeDados);
+								if (!Convert.IsDBNull(reader["tipo_exploracao"]))
+									exploracao.TipoExploracao = Convert.ToInt32(reader["tipo_exploracao"]);
+								if (!Convert.IsDBNull(reader["tipo_exploracao_texto"]))
+									exploracao.CodigoExploracaoTexto = reader["tipo_exploracao_texto"].ToString().Substring(0, 3) + exploracao.CodigoExploracao.ToString().PadLeft(3, '0');
+								if (!Convert.IsDBNull(reader["data"]))
+									exploracao.DataCadastro = new DateTecno() { Data = Convert.ToDateTime(reader["data"]) };
+							}
 						}
 
 						detalhe.ExploracaoFlorestalGeo = new ExploracaoFlorestalGeo();						
@@ -914,6 +943,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						if (exploracaoFlorestalList.Contains(exploracao))
 							exploracaoFlorestalList.Remove(exploracao);
+						if (exploracao.Exploracoes.Contains(detalhe))
+							exploracao.Exploracoes.Remove(detalhe);
 						exploracao.Exploracoes.Add(detalhe);
 						exploracaoFlorestalList.Add(exploracao);
 						exploracaoAnterior = exploracao;
