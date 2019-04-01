@@ -267,6 +267,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
 						}
 
+						#region Exploracao Geo
+
+						if (item.ExploracaoFlorestalGeo != null)
+						{
+							comando = bancoDeDados.CriarComando(@"delete from {0}crt_exp_florestal_geo c where c.exp_florestal_exploracao = :exp_florestal_exploracao", EsquemaBanco);
+							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
+							bancoDeDados.ExecutarNonQuery(comando);
+
+							comando = bancoDeDados.CriarComando(@"insert into {0}crt_exp_florestal_geo c (id, exp_florestal_exploracao, geo_pativ_id,
+							geo_aativ_id, tmp_pativ_id, tmp_aativ_id)
+							values ({0}seq_exp_florestal_geo.nextval, :exp_florestal_exploracao, :geo_pativ_id, :geo_aativ_id,
+							:tmp_pativ_id, :tmp_aativ_id)", EsquemaBanco);
+
+							comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_pativ_id", item.ExploracaoFlorestalGeo.GeoPativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("geo_aativ_id", item.ExploracaoFlorestalGeo.GeoAativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("tmp_pativ_id", item.ExploracaoFlorestalGeo.TmpPativId, DbType.Int32);
+							comando.AdicionarParametroEntrada("tmp_aativ_id", item.ExploracaoFlorestalGeo.TmpAativId, DbType.Int32);
+							bancoDeDados.ExecutarNonQuery(comando);
+						}
+
+						#endregion
+
 						#region Produtos
 
 						if (item.Produtos != null && item.Produtos.Count > 0)
@@ -787,7 +810,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 		internal IEnumerable<ExploracaoFlorestal> ObterDadosGeo(int empreendimento, BancoDeDados banco = null)
 		{
-			var exploracaoFlorestalList = this.ObterPorEmpreendimentoList(empreendimento, false, banco)?.Where(x => x.DataConclusao.IsEmpty)?.ToList();
+			var exploracaoFlorestalList = this.ObterPorEmpreendimentoList(empreendimento, false, banco)?.Where(x => x.DataConclusao.IsEmpty)?.ToList() ?? new List<ExploracaoFlorestal>();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -869,10 +892,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					while (reader.Read())
 					{
 						if (exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
-							.Exploracoes?.Exists(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32("geometria_tipo")) ?? false)
+							.Exploracoes?.Exists(x => x.Identificacao == reader["identificacao"].ToString() &&
+							x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"])) ?? false)
 						{
 							detalhe = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
-							.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32("geometria_tipo"));
+							.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"]));
 						}
 						else
 							detalhe = new ExploracaoFlorestalExploracao();
@@ -919,6 +943,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						if (exploracaoFlorestalList.Contains(exploracao))
 							exploracaoFlorestalList.Remove(exploracao);
+						if (exploracao.Exploracoes.Contains(detalhe))
+							exploracao.Exploracoes.Remove(detalhe);
 						exploracao.Exploracoes.Add(detalhe);
 						exploracaoFlorestalList.Add(exploracao);
 						exploracaoAnterior = exploracao;
