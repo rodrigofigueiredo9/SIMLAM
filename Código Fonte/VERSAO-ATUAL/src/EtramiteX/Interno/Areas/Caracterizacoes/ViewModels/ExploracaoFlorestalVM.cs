@@ -58,7 +58,8 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 					@ProdutoMouroesEstacas = eProduto.MouroesEstacas,
 					@ProdutoEscoras = eProduto.Escoras,
 					@ProdutoPalmito = eProduto.Palmito,
-					@ProdutoSemRendimento = eProduto.SemRendimento
+					@ProdutoSemRendimento = eProduto.SemRendimento,
+					@ProdutoMudaPlanta = eProduto.MudaPlanta
 				});
 			}
 		}
