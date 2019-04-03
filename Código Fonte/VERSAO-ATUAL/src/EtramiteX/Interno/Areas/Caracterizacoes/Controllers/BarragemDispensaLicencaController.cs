@@ -138,6 +138,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
 		public ActionResult Listar(int id, bool isVisualizar = false)
 		{
+			if (!_validar.Acessar(id) || !_caracterizacaoValidar.Basicas(id))
+			{
+				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
+			}
+
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			BarragemDispensaLicenca caracterizacao = new BarragemDispensaLicenca();
 			List<BarragemDispensaLicenca> caracterizacoes = new List<BarragemDispensaLicenca>();

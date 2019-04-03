@@ -167,12 +167,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMinAdequacoes))
 							Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinAdequacoes);
 					}
+				} else
+				{
+					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMinAdequacoes))
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMinAdequacoes);
 				}
 
 				if (caracterizacao.construidaConstruir.vazaoMaxTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxTipo);
 
-				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro))
+				int vazaoMaxima;
+
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro) ||
+					(Int32.TryParse(caracterizacao.construidaConstruir.vazaoMaxDiametro, out vazaoMaxima) &&
+					vazaoMaxima <= 0))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
 				if (!caracterizacao.construidaConstruir.vazaoMaxInstalado.HasValue)
@@ -188,6 +196,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxAdequacoes))
 							Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxAdequacoes);
 					}
+				} else
+				{
+					if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxAdequacoes))
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxAdequacoes);
 				}
 				#endregion
 			}
@@ -203,7 +215,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (caracterizacao.construidaConstruir.vazaoMaxTipo <= 0)
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxTipo);
 
-				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro))
+				int vazaoMaxima;
+
+				if (String.IsNullOrWhiteSpace(caracterizacao.construidaConstruir.vazaoMaxDiametro) ||
+					(Int32.TryParse(caracterizacao.construidaConstruir.vazaoMaxDiametro, out vazaoMaxima) &&
+					vazaoMaxima <= 0))
 					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeVazaoMaxDiametro);
 
 				#region Validações DATA

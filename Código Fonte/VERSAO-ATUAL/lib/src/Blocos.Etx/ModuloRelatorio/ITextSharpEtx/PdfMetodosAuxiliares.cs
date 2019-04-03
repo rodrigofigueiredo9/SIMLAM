@@ -6,7 +6,6 @@ using System.Reflection;
 using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx
 {
@@ -516,6 +515,30 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx
 			AnexarArquivos(new PdfReader(ms.ToArray()), doc, wrt);
 		}
 
+		public static MemoryStream AnexarPdf(MemoryStream msi, MemoryStream msj)
+		{
+			//PdfCopyFields copy = new PdfCopyFields(msPdf);
+			Document document = new Document(PageSize.A4);
+			MemoryStream ms = new MemoryStream();
+
+			PdfWriter writer = PdfWriter.GetInstance(document, ms);
+
+			// Open document to write
+			document.Open();
+
+			PdfMetodosAuxiliares.AnexarPdf(msi, document, writer);
+			PdfMetodosAuxiliares.AnexarPdf(msj, document, writer);
+
+			document.Close();
+			document.Dispose();
+
+			MemoryStream msOut = new MemoryStream(ms.ToArray());
+			ms.Close();
+			ms.Dispose();
+
+			return msOut;
+		}
+
 		private static void AnexarArquivos(PdfReader reader, Document doc, PdfWriter wrt)
 		{
 			try
@@ -809,7 +832,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx
 
 			doc.Open();
 
-			PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+			var parser = new iTextSharp.text.pdf.parser.PdfReaderContentParser(reader);
 
 			#region Páginas do Pdf
 
@@ -893,7 +916,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx
 
 			doc.Open();
 
-			PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+			var parser = new iTextSharp.text.pdf.parser.PdfReaderContentParser(reader);
 
 			#region Páginas do Pdf
 
