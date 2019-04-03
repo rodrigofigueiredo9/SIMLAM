@@ -85,7 +85,7 @@
 			</div>
 			<div class="coluna100">
 				<div class="coluna65">
-					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do Projeto técnico / laudo de barragem construída *</label>
+					<label for="DiametroTubulacaoVazaoMin">Número da ART de elaboração do projeto técnico / laudo de barragem construída *</label>
 				</div><br />
 				<div class="coluna30">
 				<%= Html.TextBox("RT", Model.Caracterizacao.responsaveisTecnicos[1].numeroART, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtRTElaboracaoProjetoNumero", maxlength = "14" })) %>
@@ -131,7 +131,7 @@
 	</fieldset>
 		
 	<fieldset class="block box">
-	<legend class="titFiltros">Responsável técnico pela elaboração do Estudo Ambiental</legend>
+	<legend class="titFiltros">Responsável técnico pela elaboração do estudo ambiental</legend>
 
 		<div class="block">
 			<%=Html.Hidden("rtId", Model.Caracterizacao.responsaveisTecnicos[3].id, new { @class="hdnRTElaboracaoEstudoAmbientalId" })%>
@@ -161,7 +161,7 @@
 	</fieldset>
 			
 	<fieldset class="block box">
-	<legend class="titFiltros">Responsável técnico pela elaboração do Plano de Recuperação de Área Degradada referente a APP no entorno do reservatório</legend>
+	<legend class="titFiltros">Responsável técnico pela elaboração do Plano de Recuperação de Área Degradada referente à APP no entorno do reservatório</legend>
 		
 		<div class="block">
 			<%=Html.Hidden("rtId", Model.Caracterizacao.responsaveisTecnicos[4].id, new { @class="hdnRTElaboracaoPlanoRecuperacaoId" })%>

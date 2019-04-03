@@ -42,8 +42,8 @@
         public Mensagem InformePossuiEstruturaHidraulica { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "PossuiEstruturaHidraulica", Texto = "Informe se as estruturas (monge e vertedouro) e o corpo do barramento estão funcionando de acordo com as normas de segurança." }; } }
         public Mensagem InformeAdequacoesRealizada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "AdequacoesRealizada", Texto = "Informe quais adequações serão realizadas para a barragem." }; } }
 
-		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida. Maior que 0.01 e menor ou igual que {0}.", valor) }; }
-		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe o volume armazenado (m³) válida. Maior que 0.01 e menor que {0}.", valor) }; }
+		public Mensagem AreaAlagada(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe a área alagada na soleira do vertedouro (ha) válida para a barragem. Maior que 0,01 e menor que {0}.", valor) }; }
+		public Mensagem VolumeArmazenado(decimal valor) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("Informe um volume armazenado (m3) válido para a barragem. Maior que 0,01 e menor que {0}.", valor) }; }
 
         public Mensagem InformeDataInicioObra { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano)." }; } }
         public Mensagem InformeDataInicioObraFormatoValido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataInicioObra", Texto = "Informe a data de início da obra (mês/ano) em um formato correto." }; } }
@@ -108,6 +108,6 @@
 		public Mensagem InformeAutorizacaoCREA(string tipo) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = string.Format("A autorização do CREA do responsável técnico {0} é obrigatória.", tipo) }; }
 		public Mensagem InformeRT { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Se alguma informação do Responsável técnico for preenchida, todas as outras precisam ser preenchidas." }; } }
 
-		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "O número de ART de RTs de elaboração e de execução não pode ser o mesmo." }; } }
+		public Mensagem NumeroARTIgual { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "rtNumero", Texto = "O número da ART de elaboração e execução da obra/PRAD não pode ser o mesmo." }; } }
 	}
 }
