@@ -780,9 +780,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
+				SELECT NullIF(Crt.CredenciadoId, CRT.id) Id, LPAD(CRT.CODIGO, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
 					FROM {0}CRT_INFORMACAO_CORTE CRT 
-					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.crt_informacao_corte
+					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON NullIF(Crt.CredenciadoId, CRT.id) = INF.crt_informacao_corte
 				WHERE INF.TITULO = :titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
