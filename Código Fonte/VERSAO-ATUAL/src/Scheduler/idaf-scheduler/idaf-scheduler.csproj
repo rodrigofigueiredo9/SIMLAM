@@ -81,7 +81,7 @@
       <HintPath>..\packages\Common.Logging.Log4Net1213.3.3.0\lib\net40\Common.Logging.Log4Net1213.dll</HintPath>
     </Reference>
     <Reference Include="GeoJSON.Net">
-      <HintPath>..\..\..\..\VERSAO-ATUAL\src\Scheduler\packages\GeoJSON.Net.dll</HintPath>
+      <HintPath>..\GeoJSON.Net\GeoJSON.Net.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -115,9 +115,8 @@
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.50813.1\lib\net40\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml.Linq" />
