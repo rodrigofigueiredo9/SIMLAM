@@ -197,8 +197,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				//Inserir no Histórico
 				InserirHistoricoControleCar(conn, requisicao, tid, resultado);
 
-				//if(!String.IsNullOrWhiteSpace(mensagemErro) && item != null)
-				//	VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
+				if (!String.IsNullOrWhiteSpace(mensagemErro) && item != null)
+					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
 			catch (Exception exception)
 			{
@@ -717,34 +717,12 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 			{
 				var esquema = origem == RequisicaoJobCar.INSTITUCIONAL ? 1 : 2;
 
-				//using (var cmd = new OracleCommand("SELECT COUNT(ID) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL LIKE '%:codigo%'", conn))
-				using (var cmd = new OracleCommand(@"SELECT SUM(CONTADOR) FROM (
-														  SELECT COUNT(1) CONTADOR FROM IDAF.TAB_CONTROLE_SICAR S	
-																	  INNER JOIN IDAF.TAB_CAR_SOLICITACAO C ON C.ID = S.SOLICITACAO_CAR
-																WHERE S.SOLICITACAO_CAR_ANTERIOR IN
-																			(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo)
-														  UNION ALL
-														  SELECT COUNT(1) CONTADOR FROM IDAF.TAB_CONTROLE_SICAR S
-																	  INNER JOIN IDAFCREDENCIADO.TAB_CAR_SOLICITACAO C ON C.ID = S.SOLICITACAO_CAR
-																WHERE S.SOLICITACAO_CAR_ANTERIOR IN
-																			(SELECT SOLICITACAO_CAR FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo)
-															  )", conn))
+				using (var cd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo AND SOLICITACAO_CAR != :solicitacao", conn))
 				{
-					cmd.Parameters.Add(new OracleParameter("codigo", codigo));
-					if (Convert.ToBoolean(cmd.ExecuteScalar()))
-					{
-						return false;
-					}
-					else
-					{
-						using (var cd = new OracleCommand("SELECT COUNT(1) FROM TAB_CONTROLE_SICAR WHERE CODIGO_IMOVEL = :codigo AND SOLICITACAO_CAR != :solicitacao", conn))
-						{
-							cd.Parameters.Add(new OracleParameter("codigo", codigo));
-							cd.Parameters.Add(new OracleParameter("solicitacao", solicitacao));
+					cd.Parameters.Add(new OracleParameter("codigo", codigo));
+					cd.Parameters.Add(new OracleParameter("solicitacao", solicitacao));
 
-							return (Convert.ToBoolean(cd.ExecuteScalar()));
-						}
-					}
+					return (Convert.ToBoolean(cd.ExecuteScalar()));
 				}
 			}
 			catch (Exception exception)
