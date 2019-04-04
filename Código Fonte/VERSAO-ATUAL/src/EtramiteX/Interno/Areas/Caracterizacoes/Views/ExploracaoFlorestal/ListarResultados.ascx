@@ -11,13 +11,13 @@
 	<table class="dataGridTable ordenavel" width="100%" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th width="17%">Tipo de Exploração</th>
-				<th width="17%">Código Exploração</th>
-				<th width="17%">Data Cadastro da Exploração</th>
+				<th width="15%">Tipo de Exploração</th>
+				<th width="15%">Código Exploração</th>
+				<th width="18%">Data Cadastro da Exploração</th>
 				<th width="17%">Geometria</th>
 				<th width="17%">Área Requerida (ha)</th>
-				<th width="17%">N° de Árvores Requeridas (und)</th>
-				<th width="17%">Ações</th>
+				<th width="19%">N° de Árvores Requeridas (und)</th>
+				<th width="10%">Ações</th>
 			</tr>
 		</thead>
 

@@ -1212,7 +1212,7 @@ Desenhador = {
 			Navegador.load(container, {
 			    id: ProjetoGeografico.settings.projetoId,
 			    modo: desenhadorModo,
-				tipo: ProjetoGeografico.settings.ArquivoEnviadoFilaTipo,
+				tipo: 5,
 				onCancelar: Desenhador.onCancelarProcessamento,
 				onProcessar: Desenhador.onProcessar,
 				onBaixarArquivo: Desenhador.onBaixarArquivo,
