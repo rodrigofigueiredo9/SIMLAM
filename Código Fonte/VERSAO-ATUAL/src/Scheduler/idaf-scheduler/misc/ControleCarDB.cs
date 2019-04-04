@@ -125,7 +125,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						mensagensDeResposta = String.Concat(mensagensDeResposta, men);
 						mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
 
-						if (men.Contains("sobreposição"))
+						if (men.Contains("sobreposição") && men.Contains("100"))
 						{
 							mensagemErro = men;
 						}
