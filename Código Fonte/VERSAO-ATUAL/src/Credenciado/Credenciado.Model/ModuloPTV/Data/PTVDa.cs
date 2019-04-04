@@ -11,6 +11,7 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
+using Tecnomapas.Blocos.Entities.WebService;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.EtramiteX.Configuracao;
@@ -214,6 +215,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Nota Fiscal De Caixa
+
+				InserirNotaFiscalDeCaixa(PTV.NotaFiscalDeCaixas, PTV.Id, bancoDeDados);
+
+				#endregion
+
 				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.criar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -297,6 +304,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
+				comando = bancoDeDados.CriarComando(@"delete from {0}tab_ptv_nf_caixa ", EsquemaBanco);
+				comando.DbCommand.CommandText += String.Format("where ptv = :ptv");
+				comando.AdicionarParametroEntrada("ptv", PTV.Id, DbType.Int32);
+				bancoDeDados.ExecutarNonQuery(comando);
+
 				#endregion
 
 				#region Produto PTV
@@ -375,6 +387,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Nota Fiscal de Caixa
+
+				InserirNotaFiscalDeCaixa(PTV.NotaFiscalDeCaixas, PTV.Id, bancoDeDados);
+
+				#endregion
+
 				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.atualizar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -397,6 +415,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.enviar, bancoDeDados);
+
+				bancoDeDados.Commit();
+			}
+		}
+
+		internal void CancelarEnvio(PTV PTV, BancoDeDados banco)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao where p.id = :id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", PTV.Situacao, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.atualizar, bancoDeDados);
 
 				bancoDeDados.Commit();
 			}
@@ -444,6 +482,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					delete {0}tab_ptv_comunicador pc where pc.ptv_id = :id;
 					delete {0}tab_ptv_produto pr where pr.ptv = :id;
 					delete {0}tab_ptv_arquivo pr where pr.ptv = :id;
+					delete {0}tab_ptv_nf_caixa pr where pr.ptv = :id;
 					delete {0}tab_ptv p where p.id = :id;
 				end;", UsuarioCredenciado);
 
@@ -452,6 +491,75 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				bancoDeDados.Commit();
+			}
+		}
+
+		internal void InserirNotaFiscalDeCaixa(List<NotaFiscalCaixa> lstNotaFiscalDeCaixa, int ptvID, BancoDeDados bancoDeDados)
+		{
+			lstNotaFiscalDeCaixa.ForEach(item =>
+			{
+				Comando comando;
+
+				if (item.id <= 0)
+				{
+					var notaFiscal = VerificarNumeroNFCaixa(item);
+					if (notaFiscal.id > 0)
+						item.id = notaFiscal.id;
+					else
+					{
+						using (BancoDeDados banco = BancoDeDados.ObterInstancia())
+						{
+							banco.IniciarTransacao();
+
+							comando = banco.CriarComando(@"INSERT INTO TAB_NF_CAIXA (ID, TID, NUMERO, TIPO_CAIXA, SALDO_INICIAL, CPF_CNPJ_ASSOCIADO, TIPO_PESSOA)
+												VALUES(SEQ_NF_CAIXA.NEXTVAL, :tid, :numero, :tipo, :saldoInicial, :cpf_cnpj, :tipo_pessoa) returning id into :id", EsquemaBanco);
+
+							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+							comando.AdicionarParametroEntrada("numero", item.notaFiscalCaixaNumero, DbType.String);
+							comando.AdicionarParametroEntrada("tipo", (int)item.tipoCaixaId, DbType.Int32);
+							comando.AdicionarParametroEntrada("saldoInicial", item.saldoAtual, DbType.Int32);
+							comando.AdicionarParametroEntrada("cpf_cnpj", item.PessoaAssociadaCpfCnpj, DbType.String);
+							comando.AdicionarParametroEntrada("tipo_pessoa", (int)item.PessoaAssociadaTipo, DbType.Int32);
+
+							comando.AdicionarParametroSaida("id", DbType.Int32);
+
+							banco.ExecutarScalar(comando);
+
+							item.id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+							Historico.Gerar(item.id, eHistoricoArtefato.notafiscalcaixa, eHistoricoAcao.criar, banco);
+
+							banco.Commit();
+						}
+					}
+				}
+
+				comando = bancoDeDados.CriarComando(@"INSERT INTO TAB_PTV_NF_CAIXA (ID, TID, NF_CAIXA, PTV, SALDO_ATUAL, NUMERO_CAIXAS)
+														VALUES(SEQ_PTV_NF_CAIXA.NEXTVAL, :tid, :nfCaixa, :ptv, :saldoAtual, :nCaixas)", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntrada("nfCaixa", item.id, DbType.Int32);
+				comando.AdicionarParametroEntrada("ptv", ptvID, DbType.Int32);
+				comando.AdicionarParametroEntrada("saldoAtual", item.saldoAtual, DbType.Int32);
+				comando.AdicionarParametroEntrada("nCaixas", item.numeroCaixas, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+			});
+		}
+
+		internal string ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando;
+				comando = bancoDeDados.CriarComando(@"
+								SELECT TC.TEXTO TIPO_CAIXA FROM TAB_NF_CAIXA NF INNER JOIN LOV_TIPO_CAIXA TC ON NF.TIPO_CAIXA = TC.ID 
+								WHERE NUMERO = :numero AND TIPO_CAIXA != :tipo AND ROWNUM <= 1", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
+				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.Int32);
+
+				return (string)bancoDeDados.ExecutarScalar(comando);
 			}
 		}
 
@@ -466,11 +574,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				PTV PTV = new PTV();
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select p.id, p.tid, p.tipo_numero,  p.numero, p.data_emissao, p.situacao, lst.texto situacao_texto, p.situacao_data, 
+				select p.id, p.tid, p.tipo_numero,  p.numero, p.data_emissao,
+                (case when p.situacao = 3 then (select lps.id from ins_ptv ip, lov_ptv_situacao lps
+					where ip.situacao = lps.id and ip.eptv_id = p.id) else lst.id end) as situacao,
+				(case when p.situacao = 3 then (select lps.texto from ins_ptv ip, lov_ptv_situacao lps
+					where ip.situacao = lps.id and ip.eptv_id = p.id) else lst.texto end) as situacao_texto, p.situacao_data, 
 				p.empreendimento, p.responsavel_emp, nvl(em.denominador,p.empreendimento_sem_doc) as denominador  , p.partida_lacrada_origem, p.numero_lacre, p.numero_porao,
 				p.numero_container, p.destinatario, p.possui_laudo_laboratorial, p.tipo_transporte, p.veiculo_identificacao_numero, p.rota_transito_definida, p.itinerario, p.apresentacao_nota_fiscal, p.numero_nota_fiscal,
-				p.valido_ate, p.responsavel_tecnico, p.municipio_emissao, p.dua_numero, p.dua_cpf_cnpj, p.local_vistoria, (select s.nome from {0}tab_setor s where s.id=p.local_vistoria) local_vistoria_texto, p.credenciado credenciado_id, nvl(tp.nome, tp.razao_social) credenciado_nome,
-				p.data_hora_vistoria, dua_tipo_pessoa, p.responsavel_sem_doc, p.empreendimento_sem_doc, trunc(p.data_vistoria) as data_vistoria from {0}tab_ptv p, ins_empreendimento em, {0}tab_credenciado tc, {0}lov_solicitacao_ptv_situacao lst, {0}tab_pessoa tp 
+				p.valido_ate, p.responsavel_tecnico, p.municipio_emissao, p.dua_numero, p.dua_cpf_cnpj, p.local_vistoria, (select s.nome from tab_setor s where s.id=p.local_vistoria) local_vistoria_texto, p.credenciado credenciado_id, nvl(tp.nome, tp.razao_social) credenciado_nome,
+				p.local_fiscalizacao, p.hora_fiscalizacao, p.informacoes_adicionais, 
+				p.data_hora_vistoria, dua_tipo_pessoa, p.responsavel_sem_doc, p.empreendimento_sem_doc, trunc(p.data_vistoria) as data_vistoria 
+                from tab_ptv p, ins_empreendimento em, tab_credenciado tc, lov_solicitacao_ptv_situacao lst, tab_pessoa tp 
 				where p.id = :id and em.id(+) = p.empreendimento and lst.id = p.situacao and tc.id = p.credenciado and tc.pessoa = tp.id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -513,6 +627,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
                         PTV.ResponsavelSemDoc = reader.GetValue<string>("responsavel_sem_doc");
                         PTV.EmpreendimentoSemDoc = reader.GetValue<string>("empreendimento_sem_doc");
                         PTV.DataVistoria = reader.GetValue<DateTime>("data_vistoria");
+
+						PTV.CredenciadoNome = reader.GetValue<string>("credenciado_nome");
+						PTV.LocalFiscalizacao = reader.GetValue<string>("local_fiscalizacao");
+						PTV.HoraFiscalizacao = reader.GetValue<string>("hora_fiscalizacao");
+						PTV.InformacoesAdicionais = reader.GetValue<string>("informacoes_adicionais");
 
 						if (reader.GetValue<DateTime>("valido_ate") != DateTime.MinValue)
 						{
@@ -960,7 +1079,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				}
 				if (filtro.Dados.Situacao > 0)
 				{
-					comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
+					if (filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido || filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Invalido)
+					{
+						var consulta = "(select ip.situacao from ins_ptv ip, lov_ptv_situacao lps where ip.situacao = lps.id and ip.eptv_id = pt.id )";
+						var parametroSituacao = filtro.Dados.Situacao == (int)eSolicitarPTVSituacao.Valido ? (int)ePTVSituacao.Valido : (int)ePTVSituacao.Invalido;
+						comandtxt += comando.FiltroAnd(consulta, "situacao", parametroSituacao);
+					}
+					else 
+						comandtxt += comando.FiltroAnd("pt.situacao", "situacao", filtro.Dados.Situacao);
 				}
 				if (!String.IsNullOrEmpty(filtro.Dados.Destinatario))
 				{
@@ -969,6 +1095,41 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				if (!String.IsNullOrEmpty(filtro.Dados.CulturaCultivar))
 				{
 					comandtxt += comando.FiltroAndLike("c.texto||'/'||cc.cultivar", "cultura_cultivar", filtro.Dados.CulturaCultivar, true, true);
+				}
+				if (!String.IsNullOrEmpty(filtro.Dados.Interessado))
+				{
+					var consulta = "(SELECT COALESCE(P.NOME, P.RAZAO_SOCIAL, PT.RESPONSAVEL_SEM_DOC) FROM IDAF.TAB_PESSOA P WHERE P.ID = PT.RESPONSAVEL_EMP)";
+					comandtxt += comando.FiltroAndLike(consulta, "interessado", filtro.Dados.Interessado, likeInicio: true);
+				}			
+				if (filtro.Dados.TipoDocumento > 0)
+				{
+					comandtxt += comando.FiltroAnd("pr.origem_tipo", "tipoDocumento", filtro.Dados.TipoDocumento);
+					if (!String.IsNullOrEmpty(filtro.Dados.NumeroDocumento))
+					{
+						var consulta = String.Empty;
+						switch (filtro.Dados.TipoDocumento)
+						{
+							case (int)eDocumentoFitossanitarioTipo.CFO:
+								consulta = "(SELECT case when CFO.serie is null then to_char(CFO.numero) else CFO.numero||'/'||CFO.serie end FROM IDAFCREDENCIADO.TAB_CFO CFO WHERE pr.origem = CFO.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.CFOC:
+								consulta = "(SELECT case when CFOC.serie is null then to_char(CFOC.numero) else CFOC.numero||'/'||CFOC.serie end FROM IDAFCREDENCIADO.TAB_CFOC CFOC WHERE pr.origem = CFOC.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTV:
+								consulta = "(SELECT PTV.NUMERO FROM IDAF.TAB_PTV PTV WHERE pr.origem = PTV.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+
+							case (int)eDocumentoFitossanitarioTipo.PTVOutroEstado:
+								consulta = "(SELECT PUF.NUMERO  FROM TAB_PTV_OUTROUF PUF WHERE pr.origem = PUF.ID)";
+								comandtxt += comando.FiltroAnd(consulta, "numeroDocOrigem", filtro.Dados.NumeroDocumento);
+								break;
+						}
+					}
 				}
 
 				List<String> ordenar = new List<String>();
@@ -1127,26 +1288,34 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+                        strSql = @"select t.id, t.situacao, t.credenciado, t.produtor, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}cre_cfo t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+						else
+							strSql += " and serie is null ";
 						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
-                        strSql = @"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
+                        strSql = @"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}cre_cfoc t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero";
 
                         if (!string.IsNullOrEmpty(serieNumeral))
                             strSql += " and serie = :serie ";
+						else
+							strSql += " and serie is null ";
 
 						comando = bancoDeDados.CriarComando(strSql, EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTV:
 						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador 
 						from {0}tab_ptv t, {0}tab_empreendimento e where t.empreendimento = e.id and t.numero = :numero", EsquemaBanco); break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, e.id empreendimento_id, e.denominador empreendimento_denominador
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador
+						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
+						and t.numero = :numero", EsquemaBanco); break;
+					default:
+						comando = bancoDeDados.CriarComando(@"select t.id, t.situacao, t.credenciado, e.id empreendimento_id, e.denominador empreendimento_denominador
 						from {0}tab_ptv_outrouf t, {0}tab_destinatario_ptv d, {0}tab_empreendimento e where t.destinatario = d.id and d.empreendimento_id = e.id
 						and t.numero = :numero", EsquemaBanco); break;
 				}
@@ -1163,8 +1332,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						retorno = new Dictionary<string, object>();
 						retorno.Add("id", reader.GetValue<int>("id"));
 						retorno.Add("situacao", reader.GetValue<int>("situacao"));
+
+						if (origemTipo != eDocumentoFitossanitarioTipo.PTV)
+						{
+							retorno.Add("credenciado", reader.GetValue<int>("credenciado"));
+						}
+						else
+						{
+							retorno.Add("credenciado", User.FuncionarioId);
+						}
 						retorno.Add("empreendimento_id", reader.GetValue<int>("empreendimento_id"));
 						retorno.Add("empreendimento_denominador", reader.GetValue<string>("empreendimento_denominador"));
+
+						if (origemTipo == eDocumentoFitossanitarioTipo.CFO)
+						{
+							retorno.Add("produtor", reader.GetValue<int>("produtor"));
+						}
 					}
 				}
 
@@ -1471,7 +1654,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				switch (origemTipo)
 				{
 					case eDocumentoFitossanitarioTipo.CFO:
-						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar
+						comando = bancoDeDados.CriarComando(@"select cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
 															  from {0}tab_cfo_produto t, crt_unidade_producao_unidade u, tab_cultura_cultivar cc
 															  where u.id = t.unidade_producao
 															    and cc.id = u.cultivar
@@ -1482,7 +1665,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						break;
 
 					case eDocumentoFitossanitarioTipo.CFOC:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar            
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria            
 															  from {0}tab_cfoc_produto     cp,
 																   {0}tab_lote             l,
 																   {0}tab_lote_item        li,
@@ -1498,19 +1681,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 					case eDocumentoFitossanitarioTipo.PTV:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
-						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
+						comando = bancoDeDados.CriarComando(@"select distinct cc.id, cc.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_ptv_outrouf_produto t, {1}tab_cultura_cultivar cc
 															  where cc.id = t.cultivar and t.cultura = :culturaID and t.ptv = :origemID", EsquemaBanco, UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						comando.AdicionarParametroEntrada("origemID", origemID, DbType.Int64);
 						break;
 					default: //Recebe como parâmetro o id da cultura: CF/CFR, FT
-						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
+						comando = bancoDeDados.CriarComando(@"select t.id, t.cultivar, cc.nf_caixa_obrigatoria
+															from {0}tab_cultura_cultivar t where t.cultura = :culturaID", UsuarioCredenciado);
 						comando.AdicionarParametroEntrada("culturaID", culturaID, DbType.Int32);
 						break;
 				}
@@ -1520,7 +1706,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					retorno = new List<Lista>();
 					while (reader.Read())
 					{
-						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar") });
+						retorno.Add(new Lista() { Id = reader.GetValue<string>("id"), Texto = reader.GetValue<string>("cultivar"), Tipo = reader.GetValue<int>("nf_caixa_obrigatoria") });
 					}
 
 					reader.Close();
@@ -2011,13 +2197,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-		internal List<ListaValor> DiasHorasVistoria(int setorId)
+		internal List<ListaValor> DiasHorasVistoria(int setorId, DateTime? dataVistoria = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-//                Comando comando = bancoDeDados.CriarComando(@"
-//			    select t.id, ld.texto || ' das ' || t.hora_inicio || ' a ' || t.hora_fim  texto from CNF_LOCAL_VISTORIA t, lov_dia_semana ld where t.dia_semana = ld.id and t.setor = :setorId and t.situacao = 1", EsquemaBanco);
-
                 Comando comando = bancoDeDados.CriarComando(@"SELECT COUNT(*) FROM cnf_local_vistoria_bloqueio WHERE setor = :setor", EsquemaBanco);
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
 
@@ -2026,43 +2209,54 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
                 if (totRegistros > 0)
                 {
-                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (
-                                                                      SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
-                                                                      FROM DUAL
-                                                                      CONNECT BY TRUNC(SYSDATE, 'yy') + LEVEL - 1 <= LAST_DAY(SYSDATE)),
-                                                                      cnf_local_vistoria lv,
-                                                                      lov_dia_semana d,
-                                                                (  SELECT min(to_char(dia_inicio,'DD/MM/YY HH24:MI')) dia_inicio,max(to_char(dia_fim,'DD/MM/YY HH24:MI')) dia_fim FROM cnf_local_vistoria_bloqueio WHERE setor =:setor and to_date(dia_inicio,'DD/MM/YY') > to_date(sysdate,'DD/MM/YY')
-                                                                ) bloq
-                                                               WHERE  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                               AND to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY')
-                                                               AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
-                                                               AND to_date(to_char(workday || ' ' || lv.hora_inicio),'DD/MM/YY HH24:MI') > to_date(nvl(bloq.dia_fim,'01/01/01 00:00') ,'DD/MM/YY HH24:MI'))
-                                                               OR 
-                                                               (
-                                                                  TO_CHAR(workday,'D') = lv.dia_semana AND lv.setor=:setor AND d.id = lv.dia_semana
-                                                                  AND  to_date(workday,'DD/MM/YY') >= to_date(sysdate,'DD/MM/YY') 
-                                                                  AND (to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') < to_date(nvl(bloq.dia_inicio, '01/01/01 00:00'),'DD/MM/YY HH24:MI')
-                                                                  )  )");
+                    comando = bancoDeDados.CriarComando(@"
+								SELECT lv.id,
+								       d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto,
+								       dia_semana,
+								       lv.hora_inicio,
+								       lv.hora_fim
+								FROM ( SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
+								       FROM DUAL
+								            CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI')) ),
+								            cnf_local_vistoria lv,
+								            lov_dia_semana d
+								WHERE  TO_CHAR(workday,'D') = lv.dia_semana
+								       AND lv.setor=:setor
+								       and lv.situacao = 1
+								       AND d.id = lv.dia_semana
+								       AND to_timestamp(to_char(workday || ' ' || lv.hora_fim)) >= to_timestamp(to_char(:dataVistoria,'DD/MM/YY HH24:MI'))
+								       AND not exists ( SELECT clvb.id
+								                        FROM cnf_local_vistoria_bloqueio clvb
+								                        WHERE clvb.setor = :setor
+								                              and to_timestamp(workday || ' ' || lv.hora_inicio, 'dd/mm/yy hh24:mi') >= to_timestamp(nvl(to_char(clvb.dia_inicio, 'DD/MM/YY HH24:MI'), '01/01/01 00:00'))
+								                              and to_timestamp(workday || ' ' || lv.hora_fim, 'dd/mm/yy hh24:mi') <= to_timestamp(nvl(to_char(clvb.dia_fim, 'DD/MM/YY HH24:MI'), '01/01/01 00:00')) )");
 
 
 
                 }
                 else
                 {
-                    comando = bancoDeDados.CriarComando(@"SELECT lv.id, d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim   texto , dia_semana, lv.hora_inicio, lv.hora_fim
-                                                                FROM (    SELECT TRUNC(SYSDATE, 'mm') + LEVEL - 1 workday
-                                                                            FROM DUAL
-                                                                        CONNECT BY TRUNC(SYSDATE, 'yy') + LEVEL - 1 <= LAST_DAY(SYSDATE)) ,
-                                                                        cnf_local_vistoria lv,
-                                                                        lov_dia_semana d
-                                                                WHERE  TO_CHAR(workday,'D') = lv.dia_semana and lv.setor=:setor and d.id = lv.dia_semana
-                                                                and to_date(to_char(workday || ' ' || lv.hora_fim),'DD/MM/YY HH24:MI') >= to_date(sysdate,'DD/MM/YY HH24:MI')");
+                    comando = bancoDeDados.CriarComando(@"
+								SELECT lv.id,
+								       (d.texto || '(' || workday || ') de ' || lv.hora_inicio || ' a ' || lv.hora_fim) texto,
+								       dia_semana,
+								       lv.hora_inicio,
+								       lv.hora_fim
+								FROM ( SELECT TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'mm') + LEVEL - 1 workday
+								       FROM DUAL
+								            CONNECT BY TRUNC(to_date(:dataVistoria,'DD/MM/YY HH24:MI'), 'yy') + LEVEL - 1 <= LAST_DAY(to_date(:dataVistoria,'DD/MM/YY HH24:MI'))),
+								            cnf_local_vistoria lv,
+								            lov_dia_semana d
+								       WHERE  TO_CHAR(workday,'D') = lv.dia_semana
+								              and lv.setor=:setor
+											  and lv.situacao = 1
+								              and d.id = lv.dia_semana
+								              and to_timestamp(to_char(workday || ' ' || lv.hora_fim)) >= to_timestamp(to_char(:dataVistoria,'DD/MM/YY HH24:MI'))");
                 }
-
+				if (dataVistoria == null || dataVistoria > DateTime.Now) dataVistoria = DateTime.Now.AddHours(1);
 
                 comando.AdicionarParametroEntrada("setor", setorId, DbType.Int32);
+				comando.AdicionarParametroEntrada("dataVistoria", dataVistoria, DbType.DateTime);
 
 				List<ListaValor> retorno = null;
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
@@ -2123,10 +2317,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
-       
+		internal string ObterSiglaSetorFuncionario(int funcionario)
+		{
+			var siglaSetor = String.Empty;
+			var listaSiglasSetor = new List<string>();
 
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando cd = bancoDeDados.CriarComando(@"
+					select s.sigla from idaf.tab_funcionario_setor fs 
+						inner join idaf.tab_setor s on fs.setor = s.id 
+					where fs.funcionario = :funcionario");
+
+				cd.AdicionarParametroEntrada("funcionario", funcionario, DbType.Int32);
+
+				using (IDataReader rd = bancoDeDados.ExecutarReader(cd))
+				{
+					while (rd.Read())
+					{
+						listaSiglasSetor.Add(rd.GetValue<string>("sigla"));
+					};
+
+					siglaSetor = String.Join(", ", listaSiglasSetor);
+					rd.Close();
+				}
+			}
+
+			return siglaSetor;
+		}
     
-
 		internal int ObterQuantidadeDuaEmitidos(string numero, string cpfCnpj, int ptvId)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
@@ -2170,7 +2389,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 					t.data_execucao  data_analise,
 					t.executor_nome  analista,
 					t.situacao_texto,
-					t.motivo
+					t.motivo,
+					t.executor_id,
+					t.executor_tipo_id
 				from hst_ptv t
 				where t.ptv_id = :ptv
 				order by t.data_execucao", UsuarioCredenciado);
@@ -2181,22 +2402,208 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				{
 					while (reader.Read())
 					{
+						var executorTipo = reader.GetValue<int>("executor_tipo_id");
+						var funcionario = reader.GetValue<Int32>("executor_id");
+						var siglaSetor = String.Empty;
+
+						if (executorTipo == 1)
+						{
+							siglaSetor = ObterSiglaSetorFuncionario(funcionario);
+						}
+
 						HistoricoPTV.ListaHistoricos.Add(new PTVItemHistorico()
 						{
 							Id = reader.GetValue<int>("id"),
 							DataAnalise = reader.GetValue<string>("data_analise"),
 							Analista = reader.GetValue<string>("analista"),
 							SituacaoTexto = reader.GetValue<string>("situacao_texto"),
-							MotivoTexto = reader.GetValue<string>("motivo")
+							MotivoTexto = reader.GetValue<string>("motivo"),
+							SetorTexto = siglaSetor
 						});
 					}
-
 					reader.Close();
 				}
 
 				#endregion
 
 				return HistoricoPTV;
+			}
+		}
+
+		internal NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				NotaFiscalCaixa nf = new NotaFiscalCaixa();
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"
+					SELECT ID,
+						(NF.SALDO_INICIAL - 
+							(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) -
+							(SELECT NVL(SUM(PN.NUMERO_CAIXAS),0) FROM IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PN WHERE PN.NF_CAIXA = NF.ID) +
+							NVL(NF.SALDO_RETIFICADO,0)
+						)SALDO_ATUAL          
+						FROM TAB_NF_CAIXA NF WHERE NF.NUMERO = :numero AND NF.TIPO_CAIXA = :tipo AND NF.TIPO_PESSOA = :tipo_pessoa 
+						AND NF.CPF_CNPJ_ASSOCIADO = :cpfcnpj AND ROWNUM <= 1 ORDER BY ID");
+				comando.AdicionarParametroEntrada("numero", notaFiscal.notaFiscalCaixaNumero, DbType.String);
+				comando.AdicionarParametroEntrada("tipo", notaFiscal.tipoCaixaId, DbType.String);
+				comando.AdicionarParametroEntrada("tipo_pessoa", (int)notaFiscal.PessoaAssociadaTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("cpfcnpj", notaFiscal.PessoaAssociadaCpfCnpj, DbType.String);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						nf.id = reader.GetValue<int>("ID");
+						nf.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+					}
+					else
+					{
+						nf.id = 0;
+						nf.saldoAtual = -1;
+					}
+
+					reader.Close();
+				}
+				return nf;
+			}
+		}
+
+		internal List<NotaFiscalCaixa> ObterNFCaixas(int idPTV)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				List<NotaFiscalCaixa> lstNotaFiscalDeCaixa = new List<NotaFiscalCaixa>();
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"
+								SELECT NF.ID, PNF.SALDO_ATUAL, PNF.NUMERO_CAIXAS, NF.NUMERO, NF.TIPO_CAIXA TIPO_ID,
+									LC.TEXTO TIPO_TEXTO, NF.TIPO_PESSOA, NF.CPF_CNPJ_ASSOCIADO 
+									FROM TAB_NF_CAIXA NF 
+										INNER JOIN IDAFCREDENCIADO.TAB_PTV_NF_CAIXA PNF ON PNF.NF_CAIXA = NF.ID
+										INNER JOIN LOV_TIPO_CAIXA LC ON NF.TIPO_CAIXA = LC.ID 
+									WHERE PNF.PTV = :ptv ORDER BY NF.ID");
+				comando.AdicionarParametroEntrada("ptv", idPTV, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						NotaFiscalCaixa nf = new NotaFiscalCaixa();
+						nf.id = reader.GetValue<int>("ID");
+						nf.saldoAtual = reader.GetValue<int>("SALDO_ATUAL");
+						nf.numeroCaixas = reader.GetValue<int>("NUMERO_CAIXAS");
+						nf.notaFiscalCaixaNumero = reader.GetValue<string>("NUMERO");
+						nf.tipoCaixaId = reader.GetValue<int>("TIPO_ID");
+						nf.tipoCaixaTexto = reader.GetValue<string>("TIPO_TEXTO");
+						nf.PessoaAssociadaTipo = (eTipoPessoa)reader.GetValue<int>("TIPO_PESSOA");
+						nf.PessoaAssociadaCpfCnpj = reader.GetValue<string>("CPF_CNPJ_ASSOCIADO");
+						lstNotaFiscalDeCaixa.Add(nf);
+					}
+
+					reader.Close();
+				}
+				return lstNotaFiscalDeCaixa;
+			}
+		}
+
+		internal decimal ObterOrigemQuantidade(eDocumentoFitossanitarioTipo origemTipo, int origemID, string origemNumero, int cultivarID, int unidadeMedida, int ptv)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				string query = string.Empty;
+
+				switch (origemTipo)
+				{
+					case eDocumentoFitossanitarioTipo.CFO:
+					case eDocumentoFitossanitarioTipo.CFOC:
+					case eDocumentoFitossanitarioTipo.PTV:
+						query = @"
+						select (
+						/*LOTE*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_lote t, tab_lote_item i
+						where i.lote = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida), 0)
+						+
+						/*EPTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_ptv t, tab_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3), 0)
+						+
+						/*PTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from ins_ptv t, ins_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem = :origem
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3
+						and t.id != :ptv), 0)) saldo_utilizado from dual";
+						break;
+					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+						query = @"
+						select (
+						/*LOTE*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_lote t, tab_lote_item i
+						where i.lote = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.origem_numero = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida), 0)
+						+
+						/*EPTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from tab_ptv t, tab_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.numero_origem = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3), 0)
+						+
+						/*PTV*/
+						nvl((select sum(case when i.exibe_kilos = 1 then i.quantidade / 1000 else i.quantidade end) quantidade
+						from ins_ptv t, ins_ptv_produto i
+						where i.ptv = t.id
+						and i.origem_tipo = :origem_tipo
+						and i.numero_origem = :origem_numero
+						and i.cultivar = :cultivar
+						and i.unidade_medida = :unidade_medida
+						and t.situacao != 3
+						and t.id != :ptv), 0)) saldo_utilizado from dual";
+						break;
+				}
+
+				Comando comando = bancoDeDados.CriarComando(query, UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("ptv", ptv, DbType.Int32);
+				comando.AdicionarParametroEntrada("origem_tipo", (int)origemTipo, DbType.Int32);
+				comando.AdicionarParametroEntrada("cultivar", cultivarID, DbType.Int32);
+				comando.AdicionarParametroEntrada("unidade_medida", unidadeMedida, DbType.Int32);
+
+				switch (origemTipo)
+				{
+					case eDocumentoFitossanitarioTipo.CFO:
+					case eDocumentoFitossanitarioTipo.CFOC:
+					case eDocumentoFitossanitarioTipo.PTV:
+						comando.AdicionarParametroEntrada("origem", origemID, DbType.Int32);
+						break;
+					case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+						comando.AdicionarParametroEntrada("origem_numero", origemNumero, DbType.String);
+						break;
+				}
+
+				return Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
 
@@ -2327,6 +2734,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				#endregion
 
+				#region Exibir_Mensagem
+
+				comando = bancoDeDados.CriarComando(@"update {0}tab_ptv
+															set exibir_mensagem = 1
+															where id = :ptv_id", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("ptv_id", comunicador.PTVId, DbType.Int32);
+
+				bancoDeDados.ExecutarScalar(comando);
+
+				#endregion Exibir_Mensagem
+
 				Historico.Gerar(conversa.Id, eHistoricoArtefato.ptvcomunicador, eHistoricoAcao.enviar, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -2344,6 +2763,133 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		}
 
 		#endregion
+
+		#region DUA
+
+		internal DUARequisicao BuscarRespostaConsultaDUA(int filaID)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+			{
+				var comando = bancoDeDados.CriarComando(@"select tsf.resultado, tsf.sucesso from {0}TAB_SCHEDULER_FILA tsf where tsf.id = :id", UsuarioInterno);
+
+				comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					if (reader.Read())
+						return new DUARequisicao
+						{
+							Sucesso = reader.GetValue<string>("sucesso") == "verdadeiro",
+							Resultado = reader.GetValue<string>("resultado"),
+						};
+
+				return null;
+			}
+		}
+
+		internal int VerificarConsultaDUAFila(int usuarioID, string dua)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+			{
+				var comando = bancoDeDados.CriarComando(@"select tsf.id from {0}TAB_SCHEDULER_FILA tsf where tsf.requisitante = :usuarioID and tsf.requisicao = :dua and tsf.sucesso is null", UsuarioInterno);
+
+				comando.AdicionarParametroEntrada("usuarioID", usuarioID, DbType.Int32);
+				comando.AdicionarParametroEntrada("dua", dua, DbType.String);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+			}
+		}
+
+		internal int GravarFilaConsultaDUA(int usuarioID, string dua)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+			{
+				bancoDeDados.IniciarTransacao();
+				Comando comando = null;
+
+				comando = bancoDeDados.CriarComando(@"INSERT INTO {0}TAB_SCHEDULER_FILA (id, tipo, requisitante, requisicao, empreendimento, data_criacao, data_conclusao, resultado, sucesso) 
+					VALUES (seq_TAB_SCHEDULER_FILA.nextval, 'consultar-dua', :usuarioID, :dua, 0, NULL, NULL, '', '') returning id into :rID", UsuarioInterno);
+
+				comando.AdicionarParametroEntrada("usuarioID", usuarioID, DbType.Int32);
+				comando.AdicionarParametroEntrada("dua", dua, DbType.String);
+				comando.AdicionarParametroSaida("rID", DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				var filaID = Convert.ToInt32(comando.ObterValorParametro("rID"));
+
+				bancoDeDados.Commit();
+
+				return filaID;
+			}
+		}
+
+		internal bool VerificarSeDUAConsultada(int filaID)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioInterno))
+			{
+				var comando = bancoDeDados.CriarComando(@"select count(tsf.id) from {0}TAB_SCHEDULER_FILA tsf where tsf.id = :id and tsf.sucesso is not null", UsuarioInterno);
+
+				comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		#endregion
+
+		#region Alerta EPTV
+
+		public PTV ObterNumeroPTVExibirMensagemCredenciado(int credenciadoId, BancoDeDados banco = null)
+		{
+			var ptv = new PTV();
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+			{
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select pt.id, pt.numero, pt.situacao, pt.local_fiscalizacao, pt.hora_fiscalizacao,
+														pt.informacoes_adicionais, pt.motivo
+													  from {0}tab_Ptv pt
+													  where pt.credenciado = :credenciado
+													  and pt.exibir_msg_credenciado = 1
+													  and rownum = 1", EsquemaBanco);
+				comando.AdicionarParametroEntrada("credenciado", credenciadoId, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						ptv = new PTV()
+						{
+							Id = reader.GetValue<int>("id"),
+							Numero = reader.GetValue<long>("numero"),
+							Situacao = reader.GetValue<int>("situacao"),
+							LocalVistoriaTexto = reader.GetValue<string>("local_fiscalizacao"),
+							DataHoraVistoriaTexto = reader.GetValue<string>("hora_fiscalizacao"),
+							InformacoesAdicionais = reader.GetValue<string>("informacoes_adicionais"),
+							SituacaoMotivo = reader.GetValue<string>("motivo")
+						};
+					}
+				}
+			}
+
+			#region Exibir_Mensagem
+
+			if (ptv?.Id > 0)
+			{
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
+				{
+					Comando comando = null;
+					comando = bancoDeDados.CriarComando(@"update {0}tab_Ptv pt set pt.exibir_msg_credenciado = 0
+													where pt.id = :ptv_id ", EsquemaBanco);
+					comando.AdicionarParametroEntrada("ptv_id", ptv.Id, DbType.Int32);
+					bancoDeDados.ExecutarScalar(comando);
+				}
+			}
+
+			#endregion Exibir_Mensagem
+
+			return ptv;
+		}
+
+		#endregion Alerta EPTV
 
 		internal bool EmpreendimentoPossuiEPTVBloqueado(int empreendimentoID, BancoDeDados banco = null)
 		{

@@ -3,8 +3,11 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 
 namespace Interno
@@ -46,6 +49,27 @@ namespace Interno
 			string sessionId = ticket.UserData;
 
 			GerenciarAutenticacao.CarregarUser(login, sessionId);
+
+			#region Alerta de E-PTV
+
+			HttpCookie cookieEPTV = Request.Cookies["eptv"];
+			PTVBus _bus = new PTVBus();
+			if (cookieEPTV != null)
+			{
+				if (Convert.ToDateTime(cookieEPTV.Value).AddMinutes(5) <= DateTime.Now)
+				{
+					//se já tiver se passado 5 minutos ou mais desde que o valor do cookie foi atualizado
+					//substitui o cookie por um novo, com a data atual, e faz a verificação de alerta de EPTV
+					HttpCookie aCookie = new HttpCookie("eptv");
+					aCookie.Value = DateTime.Now.ToString();
+					aCookie.Expires = DateTime.Now.AddDays(1);
+					Response.Cookies.Add(aCookie);
+
+					_bus.VerificaAlertaEPTV();	//emite o alerta
+				}
+			}
+
+			#endregion Alerta de E-PTV
 		}
 	}
 }

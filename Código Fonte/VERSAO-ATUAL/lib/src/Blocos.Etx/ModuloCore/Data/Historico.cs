@@ -51,7 +51,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloCore.Data
 					comando.SetarValorParametro("executor_id", executor.Id);
 					comando.SetarValorParametro("executor_nome", executor.Nome);
 					comando.SetarValorParametro("executor_login", executor.Login);
-					comando.SetarValorParametro("executor_tipo_id", executor.Tipo);
+					comando.SetarValorParametro("executor_tipo_id", (int)executor.Tipo);
                     comando.SetarValorParametro("executor_tid", executor.Tid);
 				}
 

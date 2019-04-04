@@ -1,4 +1,4 @@
-﻿/// <reference path="../Lib/jquery.json-2.2.min.js" />
+/// <reference path="../Lib/jquery.json-2.2.min.js" />
 /// <reference path="../Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -31,6 +31,7 @@ ComunicadorPTV = {
 	},
 
 	//----------ANEXOS - ENVIAR ARQUIVO---------------
+	//Tipos de arquivos permitidos: .zip, .rar, .pdf, .jpeg, .jpg
 	onEnviarAnexoArquivoClick: function (url) {
 		var nome = "enviando ...";
 
@@ -40,16 +41,27 @@ ComunicadorPTV = {
 			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoObrigatorio]);
 			return;
 		}
-
-		if (nomeArquivo !== '') {
-			var tam = nomeArquivo.length - 4;
-			if (nomeArquivo.toLowerCase().substr(tam) !== ".zip" && nomeArquivo.toLowerCase().substr(tam) !== ".rar") {
-				Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoTipoInvalido]);
-				return;
-			}
+		
+		var tam = nomeArquivo.length - 4;
+		var temp = nomeArquivo.toLowerCase().split('.');
+		var tipoArquivo = temp[temp.length - 1];
+		if (tipoArquivo !== "zip"
+			&& tipoArquivo !== "rar"
+			&& tipoArquivo !== "pdf"
+			&& tipoArquivo !== "jpeg"
+			&& tipoArquivo !== "jpg") {
+			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.ArquivoTipoInvalido]);
+			return;
 		}
-
+		
 		var inputFile = $('.inputFileDiv input[type="file"]');
+		
+		var tamanhoArquivo = inputFile[0].files[0].size / (1024 * 1024);	//o tamanho do arquivo é dado em bytes, precisa converter para Kb
+
+		if (tamanhoArquivo > 2) {
+			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.AnexoTamanhoMaximo]);
+			return;
+		}
 
 		inputFile.attr("id", "ArquivoId");
 
@@ -95,9 +107,13 @@ ComunicadorPTV = {
 	//----------ANEXOS - ENVIAR ARQUIVO---------------
 
 	enviar: function () {
-		if ($('.txtJustificativa', ComunicadorPTV.container).val() == '') {
-			Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.JustificativaObrigatoria]);
-			return false;
+
+		//Pelo menos um dos campos deve estar preenchido
+		if ($('.hdnDesbloqueio', ComunicadorPTV.container).val() != "True") {
+			if ($('.txtJustificativa', ComunicadorPTV.container).val() == '' && $('.txtArquivoNome', ComunicadorPTV.container).val() == '') {
+				Mensagem.gerar(ComunicadorPTV.container, [ComunicadorPTV.settings.Mensagens.UmDosCamposDeveEstarPreenchido]);
+				return false;
+			}
 		}
 
 		var ptvComunicador = {
@@ -107,6 +123,7 @@ ComunicadorPTV = {
 			ArquivoCredenciadoId: $('.hdnArqCredenciadoId', ComunicadorPTV.container).val(),
 			liberadoCredenciado: $('.hdnLiberadoCredenciado', ComunicadorPTV.container).val(),
 			ArquivoCredenciado: {},
+			IsDesbloqueio: $('.hdnDesbloqueio', ComunicadorPTV.container).val(),
 			Conversas: new Array()
 		}
 
@@ -136,10 +153,6 @@ ComunicadorPTV = {
 
 				if (response.EhValido) {
 					Modal.fechar(ComunicadorPTV.container);
-
-					//if (ComunicadorPTV.settings.callBackSalvar != null) {
-					//	ComunicadorPTV.settings.callBackSalvar();
-					//}
 				}
 			}
 		});

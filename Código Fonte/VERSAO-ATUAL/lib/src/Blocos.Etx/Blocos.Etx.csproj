@@ -273,6 +273,7 @@
     <Compile Include="ModuloValidacao\Interno\ObjetoInfracaoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\OrgaoParceiroConveniadoMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\ProfissaoMsg.cs" />
+    <Compile Include="ModuloValidacao\Interno\RetificacaoNFCaixaMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\PTVOutroMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\PTVMsg.cs" />
     <Compile Include="ModuloValidacao\Interno\RelatorioEspecificoMsg.cs" />

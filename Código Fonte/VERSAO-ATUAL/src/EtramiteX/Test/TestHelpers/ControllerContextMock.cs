@@ -28,7 +28,7 @@ namespace Tests.TestHelpers
             return request;
         }
 
-        private static Mock<HttpContextBase> getContextMock(bool isAjaxContext)
+        private static Mock<HttpContextBase> getContextMock(bool isAjaxContext, string login)
         {
             Mock<HttpRequestBase> request = ControllerContextMock.getRequestMock(isAjaxContext);
             Mock<HttpContextBase> context = new Mock<HttpContextBase>();
@@ -46,21 +46,21 @@ namespace Tests.TestHelpers
                new HttpResponse(null)
             );
 
-			GerenciarAutenticacao.CarregarUser("jose.osmar");
+			GerenciarAutenticacao.CarregarUser(login);
 
 			return context;
         }
 
-        public static void SetupAjaxContext(Controller controller)
+        public static void SetupAjaxContext(Controller controller, string login = "jose.osmar")
         {
-            var context = ControllerContextMock.getContextMock(true);
+            var context = ControllerContextMock.getContextMock(true, login);
 
             controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
         }
 
-        public static void SetupNormalContext(Controller controller)
+        public static void SetupNormalContext(Controller controller, string login = "jose.osmar")
         {
-			var context = ControllerContextMock.getContextMock(false);
+			var context = ControllerContextMock.getContextMock(false, login);
 
             controller.ControllerContext = new ControllerContext(context.Object, new RouteData(), controller);
         }

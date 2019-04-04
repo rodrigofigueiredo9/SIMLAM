@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloPulverizacaoProduto;
 using Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPTV;
@@ -61,36 +62,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.SituacaoObrigatorio);
 			}
 
+			if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
+			 (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+			{
+				if (ptv.Empreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
+				}
 
-
-            //if (ptv.Empreendimento <= 0)
-            //{
-            //    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-            //}
-
-            if (ptv.Produtos.Count > 0 && ((!ptv.Produtos[0].SemDoc) &&
-             (ptv.Produtos[0].OrigemTipo <= (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
-            {
-                if (ptv.Empreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.EmpreendimentoObrigatorio);
-                }
-
-                if (ptv.ResponsavelEmpreendimento <= 0)
-                {
-                    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-                }
-            }
+				if (ptv.ResponsavelEmpreendimento <= 0)
+				{
+					Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
+				}
+			}
 
 			if (_da.EmpreendimentoPossuiEPTVBloqueado(ptv.Id, ptv.Empreendimento))
 			{
 				Validacao.Add(Mensagem.PTV.EmpreendimentoEPTVBloqueado);
 			}
-
-            //if (ptv.ResponsavelEmpreendimento <= 0)
-            //{
-            //    Validacao.Add(Mensagem.PTV.ResponsavelEmpreend_Obrigatorio);
-            //}
 
 			if (ptv.Produtos.Count <= 0)
 			{
@@ -118,11 +107,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			{
 				Validacao.Add(Mensagem.PTV.DestinatarioObrigatorio);
 			}
-
-            //if (!ptv.PossuiLaudoLaboratorial.HasValue)
-            //{
-            //    Validacao.Add(Mensagem.PTV.PossuiLaudoLab_Obrigatorio);
-            //}
 
 			if (ptv.TransporteTipo <= 0)
 			{
@@ -169,21 +153,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 			else
 			{
-				if (ptv.Anexos.Count > 5)
-				{
-					Validacao.Add(Mensagem.PTV.AnexoLimiteMaximo);
-				}
-
-				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".png"))
+				if (ptv.Anexos.Exists(x => x.Arquivo.Extensao != ".pdf" && x.Arquivo.Extensao != ".jpg" && x.Arquivo.Extensao != ".jpeg"))
 				{
 					Validacao.Add(Mensagem.PTV.AnexoFormatoErrado);
 				}
-
-				//if (ptv.Anexos.Exists(x => x.Arquivo.Buffer.Length > 2097152))/*2mb*/
-				//{
-				//	Validacao.Add(Mensagem.PTV.AnexoTamanhoErrado);
-				//}
 			}
+
+			if ((ptv.NFCaixa.notaFiscalCaixaApresentacao == 1/*SIM*/ && ptv.NotaFiscalDeCaixas.Count() <= 0))
+			{
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionada);
+			}
+
+			if(ptv.Produtos.Any(x => x.Cultura == (int)eCultura.Banana) && ptv.NotaFiscalDeCaixas.Count() <= 0)
+				Validacao.Add(Mensagem.PTV.NenhumaNFCaixaAdicionadaECulturaBanana);
 
 			return Validacao.EhValido;
 		}
@@ -212,12 +194,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				{
 					Validacao.Add(Mensagem.PTV.NumeroPtvNaoConfigurado);
 					return "";
-                }
+				}
 
-                if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
-                {
-                    Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
-                }
+				if (PTVNumero.ToString().Substring(2, 2) != DateTime.Now.Year.ToString().Substring(2))
+				{
+					Validacao.Add(Mensagem.PTV.AnoPTVInvalido);
+				}
 
 			}
 
@@ -252,6 +234,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.PTV.OrigemObrigatorio);
 			}
 
+			//var loteBus = new LoteBus();
+			//if (item.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO && loteBus.VerificarSeCfoJaAssociadaALote(item.Origem))
+			//{
+			//    Validacao.Add(Mensagem.EmissaoCFO.DocumentoOrigemDeveSerDeMesmaUC);
+			//    return false;
+			//}
+
 			#region Saldo
 
 			//TODO
@@ -275,6 +264,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					{
 						Validacao.Add(Mensagem.Lote.OrigemVencida(item.OrigemTipoTexto));
 					}
+
+					//if (cfo.DataAtivacao.Data < ptvData.Data)
+					//{
+					//    Validacao.Add(Mensagem.Lote.OrigemDataMaiorLoteData);
+					//}
 					break;
 
 				case eDocumentoFitossanitarioTipo.CFOC:
@@ -352,7 +346,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 							break;
 					}
 
-					if(produtorItem != produtorOrigem)
+					if (produtorItem != produtorOrigem)
 					{
 						Validacao.Add(Mensagem.PTV.ProdutorDiferente);
 					}
@@ -417,8 +411,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 					decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == item.OrigemTipo && x.Origem == item.Origem && x.Cultivar == item.Cultivar && x.UnidadeMedida == item.UnidadeMedida && !x.Equals(item)).Sum(x => x.Quantidade);
 
-                    if (item.ExibeQtdKg)
-                        item.Quantidade = item.Quantidade / 1000;
+					if (item.ExibeQtdKg)
+						item.Quantidade = item.Quantidade / 1000;
 
 					if ((saldoOutrosDoc + quantidadeAdicionada + item.Quantidade) > saldo)
 					{
@@ -481,6 +475,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			if (PTV.Situacao != (int)eSolicitarPTVSituacao.Cadastrado)
 			{
 				Validacao.Add(Mensagem.PTV.EnviarSituacaoInvalida);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		internal bool CancelarEnvio(PTV ptv)
+		{
+			if (ptv.Situacao != (int)eSolicitarPTVSituacao.AguardandoAnalise)
+			{
+				Validacao.Add(Mensagem.PTV.CancelarEnvioSituacaoInvalida);
 			}
 
 			return Validacao.EhValido;
@@ -583,10 +587,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 
 			PTV eptv = _da.Obter(idPTV, true);
-			if( eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado  && 
-                eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao )
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado &&
+				eptv.Situacao != (int)eSolicitarPTVSituacao.AgendarFiscalizacao &&
+				eptv.Situacao != (int)eSolicitarPTVSituacao.Rejeitado)
 			{
 				Validacao.Add(Mensagem.PTV.ComunicadorPTVSituacaoInvalida);
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool ValidarAcessoSolicitarDesbloqueioPTV(int idPTV)
+		{
+			if (!_da.PossuiAcessoComunicadorPTV(idPTV, Executor.Current.Id))
+			{
+				Validacao.Add(Mensagem.PTV.AcessoNaoPermitido);
+				return false;
+			}
+
+			PTV eptv = _da.Obter(idPTV, true);
+			if (eptv.Situacao != (int)eSolicitarPTVSituacao.Bloqueado)
+			{
+				Validacao.Add(Mensagem.PTV.SolicitarDesbloqueioPTVSituacaoInvalida);
 				return false;
 			}
 
@@ -597,9 +620,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			if ((comunicador.ArquivoCredenciado != null) && (!String.IsNullOrEmpty(comunicador.ArquivoCredenciado.TemporarioNome) || !String.IsNullOrEmpty(comunicador.ArquivoCredenciado.Nome)))
 			{
-				if (!(comunicador.ArquivoCredenciado.Extensao == ".zip" || comunicador.ArquivoCredenciado.Extensao == ".rar"))
+				if (comunicador.ArquivoCredenciado.Extensao != ".zip"
+					&& comunicador.ArquivoCredenciado.Extensao != ".rar"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".jpeg"
+					&& comunicador.ArquivoCredenciado.Extensao != ".pdf")
 				{
-					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar" })));
+					Validacao.Add(Mensagem.Arquivo.ArquivoTipoInvalido("Anexo", new List<string>(new string[] { ".zip", ".rar", ".pdf", ".jpg", ".jpeg" })));
 				}
 			}
 
@@ -615,14 +642,58 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 
 			foreach (PTVConversa conversa in comunicador.Conversas)
 			{
-				if (String.IsNullOrEmpty(conversa.Texto))
+				if (comunicador.IsDesbloqueio)
 				{
-					Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+					if (String.IsNullOrEmpty(conversa.Texto))
+						Validacao.Add(Mensagem.PTV.JustificativaObrigatoria);
+				}
+				else
+				{
+					if (String.IsNullOrWhiteSpace(conversa.Texto) && String.IsNullOrWhiteSpace(conversa.ArquivoNome))
+						Validacao.Add(Mensagem.PTV.UmDosCamposPreenchido);
 				}
 			}
 
 			return Validacao.EhValido;
 		}
 
+		public bool ValidarNumeroNotaFiscalDeCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			var tipoCaixa = _da.ValidarNumeroNotaFiscalDeCaixa(notaFiscal);
+			if (!String.IsNullOrEmpty(tipoCaixa))
+			{
+				Validacao.Add(Mensagem.PTV.NumeroDiferenteDoTipo(notaFiscal.notaFiscalCaixaNumero, tipoCaixa));
+				return false;
+			}
+			return true;
+		}
+
+		public bool VerificarCPFCNPJ(int pessoaTipo, string CPFCNPJ)
+		{
+			if (pessoaTipo == (int)ePessoaTipo.Fisica)
+			{
+				if (string.IsNullOrEmpty(CPFCNPJ))
+				{
+					Validacao.Add(Mensagem.RetificacaoNFCaixa.Alterado);
+				}
+				else if (!ValidacoesGenericasBus.Cpf(CPFCNPJ))
+				{
+					Validacao.Add(Mensagem.DestinatarioPTV.CPFInvalido);
+				}
+			}
+			else
+			{
+				if (string.IsNullOrEmpty(CPFCNPJ))
+				{
+					Validacao.Add(Mensagem.DestinatarioPTV.CNPJObrigatorio);
+				}
+				else if (!ValidacoesGenericasBus.Cnpj(CPFCNPJ))
+				{
+					Validacao.Add(Mensagem.DestinatarioPTV.CNPJInvalido);
+				}
+			}
+
+			return Validacao.EhValido;
+		}
 	}
 }

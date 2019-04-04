@@ -228,6 +228,31 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 				});
 			}
 		}
+
+		#region Alerta de EPTV
+
+		private static List<Mensagem> _itensAlertaEPTV = new List<Mensagem>();
+		public static List<Mensagem> MensagensAlertaEPTV
+		{
+			get
+			{
+				return _itensAlertaEPTV;
+			}
+			set
+			{
+				_itensAlertaEPTV = value;
+			}
+		}
+
+		public static void AddAlertaEPTV(Mensagem msg)
+		{
+			if (!MensagensAlertaEPTV.Any(x => x.Campo == msg.Campo && x.Tipo == msg.Tipo && x.Texto == msg.Texto))
+			{
+				MensagensAlertaEPTV.Add(msg);
+			}
+		}
+
+		#endregion Alerta de EPTV
 	}
 }
 

@@ -1,10 +1,15 @@
 ﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMPTV" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloConfiguracaoDocumentoFitossanitario" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Entities.Configuracao.Interno" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPessoa" %>
 <%@ Import Namespace="Tecnomapas.Blocos.Entities.Interno.ModuloPTV" %>
 
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PTVVM>" %>
+
+<script>
+	PTVEmitir.settings.Mensagens = <%= Model.Mensagens %>;
+</script>
 
 <input type="hidden" class="hdnEmissaoId" value='<%= Model.PTV.Id %>' />
 <fieldset class="box">
@@ -37,7 +42,21 @@
 		</div>
 	</div>
 </fieldset>
-
+<fieldset class="block box isDocumentoOrigem campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+	<div class="block">
+		<div class="coluna24">
+			<label for="NotaFiscalApresentacao">Possui documento de origem ?</label><br />
+			<label>
+				<%=Html.RadioButton("IsDocumentoOrigem", (int)eApresentacaoNotaFiscal.Sim, ( Model.PTV.IsPossuiDocOrigem == 1), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbIsDocumentoOrigem" }))%>
+				Sim
+			</label>
+			<label>
+				<%=Html.RadioButton("IsDocumentoOrigem", (int)eApresentacaoNotaFiscal.Nao ,(Model.PTV.IsPossuiDocOrigem == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbIsDocumentoOrigem" }))%>
+				Não
+			</label>
+		</div>
+	</div>
+</fieldset>
 <fieldset class="block box identificacao_produto campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
 	<legend>Identificação do produto</legend>
 	<% if (!Model.IsVisualizar) { %>
@@ -46,7 +65,7 @@
 			<label for="OrigemTipo">Documento de origem *</label>
 			<%=Html.DropDownList("OrigemTipo", Model.OrigemTipoList, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlOrigemTipo"})) %>
 		</div>
-		<div class="coluna22 divNumeroDocumentoEnter">
+		<div class="coluna25 divNumeroDocumentoEnter">
 			<input type="hidden" class="hdnNumeroOrigem" value="0" />
 			<input type="hidden" class="hdnEmpreendimentoOrigemID" value="0" />
 			<input type="hidden" class="hdnEmpreendimentoOrigemNome" value="" />
@@ -62,6 +81,13 @@
 		</div>
 		<div class="coluna10">
 			<button type="button" class="inlineBotao btnVerificarDocumentoOrigem hide">Verificar</button>
+		</div>
+		<div class="coluna10">
+			<button type="button" class="inlineBotao btnLimparDocumentoOrigem hide">Limpar</button>
+		</div>
+		<div class="coluna15 saldoContainer hide">
+			<label >Saldo atual</label>
+			<%=Html.TextBox("SaldoDocOrigem",  (object)String.Empty, ViewModelHelper.SetaDisabled(true, new { @class="text txtSaldoDocOrigem"})) %>
 		</div>
 	</div>
 	<div class="block">
@@ -87,7 +113,7 @@
 		<table class="dataGridTable gridProdutos">
 			<thead>
 				<tr>
-					<th style="width: 20%">Origem</th>
+					<th style="width: 20%" class="OrigemTipoColumn <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">Origem</th>
 					<th>Cultura/Cultivar</th>
 					<th style="width: 10%">Quantidade</th>
 					<th style="width: 16%">Unidade de medida</th>
@@ -114,7 +140,7 @@
            
             %>
 				<tr>
-					<td class="Origem_Tipo" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
+					<td class="Origem_Tipo  <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>" title="<%=item.OrigemTipoTexto %>"><%= item.OrigemTipoTexto %></td>
 					<td class="cultura_cultivar" title="<%= item.CulturaCultivar %>"><%= item.CulturaCultivar %></td>
 					<td class="quantidade" title="<%=qtd %>"><%=qtd %></td>
 					<td class="unidade_medida" title="<%= unid %>"><%=unid %></td>
@@ -128,7 +154,7 @@
 				<% } %>
 
 				<tr class="trTemplate hide">
-					<td class="OrigemTipo">
+					<td class="OrigemTipo <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">
 						<label class="lblOrigemTipo"></label>
 					</td>
 					<td class="cultura_cultivar">
@@ -151,19 +177,58 @@
 		</table>
 	</div>
 	<br />
+	<div class="isPussuiDocumentoDeOrigem <%=Model.PTV.IsPossuiDocOrigem == 1 ? "" :"hide"%>">
+		<div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna58">
+				<label for="EmpreendimentoTexto">Empreendimento *</label>
+				<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
+				<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
+			</div>		
+		</div>
 
-    <div class="block campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="coluna58">
-			<label for="EmpreendimentoTexto">Empreendimento *</label>
-			<%=Html.TextBox("EmpreendimentoTexto", Model.PTV.EmpreendimentoTexto, ViewModelHelper.SetaDisabled(true, new { @class="text txtEmpreendimento"}))%>
-			<input type="hidden" class="hdnEmpreendimentoID" value='<%= Model.PTV.Empreendimento %>' />
-		</div>		
+		<div class="block divResponsavelDDL campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna58">
+				<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
+				<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+			</div>
+		</div>
+
+		<div class="block divResponsavel <%=Model.PTV.IsPossuiDocOrigem == 1 ? "hide":""%>">
+			<div class="coluna58">
+				<label>Responsável do empreendimento</label>
+				<%=Html.TextBox("ResponsavelEmpreendimento", Model.PTV.SemDocOrigem.responsavel, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtResponsavel"}))%>
+			</div>
+		</div>
 	</div>
+	<div class="isNotPussuiDocumentoDeOrigem <%=Model.PTV.IsPossuiDocOrigem == 1 ? "hide":""%>">
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna40">
+				<label>Produtor</label>
+				<%=Html.TextBox("ProdutorPTV", Model.PTV.SemDocOrigem.Produtor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtProdutor",  @maxlength="50" }))%>
+			</div>
+			<div class="coluna20">
+				<label>CPF/CNPJ*</label>
+				<%=Html.TextBox("CPFCNPJProdutor", Model.PTV.SemDocOrigem.cpfCnpjProdutor, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtCPFCNPJProdutor" }))%>
+			</div>
+		</div>
+	
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna70">
+				<label>Endereço</label>
+				<%=Html.TextBox("EnderecoProdutor", Model.PTV.SemDocOrigem.enderecoEmpreendimento, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text txtEnderecoProdutor", @maxlength="150" }))%>
+			</div>
+		</div>
 
-	<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
-		<div class="coluna58">
-			<label for="ResponsavelEmpreendimento">Responsável do empreendimento</label>
-			<%=Html.DropDownList("ResponsavelEmpreendimento", Model.ResponsavelList, ViewModelHelper.SetaDisabled(Model.IsVisualizar|| Model.ResponsavelList.Count == 1, new { @class="text ddlResponsaveis"}))%>
+		
+		<div class="block campoTela  <%= Model.PTV.Id <= 0 ? "hide":""%>">
+			<div class="coluna10">
+				<label>UF</label>
+				<%=Html.DropDownList("UFEmpreendimento", Model.EstadosUF,  ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlUFProdutor" }))%>
+			</div>
+			<div class="coluna30">
+				<label>Município</label>
+				<%=Html.DropDownList("MunicipioEmpreendimento", Model.MunicipiosOT, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="text ddlMunicipios" }))%>
+			</div>
 		</div>
 	</div>
 </fieldset>
@@ -318,6 +383,139 @@
 			<%= Html.TextBox("NotaFiscalNumero", Model.PTV.NotaFiscalNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar , new { @class="text txtNotaFiscalNumero", @maxlength="60" })) %>
 		</div>
 	</div>
+	<div class="block">
+		<div class="coluna24">
+			<label for="NotaFiscalApresentacao">Possui nota fiscal da caixa ? *</label><br />
+			<label>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Sim, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao == 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				Sim
+			</label>
+			<label>
+				<%=Html.RadioButton("NotaFiscalCaixaApresentacao", (int)eApresentacaoNotaFiscal.Nao, (Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0), ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbApresentacaoNotaFiscalCaixa" }))%>
+				Não
+			</label>
+		</div>
+		<div class="coluna40 isPossuiNFCaixa <%= Model.PTV.NFCaixa.notaFiscalCaixaApresentacao > 0 ? "hide" : "" %>">
+			<label for="NotaFiscalApresentacao">Tipo da caixa *</label><br />
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Madeira, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="1" }))%>
+				Madeira
+			</label>
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Plastico, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="2" }))%>
+				Plástico
+			</label>
+			<label>
+				<%=Html.RadioButton("tipoCaixaId", (int)eTipoNotaFiscalDeCaixa.Papelao, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class="rdbTipoCaixa", @id="3" }))%>
+				Papelão
+			</label>
+		</div>		
+	</div>
+	<div class="block">
+		<div class="isTipoCaixaChecked hide">
+			<div class="coluna36">
+				<label for="NotaFiscalNumero" class="lblNumeroNFCaixa">Nº da nota fiscal de caixa *</label>
+				<%= Html.TextBox("NotaFiscalCaixaNumero", Model.PTV.NFCaixa.notaFiscalCaixaNumero, ViewModelHelper.SetaDisabled(true, new { @class="text txtNotaFiscalCaixaNumero", @maxlength="60" })) %>
+			</div>
+			<div class="pessoaAssociadaNfCaixa">
+				<div class="coluna15 prepend1">
+					<label for="PessoaTipo">Tipo *</label><br />
+					<label><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.FISICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaf rdbPessaoNfCaixa" }))%> Física</label>							
+					<label class="append5"><%= Html.RadioButton("TipoPessoaCaixa", PessoaTipo.JURIDICA, (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "radio pessoaj rdbPessaoNfCaixa" }))%> Jurídica</label>
+				</div>
+				<div class="coluna20">
+					<div class="CpfPessoaFisicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo != PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CPF *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCpf txtCPFCaixa" }))%>
+					</div>
+					<div class="CnpjPessoaJuridicaNfCaixaContainer <%= (int)Model.PTV.NFCaixa.PessoaAssociadaTipo == PessoaTipo.JURIDICA ? "" : "hide" %> ">
+						<label for="CPFCNPJDUA">CNPJ *</label>
+						<%= Html.TextBox("CPFCNPJCaixa", Model.PTV.NFCaixa.PessoaAssociadaCpfCnpj, ViewModelHelper.SetaDisabled(false, new { @class = "text maskCnpj txtCNPJCaixa" }))%>
+					</div>
+				</div>
+			</div>
+			<div class="coluna10">
+				<button class="inlineBotao btnVerificarNotaCaixaCaixa">Verificar</button>
+				<button class="inlineBotao btnLimparNotaCaixaCaixa hide">Limpar</button>
+			</div>
+		</div>
+		
+	</div>
+	<div class="block">
+		<div class="isNFCaixaVerificado hide">
+			<div class="coluna15">
+				<label class="lblSaldoAtualInicial">Saldo atual</label>
+				<%= Html.TextBox("SaldoAtual", Model.PTV.NFCaixa.saldoAtual, ViewModelHelper.SetaDisabled(true, new { @class="text maskNum8 txtNFCaixaSaldoAtual", @maxlength="8"}))%>
+			</div>
+			<div class="coluna15">
+				<label>N° de caixas *</label>
+				<%= Html.TextBox("NumeroDeCaixas", Model.PTV.NFCaixa.numeroCaixas, ViewModelHelper.SetaDisabled(false, new { @class="text maskNum8 txtNFCaixaNumeroDeCaixas", @maxlength="8"}))%>
+			</div>
+			<div class="coluna10">
+				<button class="inlineBotao btnAddCaixa">Adicionar</button>
+			</div>
+		</div>
+	</div>
+		<div class="gridContainer identificacaoDaCaixa <%= Model.PTV.NotaFiscalDeCaixas.Count() > 0 ? "" : "hide" %>" >
+			<table class="dataGridTable gridCaixa">
+				<thead>
+					<tr>
+						<th style="width: 30%">N° da nota fiscal de caixa </th>
+						<th>CPF/CNPJ</th>
+						<th>Tipo da caixa</th>
+						<th style="width: 10%">Saldo atual</th>
+						<th style="width: 16%">N° de caixas</th>
+						<% if (!Model.IsVisualizar)
+				 { %><th style="width: 7%">Ação</th><% } %>
+					</tr>
+				</thead>
+				<tbody>
+					<% foreach (var item in Model.PTV.NotaFiscalDeCaixas)
+				 {
+					%>
+						<tr>
+							<td class="" title="<%=item.notaFiscalCaixaNumero %>"><%= item.notaFiscalCaixaNumero %></td>
+							<td class="" title="<%=item.PessoaAssociadaCpfCnpj %>"><%= item.PessoaAssociadaCpfCnpj %></td>
+							<td class="" title="<%= item.tipoCaixaTexto %>"><%= item.tipoCaixaTexto %></td>
+							<td class="" title="<%=item.saldoAtual %>"><%=item.saldoAtual %></td>
+							<td class="" title="<%= item.numeroCaixas %>"><%=item.numeroCaixas %></td>
+							<%if (!Model.IsVisualizar)
+				 { %>
+							<td>
+								<a class="icone excluir btnExcluirCaixa"></a>
+								<input type="hidden" class="hdnItemJson" value='<%=ViewModelHelper.Json(item) %>' />
+							</td>
+							<%} %>
+						</tr>
+					<% } %>
+
+					<tr class="trTemplate hide">
+						<td class="">
+							<label class="lblNFCaixaNumero"></label>
+						</td>
+						<td class="">
+							<label class="lvlCPFCNPJ"></label>
+						</td>
+						<td class="">
+							<label class="lblTipoCaixa"></label>
+						</td>
+						<td class="">
+							<label class="lblSaldoAtual"></label>
+						</td>
+						<td class="">
+							<label class="lblNumeroDeCaixas"></label>
+						</td>
+						<td>
+							<a class="icone excluir btnExcluirCaixa" title="Remover"></a>
+							<input type="hidden" value="" class="hdnOrigemID" />
+							<input type="hidden" value="0" class="hdnItemJson" />
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+	<br />
 </div>
 
 <div class="block box campoTela <%= Model.PTV.Id <= 0 ? "hide":""%>">

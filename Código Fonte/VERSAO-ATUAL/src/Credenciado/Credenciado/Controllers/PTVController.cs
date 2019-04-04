@@ -43,7 +43,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
 		public ActionResult Index()
 		{
-			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao);
+			PTVListarVM vm = new PTVListarVM(ListaCredenciadoBus.PTVSolicitacaoSituacao, ListaCredenciadoBus.DocumentosFitossanitario);
 			return View(vm);
 		}
 
@@ -151,7 +151,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				locaisVistorias, false, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -199,7 +199,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				_busPTV.ObterCultura(),
 				ListaCredenciadoBus.TipoTransporte,
 				ListaCredenciadoBus.Municipios(8),
-				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId));
+				locaisVistorias, true, _busPTV.DiasHorasVistoria(ptv.LocalVistoriaId, ptv.DataVistoria.AddDays(-1)));
 
 			DestinatarioPTVBus _destinatarioBus = new DestinatarioPTVBus();
 			vm.PTV.Destinatario = _destinatarioBus.Obter(ptv.DestinatarioID);
@@ -270,14 +270,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		#endregion
 
-		#region Historico
+		#region Cancelar Envio
 
-		[Permite(RoleArray = new Object[] { ePermissao.PTVListar })]
-		public ActionResult Historico(int id)
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvioConfirm(int id)
 		{
-			PTVHistoricoVM vm = new PTVHistoricoVM(_busPTV.ObterHistoricoAnalise(id), ListaCredenciadoBus.PTVSolicitacaoSituacao);
+			PTV ptv = _busPTV.Obter(id, true);
+			ConfirmarVM vm = new ConfirmarVM();
 
-			return PartialView("PTVHistoricoPartial", vm);
+			vm.Id = id;
+			vm.Mensagem = Mensagem.PTV.MensagemCancelarEnvio(ptv.Numero.ToString());
+			vm.Titulo = "Confirmação do cancelamento";
+			return PartialView("Confirmar", vm);
+		}
+
+		[HttpPost]
+		[Permite(RoleArray = new Object[] { ePermissao.ProjetoDigitalEditar })]
+		public ActionResult CancelarEnvio(int id)
+		{
+			_busPTV.CancelarEnvio(id);
+			return Json(new {
+				EhValido = Validacao.EhValido,
+				Msg = Validacao.Erros
+			}, JsonRequestBehavior.AllowGet);
 		}
 
 		#endregion
@@ -338,7 +353,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@OrigemID = (int)dadosDocumentoOrigem["id"],
 				@EmpreendimentoID = (int)dadosDocumentoOrigem["empreendimento_id"],
 				@EmpreendimentoDenominador = dadosDocumentoOrigem["empreendimento_denominador"].ToString(),
-                @DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
+				@SaldoAtualDocOrigem = dadosDocumentoOrigem["empreendimento_denominador"],
+				@DeclaracaoAdicional = dadosDocumentoOrigem["declaracao_adicional"].ToString(),
 				@Msg = Validacao.Erros
 			}, JsonRequestBehavior.AllowGet);
 		}
@@ -465,6 +481,31 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
 				@Destinatario = destinatario
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult VerificarNotaFiscalCaixa(NotaFiscalCaixa notaFiscal)
+		{
+
+			notaFiscal = _busPTV.VerificarNumeroNFCaixa(notaFiscal);
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@nfCaixa = notaFiscal
+			});
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
+		public ActionResult ObterSaldoDocOrigem(PTVProduto produto)
+		{
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+				@saldo = _busPTV.ObterSaldoDocOrigem(produto)
 			});
 		}
 
@@ -607,13 +648,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVCriar, ePermissao.PTVEditar })]
-		public ActionResult ObterDiasHorasVistoria(int setor)
+		public ActionResult ObterDiasHorasVistoria(int setor, DateTime? dataVistoria = null)
 		{
 			return Json(new
 			{
 				@Valido = Validacao.EhValido,
 				@Erros = Validacao.Erros,
-				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor)
+				@DiasHorasVistoria = _busPTV.DiasHorasVistoria(setor, dataVistoria)
 
 			});
 		}
@@ -649,6 +690,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		}
 
 		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult ValidarAcessoSolicitarDesbloqueio(int id)
+		{
+			_validar.ValidarAcessoSolicitarDesbloqueioPTV(id);
+			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros });
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
+		public ActionResult SolicitarDesbloqueio(int id)
+		{
+			PTVComunicadorVW vm = new PTVComunicadorVW();
+			vm.Comunicador = _busPTV.ObterComunicador(id);
+			vm.IsDesbloqueio = true;
+			return PartialView("ComunicadorPTVPartial", vm);
+		}
+
+		[Permite(RoleArray = new Object[] { ePermissao.PTVComunicador })]
 		public ActionResult ComunicadorPTV(int id)
 		{
 			PTVComunicadorVW vm = new PTVComunicadorVW();
@@ -671,5 +728,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 		}
 		#endregion
+
+		public ActionResult AlertaEPTV()
+		{
+			_busPTV.VerificarAlertaChegadaMensagemEPTV();
+
+			return Json(new
+			{
+				@EhValido = Validacao.EhValido,
+				@Msg = Validacao.Erros,
+			}, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

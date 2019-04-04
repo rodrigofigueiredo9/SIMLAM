@@ -5,6 +5,8 @@ using System.Web.Routing;
 using System.Web.Security;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Etx.ModuloValidacao;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Security;
 
 namespace Tecnomapas.EtramiteX.Credenciado

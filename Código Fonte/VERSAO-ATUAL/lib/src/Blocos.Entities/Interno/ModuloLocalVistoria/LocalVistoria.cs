@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+﻿using System.Collections.Generic;
 
 namespace Tecnomapas.Blocos.Entities.Interno.ModuloLocalVistoria
 {
-    public class LocalVistoria
+	public class LocalVistoria
     {
         public int SetorID { get; set; }
         public string SetorTexto { get; set; }
