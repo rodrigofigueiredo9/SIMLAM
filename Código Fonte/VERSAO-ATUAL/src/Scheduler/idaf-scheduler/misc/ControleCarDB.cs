@@ -125,7 +125,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 						mensagensDeResposta = String.Concat(mensagensDeResposta, men);
 						mensagensDeResposta = String.Concat(mensagensDeResposta, "  ;  ");
 
-						if (men.Contains("sobreposição"))
+						if (men.Contains("sobreposição") && men.Contains("100"))
 						{
 							mensagemErro = men;
 						}
@@ -197,8 +197,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 				//Inserir no Histórico
 				InserirHistoricoControleCar(conn, requisicao, tid, resultado);
 
-				if (!String.IsNullOrWhiteSpace(mensagemErro) && item != null)
-					VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
+				//if (!String.IsNullOrWhiteSpace(mensagemErro) && item != null)
+				//	VerificarListaCodigoImovel(conn, schema, mensagemErro, item.solicitacao_car, item.empreendimento, requisicao.origem, requisicao, tid);
 			}
 			catch (Exception exception)
 			{

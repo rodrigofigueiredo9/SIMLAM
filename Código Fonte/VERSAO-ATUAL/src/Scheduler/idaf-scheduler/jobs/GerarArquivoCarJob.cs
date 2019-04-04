@@ -70,7 +70,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(nextItem.Requisicao);
 					var controleSicar = ControleCarDB.ObterItemControleCar(conn, requisicao);
-					if (controleSicar == null)
+					if (controleSicar == null || ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
 					{
 						nextItem = LocalDB.PegarProximoItemFila(conn, "gerar-car");
 						Log.Error($" CONTROLE SICAR (GERAR) IS NULL ::: {requisicao}");
@@ -83,7 +83,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					{
 						CAR car;
 						//REQUISIÇÃO CAR
-						//throw new Exception("THROW TESTE");
 						if (requisicao.origem == RequisicaoJobCar.INSTITUCIONAL)
 						{
 							car = ObterDadosCar(conn, requisicao, CarUtils.GetEsquemaInstitucional());
