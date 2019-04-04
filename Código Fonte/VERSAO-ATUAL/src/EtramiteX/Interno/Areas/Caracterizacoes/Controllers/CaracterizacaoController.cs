@@ -120,6 +120,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 							x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
 							x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
 						}
+						x.UrlVisualizar = Url.Action("Visualizar", x.Tipo.ToString());
 						break;
 
 					case eCaracterizacao.BarragemDispensaLicenca:
