@@ -555,24 +555,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			if (dua == null)
 			{
-				Validacao.Add(Mensagem.PTV.DuaNaoEncontrado);
+				Validacao.Add(Mensagem.Dua.NaoEncontrado);
 				return Validacao.EhValido;
 			}
 
 			if (dua.PagamentoCodigo != "2"/*Pago e Consolidado*/ && dua.PagamentoCodigo != "1"/*Pago e não Consolidado*/)
-			{
-				Validacao.Add(Mensagem.PTV.DuaInvalido(numero));
-			}
+				Validacao.Add(Mensagem.Dua.Invalido(numero));
+
+			if (dua.CodigoServicoRef != "21212")
+				Validacao.Add(Mensagem.Dua.CodigoInvalido);
 
 			float valorUnitario = _da.ObterValorUnitarioDua(dua.ReferenciaData);
-
 			int quantidadeDuaPagos = (int)(Math.Round(dua.ReceitaValor, 2) / Math.Round(valorUnitario, 2));
-
 			int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj, ptvId);
 
 			if (quantidadeDuaPagos <= quantidadeDuaEmitido)
 			{
-				Validacao.Add(Mensagem.PTV.DuaSemSaldo(numero));
+				Validacao.Add(Mensagem.Dua.SemSaldo(numero));
 			}
 
 			return Validacao.EhValido;
