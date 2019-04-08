@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				while (nextItem != null)
 				{
 					//Update item as Started
-					//LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
+					LocalDB.MarcarItemFilaIniciado(conn, nextItem.Id);
 
 					var item = LocalDB.PegarItemFilaPorId(conn, nextItem.Requisitante);
 
@@ -81,15 +81,15 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					var requisicao = JsonConvert.DeserializeObject<RequisicaoJobCar>(item.Requisicao);
 					tid = Blocos.Data.GerenciadorTransacao.ObterIDAtual();
 
+					if (ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
+					{
+						nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
+						continue;
+					}
+
 					string resultado = "";
 					try
 					{
-						//if (ControleCarDB.VerificarCarValido(conn, requisicao.solicitacao_car))
-						//{
-						//	nextItem = LocalDB.PegarProximoItemFila(conn, "enviar-car");
-						//	Log.Error($" REENVIO DE SOLICITAÇÃO VALIDA ::::  {item.Requisicao}");
-						//	continue;
-						//}
 						//Atualizar controle de envio do SICAR
 						ControleCarDB.AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, ControleCarDB.SITUACAO_ENVIO_AGUARDANDO_ENVIO, tid);
 						ControleCarDB.AtualizarControleSICAR(conn, null, requisicao, ControleCarDB.SITUACAO_ENVIO_ENVIANDO, tid);
@@ -104,16 +104,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						}
 						var resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
 
-						//if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro)
-						//{
-						//	resultado = await EnviarArquivoCAR(pathArquivoTemporario + nextItem.Requisicao, dataCadastroEstadual, requisicao.solicitacao_car);
-						//	if (String.IsNullOrWhiteSpace(resultado) || resultado.Contains("task was canceled"))
-						//	{
-						//		throw new System.ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-						//	}
-						//	resultadoEnvio = JsonConvert.DeserializeObject<MensagemRetorno>(resultado);
-						//}
-						//resultadoEnvio.codigoResposta = 200;
 
 						//Salvar no diretorio de arquivos do SIMLAM Institucional
 						string arquivoFinal;
@@ -122,17 +112,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							var arquivoManager = new ArquivoManager();
 							arquivoFinal = arquivoManager.Salvar(nextItem.Requisicao, stream, conn);
 						}
-
-
-
-						/*if (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaErro
-							|| (resultadoEnvio.codigoResposta == MensagemRetorno.CodigoRespostaInconformidade
-								&& resultadoEnvio.mensagensResposta.Any( r=> r.Equals("Foi encontrada sobreposição de 100,00% com outro imóvel já inscrito no CAR que possui os mesmos documentos (CPF e/ou CNPJ).", StringComparison.CurrentCultureIgnoreCase))))
-						{
-							LocalDB.AdicionarItemFila(conn, "revisar-resposta-car", item.Id, nextItem.Requisicao.Substring(0, nextItem.Requisicao.Length - 4), requisicao.empreendimento);
-						}
-						else
-						{*/
 
 						//Retificação
 						ItemControleCar itemSicar = ControleCarDB.ObterItemControleCarRetificacao(conn, requisicao);
