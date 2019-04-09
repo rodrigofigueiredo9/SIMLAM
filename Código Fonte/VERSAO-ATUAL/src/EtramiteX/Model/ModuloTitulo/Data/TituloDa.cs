@@ -1,5 +1,4 @@
-﻿using Exiges.Negocios.Library;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -17,6 +16,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 using Tecnomapas.Blocos.Etx.ModuloCore.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Data;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
@@ -2698,35 +2698,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					"periodo_inicio_obra",
 				   "periodo_termino_obra",
 					"atividades",
-					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_nome",
-					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_profissao",
-					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_numero_art",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoDeclaracao.ToDescription() + "_numero_art",
 
-					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_nome",
-					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_profissao",
-					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ElaboracaoProjeto.Description() + "_numero_art",
+					"rt_" + eTipoRT.ElaboracaoProjeto.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoProjeto.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoProjeto.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoProjeto.ToDescription() + "_numero_art",
 
-					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_nome",
-					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_profissao",
-					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ExecucaoBarragem.Description() + "_numero_art",
+					"rt_" + eTipoRT.ExecucaoBarragem.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ExecucaoBarragem.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ExecucaoBarragem.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ExecucaoBarragem.ToDescription() + "_numero_art",
 
-					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_nome",
-					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_profissao",
-					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.Description() + "_numero_art",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoEstudoAmbiental.ToDescription() + "_numero_art",
 
-					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_nome",
-					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_profissao",
-					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.Description() + "_numero_art",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ElaboracaoPlanoRecuperacao.ToDescription() + "_numero_art",
 
-					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_nome",
-					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_profissao",
-					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_registro_crea",
-					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.Description() + "_numero_art"
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.ToDescription() + "_nome",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.ToDescription() + "_profissao",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.ToDescription() + "_registro_crea",
+					"rt_" + eTipoRT.ExecucaoPlanoRecuperacao.ToDescription() + "_numero_art"
 				};
 				retorno.Add(colunas);
 				#endregion

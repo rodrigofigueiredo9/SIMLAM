@@ -31,5 +31,14 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem NumeroObrigatorio { get { return new Mensagem() { Campo = "NumeroDua", Texto = "Número do DUA é Obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem CPFCNPJObrigatorio { get { return new Mensagem() { Campo = "CPFCNPJDUA, .txtCNPJDUA", Texto = "CPF/CNPJ é Obrigatório.", Tipo = eTipoMensagem.Advertencia }; } }
 		public Mensagem CodigoInvalido { get { return new Mensagem() { Texto = "Código do DUA inválido.", Tipo = eTipoMensagem.Advertencia }; } }
+
+		public Mensagem Sucesso { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "DUAs emitidos com sucesso." }; } }
+		public Mensagem Falha { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Falha ao emitir DUAs." }; } }
+		public Mensagem ExisteDuaTitulo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível editar esse título, porque todos os DUAS para esse título já foram emitidos." }; } }
+		public Mensagem SolicitacaoSituacaoNaoPodeEditar(string situacaoAtual)
+		{
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Solicitacao_Situacao", Texto = String.Format("Não é possível editar a Solicitação de inscrição na situação \"{0}\".", situacaoAtual) };
+		}
+
 	}
 }

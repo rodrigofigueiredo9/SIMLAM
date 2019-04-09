@@ -1,5 +1,4 @@
-﻿using Exiges.Negocios.Library;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Bussiness;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business
 {
@@ -106,9 +106,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			caracterizacao.coordenadas.ForEach(x => {
 				if (!x.northing.HasValue || x.northing <= 0)
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.Description()));
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordNorthing(x.tipo.ToDescription()));
 				if (!x.easting.HasValue || x.easting <= 0)
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.Description()));
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCoordEasting(x.tipo.ToDescription()));
 			});
 
 			if (!Validacao.EhValido) return false;
@@ -297,18 +297,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (x.tipo == eTipoRT.ElaboracaoDeclaracao || x.tipo == eTipoRT.ElaboracaoProjeto || x.tipo == eTipoRT.ElaboracaoEstudoAmbiental)
 				{
 					if (String.IsNullOrWhiteSpace(x.nome))
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNomeRT(x.tipo.Description()));
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNomeRT(x.tipo.ToDescription()));
 					if (x.profissao.Id <= 0)
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeProfissapRT(x.tipo.Description()));
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeProfissapRT(x.tipo.ToDescription()));
 					if (String.IsNullOrWhiteSpace(x.registroCREA))
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCREART(x.tipo.Description()));
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeCREART(x.tipo.ToDescription()));
 					if (String.IsNullOrWhiteSpace(x.numeroART))
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.Description()));
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeNumeroART(x.tipo.ToDescription()));
 				}
 				if (x.tipo == eTipoRT.ElaboracaoProjeto &&
 					!profissoesSemAutorizacao.Contains(x.profissao.Id) &&
 					String.IsNullOrWhiteSpace(x.autorizacaoCREA.Nome))
-					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.Description()));
+					Validacao.Add(Mensagem.BarragemDispensaLicenca.InformeAutorizacaoCREA(x.tipo.ToDescription()));
 			});
 
 			if (caracterizacao.responsaveisTecnicos.Exists(x =>
@@ -378,7 +378,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							var atpCoordenada = JsonConvert.DeserializeObject<List<int>>(json);
 
 							if (!atpCoordenada.Contains(empreendimento.AtpID))
-								Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaATP(x.tipo.Description()));
+								Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaATP(x.tipo.ToDescription()));
 						}
 					});
 				}
@@ -392,7 +392,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					if (resposta.Data != null && resposta.Data.Count > 0 &&
 						resposta.Data["Municipio"]["IBGE"] != empreendimento.MunicipioIBGE.ToString())
-						Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaMunicipio(eTipoCoordenadaBarragem.barramento.Description()));
+						Validacao.Add(Mensagem.BarragemDispensaLicenca.CoordenadaForaMunicipio(eTipoCoordenadaBarragem.barramento.ToDescription()));
 				}
 			}
 			catch (Exception ex)
