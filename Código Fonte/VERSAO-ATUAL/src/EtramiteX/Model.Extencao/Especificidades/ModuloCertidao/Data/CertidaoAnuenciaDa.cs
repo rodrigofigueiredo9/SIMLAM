@@ -71,8 +71,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCer
 
 				comando.AdicionarParametroEntrada("titulo", certidaoAnuencia.Titulo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("protocolo", certidaoAnuencia.ProtocoloReq.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("certificacao", certidaoAnuencia.Certificacao, DbType.String);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+				comando.AdicionarParametroEntClob("certificacao", certidaoAnuencia.Certificacao);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
