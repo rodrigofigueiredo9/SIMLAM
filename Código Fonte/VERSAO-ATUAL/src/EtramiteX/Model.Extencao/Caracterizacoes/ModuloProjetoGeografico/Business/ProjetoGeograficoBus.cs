@@ -843,10 +843,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		{
 			try
 			{
-				if (projeto.Dependencias == null || projeto.Dependencias.Count == 0 || atual)
-				{
+				if (!projeto.Dependencias.Any() || atual)
 					projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(projeto.EmpreendimentoId, (eCaracterizacao)projeto.CaracterizacaoId, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
-				}
 
 				Dependencia dependencia = projeto.Dependencias.SingleOrDefault(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico
 					&& x.DependenciaCaracterizacao == (int)eCaracterizacao.Dominialidade);
