@@ -280,7 +280,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 								) area_croqui,
 							'IC / ' || i.id || ' - ' || i.data_informacao carac
 						from crt_informacao_corte i 
-						inner join esp_out_informacao_corte o on o.crt_informacao_corte = i.id
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte =  NULLIF(i.credenciadoid, i.id)
 						where o.titulo = :titulo ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
@@ -324,8 +324,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				{
 					comando = bancoDeDados.CriarComando(@"
 					select c.tipo_licenca || ' - ' || c.data_vencimento licenca
-						from {0}crt_inf_corte_licenca c 
-						inner join esp_out_informacao_corte o on o.crt_informacao_corte = c.corte_id
+						from {0}crt_inf_corte_licenca c
+						inner join crt_informacao_corte ic on c.corte_id = ic.id
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte = NULLIF(ic.credenciadoid, ic.id)
 						where o.titulo = :titulo and rownum <= 1
 					order by c.data_vencimento desc
 						", EsquemaBanco);
@@ -349,7 +350,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					select  oic.titulo, ict.tipo_corte, ict.especie, ict.area_corte, ict.idade_plantio, icd.dest_material,
 					lvd.texto dest_mat, lvp.texto produto, icd.quantidade
 						from {0}crt_informacao_corte ic
-							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte
+							inner join esp_out_informacao_corte       oic on NULLIF(ic.credenciadoid, ic.id) = oic.crt_informacao_corte
 							inner join {0}crt_inf_corte_tipo             ict on ic.id = ict.corte_id
 							inner join {0}crt_inf_corte_dest_material    icd on ict.id = icd.tipo_corte_id
 							inner join lov_crt_inf_corte_inf_dest_mat lvd on lvd.id = icd.dest_material
