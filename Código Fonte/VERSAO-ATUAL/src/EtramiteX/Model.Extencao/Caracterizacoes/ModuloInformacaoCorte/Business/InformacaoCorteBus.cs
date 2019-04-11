@@ -95,7 +95,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 					return Validacao.EhValido;
 
-				if (!_validar.Excluir(id))
+				if (!_validar.Excluir(caracterizacao.CredenciadoId ?? id))
 					return Validacao.EhValido;
 
 				if (validarDependencias && !_caracterizacaoValidar.DependenciasExcluir(caracterizacao.EmpreendimentoId, eCaracterizacao.InformacaoCorte))

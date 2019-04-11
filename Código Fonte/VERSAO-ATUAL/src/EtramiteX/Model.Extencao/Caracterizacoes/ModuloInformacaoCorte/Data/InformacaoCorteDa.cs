@@ -430,7 +430,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.credenciadoid
 				from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -441,6 +441,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					{
 						caracterizacao.Id = id;
 						caracterizacao.Codigo = reader.GetValue<int>("codigo");
+						caracterizacao.CredenciadoId = reader.GetValue<int>("credenciadoid");
 						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
