@@ -7,6 +7,7 @@ InformacaoCorte = {
 			adicionarInformacao: '',
 			editar: '',
 			visualizar: '',
+			visualizarAntigo: '',
 			excluirConfirm: '',
 			excluir: '',
 			voltar: ''
@@ -40,8 +41,15 @@ InformacaoCorte = {
 	visualizar: function () {
 		var linha = $(this).closest('tr');
 		var id = $('.itemId', linha).val();
+		var internoId = $('.itemInternoId', linha).val();
+		var antigo = $('.itemAntigo', linha).val();
 
-		MasterPage.redireciona(InformacaoCorte.settings.urls.visualizar + '/' + id + '?projetoDigitalId=' + InformacaoCorte.settings.projetoDigitalID);
+		if (antigo == "True")
+			MasterPage.redireciona(InformacaoCorte.settings.urls.visualizarAntigo + '/' + id + '?empreendimento=' + InformacaoCorte.settings.empreendimentoID + '&projetoDigitalId=' + InformacaoCorte.settings.projetoDigitalID);
+		else if (id == internoId)
+			MasterPage.redireciona(InformacaoCorte.settings.urls.visualizar + '/' + id + '?projetoDigitalId=' + InformacaoCorte.settings.projetoDigitalID + '&empreendimentoId=' + InformacaoCorte.settings.empreendimentoID);
+		else
+			MasterPage.redireciona(InformacaoCorte.settings.urls.visualizar + '/' + id + '?projetoDigitalId=' + InformacaoCorte.settings.projetoDigitalID);
 	},
 
 	editar: function () {

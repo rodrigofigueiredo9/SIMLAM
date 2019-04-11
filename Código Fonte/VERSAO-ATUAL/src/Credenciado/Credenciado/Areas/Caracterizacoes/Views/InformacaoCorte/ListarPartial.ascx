@@ -57,7 +57,7 @@
 				<% foreach (var informacao in Model.Resultados){ %>
 					<tr>
 						<td>
-							<span class="codigo" title="<%: String.Concat(informacao.Id.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%>"><%:String.Concat(informacao.Id.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%></span>
+							<span class="codigo" title="<%: String.Concat(informacao.Codigo.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%>"><%:String.Concat(informacao.Codigo.ToString().PadLeft(4, '0'), '-', informacao.DataInformacao.DataTexto)%></span>
 						</td>
 						<td>
 							<span class="dataInformacao" title="<%:informacao.DataInformacao.DataTexto%>"><%:informacao.DataInformacao.DataTexto%></span>
@@ -68,9 +68,11 @@
 						<td class="tdAcoes">
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(informacao)%>' />
 							<input type="hidden" class="itemId" value="<%= informacao.Id %>" />
+							<input type="hidden" class="itemInternoId" value="<%= informacao.InternoID %>" />
+							<input type="hidden" class="itemAntigo" value="<%= informacao.Antigo %>" />
 							<input title="Visualizar" type="button" class="icone visualizar btnVisualizarInformacaoCorte" value="" />
-							<%if (!Model.IsVisualizar){%><input title="Editar" type="button" class="icone editar btnEditarInformacaoCorte" value="" /><%} %>
-							<%if (Model.IsPodeExcluir && informacao.InternoID == 0){%><input title="Excluir" type="button" class="icone excluir btnExcluirInformacaoCorte" value="" /><%} %>
+							<%if (!Model.IsVisualizar && informacao.Id != informacao.InternoID){%><input title="Editar" type="button" class="icone editar btnEditarInformacaoCorte" value="" /><%} %>
+							<%if (Model.IsPodeExcluir && informacao.Id != informacao.InternoID){%><input title="Excluir" type="button" class="icone excluir btnExcluirInformacaoCorte" value="" /><%} %>
 						</td>
 					</tr>
 					<% } %>

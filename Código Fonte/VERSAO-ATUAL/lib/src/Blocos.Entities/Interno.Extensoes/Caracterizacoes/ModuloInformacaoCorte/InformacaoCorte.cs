@@ -8,6 +8,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 	public class InformacaoCorte
 	{
 		public Int32 Id { get; set; }
+		public Int32 Codigo { get; set; }
 		public Int32 EmpreendimentoId { get; set; }
 		public EmpreendimentoCaracterizacao Empreendimento { get; set; }
 
@@ -37,6 +38,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public String Tid { get; set; }
 
 		public Decimal AreaCorteCalculada { get; set; }
+
+		public bool Antigo { get; set; }
 
 		public InformacaoCorte()
 		{

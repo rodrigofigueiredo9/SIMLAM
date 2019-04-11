@@ -22,6 +22,7 @@ using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCar
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloUnidadeProducao.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Data;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Antigo;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business
 {
@@ -116,6 +117,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				if (!_caracterizacaoValidar.Basicas(caracterizacao.EmpreendimentoId))
 					return Validacao.EhValido;
 
+				if (!_validar.Excluir(id))
+					return Validacao.EhValido;
+
 				GerenciadorTransacao.ObterIDAtual();
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -162,7 +166,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return caracterizacao;
 		}
-
 
 		public List<InformacaoCorte> ObterPorEmpreendimento(int empreendimentoInternoId, bool simplificado = false)
 		{
@@ -234,6 +237,40 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return retorno;
 		}
 
+		public InformacaoCorteAntigo ObterAntigo(int id, bool simplificado = false, BancoDeDados banco = null)
+		{
+
+			InformacaoCorteAntigo caracterizacao = null;
+			try
+			{
+				caracterizacao = _da.ObterAntigo(id, simplificado, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return caracterizacao;
+		}
+
+		public InformacaoCorteInformacao ObterInformacaoItem(int id, BancoDeDados banco = null)
+		{
+
+			InformacaoCorteInformacao item = null;
+			try
+			{
+				item = _da.ObterInformacaoItem(id);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return item;
+		}
+
+		public List<InformacaoCorteLicenca> ObterLicencas(int empreendimento, BancoDeDados banco = null) => _da.ObterLicencas(empreendimento, banco);
+
 		#endregion
 
 		#region Caracterizacao
@@ -289,5 +326,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			return Validacao.EhValido;
 		}
+
+		public bool CaracterizacaoEmAberto(int id) => _da.CaracterizacaoEmAberto(id);
 	}
 }

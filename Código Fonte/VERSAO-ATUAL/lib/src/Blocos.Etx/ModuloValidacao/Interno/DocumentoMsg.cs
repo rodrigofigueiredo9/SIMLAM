@@ -181,7 +181,5 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem PosseCredenciado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Você não possui a posse desse documento." }; } }
 
 		public Mensagem PossuiAI_TEI_TAD { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Para fiscalização que possuir AI, TEI e/ou TAD deverá ser cadastrado um processo e não um documento." }; } }
-
-		public Mensagem AssociarDeclaratorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O requerimento não deve possuir solicitação de Título Declaratório." }; } }
 	}
 }

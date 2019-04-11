@@ -173,11 +173,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business
 				}
 				else
 				{
-					if (_requerimentoValidar.RequerimentoDeclaratorio(documento.Requerimento.Id))
-					{
-						Validacao.Add(Mensagem.Documento.AssociarDeclaratorio);
-					}
-
 					RequerimentoFinalizado(documento.Requerimento.Id, documento.Id.GetValueOrDefault());
 
 					ResponsavelTecnico(documento.Responsaveis);

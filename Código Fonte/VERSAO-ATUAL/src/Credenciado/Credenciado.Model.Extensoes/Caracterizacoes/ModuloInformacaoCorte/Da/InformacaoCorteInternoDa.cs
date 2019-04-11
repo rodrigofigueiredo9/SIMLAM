@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tecnomapas.Blocos.Data;
-using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloUnidadeProducao;
-using Tecnomapas.EtramiteX.Configuracao;
-using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
-using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Data;
-using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using System.Data;
-using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
-using Tecnomapas.Blocos.Entities.Etx.ModuloGeo;
-using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
-using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
+using Tecnomapas.EtramiteX.Configuracao;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Data
 {
@@ -42,27 +34,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 		#region Obter/Filtrar
 
-		internal InformacaoCorte ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
-		{
-			InformacaoCorte caracterizacao = new InformacaoCorte();
-
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}crt_informacao_corte t where t.empreendimento = :empreendimento", EsquemaBanco);
-				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
-
-				object valor = bancoDeDados.ExecutarScalar(comando);
-
-				if (valor != null && !Convert.IsDBNull(valor))
-				{
-					caracterizacao = Obter(Convert.ToInt32(valor), bancoDeDados, simplificado);
-				}
-			}
-
-			return caracterizacao;
-		}
-
-		internal InformacaoCorte Obter(int id, BancoDeDados banco = null, bool simplificado = false)
+		internal InformacaoCorte Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
 			InformacaoCorte caracterizacao = new InformacaoCorte();
 
@@ -71,8 +43,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada, e.codigo empreendimento_codigo
-				from {0}crt_informacao_corte c, tab_empreendimento e where c.empreendimento = e.id and c.id = :id", EsquemaBanco);
+				select c.id, c.tid, c.empreendimento, c.data_informacao, c.area_flor_plantada
+				from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -81,11 +53,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					if (reader.Read())
 					{
 						caracterizacao.Id = id;
-						caracterizacao.Empreendimento = new EmpreendimentoCaracterizacao()
-						{
-							Id = reader.GetValue<int>("empreendimento"),
-							Codigo = reader.GetValue<int>("empreendimento_codigo")
-						};
+						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
 						caracterizacao.Tid = reader.GetValue<string>("tid");
@@ -104,8 +72,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				#region Informação de Corte Licença
 
 				comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.corte_id, c.licenca, c.numero_licenca, c.atividade, c.area_licenca
-				from crt_inf_corte_licenca c
+				select c.id, c.tid, c.corte_id, c.licenca, c.tipo_licenca, c.numero_licenca, c.atividade, c.area_licenca, c.data_vencimento
+				from {0}crt_inf_corte_licenca c
 				where c.corte_id = :corte_id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -119,10 +87,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							Id = reader.GetValue<int>("id"),
 							Tid = reader.GetValue<string>("tid"),
 							Corte = reader.GetValue<int>("corte_id"),
-							Licenca= reader.GetValue<int>("licenca"),
+							Licenca = reader.GetValue<int>("licenca"),
+							TipoLicenca = reader.GetValue<string>("tipo_licenca"),
 							NumeroLicenca = reader.GetValue<string>("numero_licenca"),
 							Atividade = reader.GetValue<string>("atividade"),
-							AreaLicenca = reader.GetValue<decimal>("area_licenca")
+							AreaLicenca = reader.GetValue<decimal>("area_licenca"),
+							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") }
 						});
 					}
 
@@ -135,7 +105,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando = bancoDeDados.CriarComando(@"
 				select c.id, c.tid, c.corte_id, c.tipo_corte, c.especie, c.area_corte, c.idade_plantio
-				from crt_inf_corte_tipo c
+				from {0}crt_inf_corte_tipo c
 				where c.corte_id = :corte_id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("corte_id", caracterizacao.Id, DbType.Int32);
@@ -150,7 +120,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							Tid = reader.GetValue<string>("tid"),
 							Corte = reader.GetValue<int>("corte_id"),
 							TipoCorte = reader.GetValue<int>("tipo_corte"),
+							TipoCorteTexto = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription(),
 							EspecieInformada = reader.GetValue<int>("especie"),
+							EspecieInformadaTexto = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription(),
 							AreaCorte = reader.GetValue<decimal>("area_corte"),
 							IdadePlantio = reader.GetValue<int>("idade_plantio")
 						};
@@ -158,8 +130,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						#region Informação Corte Destinação
 
 						comando = bancoDeDados.CriarComando(@"
-						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz
-						from crt_inf_corte_dest_material c
+						select c.id, c.tid, c.tipo_corte_id, c.dest_material, c.produto, c.quantidade, c.inf_codigo_sefaz,
+							lv.texto as dest_material_texto, lvp.texto as produto_texto
+						from {0}crt_inf_corte_dest_material c
+						left join {0}lov_crt_inf_corte_inf_dest_mat lv
+							on(c.dest_material = lv.id)
+						left join {0}lov_crt_produto lvp
+							on(c.produto = lvp.id)
 						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("tipo_corte_id", informacaoCorteTipo.Id, DbType.Int32);
@@ -170,13 +147,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							{
 								informacaoCorteTipo.InformacaoCorteDestinacao.Add(new InformacaoCorteDestinacao()
 								{
-									Id = reader.GetValue<int>("id"),
-									Tid = reader.GetValue<string>("tid"),
-									TipoCorteId = reader.GetValue<int>("tipo_corte_id"),
-									DestinacaoMaterial = reader.GetValue<int>("DestinacaoMaterial"),
-									Produto = reader.GetValue<int>("produto"),
-									Quantidade = reader.GetValue<int>("quantidade"),
-									CodigoSefazId = reader.GetValue<int>("inf_codigo_sefaz")
+									Id = readerDestinacao.GetValue<int>("id"),
+									Tid = readerDestinacao.GetValue<string>("tid"),
+									TipoCorteId = readerDestinacao.GetValue<int>("tipo_corte_id"),
+									DestinacaoMaterial = readerDestinacao.GetValue<int>("dest_material"),
+									DestinacaoMaterialTexto = readerDestinacao.GetValue<string>("dest_material_texto"),
+									Produto = readerDestinacao.GetValue<int>("produto"),
+									ProdutoTexto = readerDestinacao.GetValue<string>("produto_texto"),
+									Quantidade = readerDestinacao.GetValue<int>("quantidade"),
+									CodigoSefazId = readerDestinacao.GetValue<int>("inf_codigo_sefaz")
 								});
 							}
 
@@ -192,6 +171,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 
 				#endregion
+			}
+
+			return caracterizacao;
+		}
+
+		internal InformacaoCorte ObterPorEmpreendimento(int empreendimentoId, bool simplificado = false, BancoDeDados banco = null)
+		{
+			InformacaoCorte caracterizacao = new InformacaoCorte();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select t.id from {0}crt_informacao_corte t where t.empreendimento = :empreendimento", EsquemaBanco);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
+
+				object valor = bancoDeDados.ExecutarScalar(comando);
+
+				if (valor != null && !Convert.IsDBNull(valor))
+				{
+					caracterizacao = Obter(Convert.ToInt32(valor), simplificado, bancoDeDados);
+				}
 			}
 
 			return caracterizacao;

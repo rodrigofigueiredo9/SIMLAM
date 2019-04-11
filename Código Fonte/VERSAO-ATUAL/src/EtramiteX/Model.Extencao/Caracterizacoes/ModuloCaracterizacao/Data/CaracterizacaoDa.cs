@@ -181,6 +181,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data
 						empreendimento.CNPJ = reader.GetValue<string>("cnpj");
 						empreendimento.Codigo = reader.GetValue<int>("codigo");
 						empreendimento.AreaImovelHA = reader.GetValue<decimal>("area_croqui");
+						if (empreendimento.AreaImovelHA > 0)
+							empreendimento.AreaImovelHA = empreendimento.AreaImovelHA / 10000;
 					}
 
 					reader.Close();

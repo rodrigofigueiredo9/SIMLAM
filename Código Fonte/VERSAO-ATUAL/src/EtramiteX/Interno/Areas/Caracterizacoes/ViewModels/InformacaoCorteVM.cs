@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao;
@@ -22,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 			if (caracterizacao != null)
 			{
 				this.Id = caracterizacao.Id;
+				this.Codigo = caracterizacao.Codigo;
 				this.DataInformacao = caracterizacao.DataInformacao;
 				this.AreaPlantada = caracterizacao.AreaFlorestaPlantada;
 				this.InformacaoCorteLicencaList = caracterizacao.InformacaoCorteLicenca;
@@ -80,6 +82,13 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 				TipoCorte = ViewModelHelper.CriarSelectList(tipoCorte),
 				Especie = ViewModelHelper.CriarSelectList(especie)
 			};
+
+			this.TipoLicenca = new List<SelectListItem>
+			{
+				new SelectListItem() { Text = "*** Selecione ***", Value = "", Selected = true },
+				new SelectListItem() { Text = "LAR", Value = "LAR" },
+				new SelectListItem() { Text = "LO", Value = "LO" }
+			};
 		}
 
 		#endregion
@@ -87,6 +96,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		#region Properties
 
 		public int? Id { get; set; }
+		public int? Codigo { get; set; }
 		public DateTecno DataInformacao { get; set; } = new DateTecno { Data = DateTime.Now };
 		public Decimal AreaPlantada { get; set; }
 
@@ -97,6 +107,7 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels
 		public InformacaoCorteTipoVM InformacaoCorteTipo { get; set; }
 		public EmpreendimentoCaracterizacaoVM Empreendimento { get; set; }
 
+		public List<SelectListItem> TipoLicenca { get; set; } = new List<SelectListItem>();
 		public List<InformacaoCorteLicenca> InformacaoCorteLicencaList { get; set; } = new List<InformacaoCorteLicenca>();
 		public List<InformacaoCorteResultadosVM> InformacaoCorteResultados { get; set; } = new List<InformacaoCorteResultadosVM>();
 

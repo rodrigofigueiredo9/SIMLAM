@@ -18,6 +18,7 @@ using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Data;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 {
@@ -82,6 +83,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Business
 			if (carSolicitacao.Id > 0)
 			{
 				Validacao.Add(Mensagem.ProjetoDigital.ExcluirPossuiCARSolicitacao(carSolicitacao.SituacaoTexto));
+			}
+
+			if (projeto.Dependencias.Exists(x => x.DependenciaCaracterizacao == (int)eCaracterizacao.InformacaoCorte))
+			{
+				var informacao = projeto.Dependencias.First();
+				InformacaoCorteBus informacaoCorteBus = new InformacaoCorteBus();
+				if (informacaoCorteBus.CaracterizacaoEmAberto(informacao.DependenciaId))
+					Validacao.Add(Mensagem.ProjetoDigital.ProibidoExcluir);
 			}
 
 			return Validacao.EhValido;

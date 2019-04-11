@@ -65,6 +65,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
+		internal bool Excluir(int caracterizacaoId)
+		{
+			if(!_da.CaracterizacaoEmAberto(caracterizacaoId))
+				Validacao.Add(Mensagem.InformacaoCorte.ProibidoExcluir);
+
+			return Validacao.EhValido;
+		}
+
 		internal bool CopiarDadosInstitucional(InformacaoCorte caracterizacao)
 		{
 			if (caracterizacao.InternoID <= 0)

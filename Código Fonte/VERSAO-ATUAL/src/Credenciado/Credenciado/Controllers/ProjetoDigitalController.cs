@@ -207,14 +207,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			if (Validacao.EhValido)
 			{
-				RequerimentoCredenciadoBus requerimentoBus = new RequerimentoCredenciadoBus();
-				if(requerimentoBus.RequerimentoDeclaratorio(projeto.RequerimentoId))
-				{
-					urlRedirecionar = Url.Action("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id }));
-				}
+				if (projeto.Dependencias.Exists(x => x.DependenciaCaracterizacao == (int)eCaracterizacao.InformacaoCorte))
+					urlRedirecionar = Url.Action("Criar", "TituloDeclaratorio");
 				else
 				{
-					urlRedirecionar = Url.Action("ImprimirDocumentos", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id, MostrarFechar = true }));
+					RequerimentoCredenciadoBus requerimentoBus = new RequerimentoCredenciadoBus();
+					if (requerimentoBus.RequerimentoDeclaratorio(projeto.RequerimentoId))
+						urlRedirecionar = Url.Action("Operar", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id }));
+					else
+						urlRedirecionar = Url.Action("ImprimirDocumentos", "ProjetoDigital", Validacao.QueryParamSerializer(new { Id = id, MostrarFechar = true }));
 				}
 			}
 
