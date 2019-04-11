@@ -359,10 +359,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 				comando = bancoDeDados.CriarComandoPlSql(
 				@"begin
-					delete from {0}crt_informacao_corte c where c.id = :id;
 					delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
-					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
 					delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
+					delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+					delete from {0}crt_inf_corte_inf_especie c where c.inf_corte_inf in (select t.id from {0}crt_inf_corte_inf t where t.caracterizacao = :id);
+					delete from {0}crt_inf_corte_inf_produto c where c.inf_corte_inf in (select t.id from {0}crt_inf_corte_inf t where t.caracterizacao = :id);
+					delete from {0}crt_inf_corte_inf c where c.caracterizacao = :id;
+					delete from {0}crt_informacao_corte c where c.id = :id;
 				end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);

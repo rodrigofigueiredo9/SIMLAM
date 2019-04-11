@@ -13,11 +13,11 @@
 	public class InformacaoCorteMsg
 	{
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte excluída com sucesso." }; } }
-		public Mensagem ProibidoExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização não pode ser excluída pois está vinculada a um título declaratório." }; } }
 		public Mensagem ExcluirMensagem { get { return new Mensagem() { Texto = "Excluir caracterização Informação de Corte?" }; } }
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização informação de corte salva com sucesso." }; } }
 		public Mensagem ProibidoCriar { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível incluir Informação de Corte para o empreendimento, pois possui informação(s) de corte em aberto." }; } }
 		public Mensagem ProibidoEditar { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível editar a Informação de Corte, pois a mesma se encontra vinculada a um Título." }; } }
+		public Mensagem ProibidoExcluir { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Caracterização não pode ser excluída pois está vinculada a um título declaratório." }; } }
 
 		public Mensagem AreaPlantadaObrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_AreaPlantada", Texto = @"Área de Floresta Plantada é obrigatória." }; } }
 		public Mensagem Declaracao1Obrigatoria { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "InformacaoCorte_DeclaracaoVerdadeira", Texto = "Para salvar a caracterização informação de corte é necessário aceitar as declarações." }; } }
