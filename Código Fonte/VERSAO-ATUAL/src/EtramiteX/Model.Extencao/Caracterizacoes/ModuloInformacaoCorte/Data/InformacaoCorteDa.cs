@@ -1192,7 +1192,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
-					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte =  nvl(nullif(t.credenciadoid, null), t.id)
 					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
 					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
@@ -1206,7 +1206,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.id = :id
-					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
+					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = nvl(nullif(t.credenciadoid, null), t.id)
 					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
 					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
