@@ -44,7 +44,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 		internal bool Excluir(int caracterizacaoId)
 		{
-			if (!_da.CaracterizacaoEmAberto(caracterizacaoId))
+			if (_da.CaracterizacaoEmAberto(caracterizacaoId))
 				Validacao.Add(Mensagem.InformacaoCorte.ProibidoExcluir);
 
 			return Validacao.EhValido;

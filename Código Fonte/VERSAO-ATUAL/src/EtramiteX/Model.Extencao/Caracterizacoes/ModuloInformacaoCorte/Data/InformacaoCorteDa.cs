@@ -441,7 +441,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 					{
 						caracterizacao.Id = id;
 						caracterizacao.Codigo = reader.GetValue<int>("codigo");
-						caracterizacao.CredenciadoId = reader.GetValue<int>("credenciadoid");
+						caracterizacao.CredenciadoId = reader.GetValue<int?>("credenciadoid");
 						caracterizacao.EmpreendimentoId = reader.GetValue<int>("empreendimento");
 						caracterizacao.DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") };
 						caracterizacao.AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada");
