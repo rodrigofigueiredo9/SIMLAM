@@ -41,5 +41,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 			return Validacao.EhValido;
 		}
+
+		internal bool Excluir(int caracterizacaoId)
+		{
+			if (!_da.CaracterizacaoEmAberto(caracterizacaoId))
+				Validacao.Add(Mensagem.InformacaoCorte.ProibidoExcluir);
+
+			return Validacao.EhValido;
+		}
 	}
 }

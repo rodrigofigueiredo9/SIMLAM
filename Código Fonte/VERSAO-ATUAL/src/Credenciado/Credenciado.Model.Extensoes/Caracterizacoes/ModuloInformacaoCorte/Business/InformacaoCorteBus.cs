@@ -327,6 +327,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			return Validacao.EhValido;
 		}
 
+		public bool ValidarExcluir(int id)
+		{
+			try
+			{
+				if (_da.CaracterizacaoEmAberto(id))
+					Validacao.Add(Mensagem.InformacaoCorte.ProibidoExcluir);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return Validacao.EhValido;
+		}
+
 		public bool CaracterizacaoEmAberto(int id) => _da.CaracterizacaoEmAberto(id);
 	}
 }
