@@ -16,7 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloReg
 		public Int32 ComprovacaoId { get; set; }
 		public String ComprovacaoTexto { get; set; }
 		public Decimal AreaCroqui { get; set; }
-		public Decimal Perimetro { get; set; }
+		public Decimal? Perimetro { get; set; }
 		public Decimal AreaRequerida { set; get; }
 		public Int32 Zona { set; get; }
 		public Int32 RegularizacaoTipo { set; get; }
