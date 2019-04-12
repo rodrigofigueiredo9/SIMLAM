@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Configuration;
 using Aspose.Words.Tables;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
@@ -17,13 +21,8 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecif
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloCertidao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Data;
-using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloBarragemDispensaLicensa.Business;
-using System.ComponentModel;
-using System.Configuration;
-using System.Net.Http;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
-using System.Net;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloCertidao.Business
 {
@@ -157,7 +156,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			return null;
 		}
 
-
 		public override IConfiguradorPdf ObterConfiguradorPdf(IEspecificidade especificidade)
 		{
 			ConfiguracaoDefault conf = new ConfiguracaoDefault();
@@ -192,17 +190,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				HttpResponseMessage response = _client.PostAsync($"{apiUri}Titulo/{tituloId}/ImportacaoBarragem", stringContent).Result;
 
+				var json = response.Content.ReadAsStringAsync().Result;
+				JsonConvert.DeserializeObject(json);
+
 				if (!response.IsSuccessStatusCode)
 					throw new Exception("Não foi possível conectar no servidor");
 				if(response.StatusCode != HttpStatusCode.OK)
 					throw new Exception("Mensagem não esperada");
-
-				var json = response.Content.ReadAsStringAsync().Result;
 			}
 			catch(Exception ex)
 			{
 				Validacao.Add(Mensagem.BarragemDispensaLicenca.ImportacaoErro);
-				Validacao.AddErro(ex);
+				Validacao.Add(eTipoMensagem.Erro, ex.Message);
 			}
 			
 		}
