@@ -451,6 +451,7 @@ TituloDeclaratorio = {
 			fimPeriodo: $('.filterFImPeriodo').val(),
 			nomeRazaoSocial: $('.filterNome').val(),
 			cpfCnpj: $('.filterCpfCnpj').val(),
+			isCpf: $('.radioCpfCnpj:checked').val() == 1 ? true : false,
 			municipio: $('.filterMunicipio:visible').val()
 		};
 
