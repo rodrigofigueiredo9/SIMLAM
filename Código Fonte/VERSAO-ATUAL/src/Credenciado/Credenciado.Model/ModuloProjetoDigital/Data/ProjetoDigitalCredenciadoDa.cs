@@ -461,6 +461,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloProjetoDigital.Data
 				}
 				else
 				{
+
 					comando.DbCommand.CommandText += comando.FiltroAnd("p.id", "id", idProjeto);
 				}
 

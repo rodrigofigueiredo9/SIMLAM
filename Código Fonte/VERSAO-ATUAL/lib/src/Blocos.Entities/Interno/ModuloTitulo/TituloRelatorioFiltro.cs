@@ -11,6 +11,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		public string fimPeriodo { get; set; }
 		public string nomeRazaoSocial { get; set; }
 		public string cpfCnpj { get; set; }
+		public bool isCpf { get; set; }
 		public int municipio { get; set; }
 		
 		public TituloRelatorioFiltro()

@@ -68,7 +68,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         public ActionResult Criar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId = 0)
         {
             _bus.Salvar(caracterizacao, projetoDigitalId);
-			AssociarCaracterizacaoProjetoDigital(projetoDigitalId, caracterizacao.Id, caracterizacao.Tid);
+			AssociarCaracterizacaoProjetoDigital(projetoDigitalId, caracterizacao.Id, caracterizacao.Tid, novo: true);
 
             return Json(new
             {
@@ -92,23 +92,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			}, JsonRequestBehavior.AllowGet);
 		}
 		
-		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
-		public ActionResult Salvar(BarragemDispensaLicenca caracterizacao, int projetoDigitalId = 0)
-		{
-			if(caracterizacao.Id <= 0)
-				AssociarCaracterizacaoProjetoDigital(projetoDigitalId, caracterizacao.Id, caracterizacao.Tid);
-			if(Validacao.EhValido)
-				_bus.Salvar(caracterizacao, projetoDigitalId);
-
-			return Json(new
-			{
-				@EhValido = Validacao.EhValido,
-				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("", "Caracterizacao", new { id = caracterizacao.EmpreendimentoID, projetoDigitalId = projetoDigitalId, Msg = Validacao.QueryParam() })
-			}, JsonRequestBehavior.AllowGet);
-		}
-
 		#endregion
 
 		#region Editar
@@ -283,9 +266,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		#endregion
 
 		[Permite(Tipo = ePermiteTipo.Logado)]
-		public ActionResult AssociarCaracterizacaoProjetoDigital(int projetoDigitalId, int caracterizacao, string tid)
+		public ActionResult AssociarCaracterizacaoProjetoDigital(int projetoDigitalId, int caracterizacao, string tid, bool novo = false)
 		{
-			var barragemId = _bus.AssociarNovaCaracterizacao(caracterizacao, projetoDigitalId);
+			var barragemId = novo ? caracterizacao : _bus.AssociarNovaCaracterizacao(caracterizacao, projetoDigitalId);
 
 			var projetoDigitalBus = new ProjetoDigitalCredenciadoBus();
 			var projetoDigital = projetoDigitalBus.Obter(projetoDigitalId);
