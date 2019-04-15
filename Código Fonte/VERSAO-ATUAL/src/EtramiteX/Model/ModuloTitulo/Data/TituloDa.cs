@@ -2620,7 +2620,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					comandtxt += comando.FiltroAndLike("pc.nome", "nomeRazaoSocial", filtro.nomeRazaoSocial, upper: true, likeInicio: true);
 								
 				if (!string.IsNullOrWhiteSpace(filtro.cpfCnpj))
-					comandtxt += comando.FiltroAnd("pc.cpf", "cpfCnpj", filtro.cpfCnpj);
+				{
+					if(filtro.isCpf)
+						comandtxt += comando.FiltroIn("rq.interessado", "select p.id from tab_pessoa p where p.CPF = :cpfCnpj", "cpfCnpj", filtro.cpfCnpj);
+					else
+						comandtxt += comando.FiltroIn("rq.interessado", "select p.id from tab_pessoa p where p.CNPJ = :cpfCnpj", "cpfCnpj", filtro.cpfCnpj);
+				}
 
 				#endregion
 
@@ -2818,16 +2823,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					left join tab_titulo_numero                    tn on tt.id = tn.titulo
 					inner join lov_municipio                        mp on mp.id = tt.local_emissao
 					inner join idafcredenciado.tab_empreendimento   ee on ee.id = tt.empreendimento
-					inner join tab_requerimento                     rq on rq.numero = tt.requerimento
-					inner join tab_requerimento_barragem            rb on rq.id = rb.requerimento
-					inner join crt_barragem_dispensa_lic            bd on bd.id = rb.barragem
-					inner join lov_crt_bdla_fase                    lf on lf.id = bd.fase
-					inner join lov_crt_bdla_barragem_tipo           lt on lt.id = bd.tipo_barragem
-					inner join crt_barragem_construida_con          bc on bd.id = bc.barragem
-					inner join LOV_CRT_BDLA_MONGE_TIPO              li on li.id = bc.vazao_min_tipo
-					inner join LOV_CRT_BDLA_VERTEDOURO_TIPO         la on la.id = bc.vazao_max_tipo 
+					inner join tab_requerimento                     rq on rq.id = tt.requerimento
+					left join tab_requerimento_barragem            rb on rb.requerimento = rq.id
+					left join crt_barragem_dispensa_lic            bd on bd.id = rb.barragem
+					left join lov_crt_bdla_fase                    lf on lf.id = bd.fase
+					left join lov_crt_bdla_barragem_tipo           lt on lt.id = bd.tipo_barragem
+					left join crt_barragem_construida_con          bc on bd.id = bc.barragem
+					left join LOV_CRT_BDLA_MONGE_TIPO              li on li.id = bc.vazao_min_tipo
+					left join LOV_CRT_BDLA_VERTEDOURO_TIPO         la on la.id = bc.vazao_max_tipo 
     
-				where 1 = 1  " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
+				where 1 = 1 and tm.id = 72  " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 				#endregion
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))

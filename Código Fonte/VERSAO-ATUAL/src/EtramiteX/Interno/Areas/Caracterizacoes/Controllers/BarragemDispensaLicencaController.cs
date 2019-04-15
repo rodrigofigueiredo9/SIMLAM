@@ -138,7 +138,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.BarragemDispensaLicencaCriar })]
 		public ActionResult Listar(int id, bool isVisualizar = false)
 		{
-			if (!_validar.Acessar(id) || !_caracterizacaoValidar.Basicas(id))
+			if (!_validar.Acessar(id))
 			{
 				return RedirectToAction("Index", "Caracterizacao", new { id = id, Msg = Validacao.QueryParam() });
 			}

@@ -458,6 +458,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				if (!Validacao.EhValido)
 				{
 					bancoDeDados.Rollback();
+					if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
+					{
+						ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
+
+						var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
+						projetoDigital.Situacao = 2; /*Finalizado*/
+						_proj.AlterarSituacao(projetoDigital);
+					}
 					return;
 				}
 

@@ -6,6 +6,7 @@
 		AutorizacaoExploracaoFlorestal = 5,
 		CertificadoRegistroAtividadeFlorestal = 19,
 		LaudoVistoriaQueimaControlada = 60,
-		OutrosInformacaoCorte = 61
+		OutrosInformacaoCorte = 61,
+		DeclaracaoDispensaLicencaBarragem = 54,
 	}
 }
