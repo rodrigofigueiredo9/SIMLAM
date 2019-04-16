@@ -1,4 +1,4 @@
-﻿/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
+/// <reference path="Lib/JQuery/jquery-1.4.3-vsdoc.js" />
 /// <reference path="../jquery.json-2.2.min.js" />
 /// <reference path="../masterpage.js" />
 /// <reference path="../jquery.ddl.js" />
@@ -64,7 +64,7 @@ TituloAlterarSituacao = {
 			error: Aux.error,
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.EhValido) {
-					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId);
+					MasterPage.redireciona(TituloAlterarSituacao.settings.urls.redirecionar + '?Msg=' + response.Msg + '&acaoId=' + response.AcaoId + '&modelo=' + response.modelo);
 				} else {
 					if (response.Msg && response.Msg.length > 0) {
 						Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), response.Msg);

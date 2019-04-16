@@ -10,7 +10,7 @@
 			TituloAlterarSituacao.load($('#central'), {
 				urls: {
 					salvar: '<%= Url.Action("AlterarSituacao", "TituloDeclaratorio") %>',
-					redirecionar: '<%= Url.Action("Index", "TituloDeclaratorio") %>'
+					redirecionar: '<%= Url.Action("", "TituloDeclaratorio") %>'
 			}
 		});
 	});
