@@ -286,7 +286,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				Validacao.Add(Mensagem.Titulo.ModeloNaoPossuiPdf);
 				return null;
 			}
-			var esquemaArquivo = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.DeclaracaoDispensaLicencaBarragem ? eExecutorTipo.Credenciado : eExecutorTipo.Interno;
 
 			if (titulo.ArquivoPdf.Id > 0)
 			{
