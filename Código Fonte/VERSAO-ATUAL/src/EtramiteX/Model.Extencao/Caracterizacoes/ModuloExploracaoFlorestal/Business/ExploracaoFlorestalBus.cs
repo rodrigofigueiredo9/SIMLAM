@@ -140,16 +140,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					throw new Exception("Projeto Geográfico não encontrado");
 
 				var projeto = _projetoGeoBus.ObterProjeto(idProjetoGeo);
-				if (projeto.SituacaoId != (int)eProjetoGeograficoSituacao.Finalizado)
-				{
-					projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
-					_projetoGeoBus.SalvarSobreposicoes(projeto);
-					_projetoGeoBus.Finalizar(projeto, banco);
-					if (Validacao.EhValido)
-						_projetoGeoBus.ExcluirRascunho(projeto, banco);
-				}
+				_projetoGeoBus.FinalizarGeometrias(projeto, titulo, banco);
 
-				if(!Validacao.EhValido) return;
+				if (!Validacao.EhValido) return;
 
 				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
@@ -170,6 +163,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 					}
 
 					_da.FinalizarExploracao(empreendimento, bancoDeDados);
+
+					if (!this.ExisteExploracaoEmAndamento(empreendimento, bancoDeDados))
+					{
+						if (projeto.SituacaoId != (int)eProjetoGeograficoSituacao.Finalizado)
+						{
+							projeto.Sobreposicoes = _projetoGeoBus.ObterGeoSobreposiacao(idProjetoGeo, eCaracterizacao.ExploracaoFlorestal);
+							_projetoGeoBus.SalvarSobreposicoes(projeto);
+							_projetoGeoBus.Finalizar(projeto, bancoDeDados);
+							if (Validacao.EhValido)
+								_projetoGeoBus.ExcluirRascunho(projeto, bancoDeDados);
+						}
+					}
 
 					if (Validacao.EhValido)
 						Validacao.Erros.Clear();
