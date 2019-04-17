@@ -583,6 +583,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		public void FinalizarGeometrias(ProjetoGeografico projeto, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Finalizar(projeto))
+				{
+					_da.FinalizarGeometrias(projeto.Id, titulo, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.FinalizadoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
 		public void CopiarDadosCredenciado(Dependencia dependencia, int empreendimentoInternoID, BancoDeDados banco, BancoDeDados bancoCredenciado)
 		{
 			if (banco == null) return;

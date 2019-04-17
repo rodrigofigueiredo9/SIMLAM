@@ -398,6 +398,72 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		internal void FinalizarGeometrias(int id, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Atualizar o projeto geográfico
+
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				begin
+					insert into {1}GEO_PATIV (id, projeto, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry, data, tid)
+					(select a.id, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry, sysdate, tid_code
+						from {1}TMP_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal))));
+
+					insert into {1}GEO_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry, data, tid)
+					(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry, sysdate, tid_code
+					from {1}TMP_AATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_aativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal))));
+
+					delete from {1}TMP_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					delete from {1}TMP_AATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_aativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+				end; ", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
 		internal void Refazer(int id, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
