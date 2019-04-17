@@ -139,6 +139,7 @@
     <Compile Include="Areas\Especificidades\EspecificidadesAreaRegistration.cs" />
     <Compile Include="Areas\Especificidades\ViewModels\Certidao\CertidaoDispensaLicenciamentoAmbientalVM.cs" />
     <Compile Include="Areas\Especificidades\ViewModels\Especificidade\EspecificidadeVME.cs" />
+    <Compile Include="Areas\Especificidades\ViewModels\Outros\OutrosInformacaoCorteVM.cs" />
     <Compile Include="Areas\GeoProcessamento\Controllers\MapaController.cs" />
     <Compile Include="Areas\GeoProcessamento\GeoProcessamentoAreaRegistration.cs" />
     <Compile Include="Areas\GeoProcessamento\ViewModels\VMMapa\CoordenadaVM.cs" />
