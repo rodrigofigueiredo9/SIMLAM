@@ -278,17 +278,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)), 
 								  i.area_imovel
 								) area_croqui,
+							COALESCE(
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento = :empreendimento and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento IN (
+										SELECT EC.ID FROM IDAFCREDENCIADO.TAB_EMPREENDIMENTO EC
+											INNER JOIN TAB_CREDENCIADO EI ON EI.CODIGO = EC.CODIGO
+											WHERE EI.ID = :empreendimento) 
+									and cs.solicitacao_car_esquema = 2 and codigo_imovel is not null),
+								'') codigo_imovel,
 							'IC / ' || i.id || ' - ' || i.data_informacao carac
 						from crt_informacao_corte i 
 						inner join esp_out_informacao_corte o on o.crt_informacao_corte =  nvl(nullif(i.credenciadoid, null), i.id)
 						where o.titulo = :titulo ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
+						outros.Empreendimento.CodigoImovel = reader.GetValue<string>("codigo_imovel");
 						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_flor_plantada");
 						outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui");
 						outros.InformacaoCorte.Caracterizacao = reader.GetValue<string>("carac");
