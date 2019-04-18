@@ -789,7 +789,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
 					FROM {0}CRT_INFORMACAO_CORTE CRT 
 					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.crt_informacao_corte
-				WHERE INF.TITULO = :titulo", EsquemaBanco);
+				WHERE INF.TITULO = :titulo AND CRT.CODIGO IS NOT NULL", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 

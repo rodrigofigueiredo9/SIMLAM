@@ -220,10 +220,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				{
 					if (reader.Read())
 					{
-						outros.Interessado.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
-						outros.Interessado.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
-						outros.Interessado.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
-						outros.Interessado.RGIE = reader.GetValue<string>("rg");
+						outros.Autor.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
+						outros.Autor.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
+						outros.Autor.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
+						outros.Autor.RGIE = reader.GetValue<string>("rg");
 						empreendimentoId = reader.GetValue<int>("empreendimento");
 
 						//_daEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), outros.Empreendimento.Id, bancoDeDados);
