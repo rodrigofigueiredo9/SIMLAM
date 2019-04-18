@@ -284,7 +284,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 								(select cs.codigo_imovel from tab_controle_sicar cs
 									where cs.empreendimento IN (
 										SELECT EC.ID FROM IDAFCREDENCIADO.TAB_EMPREENDIMENTO EC
-											INNER JOIN TAB_CREDENCIADO EI ON EI.CODIGO = EC.CODIGO
+											INNER JOIN TAB_EMPREENDIMENTO EI ON EI.CODIGO = EC.CODIGO
 											WHERE EI.ID = :empreendimento) 
 									and cs.solicitacao_car_esquema = 2 and codigo_imovel is not null),
 								'') codigo_imovel,
