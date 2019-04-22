@@ -126,7 +126,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			return end;
 		}
 
-		public DadosPDF ObterDadosTitulo(int titulo, BancoDeDados banco = null)
+		public DadosPDF ObterDadosTitulo(int titulo, BancoDeDados banco = null, int empreendimento = 0)
 		{
 			DadosPDF dados = new DadosPDF();
 			string campo = string.Empty;
@@ -158,19 +158,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 					if (reader.Read())
 					{
 						if (reader["setor"] != null && !Convert.IsDBNull(reader["setor"]))
-						{
 							dados.Titulo.SetorId = Convert.ToInt32(reader["setor"]);
-						}
 
-						if (reader["empreendimento_id"] != null && !Convert.IsDBNull(reader["empreendimento_id"]))
-						{
+						if (empreendimento > 0)
+							dados.Empreendimento.Id = empreendimento;
+						else if (reader["empreendimento_id"] != null && !Convert.IsDBNull(reader["empreendimento_id"]))
 							dados.Empreendimento.Id = Convert.ToInt32(reader["empreendimento_id"]);
-						}
 
 						if (reader["protocolo_id"] != null && !Convert.IsDBNull(reader["protocolo_id"]))
-						{
 							dados.Protocolo.Id = Convert.ToInt32(reader["protocolo_id"]);
-						}
 
 						dados.Protocolo.Tipo = reader["protocolo_tipo"].ToString();
 
@@ -186,9 +182,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 						dados.Titulo.AutorNome = reader["autor_nome"].ToString();
 
 						if (reader["modelo_hierarquia"] != null && !Convert.IsDBNull(reader["modelo_hierarquia"]))
-						{
 							dados.Titulo.ModeloHierarquia = reader["modelo_hierarquia"].ToString();
-						}
 
 						dados.Titulo.Prazo = reader["prazo"].ToString();
 						dados.Titulo.PrazoTipo = reader["prazo_unidade"].ToString();

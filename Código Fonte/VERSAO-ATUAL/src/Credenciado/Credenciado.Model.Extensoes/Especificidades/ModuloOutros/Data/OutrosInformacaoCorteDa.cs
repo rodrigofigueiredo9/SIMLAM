@@ -201,6 +201,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#endregion
 
 				#region Interessado
+
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tt.requerimento, r.empreendimento, r.interessado, 
 					nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, 
@@ -218,10 +219,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				{
 					if (reader.Read())
 					{
-						outros.Autor.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
-						outros.Autor.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
-						outros.Autor.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
-						outros.Autor.RGIE = reader.GetValue<string>("rg");
+						outros.Destinatario.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
+						outros.Destinatario.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
+						outros.Destinatario.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
+						outros.Destinatario.RGIE = reader.GetValue<string>("rg");
 						empreendimentoId = reader.GetValue<int>("empreendimento");
 					}
 
@@ -233,45 +234,50 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#region Empreendimento
 
+
 				comando = bancoDeDados.CriarComando(@"
-					select e.codigo, lv.texto segmento, e.denominador, e.cnpj, ee.bairro, ee.distrito, lvm.texto municipio, ee.complemento,
+					select i.area_flor_plantada,
+							nvl(  (select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
+										where exists (select 1 from {0}crt_dominialidade d
+											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)), 
+								  i.area_imovel
+								) area_croqui,
+							(select sum(dd.area_croqui) from idaf.crt_dominialidade_dominio dd
+							where exists (select 1 from idaf.crt_dominialidade d
+								where d.id = dd.dominialidade and d.empreendimento = 
+								(SELECT e.INTERNO FROM TAB_EMPREENDIMENTO e WHERE e.id = i.EMPREENDIMENTO))) area_croqui_interno,
+							coalesce(
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento = :empreendimento and cs.solicitacao_car_esquema = 2 and codigo_imovel is not null),
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento in (
+										select ei.id from {0}tab_empreendimento ec
+											inner join idaf.tab_empreendimento ei on ei.codigo = ec.codigo
+											where ec.id = :empreendimento) 
+									and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
+								'') codigo_imovel,
+							'IC / ' || i.codigo || ' - ' || i.data_informacao carac
+						from {0}crt_informacao_corte i 
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred =  i.id
+						where o.titulo = :titulo ", UsuarioCredenciado, EsquemaBanco);
 
-						nvl((select cs.codigo_imovel from tab_controle_sicar cs
-								where cs.empreendimento = e.id and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
-							'') codigo_imovel,
-						(select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
-							where exists (select 1 from {0}crt_dominialidade d
-								where d.id = dd.dominialidade and d.empreendimento = e.id)) area_croqui,
-						(case ee.zona when 1 then 'Zona Urbana' when 2 then 'Zona Rural' end) zona,
-						(select max(c.area_flor_plantada) from {0}crt_informacao_corte c inner join esp_out_informacao_corte es 
-						  on c.id = es.crt_informacao_corte_cred where es.titulo = :titulo) area_plantada
-						
-					from {0}tab_empreendimento e
-					inner join {0}tab_empreendimento_endereco ee on e.id = ee.empreendimento
-					inner join lov_empreendimento_segmento lv on lv.id = e.segmento
-					inner join lov_municipio              lvm on lvm.id = ee.municipio
-
-					where ee.correspondencia = 0 and e.id = :empreendimento", UsuarioCredenciado);
-
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						outros.Empreendimento.Codigo = reader.GetValue<string>("codigo");
 						outros.Empreendimento.CodigoImovel = reader.GetValue<string>("codigo_imovel");
-						outros.Empreendimento.EndZona = reader.GetValue<string>("zona");
-						outros.Empreendimento.Segmento = reader.GetValue<string>("segmento");
-						outros.Empreendimento.Nome = reader.GetValue<string>("denominador");
-						outros.Empreendimento.CNPJ = reader.GetValue<string>("cnpj");
-						outros.Empreendimento.EndBairro = reader.GetValue<string>("bairro");
-						outros.Empreendimento.EndDistrito = reader.GetValue<string>("distrito");
-						outros.Empreendimento.EndMunicipio = reader.GetValue<string>("municipio");
-						outros.Empreendimento.EndComplemento = reader.GetValue<string>("complemento");
-						outros.Empreendimento.ATPCroquiDecimal = reader.GetValue<decimal>("area_croqui");
-						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_plantada");
+						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_flor_plantada");
+						outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui");
+						if(outros.InformacaoCorte.AreaCroqui == 0)
+							outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui_interno");
+						outros.InformacaoCorte.Caracterizacao = reader.GetValue<string>("carac");
 					}
+
+					reader.Close();
+
 				}
 
 				#endregion
@@ -300,8 +306,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				{
 					comando = bancoDeDados.CriarComando(@"
 					select c.tipo_licenca || ' - ' || c.data_vencimento licenca
-						from {0}crt_inf_corte_licenca c 
-						inner join esp_out_informacao_corte o on o.crt_informacao_corte = c.corte_id
+						from {0}crt_inf_corte_licenca c
+						inner join {0}crt_informacao_corte ic on c.corte_id = ic.id
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred = ic.id
 						where o.titulo = :titulo and rownum <= 1
 					order by c.data_vencimento desc
 						", UsuarioCredenciado);
