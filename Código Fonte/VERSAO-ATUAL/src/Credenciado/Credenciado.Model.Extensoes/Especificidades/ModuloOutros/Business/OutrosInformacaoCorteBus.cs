@@ -16,6 +16,7 @@ using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecif
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloOutros.Data;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOutros;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloOutros.Business
 {
@@ -23,6 +24,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 	{
 		OutrosInformacaoCorteDa _da = new OutrosInformacaoCorteDa();
 		GerenciadorConfiguracao _config = new GerenciadorConfiguracao(new ConfiguracaoSistema());
+
+		public static EtramitePrincipal Usuario
+		{
+			get { return (System.Web.HttpContext.Current.User as EtramitePrincipal); }
+		}
 
 		public eEspecificidadeTipo Tipo
 		{
@@ -95,7 +101,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			try
 			{
-				Outros Outros = _da.ObterDadosPDF(especificidade.Titulo.Id, banco);
+				var user = Usuario.EtramiteIdentity.UsuarioId;
+				
+				Outros Outros = _da.ObterDadosPDF(especificidade.Titulo.Id, user, banco);
 				DataEmissaoPorExtenso(Outros.Titulo);
 
 				return Outros;
@@ -114,12 +122,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			conf.AddLoadAcao((doc, dataSource) =>
 			{
 				List<Table> itenRemover = new List<Table>();
-				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
+				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId, isCredenciado: true);
 
 				AsposeExtensoes.RemoveTables(itenRemover);
 			});
 
+			conf.ExibirAssinantes1 = true;
+			conf.ExibirAssinantes2 = true;
+
 			return conf;
+		}
+
+		public void AlterarSituacao(int? titulo)
+		{
+
 		}
 	}
 }
