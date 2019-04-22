@@ -288,7 +288,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 											WHERE EI.ID = :empreendimento) 
 									and cs.solicitacao_car_esquema = 2 and codigo_imovel is not null),
 								'') codigo_imovel,
-							'IC / ' || i.id || ' - ' || i.data_informacao carac
+							'IC / ' || i.codigo || ' - ' || i.data_informacao carac
 						from crt_informacao_corte i 
 						inner join esp_out_informacao_corte o on o.crt_informacao_corte =  i.id
 						where o.titulo = :titulo ", EsquemaBanco);
