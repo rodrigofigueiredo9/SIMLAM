@@ -187,25 +187,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 		{
 			Outros outros = new Outros();
 			InformacaoCorteBus infoCorteBus = new InformacaoCorteBus();
-			List<InformacaoCorte> infoCorte = null;
-			InformacaoCorte infoCorteInfo = null;
-			int infoCorteInfoId = 0;
 			int empreendimentoId = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				#region Dados do Titulo
-
-				DadosPDF dados = DaEsp.ObterDadosTitulo(titulo, bancoDeDados);
-
-				outros.Titulo = dados.Titulo;
-				outros.Titulo.SetorEndereco = DaEsp.ObterEndSetor(outros.Titulo.SetorId);
-				outros.Protocolo = dados.Protocolo;
-				outros.Empreendimento = dados.Empreendimento;
-
-				#endregion
-
 				#region Interessado
+
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tt.requerimento, r.empreendimento, r.interessado, 
 					nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, 
@@ -228,13 +215,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 						outros.Destinatario.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
 						outros.Destinatario.RGIE = reader.GetValue<string>("rg");
 						empreendimentoId = reader.GetValue<int>("empreendimento");
-
-						//_daEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), outros.Empreendimento.Id, bancoDeDados);
 					}
 
 					reader.Close();
 
 				}
+
+				#endregion
+
+				#region Dados do Titulo
+
+				DadosPDF dados = DaEsp.ObterDadosTitulo(titulo, bancoDeDados, empreendimentoId);
+
+				outros.Titulo = dados.Titulo;
+				outros.Titulo.SetorEndereco = DaEsp.ObterEndSetor(outros.Titulo.SetorId);
+				outros.Protocolo = dados.Protocolo;
+				outros.Empreendimento = dados.Empreendimento;
 
 				#endregion
 

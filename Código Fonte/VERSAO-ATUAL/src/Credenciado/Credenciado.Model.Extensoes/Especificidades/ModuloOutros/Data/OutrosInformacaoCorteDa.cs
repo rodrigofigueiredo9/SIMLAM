@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Tecnomapas.Blocos.Data;
+using Tecnomapas.Blocos.Entities.Autenticacao;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInformacaoCorte;
@@ -173,27 +174,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
 				especificidade = bancoDeDados.ObterEntity<OutrosInformacaoCorte>(comando);
-				
+
 				#endregion
 			}
 
 			return especificidade;
 		}
 
-		internal Outros ObterDadosPDF(int titulo, BancoDeDados banco = null)
+		internal Outros ObterDadosPDF(int titulo, int user, BancoDeDados banco = null)
 		{
 			Outros outros = new Outros();
 			InformacaoCorteBus infoCorteBus = new InformacaoCorteBus();
-			List<InformacaoCorte> infoCorte = null;
-			InformacaoCorte infoCorteInfo = null;
-			int infoCorteInfoId = 0;
 			int empreendimentoId = 0;
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
 				#region Dados do Titulo
 
-				DadosPDF dados = DaEsp.ObterDadosTitulo(151048, bancoDeDados);
+				DadosPDF dados = DaEsp.ObterDadosTitulo(titulo);
 
 				outros.Titulo = dados.Titulo;
 				outros.Titulo.SetorEndereco = DaEsp.ObterEndSetor(outros.Titulo.SetorId);
@@ -203,6 +201,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#endregion
 
 				#region Interessado
+
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tt.requerimento, r.empreendimento, r.interessado, 
 					nvl(p.nome, p.razao_social) nome_razao, nvl(p.cpf, p.cnpj) cpf_cnpj, 
@@ -214,19 +213,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					  inner join lov_empreendimento_tipo_resp   lv  on er.tipo = lv.id
 					where tt.id = :id", UsuarioCredenciado);
 
-				comando.AdicionarParametroEntrada("id", 151048, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						outros.Autor.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
-						outros.Autor.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
-						outros.Autor.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
-						outros.Autor.RGIE = reader.GetValue<string>("rg");
+						outros.Destinatario.NomeRazaoSocial = reader.GetValue<string>("nome_razao");
+						outros.Destinatario.CPFCNPJ = reader.GetValue<string>("cpf_cnpj");
+						outros.Destinatario.VinculoTipoTexto = reader.GetValue<string>("vinculoPropriedade");
+						outros.Destinatario.RGIE = reader.GetValue<string>("rg");
 						empreendimentoId = reader.GetValue<int>("empreendimento");
-
-						//_daEsp.ObterDadosPessoa(reader.GetValue<int>("destinatario"), outros.Empreendimento.Id, bancoDeDados);
 					}
 
 					reader.Close();
@@ -239,47 +236,92 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 
 				comando = bancoDeDados.CriarComando(@"
-					select e.codigo, lv.texto segmento, e.denominador, e.cnpj, ee.bairro, ee.distrito, lvm.texto municipio, ee.complemento,
+					select i.area_flor_plantada,
+							nvl(  (select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
+										where exists (select 1 from {0}crt_dominialidade d
+											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)), 
+								  i.area_imovel
+								) area_croqui,
+							(select sum(dd.area_croqui) from idaf.crt_dominialidade_dominio dd
+							where exists (select 1 from idaf.crt_dominialidade d
+								where d.id = dd.dominialidade and d.empreendimento = 
+								(SELECT e.INTERNO FROM TAB_EMPREENDIMENTO e WHERE e.id = i.EMPREENDIMENTO))) area_croqui_interno,
+							coalesce(
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento = :empreendimento and cs.solicitacao_car_esquema = 2 and codigo_imovel is not null),
+								(select cs.codigo_imovel from tab_controle_sicar cs
+									where cs.empreendimento in (
+										select ei.id from {0}tab_empreendimento ec
+											inner join idaf.tab_empreendimento ei on ei.codigo = ec.codigo
+											where ec.id = :empreendimento) 
+									and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
+								'') codigo_imovel,
+							'IC / ' || i.codigo || ' - ' || i.data_informacao carac
+						from {0}crt_informacao_corte i 
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred =  i.id
+						where o.titulo = :titulo ", UsuarioCredenciado, EsquemaBanco);
 
-						nvl((select cs.codigo_imovel from tab_controle_sicar cs
-								where cs.empreendimento = e.id and cs.solicitacao_car_esquema = 1 and codigo_imovel is not null),
-							'') codigo_imovel,
-						(select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
-							where exists (select 1 from {0}crt_dominialidade d
-								where d.id = dd.dominialidade and d.empreendimento = e.id)) area_croqui,
-						(case ee.zona when 1 then 'Zona Urbana' when 2 then 'Zona Rural' end) zona,
-						(select max(c.area_flor_plantada) from {0}crt_informacao_corte c inner join esp_out_informacao_corte es 
-						  on c.id = es.crt_informacao_corte_cred where es.titulo = :titulo) area_plantada
-						
-					from {0}tab_empreendimento e
-					inner join {0}tab_empreendimento_endereco ee on e.id = ee.empreendimento
-					inner join lov_empreendimento_segmento lv on lv.id = e.segmento
-					inner join lov_municipio              lvm on lvm.id = ee.municipio
-
-					where ee.correspondencia = 0 and e.id = :empreendimento", UsuarioCredenciado);
-
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
 					{
-						outros.Empreendimento.Codigo = reader.GetValue<string>("codigo");
 						outros.Empreendimento.CodigoImovel = reader.GetValue<string>("codigo_imovel");
-						outros.Empreendimento.EndZona = reader.GetValue<string>("zona");
-						outros.Empreendimento.Segmento = reader.GetValue<string>("segmento");
-						outros.Empreendimento.Nome = reader.GetValue<string>("denominador");
-						outros.Empreendimento.CNPJ = reader.GetValue<string>("cnpj");
-						outros.Empreendimento.EndBairro = reader.GetValue<string>("bairro");
-						outros.Empreendimento.EndDistrito = reader.GetValue<string>("distrito");
-						outros.Empreendimento.EndMunicipio = reader.GetValue<string>("municipio");
-						outros.Empreendimento.EndComplemento = reader.GetValue<string>("complemento");
-						outros.Empreendimento.ATPCroquiDecimal = reader.GetValue<decimal>("area_croqui");
-						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_plantada");
+						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_flor_plantada");
+						outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui");
+						if(outros.InformacaoCorte.AreaCroqui == 0)
+							outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui_interno");
+						outros.InformacaoCorte.Caracterizacao = reader.GetValue<string>("carac");
 					}
 
 					reader.Close();
 
+				}
+
+				#endregion
+
+				#region Licença
+
+				comando = bancoDeDados.CriarComando(@"
+					select tm.sigla || '-' || t.data_vencimento licenca
+						from tab_titulo t 
+							inner join tab_titulo_modelo tm on tm.id = t.modelo
+					where t.modelo in (23, 24) and t.id = :titulo and rownum <= 1
+					order by t.data_vencimento desc 
+						", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+						outros.InformacaoCorte.LicençaAmbiental = reader.GetValue<string>("licenca");
+
+					reader.Close();
+				}
+
+				if (String.IsNullOrWhiteSpace(outros.InformacaoCorte.LicençaAmbiental))
+				{
+					comando = bancoDeDados.CriarComando(@"
+					select c.tipo_licenca || ' - ' || c.data_vencimento licenca
+						from {0}crt_inf_corte_licenca c
+						inner join {0}crt_informacao_corte ic on c.corte_id = ic.id
+						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred = ic.id
+						where o.titulo = :titulo and rownum <= 1
+					order by c.data_vencimento desc
+						", UsuarioCredenciado);
+
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+							outros.InformacaoCorte.LicençaAmbiental = reader.GetValue<string>("licenca");
+
+						reader.Close();
+					}
 				}
 
 				#endregion
@@ -294,7 +336,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 							inner join {0}crt_inf_corte_tipo             ict on ic.id = ict.corte_id
 							inner join {0}crt_inf_corte_dest_material    icd on ict.id = icd.tipo_corte_id
 							inner join lov_crt_inf_corte_inf_dest_mat lvd on lvd.id = icd.dest_material
-							inner join lov_crt_produto                lvp on lvp.id = icd.produto
+							inner join idaf.lov_crt_produto                lvp on lvp.id = icd.produto
 						where oic.titulo = :titulo", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
@@ -319,24 +361,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				}
 
-				//infoCorte = infoCorteBus.ObterPorEmpreendimento(outros.Empreendimento.Id.GetValueOrDefault(), banco: bancoDeDados);
-
-				//if (infoCorte != null)
-				//{
-				//	infoCorteInfo = infoCorte.SingleOrDefault(x => x.Id == infoCorteInfoId);
-
-				//	if (infoCorteInfo != null)
-				//	{
-				//		outros.InformacaoCorteInfo = new InformacaoCorteInfoPDF(infoCorteInfo);
-				//	}
-				//}
-
 				#endregion
 			}
 
 			return outros;
 		}
-
 
 		#endregion
 	}
