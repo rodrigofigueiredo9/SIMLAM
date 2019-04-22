@@ -784,10 +784,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				SELECT NullIF(Crt.CredenciadoId, CRT.id) Id, LPAD(CRT.CODIGO, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
-					FROM {0}CRT_INFORMACAO_CORTE CRT 
-					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON NVL(NullIF(Crt.CredenciadoId, NULL), CRT.id) = INF.crt_informacao_corte
-				WHERE INF.TITULO = :titulo AND CRT.CODIGO IS NOT NULL", EsquemaBanco);
+				select crt.id, lpad(crt.codigo, 4, '0') || ' - ' || data_informacao informacaoCorte
+					from {0}crt_informacao_corte crt 
+					inner join esp_out_informacao_corte inf on crt.id = inf.crt_informacao_corte
+				where inf.titulo = :titulo and crt.codigo is not null", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
@@ -1190,7 +1190,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.empreendimento = :empreendimento
-					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte =  nvl(nullif(t.credenciadoid, null), t.id)
+					and not exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte =  t.id
 					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
 					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
@@ -1204,7 +1204,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select count(t.id) from {0}crt_informacao_corte t where t.id = :id
-					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = nvl(nullif(t.credenciadoid, null), t.id)
+					and exists(select 1 from {0}esp_out_informacao_corte e where e.crt_informacao_corte = t.id
 					and not exists(select 1 from {0}tab_titulo t where t.id = e.titulo
 					and t.situacao = " + (int)eTituloSituacao.Encerrado + "))", EsquemaBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
