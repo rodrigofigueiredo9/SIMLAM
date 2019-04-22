@@ -232,6 +232,36 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				#endregion
 
+				#region Assinantes
+				outros.Titulo.Assinantes1 = new List<IAssinante>();
+				outros.Titulo.Assinantes2 = new List<IAssinante>();
+
+				comando = bancoDeDados.CriarComando(@"
+					select  p.nome autor
+					from tab_titulo						t
+					inner join tab_credenciado			c  on c.id = t.autor
+					inner join tab_pessoa				p  on p.id = c.pessoa
+					where t.id = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						outros.Titulo.Assinantes2.Add(new AssinanteDefault
+						{
+							Cargo = "Credenciado",
+							Nome = reader.GetValue<string>("autor")
+						});
+					}
+				}
+
+				outros.Titulo.Assinantes1.Add(new AssinanteDefault { Cargo = "Proprietário", Nome = outros.Destinatario.NomeRazaoSocial });
+
+				outros.Autor.NomeRazaoSocial = outros.Titulo.Assinantes2[0].Nome;
+				#endregion
+
 				#region Empreendimento
 
 

@@ -239,12 +239,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				outros.Titulo.Assinantes2 = new List<IAssinante>();
 
 				comando = bancoDeDados.CriarComando(@"
-					SELECT  f.NOME autor, c.NOME cargo
-					FROM TAB_TITULO						t
-					INNER JOIN TAB_FUNCIONARIO			f  ON f.id = t.autor
-					INNER JOIN TAB_FUNCIONARIO_CARGO	fc ON t.AUTOR = fc.FUNCIONARIO
-					INNER JOIN TAB_CARGO				c  ON c.ID = fc.CARGO
-					WHERE t.id = :titulo", EsquemaBanco);
+					select  f.nome autor, c.nome cargo
+					from tab_titulo						t
+					inner join tab_funcionario			f  on f.id = t.autor
+					inner join tab_funcionario_cargo	fc on t.autor = fc.funcionario
+					inner join tab_cargo				c  on c.id = fc.cargo
+					inner join esp_out_informacao_corte i on i.titulo = t.id and i.crt_informacao_corte_cred is null
+					where t.id = :titulo
+					union all
+					select p.nome autor, 'Credenciado' cargo
+					from tab_titulo t
+					inner join tab_credenciado c  on c.id = t.autor
+					inner join idafcredenciado.tab_pessoa p on p.id = c.pessoa
+					where t.id =:titulo", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo);
 

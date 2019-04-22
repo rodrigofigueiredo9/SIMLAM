@@ -122,12 +122,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			conf.AddLoadAcao((doc, dataSource) =>
 			{
 				List<Table> itenRemover = new List<Table>();
-				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
+				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId, isCredenciado: true);
 
 				AsposeExtensoes.RemoveTables(itenRemover);
 			});
 
-			conf.ExibirAssinante = true;
+			conf.ExibirAssinantes1 = true;
+			conf.ExibirAssinantes2 = true;
 
 			return conf;
 		}
