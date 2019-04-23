@@ -332,7 +332,8 @@ BarragemDispensaLicenca = {
 				isSupressaoAPP: $('.rbSupressaoAPP:checked').val(), 
 				isDemarcacaoAPP: $('.rbDemarcaoAPP:checked').val(),
 				larguraDemarcada: $('.txtLarguraDemarcada').val(),
-				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true : false,
+				larguraDemarcadaLegislacao: $('.rbLarguraDemarcadaLegislacao:checked').val() == 1 ? true :
+					($('.rbLarguraDemarcadaLegislacao:checked').val() == 0 ? false : null),
 				faixaCercada: $('.rbFaixaCercada:checked').val(),
 				descricaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
 				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
