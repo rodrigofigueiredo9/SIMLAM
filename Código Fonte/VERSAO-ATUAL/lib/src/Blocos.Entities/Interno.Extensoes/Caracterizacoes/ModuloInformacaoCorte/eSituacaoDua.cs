@@ -13,6 +13,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloDUA
 		[Description("Dua Cancelado")]
 		Cancelado,
 		[Description("Reemitido")]
-		Reemitido
+		Reemitido,
+		[Description("Indefinido")]
+		Indefinido = 99
 	}
 }

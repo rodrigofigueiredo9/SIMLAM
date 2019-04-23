@@ -57,7 +57,7 @@ Dua = {
 		var numeroDua = item.Numero;
 		var cpfcnpj = item.CpfCnpj;
 
-		var urlGerar = Dua.urlGerarPDF + "SefazDua/ObterPdfDua/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj;
+		var urlGerar = Dua.urlGerarPDF + "/SefazDua/ObterPdfDua/" + numeroDua + "/DocumentoPessoa/" + cpfcnpj;
 		Aux.downloadAjax("downloadPdfDua", urlGerar, null, 'get');
 	},
 
