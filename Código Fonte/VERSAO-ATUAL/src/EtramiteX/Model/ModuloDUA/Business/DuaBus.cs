@@ -95,7 +95,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 				var token = ConfigurationManager.AppSettings["token"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
-				HttpResponseMessage response = _client.GetAsync($"{apiUri}SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;
+				HttpResponseMessage response = _client.GetAsync($"{apiUri}/SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;
 				response.EnsureSuccessStatusCode();
 
 				string responseBody = response.Content.ReadAsStringAsync().Result;
