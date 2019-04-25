@@ -47,7 +47,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			if (caracterizacao.AreaFlorestaPlantada == 0)
 				Validacao.Add(Mensagem.InformacaoCorte.AreaPlantadaObrigatoria);
 
-			if (caracterizacao.AreaFlorestaPlantada > 100)
+			if (caracterizacao.AreaFlorestaPlantada >= 100)
 			{
 				if (caracterizacao.InformacaoCorteLicenca.Count < 1)
 					Validacao.Add(Mensagem.InformacaoCorte.LicencaObrigatoria);

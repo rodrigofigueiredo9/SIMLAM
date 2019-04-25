@@ -321,10 +321,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 					comando = bancoDeDados.CriarComandoPlSql(
 					@"begin
-						delete from {0}crt_informacao_corte c where c.id = :id;
 						delete from {0}crt_inf_corte_licenca c where c.corte_id = :id;
-						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
 						delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id in (select t.id from {0}crt_inf_corte_tipo t where t.corte_id = :id);
+						delete from {0}crt_inf_corte_tipo c where c.corte_id = :id;
+						delete from {0}crt_informacao_corte c where c.id = :id;
 					end;", EsquemaCredenciadoBanco);
 
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -1091,7 +1091,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					IF ( sql%rowcount = 0 )
 						THEN
 						INSERT INTO idaf.crt_inf_corte_codigo (id, codigo, empreendimento)
-							VALUES (seq_inf_corte_codigo.nextval, 1, (select e.interno from {1}tab_empreendimento e where e.id = :empreendimento and rownum = 1))
+							VALUES (idaf.seq_inf_corte_codigo.nextval, 1, (select e.interno from {1}tab_empreendimento e where e.id = :empreendimento and rownum = 1))
 							returning codigo into :codigo;					
 					END IF;
 				END;", EsquemaBanco, EsquemaCredenciadoBanco);
