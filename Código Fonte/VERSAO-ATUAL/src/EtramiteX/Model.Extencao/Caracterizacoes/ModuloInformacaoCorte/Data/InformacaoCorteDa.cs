@@ -248,11 +248,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 
 						item.Id = comando.ObterValorParametro<int>("tipo_id");
 
-						comando = bancoDeDados.CriarComando(@"delete from {0}crt_inf_corte_dest_material c where c.tipo_corte_id = :tipo_corte_id ", EsquemaBanco);
-						comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, item.InformacaoCorteDestinacao.Where(x => x.Id > 0).Select(y => y.Id).ToList());
-						comando.AdicionarParametroEntrada("tipo_corte_id", item.Id, DbType.Int32);
-						bancoDeDados.ExecutarNonQuery(comando);
-
 						foreach (var destinacao in item.InformacaoCorteDestinacao)
 						{
 							comando = bancoDeDados.CriarComando(@"
@@ -435,7 +430,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 				#region Informação de Corte
 
 				Comando comando = bancoDeDados.CriarComando(@"
-				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel
+				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel, c.credenciadoid
 				from {0}crt_informacao_corte c where c.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -737,7 +732,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 							Tid = reader.GetValue<string>("tid"),
 							Antigo = string.IsNullOrWhiteSpace(reader.GetValue<string>("data_informacao"))
 						});
-						
+
 					}
 
 					reader.Close();
@@ -789,10 +784,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				SELECT CRT.ID, LPAD(CRT.ID, 4, '0') || ' - ' || DATA_INFORMACAO informacaoCorte
-					FROM {0}CRT_INFORMACAO_CORTE CRT 
-					INNER JOIN ESP_OUT_INFORMACAO_CORTE INF ON CRT.id = INF.crt_informacao_corte
-				WHERE INF.TITULO = :titulo AND CRT.CODIGO IS NOT NULL", EsquemaBanco);
+				select crt.id, lpad(crt.codigo, 4, '0') || ' - ' || data_informacao informacaoCorte
+					from {0}crt_informacao_corte crt 
+					inner join esp_out_informacao_corte inf on crt.id = inf.crt_informacao_corte
+				where inf.titulo = :titulo and crt.codigo is not null", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 

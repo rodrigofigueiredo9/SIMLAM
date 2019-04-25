@@ -75,7 +75,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				var codigo = this.ObterProximoCodigo(caracterizacao.Empreendimento.Id, bancoDeDados);
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_informacao_corte
-				(id, tid, empreendimento, data_informacao, area_flor_plantada, area_imovel, interno_id, interno_tid) values
+				(id, tid, empreendimento, data_informacao, area_flor_plantada, area_imovel, interno_id, interno_tid, codigo) values
 				(seq_informacao_corte.nextval, :tid, :empreendimento_id, :data_informacao, :area_flor_plantada, :area_imovel, :interno_id, :interno_tid, :codigo)
 				returning id into :id", EsquemaCredenciadoBanco);
 
@@ -641,7 +641,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				return retorno;
 			}
 		}
-		
+
 		internal List<Lista> ObterListaInfCorteTitulo(int titulo)
 		{
 			List<Lista> retorno = new List<Lista>();
@@ -1023,7 +1023,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.DbCommand.CommandText += String.Format(@" and exists (select 1 from tab_titulo_modelo m where m.id = t.modelo {0})",
 					comando.AdicionarIn("and", "m.codigo", DbType.Int32,
-					new List<int>(){ (int)eEspecificidade.LicencaAmbientalRegularizacao, (int)eEspecificidade.LicencaOperacao }));
+					new List<int>() { (int)eEspecificidade.LicencaAmbientalRegularizacao, (int)eEspecificidade.LicencaOperacao }));
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.DbCommand.CommandText += comando.AdicionarIn("and", "t.situacao", DbType.Int32, new List<int>() { (int)eTituloSituacao.Valido, (int)eTituloSituacao.Concluido });
 
