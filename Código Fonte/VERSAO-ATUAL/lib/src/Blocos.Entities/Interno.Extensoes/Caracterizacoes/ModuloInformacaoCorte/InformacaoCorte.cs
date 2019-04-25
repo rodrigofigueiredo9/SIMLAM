@@ -16,6 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public DateTecno DataInformacao { get { return _dataInformacao; } set { _dataInformacao = value; } }
 
 		public Decimal AreaFlorestaPlantada { get; set; }
+		public Decimal AreaImovel { get; set; }
 
 		private List<InformacaoCorteLicenca> _informacaoCorteLicenca = new List<InformacaoCorteLicenca>();
 		public List<InformacaoCorteLicenca> InformacaoCorteLicenca

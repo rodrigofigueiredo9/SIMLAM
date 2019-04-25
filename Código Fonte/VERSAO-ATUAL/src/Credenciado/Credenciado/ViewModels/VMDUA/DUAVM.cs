@@ -26,11 +26,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.ViewModels.VMDUA
 			{
 				@codigo = dua.Codigo,
 				@valor = dua.Valor,
-				@numeroDua = dua.Numero,
+				@Numero = dua.Numero,
 				@situacao = dua.Situacao,
 				@situacaoTexto = dua.SituacaoTexto,
 				@validade = dua.Validade,
-				@cpfCnpj = dua.CpfCnpj
+				@CpfCnpj = dua.CpfCnpj
 			};
 
 			return HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(objeto));

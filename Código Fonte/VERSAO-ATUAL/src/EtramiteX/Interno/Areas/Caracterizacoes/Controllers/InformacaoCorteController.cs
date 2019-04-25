@@ -173,6 +173,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			var resultados = _informacaoCorteBus.FiltrarPorEmpreendimento(id);
 			var empreendimento = _bus.ObterEmpreendimentoSimplificado(id);
 			var last = resultados?.LastOrDefault();
+			if (empreendimento.AreaImovelHA <= 0)
+				empreendimento.AreaImovelHA = last?.AreaImovel ?? 0;
 			var vm = new ListarVM(empreendimento)
 			{
 				Resultados = resultados,

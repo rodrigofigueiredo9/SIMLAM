@@ -415,6 +415,7 @@ InformacaoCorte = {
 			Empreendimento: { Id: $('.hdnEmpreendimentoId', container).val() },
 			DataInformacao: { DataTexto: $('.dataInformacao', container).val() },
 			AreaFlorestaPlantada: $('.areaPlantada', container).val(),
+			AreaImovel: $('.areaImovelInf', container).val(),
 			InformacaoCorteLicenca: [],
 			InformacaoCorteTipo: []
 		};

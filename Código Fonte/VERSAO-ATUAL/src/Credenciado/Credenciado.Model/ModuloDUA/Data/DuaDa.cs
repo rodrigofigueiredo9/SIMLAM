@@ -49,7 +49,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 		{
 			List<Dua> retorno = new List<Dua>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioInterno))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
 			{
 				#region Solicitação
 
@@ -57,9 +57,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 					SELECT  D.ID, LPAD(D.ID, 4, '0') || ' - ' || TO_CHAR(D.DATAHORA,'DD/MM/YYYY') codigo,
 							D.VALORTOTALDUA valor, D.SITUACAO, D.NUMERODUA numero_dua, TO_CHAR(E.DATA_VENCIMENTO,'DD/MM/YYYY') validade,
 							E.CNPJ_PESSOA
-						FROM TAB_INFCORTE_SEFAZDUA D 
-							INNER JOIN TAB_INFCORTE_EMISSAO_DUA E ON E.ID = D.EMISSAO_DUA
-						WHERE TITULO = :titulo", UsuarioInterno);
+						FROM {0}TAB_INFCORTE_SEFAZDUA D 
+							INNER JOIN {0}TAB_INFCORTE_EMISSAO_DUA E ON E.ID = D.EMISSAO_DUA
+						WHERE TITULO = :titulo", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 
@@ -74,7 +74,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 						dua.SituacaoTexto = ((eSituacaoDua)reader.GetValue<int>("situacao")).ToDescription();
 						dua.Numero = reader.GetValue<String>("numero_dua");
 						dua.Validade = new DateTecno() { Data = reader.GetValue<DateTime>("validade") };
-						dua.CpfCnpj = reader.GetValue<String>("cnpj_pessoa");
+						dua.CpfCnpj = reader.GetValue<String>("cnpj_pessoa").Replace("-", "").Replace("/", "").Replace(".", "");
 
 						retorno.Add(dua);
 					}
@@ -90,7 +90,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Data
 		
 		internal bool ExisteDuaTitulo(int titulo)
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(null, UsuarioCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 					SELECT count(1) FROM TAB_INFCORTE_SEFAZDUA WHERE TITULO = :titulo");

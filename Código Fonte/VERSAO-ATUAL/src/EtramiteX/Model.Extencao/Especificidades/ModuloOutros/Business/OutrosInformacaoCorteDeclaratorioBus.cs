@@ -123,6 +123,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 				Outros outros = dataSource as Outros;
 				conf.CabecalhoRodape = CabecalhoRodapeFactory.Criar(especificidade.Titulo.SetorId);
 			});
+			conf.ExibirAssinantes1 = true;
+			conf.ExibirAssinantes2 = true;
 
 			return conf;
 		}

@@ -37,7 +37,7 @@
 					<%if (!Model.PodeAssociar && Model.PodeVisualizar) {%><input type="button" title="Visualizar" class="icone visualizar btnVisualizar" /><% } %>
 					<%if (Model.PodeEditar) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
 					<%if (Model.PodeExcluir) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
-					<%if (Model.PodeAlterarSituacao){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
+					<%if (Model.PodeAlterarSituacao && item.Modelo.Sigla != "IC"){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
 					<%if (item.Modelo.Sigla == "IC"){%><input type="button" title="Emitir DUA" class="icone dolar btnEmitirDua" /><% } %>
 				</td>
 			</tr>

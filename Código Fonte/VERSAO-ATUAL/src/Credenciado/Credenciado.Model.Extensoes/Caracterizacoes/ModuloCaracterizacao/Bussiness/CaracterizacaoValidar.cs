@@ -154,12 +154,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				foreach (var item in dependenciasBanco)
 				{
-					caracterizacoes.Add(new CaracterizacaoLst()
+					if (caracterizacaoTipo != (int)eCaracterizacao.InformacaoCorte)
 					{
-						IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
-						IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
-						Texto = caracterizacoesLst.SingleOrDefault(x => x.Id == item.DependenciaCaracterizacao).Texto
-					});
+						caracterizacoes.Add(new CaracterizacaoLst()
+						{
+							IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
+							IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
+							Texto = caracterizacoesLst.SingleOrDefault(x => x.Id == item.DependenciaCaracterizacao).Texto
+						});
+					}
 
 					if (caracterizacoes.Count > 0)
 					{
