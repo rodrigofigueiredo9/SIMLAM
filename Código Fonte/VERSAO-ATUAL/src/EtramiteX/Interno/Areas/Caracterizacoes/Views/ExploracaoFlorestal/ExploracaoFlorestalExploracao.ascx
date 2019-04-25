@@ -7,8 +7,8 @@
 
 <script>
 	ExploracaoFlorestalExploracao.settings.mensagens = <%= Model.Mensagens %>;
-	ExploracaoFlorestalExploracao.settings.api = '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString() %>';
-	ExploracaoFlorestalExploracao.settings.token = '<%= System.Configuration.ConfigurationManager.AppSettings["token"].ToString() %>';
+	ExploracaoFlorestalExploracao.settings.api = '<%= System.Configuration.ConfigurationManager.AppSettings["apiInstitucional"].ToString() %>';
+	ExploracaoFlorestalExploracao.settings.token = '<%= System.Configuration.ConfigurationManager.AppSettings["tokenApiInstitucional"].ToString() %>';
 </script>
 
 <div class="block filtroCorpo divExploracaoFlorestalExploracao">

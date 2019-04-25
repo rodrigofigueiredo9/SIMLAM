@@ -64,8 +64,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 			{
 				HttpClient _client = new HttpClient();
 
-				var apiUri = ConfigurationManager.AppSettings["api"];
-				var token = ConfigurationManager.AppSettings["token"];
+				var apiUri = ConfigurationManager.AppSettings["apiInstitucionalLocal"];
+				var token = ConfigurationManager.AppSettings["tokenApiInstitucional"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
 				HttpResponseMessage response = _client.GetAsync($"{apiUri}/SefazDua/EmitirDuaSefaz/titulo/{titulo}").Result;
@@ -91,8 +91,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloDUA.Business
 			{
 				HttpClient _client = new HttpClient();
 
-				var apiUri = ConfigurationManager.AppSettings["api"];
-				var token = ConfigurationManager.AppSettings["token"];
+				var apiUri = ConfigurationManager.AppSettings["apiInstitucionalLocal"];
+				var token = ConfigurationManager.AppSettings["tokenApiInstitucional"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
 				HttpResponseMessage response = _client.GetAsync($"{apiUri}/SefazDua/RemitirDuaSefaz/NumeroDua/{dua}").Result;

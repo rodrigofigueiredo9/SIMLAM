@@ -64,7 +64,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			{
 				HttpClient _client = new HttpClient();
 
-				var apiUri = ConfigurationManager.AppSettings["api"];
+				var apiUri = ConfigurationManager.AppSettings["apiCredenciadoLocal"];
 				var token = ConfigurationManager.AppSettings["tokenCredenciado"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
@@ -91,7 +91,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloDUA.Business
 			{
 				HttpClient _client = new HttpClient();
 
-				var apiUri = ConfigurationManager.AppSettings["api"];
+				var apiUri = ConfigurationManager.AppSettings["apiCredenciadoLocal"];
 				var token = ConfigurationManager.AppSettings["tokenCredenciado"];
 
 				_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
