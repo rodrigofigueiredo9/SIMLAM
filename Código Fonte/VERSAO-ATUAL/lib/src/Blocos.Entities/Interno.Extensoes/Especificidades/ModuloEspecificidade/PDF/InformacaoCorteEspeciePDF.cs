@@ -13,7 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			this.Especie = informacaoCorteEspecie.EspecieInformadaTexto;
 			this.ArvoresIsoladas = informacaoCorteEspecie.AreaCorte.ToStringTrunc();
-			this.AreaCorte = informacaoCorteEspecie.AreaCorte.ToStringTrunc();
+			this.AreaCorte = string.Concat(informacaoCorteEspecie.AreaCorte.ToStringTrunc(), " ", informacaoCorteEspecie.TipoCorte == (int)eTipoCorte.CorteRaso ? "ha" : "un");
 		}
 	}
 }
