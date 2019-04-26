@@ -73,6 +73,7 @@ Caracterizacao = {
 		MasterPage.redireciona($('.hdnUrlVisualizar', $(this).closest('tr')).val() + '/' +
 			Caracterizacao.settings.empreendimentoID +
 			'?projetoDigitalId=' + Caracterizacao.settings.projetoDigitalID +
+			($('.hdnUrlVisualizar', $(this).closest('tr')).val().includes("InformacaoCorte") ? "&visualizar=true" : "") +
 			'&retornarVisualizar=' + ($('.btnFinalizarPasso', Caracterizacao.container).length <= 0));
 	},
 

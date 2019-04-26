@@ -36,7 +36,7 @@
 
 		<div class="block box">
 			<input class="floatLeft btnVoltarInformacao" type="button" value="Voltar" />
-			<input class="floatRight btnAdicionarInformacao" type="button" value="Incluir Informação de Corte" />
+			<% if (!Model.IsVisualizar) {%><input class="floatRight btnAdicionarInformacao" type="button" value="Incluir Informação de Corte" /><%} %>
 		</div>
 	</div>
 </asp:Content>
