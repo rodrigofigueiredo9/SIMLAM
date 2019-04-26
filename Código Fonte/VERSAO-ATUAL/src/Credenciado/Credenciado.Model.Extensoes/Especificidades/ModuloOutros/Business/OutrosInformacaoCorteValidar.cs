@@ -19,6 +19,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		{
 			var esp = especificidade as OutrosInformacaoCorte;
 			
+			DeclaratorioRequerimentoAtividade(esp);
+
 			if (especificidade.RequerimentoId <= 0)
 				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
 

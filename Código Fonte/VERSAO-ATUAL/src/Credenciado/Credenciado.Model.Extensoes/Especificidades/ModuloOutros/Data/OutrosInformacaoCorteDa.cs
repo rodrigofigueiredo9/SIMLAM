@@ -267,11 +267,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 
 				comando = bancoDeDados.CriarComando(@"
 					select i.area_flor_plantada,
-							nvl(  (select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
+							(select sum(dd.area_croqui) from {0}crt_dominialidade_dominio dd
 										where exists (select 1 from {0}crt_dominialidade d
-											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)), 
-								  i.area_imovel
-								) area_croqui,
+											where d.id = dd.dominialidade and d.empreendimento = i.empreendimento)) area_croqui,
+							i.area_imovel,
 							(select sum(dd.area_croqui) from idaf.crt_dominialidade_dominio dd
 							where exists (select 1 from idaf.crt_dominialidade d
 								where d.id = dd.dominialidade and d.empreendimento = 
@@ -299,11 +298,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 					if (reader.Read())
 					{
 						outros.Empreendimento.CodigoImovel = reader.GetValue<string>("codigo_imovel");
-						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_flor_plantada");
-						outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui");
-						if(outros.InformacaoCorte.AreaCroqui == 0)
-							outros.InformacaoCorte.AreaCroqui = reader.GetValue<decimal>("area_croqui_interno");
+						outros.InformacaoCorte.AreaPlantada = reader.GetValue<decimal>("area_flor_plantada").ToStringTrunc();
 						outros.InformacaoCorte.Caracterizacao = reader.GetValue<string>("carac");
+						var areaCroqui = reader.GetValue<decimal>("area_croqui").Convert(eMetrica.M2ToHa);
+						if(areaCroqui == 0)
+							areaCroqui = reader.GetValue<decimal>("area_croqui_interno").Convert(eMetrica.M2ToHa);
+						if (areaCroqui == 0)
+							areaCroqui = reader.GetValue<decimal>("area_imovel");
+						outros.InformacaoCorte.AreaCroqui = areaCroqui.ToStringTrunc();
 					}
 
 					reader.Close();
@@ -315,7 +317,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#region Licença
 
 				comando = bancoDeDados.CriarComando(@"
-					select tm.sigla || '-' || t.data_vencimento licenca
+					select tm.sigla || ' - ' || to_char(t.data_vencimento, 'dd/MM/yyyy') licenca
 						from tab_titulo t 
 							inner join tab_titulo_modelo tm on tm.id = t.modelo
 					where t.modelo in (23, 24) and t.id = :titulo and rownum <= 1
@@ -335,7 +337,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				if (String.IsNullOrWhiteSpace(outros.InformacaoCorte.LicençaAmbiental))
 				{
 					comando = bancoDeDados.CriarComando(@"
-					select c.tipo_licenca || ' - ' || c.data_vencimento licenca
+					select c.tipo_licenca || ' - ' || to_char(c.data_vencimento, 'dd/MM/yyyy') licenca
 						from {0}crt_inf_corte_licenca c
 						inner join {0}crt_informacao_corte ic on c.corte_id = ic.id
 						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred = ic.id
