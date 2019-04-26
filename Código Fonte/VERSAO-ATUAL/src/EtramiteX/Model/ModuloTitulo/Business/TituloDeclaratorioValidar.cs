@@ -365,7 +365,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public bool AssociarRequerimento(Requerimento requerimento, int modeloId)
 		{
-			if (requerimento.SituacaoId != (int)eRequerimentoSituacao.Finalizado)
+			if (requerimento.SituacaoId != (int)eRequerimentoSituacao.Finalizado && requerimento.SituacaoId != (int)eRequerimentoSituacao.Protocolado)
 			{
 				Validacao.Add(Mensagem.Titulo.RequerimentoSituacaoInvalida);
 			}

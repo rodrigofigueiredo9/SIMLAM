@@ -14,6 +14,7 @@ using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.ModuloInformacaoCorte.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloEspecificidade.Data;
 
 namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.ModuloOutros.Data
@@ -361,37 +362,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#region Informação de corte
 
 				comando = bancoDeDados.CriarComando(@"
-					select  oic.titulo, ict.tipo_corte, ict.especie, ict.area_corte, ict.idade_plantio, icd.dest_material,
-					lvd.texto dest_mat, lvp.texto produto, icd.quantidade
+					select  ic.id
 						from {0}crt_informacao_corte ic
 							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte_cred
-							inner join {0}crt_inf_corte_tipo             ict on ic.id = ict.corte_id
-							inner join {0}crt_inf_corte_dest_material    icd on ict.id = icd.tipo_corte_id
-							inner join lov_crt_inf_corte_inf_dest_mat lvd on lvd.id = icd.dest_material
-							inner join idaf.lov_crt_produto                lvp on lvp.id = icd.produto
-						where oic.titulo = :titulo", UsuarioCredenciado);
-
+						where oic.titulo = :titulo
+						union all
+					select  ic.id
+						from {0}crt_informacao_corte ic
+							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte
+						where oic.titulo = :titulo and credenciadoid is null", UsuarioCredenciado);
 				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				var corteId = bancoDeDados.ExecutarScalar<int>(comando);
 
-				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-				{
-					while (reader.Read())
-					{
-						InformacaoCorteInfoPDF ic = new InformacaoCorteInfoPDF();
-						ic.TipoCorte = Enum.ToObject(typeof(eTipoCorte), reader.GetValue<int>("tipo_corte")).ToDescription();
-						ic.Especie = Enum.ToObject(typeof(eEspecieInformada), reader.GetValue<int>("especie")).ToDescription();
-						ic.AreaCorte = reader.GetValue<decimal>("area_corte");
-						ic.IdadePlantio = reader.GetValue<int>("idade_plantio");
-						ic.DestMaterial = reader.GetValue<string>("dest_mat");
-						ic.Produto = reader.GetValue<string>("produto");
-						ic.Quantidade = reader.GetValue<decimal>("quantidade");
+				var corte = infoCorteBus.Obter(corteId);
 
-						outros.InformacaoCorte.InformacoesDeCorte.Add(ic);
-					}
-
-					reader.Close();
-
-				}
+				outros.InformacaoCorte.InformacaoCorteTipo = corte.InformacaoCorteTipo;
 
 				#endregion
 			}

@@ -23,6 +23,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public List<InformacaoCorteProdutoPDF> Produtos { get; set; }
 
 		public List<InformacaoCorteInfoPDF> InformacoesDeCorte { get; set; }
+		public List<InformacaoCorteTipo> InformacaoCorteTipo { get; set; }
 
 		public InformacaoCortePDF()
 		{
@@ -33,6 +34,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		{
 			this.Especies = informacao.InformacaoCorteTipo.Select(x => new InformacaoCorteEspeciePDF(x)).ToList();
 			this.Produtos = informacao.InformacaoCorteTipo.SelectMany(x => x.InformacaoCorteDestinacao).Select(x => new InformacaoCorteProdutoPDF(x)).ToList();
+			this.InformacaoCorteTipo = informacao.InformacaoCorteTipo;
 
 			this.ArvoresRestantes = Convert.ToDecimal(informacao.AreaFlorestaPlantada).ToString("N0");
 			this.AreaRestantes = Convert.ToDecimal(informacao.AreaCorteCalculada).ToString("N4");
