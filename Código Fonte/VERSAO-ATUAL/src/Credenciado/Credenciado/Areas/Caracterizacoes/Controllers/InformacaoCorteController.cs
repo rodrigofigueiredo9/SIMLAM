@@ -193,7 +193,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			{
 				Resultados = resultados,
 				IsVisualizar = visualizar,
-				IsPodeExcluir = true,
+				IsPodeExcluir = !visualizar,
 				ProjetoDigitalId = projetoDigitalId,
 				AreaPlantada = last?.AreaFlorestaPlantada ?? 0
 			};

@@ -1012,10 +1012,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-				select t.id, t.data_vencimento, t.modelo,
+				select t.id, t.data_vencimento, 
+					(select m.codigo from tab_titulo_modelo m where m.id = t.modelo and rownum = 1) modelo,
 					(select a.atividade from tab_atividade a where rownum = 1
 					and exists (select 1 from tab_titulo_atividades ta where ta.titulo = t.id and ta.atividade = a.id)) atividade,
-					concat(concat(numero, '/'), ano) numero
+					concat(concat(numero, '/'), ano) numero,
+					(select sum(area_croqui) from crt_silvicultura_silv c
+						where exists (select 1 from crt_silvicultura s
+						where s.id = c.caracterizacao and s.empreendimento = :empreendimento)) area_croqui
 				from tab_titulo t
 				left join tab_titulo_numero n
 				on (n.titulo = t.id)
@@ -1037,9 +1041,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							DataVencimento = new DateTecno() { Data = reader.GetValue<DateTime>("data_vencimento") },
 							TipoLicenca = reader.GetValue<int>("modelo") == (int)eEspecificidade.LicencaOperacao ? "LO" : "LAR",
 							Atividade = reader.GetValue<string>("atividade"),
-							NumeroLicenca = reader.GetValue<string>("numero")
+							NumeroLicenca = reader.GetValue<string>("numero"),
+							AreaLicenca = reader.GetValue<decimal>("area_croqui").Convert(eMetrica.M2ToHa)
 						});
-					}
+				}
 
 					reader.Close();
 				}

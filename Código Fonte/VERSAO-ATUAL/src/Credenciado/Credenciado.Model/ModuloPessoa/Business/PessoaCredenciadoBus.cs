@@ -187,17 +187,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 
 									if (representante.Fisica.Conjuge != null && representante.Fisica.Conjuge.IsCopiado)
 									{
-										if (!_validar.Salvar(representante.Fisica.Conjuge, true))
+										representante.Fisica.Conjuge.IsValidarConjuge = !string.IsNullOrWhiteSpace(representante.Fisica.Conjuge.CPFCNPJ);
+										if (representante.Fisica.Conjuge.IsValidarConjuge || !isAtividadeDeCorte)
 										{
-											bancoDeDados.Rollback();
-											return false;
+											if (!_validar.Salvar(representante.Fisica.Conjuge, true))
+											{
+												bancoDeDados.Rollback();
+												return false;
+											}
+
+											representante.Fisica.Conjuge.CredenciadoId = User.FuncionarioId;
+
+											_da.Salvar(representante.Fisica.Conjuge, bancoDeDados);
+
+											representante.Fisica.ConjugeId = representante.Fisica.Conjuge.Id;
 										}
-
-										representante.Fisica.Conjuge.CredenciadoId = User.FuncionarioId;
-
-										_da.Salvar(representante.Fisica.Conjuge, bancoDeDados);
-
-										representante.Fisica.ConjugeId = representante.Fisica.Conjuge.Id;
 									}
 
 									if (!_validar.Salvar(representante))
