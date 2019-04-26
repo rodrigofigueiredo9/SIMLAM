@@ -641,7 +641,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				return retorno;
 			}
 		}
-		
+
 		internal List<Lista> ObterListaInfCorteTitulo(int titulo)
 		{
 			List<Lista> retorno = new List<Lista>();
@@ -1027,7 +1027,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 				comando.DbCommand.CommandText += String.Format(@" and exists (select 1 from tab_titulo_modelo m where m.id = t.modelo {0})",
 					comando.AdicionarIn("and", "m.codigo", DbType.Int32,
-					new List<int>(){ (int)eEspecificidade.LicencaAmbientalRegularizacao, (int)eEspecificidade.LicencaOperacao }));
+					new List<int>() { (int)eEspecificidade.LicencaAmbientalRegularizacao, (int)eEspecificidade.LicencaOperacao }));
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 				comando.DbCommand.CommandText += comando.AdicionarIn("and", "t.situacao", DbType.Int32, new List<int>() { (int)eTituloSituacao.Valido, (int)eTituloSituacao.Concluido });
 

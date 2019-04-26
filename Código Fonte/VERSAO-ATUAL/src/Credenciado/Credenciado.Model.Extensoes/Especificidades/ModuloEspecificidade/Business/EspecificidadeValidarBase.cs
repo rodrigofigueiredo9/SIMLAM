@@ -49,7 +49,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			}
 			else
 			{
-				if(!_da.EmpreendimentoPossuiCaracterizacaoBarragemDis(especificidade.RequerimentoId))
+				if (especificidade.Atividades.Any(x => x.Id == 327) && !_da.EmpreendimentoPossuiCaracterizacaoBarragemDis(especificidade.RequerimentoId))
 				{
 					Validacao.Add(Mensagem.Especificidade.CaracterizacaoBarragemDisNaoCadastrada);
 				}

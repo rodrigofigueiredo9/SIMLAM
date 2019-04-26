@@ -732,7 +732,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloInf
 							Tid = reader.GetValue<string>("tid"),
 							Antigo = string.IsNullOrWhiteSpace(reader.GetValue<string>("data_informacao"))
 						});
-						
+
 					}
 
 					reader.Close();
