@@ -568,8 +568,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel, " +
 				(esquema == EsquemaCredenciadoBanco ? "c.interno_id, c.interno_tid," : "c.id as interno_id, c.tid as interno_tid,") + @"
 				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
-				from {0}crt_informacao_corte c where " + (esquema == EsquemaCredenciadoBanco ? "c.empreendimento = :id and c.interno_id is null" :
-				"exists(select 1 from {1}tab_empreendimento e where e.id = :id and e.interno = c.empreendimento)"), esquema, esquema2);
+				from {0}crt_informacao_corte c where " + (esquema == EsquemaCredenciadoBanco ? "c.empreendimento = :id" :
+				"exists(select 1 from {1}tab_empreendimento e where e.id = :id and e.interno = c.empreendimento and c.credenciadoid is null)"), esquema, esquema2);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 

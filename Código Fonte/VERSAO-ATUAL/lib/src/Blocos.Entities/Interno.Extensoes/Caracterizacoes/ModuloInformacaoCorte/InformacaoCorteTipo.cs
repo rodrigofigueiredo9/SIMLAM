@@ -16,6 +16,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public String EspecieInformadaTexto { get; set; }
 
 		public Decimal AreaCorte { get; set; }
+		public String UnidadeMedida { get { return this.TipoCorte == (int)eTipoCorte.CorteRaso ? "ha" : "und"; } }
 		public Int32 IdadePlantio { get; set; }
 
 		private List<InformacaoCorteDestinacao> _informacaoCorteDestinacao = new List<InformacaoCorteDestinacao>();

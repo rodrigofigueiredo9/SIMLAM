@@ -22,7 +22,7 @@
 			<% foreach (var item in Model.DuaLst) { %>
 			<tr>
 				<td title="<%= Html.Encode(item.Codigo)%>"><%= Html.Encode(item.Codigo)%></td>
-				<td title="<%= Html.Encode(item.Valor)%>"><%= Html.Encode(item.Valor)%></td>
+				<td title="<%= Html.Encode(item.Valor.ToStringTrunc())%>"><%= Html.Encode(item.Valor.ToStringTrunc())%></td>
 				<td title="<%= Html.Encode(item.SituacaoTexto)%>"><%= Html.Encode(item.SituacaoTexto)%></td>
 				<td title="<%= Html.Encode(item.Numero)%>"><%= Html.Encode(item.Numero)%></td>
 				<td title="<%= Html.Encode(item.Validade.DataTexto)%>"><%= Html.Encode(item.Validade.DataTexto)%></td>

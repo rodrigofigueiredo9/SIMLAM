@@ -318,9 +318,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#region Licença
 
 				comando = bancoDeDados.CriarComando(@"
-					select tm.sigla || ' - ' || to_char(t.data_vencimento, 'dd/MM/yyyy') licenca
+					select tm.sigla ||': ' || tn.numero || '/' || tn.ano || ' - ' || to_char(t.data_vencimento, 'dd/MM/yyyy') licenca
 						from tab_titulo t 
 							inner join tab_titulo_modelo tm on tm.id = t.modelo
+							inner join tab_titulo_numero tn on tn.titulo = t.id
 					where t.modelo in (23, 24) and t.id = :titulo and rownum <= 1
 					order by t.data_vencimento desc 
 						", UsuarioCredenciado);
@@ -338,7 +339,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				if (String.IsNullOrWhiteSpace(outros.InformacaoCorte.LicençaAmbiental))
 				{
 					comando = bancoDeDados.CriarComando(@"
-					select c.tipo_licenca || ' - ' || to_char(c.data_vencimento, 'dd/MM/yyyy') licenca
+					select c.tipo_licenca ||': ' || c.numero_licenca || ' - ' || to_char(c.data_vencimento, 'dd/MM/yyyy') licenca
 						from {0}crt_inf_corte_licenca c
 						inner join {0}crt_informacao_corte ic on c.corte_id = ic.id
 						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred = ic.id
@@ -382,6 +383,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			}
 
 			return outros;
+		}
+
+		internal string ObterTituloDeclaratorioAssociadoACaracterizacao(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select n.numero || '/' || n.ano from {0}tab_titulo_numero n
+				where exists
+				(select 1 from {0}esp_out_informacao_corte e where
+				e.titulo = n.titulo
+				and e.crt_informacao_corte_cred = :id)
+				and not exists
+				(select 1 from tab_titulo t 
+				where t.id = n.titulo
+				and t.situacao = :situacao)", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
 		}
 
 		#endregion

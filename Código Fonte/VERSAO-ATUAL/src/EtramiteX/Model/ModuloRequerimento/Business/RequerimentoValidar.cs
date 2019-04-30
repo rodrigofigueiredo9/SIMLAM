@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -177,6 +177,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloRequerimento.Business
 						++titulosDeclaratorio;
 						tituloDeclaratorioModelo = modelo.Nome;
 					}
+
+					if (modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+						--titulosDeclaratorio;
 
 					if (titulos > 0 && titulosDeclaratorio > 0)
 					{

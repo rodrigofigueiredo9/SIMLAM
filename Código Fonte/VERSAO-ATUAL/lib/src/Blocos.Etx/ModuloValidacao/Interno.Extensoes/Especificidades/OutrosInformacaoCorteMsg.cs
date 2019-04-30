@@ -20,6 +20,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem InformacaoCorteInexistente { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Outros_InformacaoCortes", Texto = "A informação de corte deve estar cadastrada." }; } }
 		public Mensagem InformacaoCorteAssociado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Outros_InformacaoCorte", Texto = "Já existe um título para a informação de corte selecionada." }; } }
 		public Mensagem CaracterizacaoCadastrada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A caracterização de informação de corte deve estar cadastrada." }; } }
+		public Mensagem CaracterizacaoJaAssociada(string tituloAssociado) { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = $"A caracterização de informação de corte selecionada já se encontra associada ao título {tituloAssociado}." }; }
 
 		public Mensagem CaracterizacaoValida(String caracterizacao)
 		{

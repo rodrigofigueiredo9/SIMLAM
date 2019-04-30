@@ -290,6 +290,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			return lst;
 		}
 
+		internal string ObterTituloDeclaratorioAssociadoACaracterizacao(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select n.numero || '/' || n.ano from {0}tab_titulo_numero n
+				where exists
+				(select 1 from {0}esp_out_informacao_corte e where
+				e.titulo = n.titulo
+				and e.crt_informacao_corte = :id)
+				and not exists
+				(select 1 from tab_titulo t 
+				where t.id = n.titulo
+				and t.situacao = :situacao)", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
+		}
+
 		#endregion
 
 		#region Validação
