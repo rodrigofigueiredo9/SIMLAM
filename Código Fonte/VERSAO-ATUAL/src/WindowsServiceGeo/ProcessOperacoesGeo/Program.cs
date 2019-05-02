@@ -1,4 +1,5 @@
 ﻿using System;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Entities;
 using Tecnomapas.EtramiteX.WindowsService.Utilitarios;
@@ -12,7 +13,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 		/// 
 		/// projectType: Tipo do projeto em execução, sendo:
 		/// 1 - Base de Referência Interna, 2 - Base de Referência GEOBASES, 3 - Dominialidade, 4 - Atividade
-		/// 5 - Fiscalização, 6 - Base de Referência Fiscalização, 7 - CAR
+		/// 5 - Fiscalização, 6 - Base de Referência Fiscalização, 7 - CAR, 8 - Atividade por título,
+		/// 9 - Regularização Fundiária
 		/// 
 		/// projectStep: Etapa do precessamento
 		/// 1 - Validação, 2 - Processamento, 3 - Geração de PDF
@@ -22,6 +24,9 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 		{
 			try
 			{
+				var _bus = new ProjetoBus(BancoDeDados.ObterInstancia());
+				_bus.SetComErroParaAguardandoEtapaNaFila();
+
 				if (args == null || args.Length <= 0)
 				{
 					throw new Exception("Nenhum argumento informado.");
@@ -29,8 +34,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 
 				string[] parametros = args[0].Split(',');
 
-				//projectID,projectType,projectStep 
-				//string[] parametros = "1490,3,2,mutexServ1,mutexProc1".Split(',');
+				//projectID,projectType,projectStep
+				//string[] parametros = "463544,3,1,mutexServ1,mutexProc1".Split(',');
 
 				if (parametros == null || parametros.Length != 5)
 				{

@@ -839,7 +839,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 				strSQL = @"	select t.nome apmp_nome,
 							(case t.tipo when 'M' then 'Matrícula'	when 'P' then 'Posse' else 'Desconhecido' end) apmp_tipo,
-							(select count(id) from geo_pativ g
+							(select count(g.id) from geo_pativ g
 											inner join {0}CRT_EXP_FLORESTAL_GEO ge
 												on ge.GEO_PATIV_ID = g.id
 											inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
