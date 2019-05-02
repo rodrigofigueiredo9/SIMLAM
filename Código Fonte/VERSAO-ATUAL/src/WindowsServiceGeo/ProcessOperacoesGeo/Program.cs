@@ -1,4 +1,5 @@
 ﻿using System;
+using Tecnomapas.Blocos.Data;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo;
 using Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Entities;
 using Tecnomapas.EtramiteX.WindowsService.Utilitarios;
@@ -23,6 +24,9 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 		{
 			try
 			{
+				var _bus = new ProjetoBus(BancoDeDados.ObterInstancia());
+				_bus.SetComErroParaAguardandoEtapaNaFila();
+
 				if (args == null || args.Length <= 0)
 				{
 					throw new Exception("Nenhum argumento informado.");
@@ -31,7 +35,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 				string[] parametros = args[0].Split(',');
 
 				//projectID,projectType,projectStep
-				//string[] parametros = "137807,9,3,mutexServ1,mutexProc1".Split(',');
+				//string[] parametros = "463544,3,1,mutexServ1,mutexProc1".Split(',');
 
 				if (parametros == null || parametros.Length != 5)
 				{
