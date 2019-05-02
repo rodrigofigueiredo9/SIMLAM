@@ -188,7 +188,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
 				var stringContent = new StringContent("", UnicodeEncoding.UTF8, "application/json");
 
-				HttpResponseMessage response = _client.PostAsync($"{apiUri}Titulo/{tituloId}/ImportacaoBarragem", stringContent).Result;
+				HttpResponseMessage response = _client.PostAsync($"{apiUri}/Titulo/{tituloId}/ImportacaoBarragem", stringContent).Result;
 
 				var json = response.Content.ReadAsStringAsync().Result;
 				JsonConvert.DeserializeObject(json);
