@@ -367,7 +367,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 					coordenadas.ForEach(x => {
 						if (x.tipo == eTipoCoordenadaBarragem.barramento)
 						{
-							HttpResponseMessage response = _client.GetAsync($"{apiUri}geoatp/coordenada/latitude/{x.easting}/longitude/{x.northing}").Result;
+							HttpResponseMessage response = _client.GetAsync($"{apiUri}/geoatp/coordenada/latitude/{x.easting}/longitude/{x.northing}").Result;
 
 							if (!response.IsSuccessStatusCode)
 								throw new Exception("Não foi possível conectar no servidor");
