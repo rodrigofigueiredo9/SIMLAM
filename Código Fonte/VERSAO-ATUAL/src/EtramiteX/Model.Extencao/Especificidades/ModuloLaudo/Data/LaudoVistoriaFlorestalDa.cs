@@ -243,6 +243,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		internal Laudo ObterDadosPDF(int titulo, BancoDeDados banco = null)
 		{
 			Laudo laudo = new Laudo();
+			int protocoloLaudo = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -258,7 +259,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 				#region Dados da Especificidade
 
 				Comando comando = bancoDeDados.CriarComando(@"select e.destinatario, e.responsavel, e.caracterizacao, lp.texto conclusao, e.data_vistoria, e.objetivo, e.consideracao, 
-				e.restricao, e.descricao_parecer, e.parecer_desfavoravel from {0}esp_laudo_vistoria_florestal e, {0}lov_esp_conclusao lp where e.conclusao = lp.id and e.titulo = :id", EsquemaBanco);
+				e.restricao, e.descricao_parecer, e.parecer_desfavoravel, e.protocolo from {0}esp_laudo_vistoria_florestal e, {0}lov_esp_conclusao lp where e.conclusao = lp.id and e.titulo = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", titulo, DbType.Int32);
 
@@ -284,6 +285,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 						{
 							laudo.Responsavel.Id = Convert.ToInt32(reader["responsavel"]);
 						}
+
+						if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"]))
+							protocoloLaudo = Convert.ToInt32(reader["protocolo"]);
+						else
+							protocoloLaudo = laudo.Protocolo.Id.GetValueOrDefault();
 					}
 
 					reader.Close();
@@ -293,7 +299,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				laudo.Destinatario = DaEsp.ObterDadosPessoa(laudo.Destinatario.Id, laudo.Empreendimento.Id, bancoDeDados);
 
-				laudo.Responsavel = DaEsp.ObterDadosResponsavel(laudo.Responsavel.Id, laudo.Protocolo.Id.GetValueOrDefault(), bancoDeDados);
+				laudo.Responsavel = DaEsp.ObterDadosResponsavel(laudo.Responsavel.Id, protocoloLaudo, bancoDeDados);
 
 				laudo.AnaliseItens = DaEsp.ObterAnaliseItem(laudo.Protocolo.Id.GetValueOrDefault(), bancoDeDados);
 
