@@ -561,7 +561,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					{
 						bancoDeDados.IniciarTransacao();
 
-						_da.Finalizar(projeto.Id);
+						_da.Finalizar(projeto.Id, banco);
 
 						//Gerencia as dependências da caracterização
 						_caracterizacaoBus.Dependencias(new Caracterizacao()

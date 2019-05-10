@@ -891,13 +891,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 					while (reader.Read())
 					{
-						if (exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
-							.Exploracoes?.Exists(x => x.Identificacao == reader["identificacao"].ToString() &&
-							x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"])) ?? false)
-						{
-							detalhe = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]))?
-							.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString() && x.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"]));
-						}
+						exploracao = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]) &&
+															x.Exploracoes.Exists(y => y.GeometriaTipoId == Convert.ToInt32(reader["geometria_tipo"])));
+						if (exploracao?.Id > 0 && exploracao.Exploracoes.Exists(x => x.Identificacao == reader["identificacao"].ToString()))
+							detalhe = exploracao.Exploracoes?.FirstOrDefault(x => x.Identificacao == reader["identificacao"].ToString());
 						else
 							detalhe = new ExploracaoFlorestalExploracao();
 						detalhe.Identificacao = reader["identificacao"].ToString();
@@ -911,9 +908,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 						if (exploracaoAnterior.TipoExploracao != Convert.ToInt32(reader["tipo_exploracao"]) || detalheAnterior.GeometriaTipoId != detalhe.GeometriaTipoId)
 						{
-							if (exploracaoFlorestalList.Exists(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"])))
-								exploracao = exploracaoFlorestalList.FirstOrDefault(x => x.TipoExploracao == Convert.ToInt32(reader["tipo_exploracao"]));
-							else
+							if (exploracao == null || exploracao?.Id == 0)
 							{
 								exploracao = new ExploracaoFlorestal();
 								exploracao.EmpreendimentoId = empreendimento;
