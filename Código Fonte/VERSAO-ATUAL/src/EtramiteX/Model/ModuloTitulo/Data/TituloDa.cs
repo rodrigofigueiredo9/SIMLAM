@@ -957,28 +957,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 			{
 				bancoDeDados.IniciarTransacao();
 
-				//Verifica a existencia do título
-				Comando comando = bancoDeDados.CriarComando(@"select e.titulo from {0}tab_titulo_numero e where e.titulo = :titulo", EsquemaBanco);
-				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
+				var comando = bancoDeDados.CriarComandoPlSql(@"
+					declare 
+						numeroc number;
+					begin
+						select 
+						(case when maior.numero > :iniciarEm then maior.numero else :iniciarEm end) numero INTO numeroc
+							from (select (nvl(max(t.numero),0)+1) numero 
+									from {0}tab_titulo_numero t 
+									where t.modelo = :modelo" + ((titulo.Numero.ReiniciaPorAno) ? " and t.ano = :ano" : String.Empty) + @") maior;
 
-				Object id = bancoDeDados.ExecutarScalar(comando);
-
-				string sqlNumero = @"(select 
-					(case when maior.numero > :iniciarEm then maior.numero else :iniciarEm end) numero 
-						from (select (nvl(max(t.numero),0)+1) numero 
-								from {0}tab_titulo_numero t 
-								where t.modelo = :modelo" + ((titulo.Numero.ReiniciaPorAno) ? " and t.ano = :ano" : String.Empty) + @") maior )";
-
-				if (id == null || Convert.IsDBNull(id))
-				{
-					comando = bancoDeDados.CriarComando(@"insert into {0}tab_titulo_numero e (id, titulo, modelo, numero, ano, tid) 
-						values ({0}seq_titulo_numero.nextval, :titulo, :modelo, " + sqlNumero + @", :ano, :tid) returning numero into :numero", EsquemaBanco);
-
-				}
-				else
-				{
-					comando = bancoDeDados.CriarComando(@"update {0}tab_titulo_numero tt set tt.numero = " + sqlNumero + @", tt.ano = :ano, tt.tid = :tid where tt.titulo = :titulo returning tt.numero into :numero", EsquemaBanco);
-				}
+						update {0}tab_titulo_numero tt set tt.numero = numeroc, tt.ano = :ano, tt.tid = :tid where tt.titulo = :titulo returning tt.numero into :numero;
+						if ( sql%rowcount = 0 ) then
+							insert into {0}tab_titulo_numero e (id, titulo, modelo, numero, ano, tid) 
+							values ({0}seq_titulo_numero.nextval, :titulo, :modelo, numeroc, :ano, :tid) returning numero into :numero;
+						end if;
+					end;", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("modelo", titulo.Modelo.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("titulo", titulo.Id, DbType.Int32);
