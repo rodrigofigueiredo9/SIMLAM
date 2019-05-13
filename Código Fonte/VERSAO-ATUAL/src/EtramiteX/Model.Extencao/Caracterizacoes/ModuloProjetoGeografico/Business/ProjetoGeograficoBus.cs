@@ -22,6 +22,7 @@ using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Data;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria.Data;
 using Cred = Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes;
 using HistCaract = Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data;
 
@@ -38,6 +39,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		GerenciadorConfiguracao<ConfiguracaoProjetoGeo> _configPGeo;
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig;
 		GerenciadorArquivo _gerenciador;
+		RegularizacaoFundiariaDa _regularizacaoDa;
 
 		public GerenciadorConfiguracao<ConfiguracaoCaracterizacao> CaracterizacaoConfig
 		{
@@ -75,6 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			_configPGeo = new GerenciadorConfiguracao<ConfiguracaoProjetoGeo>(new ConfiguracaoProjetoGeo());
 			_caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 			_gerenciador = new GerenciadorArquivo(_config.DiretorioOrtoFotoMosaico, null);
+			_regularizacaoDa = new RegularizacaoFundiariaDa();
 		}
 
 		#region Comandos DML
@@ -417,6 +420,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				if (_validar.Refazer(projeto))
 				{
 					_da.Refazer(projeto.Id, banco);
+
+					if (projeto.CaracterizacaoId == (int)eCaracterizacao.RegularizacaoFundiaria)
+					{
+						_regularizacaoDa.Excluir(projeto.EmpreendimentoId, banco);
+					}
+
 					Validacao.Add(Mensagem.ProjetoGeografico.RefeitoSucesso);
 				}
 			}

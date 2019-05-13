@@ -157,7 +157,8 @@ TituloAlterarSituacao = {
 						var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
 						var prazo = objeto.Prazo;
 						if (situacao == 6)
-							prazo = objeto.DiasProrrogados == '' ? 0 : objeto.DiasProrrogados;
+							prazo = objeto.DiasProrrogados == '' ? 1 : objeto.DiasProrrogados;
+						if (prazo == '') prazo = 1;
 
 						$.ajax({
 							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +

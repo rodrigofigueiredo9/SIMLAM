@@ -20,7 +20,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEsp
 		public Decimal AreaCroquiDecimal { get; set; }
 		public String AreaCroqui { get { return AreaCroquiDecimal.ToStringTrunc(); } }
 		public String AreaPosse { get { return AreaCroquiDecimal.ToStringTrunc(); } }
-		public Decimal AreaPerimetroDecimal { get; set; }
+		public Decimal? AreaPerimetroDecimal { get; set; }
 		public String AreaPerimetro { get { return AreaPerimetroDecimal.ToStringTrunc(3); } }
 		public String AreaRequerida { set; get; }
 		public Int32 Zona { get; set; }

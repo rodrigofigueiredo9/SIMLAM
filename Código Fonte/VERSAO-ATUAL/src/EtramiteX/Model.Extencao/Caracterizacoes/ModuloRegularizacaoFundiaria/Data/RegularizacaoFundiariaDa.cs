@@ -749,7 +749,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							posse.Observacoes = reader["observacoes"].ToString();
 							posse.Tid = reader["tid"].ToString();
 							posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
-							posse.Perimetro = reader.GetValue<decimal>("perimetro");
+							posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 							posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
 							posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
 							posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
@@ -780,7 +780,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							posse.Id = Convert.ToInt32(reader["id"]);
 							posse.Identificacao = reader["codigo"].ToString();
 							posse.AreaCroqui = reader.GetValue<decimal>("area_m2");
-							posse.Perimetro = reader.GetValue<decimal>("perimetro");
+							posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 
 							regularizacao.Posses.Add(posse);
 						}
@@ -1007,7 +1007,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Observacoes = reader.GetValue<string>("observacoes");
 						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
 						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
-						posse.Perimetro = reader.GetValue<decimal>("perimetro");
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 						posse.Zona = reader.GetValue<int>("zona");
 						posse.RegularizacaoTipo = reader.GetValue<int>("regularizacao_tipo_id");
 						posse.RelacaoTrabalho = reader.GetValue<int>("relacao_trabalho");
@@ -1266,7 +1266,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Observacoes = reader["observacoes"].ToString();
 						posse.Tid = reader["tid"].ToString();
 						posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
-						posse.Perimetro = Convert.ToInt32(reader["perimetro"]);
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 						posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
 						posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
 						posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
@@ -1312,7 +1312,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Id = Convert.ToInt32(reader["id"]);
 						posse.Identificacao = reader["codigo"].ToString();
 						posse.AreaCroqui = reader.GetValue<decimal>("area_m2");
-						posse.Perimetro = reader.GetValue<decimal>("perimetro");
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 						posse.Zona = zona;
 
 						regularizacao.Posses.Add(posse);
