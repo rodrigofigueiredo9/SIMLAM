@@ -243,7 +243,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		internal Laudo ObterDadosPDF(int titulo, BancoDeDados banco = null)
 		{
 			Laudo laudo = new Laudo();
-			int protocoloLaudo = 0;
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -287,9 +286,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 						}
 
 						if (reader["protocolo"] != null && !Convert.IsDBNull(reader["protocolo"]))
-							protocoloLaudo = Convert.ToInt32(reader["protocolo"]);
-						else
-							protocoloLaudo = laudo.Protocolo.Id.GetValueOrDefault();
+							laudo.Protocolo.Id = Convert.ToInt32(reader["protocolo"]);
 					}
 
 					reader.Close();
@@ -297,9 +294,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 
 				#endregion
 
+				laudo.Protocolo = DaEsp.ObterDadosProtocolo(laudo.Protocolo.Id.GetValueOrDefault(0), bancoDeDados);
+
 				laudo.Destinatario = DaEsp.ObterDadosPessoa(laudo.Destinatario.Id, laudo.Empreendimento.Id, bancoDeDados);
 
-				laudo.Responsavel = DaEsp.ObterDadosResponsavel(laudo.Responsavel.Id, protocoloLaudo, bancoDeDados);
+				laudo.Responsavel = DaEsp.ObterDadosResponsavel(laudo.Responsavel.Id, laudo.Protocolo.Id.GetValueOrDefault(0), bancoDeDados);
 
 				laudo.AnaliseItens = DaEsp.ObterAnaliseItem(laudo.Protocolo.Id.GetValueOrDefault(), bancoDeDados);
 

@@ -950,7 +950,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Mostrar = permicaoAcaoConcluir;
 
 			//Habilitar Radio
-			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.EmitirParaAssinatura).Habilitado = !concluir && (titulo.Situacao.Id == 1);
+			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.EmitirParaAssinatura).Habilitado = !concluir && (new int[] { 1, 11 }).Contains(titulo.Situacao.Id);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.CancelarEmissao).Habilitado = (titulo.Situacao.Id == 2);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Assinar).Habilitado = !concluir && (titulo.Situacao.Id == 2);
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Prorrogar).Habilitado = !concluir && (new int[] { 3, 6 }).Contains(titulo.Situacao.Id) && titulo.Modelo.Regra(eRegra.Prazo);

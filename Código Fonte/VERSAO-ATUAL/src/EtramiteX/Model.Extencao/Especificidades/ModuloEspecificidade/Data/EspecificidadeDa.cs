@@ -592,6 +592,112 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			}
 		}
 
+		public ProtocoloPDF ObterDadosProtocolo(int titulo, BancoDeDados banco = null)
+		{
+			var dados = new ProtocoloPDF();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Dados do Título - Protocolo
+
+				if (dados.Id.HasValue)
+				{
+					var comando = bancoDeDados.CriarComando(@"select p.id protocolo_id, p.numero||'/'||p.ano protocolo_numero, r.numero requerimento_numero, 
+					to_char(r.data_criacao, 'dd/MM/yyyy') requerimento_data, p.data_autuacao, p.numero_autuacao, data_autuacao, to_char(p.data_criacao) data_criacao, 
+					p.protocolo, (select lt.texto from {0}lov_protocolo_tipo lt where lt.id = p.tipo) protocolo_tipo
+					from {0}tab_protocolo p, {0}tab_requerimento r where p.requerimento = r.id(+) and p.id = :protocolo", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("protocolo", dados.Id, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+						{
+							dados.Id = Convert.ToInt32(reader["protocolo_id"]);
+							dados.Requerimento.Numero = Convert.ToInt32(reader["requerimento_numero"]);
+							dados.Requerimento.DataCriacao = reader["requerimento_data"].ToString();
+							dados.DataCriacao = reader["data_criacao"].ToString();
+							dados.IsProcesso = (reader["protocolo"].ToString() == "1");
+							dados.Numero = reader["protocolo_numero"].ToString();
+							dados.NumeroAutuacao = reader["numero_autuacao"].ToString();
+							dados.DataAutuacao = reader["data_autuacao"].ToString();
+							dados.Tipo = reader["protocolo_tipo"].ToString();
+							dados.Texto = (dados.IsProcesso) ? ProtocoloPDF.PROCESSO : ProtocoloPDF.DOCUMENTO;
+
+						}
+
+						reader.Close();
+					}
+
+					#region Dados do Interessado
+
+					comando = bancoDeDados.CriarComando(@"select tp.id, tp.tipo, nvl(tp.nome, tp.razao_social) interessado_nome, nvl(tp.cpf, tp.cnpj) interessado_cpfcnpj,
+					e.cep endcep, e.logradouro endlogradouro, e.bairro endbairro, e.distrito enddistrito, le.texto endestado, le.sigla enduf, lm.texto endmunicipio, e.numero endnumero
+					from {0}tab_protocolo p, {0}tab_pessoa tp, {0}tab_pessoa_endereco e, {0}lov_municipio lm, {0}lov_estado le 
+					where p.interessado = tp.id and e.municipio = lm.id(+) and e.estado = le.id(+) and tp.id = e.pessoa(+) 
+					and p.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", dados.Id, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+						{
+							dados.Interessado.Id = Convert.ToInt32(reader["id"]);
+							dados.Interessado.Tipo = Convert.ToInt32(reader["tipo"]);
+							dados.Interessado.NomeRazaoSocial = reader["interessado_nome"].ToString();
+							dados.Interessado.CPFCNPJ = reader["interessado_cpfcnpj"].ToString();
+							dados.Interessado.EndCEP = reader["endcep"].ToString();
+							dados.Interessado.EndLogradouro = reader["endlogradouro"].ToString();
+							dados.Interessado.EndNumero = reader["endnumero"].ToString();
+							dados.Interessado.EndBairro = reader["endbairro"].ToString();
+							dados.Interessado.EndDistrito = reader["enddistrito"].ToString();
+							dados.Interessado.EndMunicipio = reader["endmunicipio"].ToString();
+							dados.Interessado.EndEstado = reader["endestado"].ToString();
+							dados.Interessado.EndUF = reader["enduf"].ToString();
+						}
+
+						reader.Close();
+					}
+
+					#endregion
+
+					#region Dados do Representante do Interessado
+
+					comando = bancoDeDados.CriarComando(@"select p.nome, p.cpf, pe.logradouro, pe.numero, pe.cep, pe.bairro, lm.texto municipio, le.texto estado, le.sigla uf 
+					from {0}tab_pessoa p, {0}tab_titulo_pessoas tp, {0}tab_pessoa_endereco pe, {0}lov_municipio lm, {0}lov_estado le
+					where tp.titulo = :titulo and tp.pessoa = p.id and tp.pessoa = pe.pessoa(+) and pe.municipio = lm.id(+) and pe.estado = le.id(+) and tp.tipo = 2", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+					{
+						if (reader.Read())
+						{
+							dados.InteressadoRepresentante.NomeRazaoSocial = reader["nome"].ToString();
+							dados.InteressadoRepresentante.CPFCNPJ = reader["cpf"].ToString();
+
+							dados.InteressadoRepresentante.EndLogradouro = reader["logradouro"].ToString();
+							dados.InteressadoRepresentante.EndCEP = reader["cep"].ToString();
+							dados.InteressadoRepresentante.EndNumero = reader["numero"].ToString();
+							dados.InteressadoRepresentante.EndBairro = reader["bairro"].ToString();
+							dados.InteressadoRepresentante.EndMunicipio = reader["municipio"].ToString();
+							dados.InteressadoRepresentante.EndEstado = reader["estado"].ToString();
+							dados.InteressadoRepresentante.EndUF = reader["uf"].ToString();
+						}
+
+						reader.Close();
+					}
+
+					#endregion
+				}
+
+				#endregion
+
+				return dados;
+			}
+		}
+
 		public List<AnaliseItemPDF> ObterAnaliseItem(int protocolo, BancoDeDados banco = null)
 		{
 			List<AnaliseItemPDF> itens = new List<AnaliseItemPDF>();

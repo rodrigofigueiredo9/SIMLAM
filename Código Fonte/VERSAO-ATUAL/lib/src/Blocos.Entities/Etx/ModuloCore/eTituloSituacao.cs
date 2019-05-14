@@ -11,8 +11,9 @@
 		Prorrogado = 6,
 		EmCadastro = 7,
 		Valido = 8,
-		Suspenso = 9,
+		SuspensoDeclaratorio = 9,
 		EncerradoDeclaratorio = 10,
-		AguardandoPagamento= 12
+		Suspenso = 11,
+		AguardandoPagamento = 12
 	}
 }

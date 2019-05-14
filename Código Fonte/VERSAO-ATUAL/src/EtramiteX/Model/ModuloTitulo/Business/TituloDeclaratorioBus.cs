@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web;
 using Tecnomapas.Blocos.Arquivo.Data;
@@ -316,13 +316,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 				#region Título Suspenso
 
-				if (titulo.Situacao.Id == (int)eTituloSituacao.Suspenso)
+				if (titulo.Situacao.Id == (int)eTituloSituacao.SuspensoDeclaratorio)
 				{
 					if (titulo.Atividades != null && titulo.Atividades.Count > 0)
 					{
 						foreach (Atividade atividade in titulo.Atividades)
 						{
-							if (VerificarDeclaratorioSituacao(atividade, eTituloSituacao.Suspenso, titulo.EmpreendimentoId.GetValueOrDefault(), bancoDeDados))
+							if (VerificarDeclaratorioSituacao(atividade, eTituloSituacao.SuspensoDeclaratorio, titulo.EmpreendimentoId.GetValueOrDefault(), bancoDeDados))
 							{
 								atividade.SituacaoId = (int)eAtividadeSituacao.Suspensa;
 								atividadeBus.AlterarSituacao(atividade, bancoDeDados);

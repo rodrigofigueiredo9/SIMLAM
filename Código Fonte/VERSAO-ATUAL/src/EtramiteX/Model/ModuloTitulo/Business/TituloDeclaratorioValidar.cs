@@ -399,7 +399,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				case eTituloSituacao.Valido:
 					if (titulo.Modelo.Id == 72)   //Declaração de Dispensa de Licenciamento Ambiental de Barragem
 					{
-						if (tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso && tituloAux.Situacao.Id != (int)eTituloSituacao.EncerradoDeclaratorio)
+						if (tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio && tituloAux.Situacao.Id != (int)eTituloSituacao.EncerradoDeclaratorio)
 						{
 							Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Suspenso ou encerrado"));
 						}
@@ -414,7 +414,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							}
 						}
 					}
-					else if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					else if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Em cadastro ou Suspenso"));
 					}
@@ -424,7 +424,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 #region Suspenso
 
-				case eTituloSituacao.Suspenso:
+				case eTituloSituacao.SuspensoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Válido"));
@@ -441,7 +441,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 #region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido ou Suspenso"));
 					}
