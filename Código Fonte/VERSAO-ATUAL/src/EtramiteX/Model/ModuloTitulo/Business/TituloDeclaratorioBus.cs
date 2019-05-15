@@ -242,6 +242,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					break;
 
 				#endregion
+
+				#region 13 - Prorrogado
+
+				case eTituloSituacao.ProrrogadoDeclaratorio:
+					if (titulo.Modelo.Regra(eRegra.Prazo))
+					{
+						titulo.DataVencimento.Data = titulo.DataVencimento.Data.Value.AddDays(titulo.DiasProrrogados.GetValueOrDefault());
+					}
+					break;
+
+				#endregion
 			}
 
 			#endregion
@@ -344,6 +355,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							if (VerificarDeclaratorioSituacao(atividade, eTituloSituacao.EncerradoDeclaratorio, titulo.EmpreendimentoId.GetValueOrDefault(), bancoDeDados))
 							{
 								atividade.SituacaoId = (int)eAtividadeSituacao.Irregular;
+								atividadeBus.AlterarSituacao(atividade, bancoDeDados);
+							}
+						}
+					}
+				}
+
+				#endregion
+
+				#region Título Prorrogado
+
+				if (titulo.Situacao.Id == (int)eTituloSituacao.ProrrogadoDeclaratorio)
+				{
+					if (titulo.Atividades != null && titulo.Atividades.Count > 0)
+					{
+						int finalidade = _da.VerificarEhTituloAnterior(titulo);
+						if (finalidade > 0)
+						{
+							eAtividadeSituacao atividadeSituacao = (finalidade == 1) ? eAtividadeSituacao.NovaFase : eAtividadeSituacao.EmRenovacao;
+							atividadeBus.AlterarSituacao(titulo.Atividades, atividadeSituacao, bancoDeDados);
+						}
+						else
+						{
+							foreach (Atividade atividade in titulo.Atividades)
+							{
+								if (atividadeBus.VerificarDeferir(atividade, bancoDeDados))
+								{
+									atividade.SituacaoId = (int)eAtividadeSituacao.Deferida;
+									atividadeBus.AlterarSituacao(atividade, bancoDeDados);
+									continue;
+								}
+
+								//Voltar a situação default de andamento
+								atividade.SituacaoId = (int)eAtividadeSituacao.EmAndamento;
 								atividadeBus.AlterarSituacao(atividade, bancoDeDados);
 							}
 						}

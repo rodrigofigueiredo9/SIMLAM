@@ -242,6 +242,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				case eTituloSituacao.EmCadastro:
 					situacoes = ListaCredenciadoBus.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
 					break;
+				case eTituloSituacao.Valido:
+				case eTituloSituacao.ProrrogadoDeclaratorio:
+					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+							situacoes = ListaCredenciadoBus.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio)).ToList();
+					break;
 				default:
 					break;
 			}
@@ -263,6 +268,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 			Titulo tituloAtual = _bus.Obter(titulo.Id);
 			tituloAtual.Modelo = _busModelo.Obter(tituloAtual.Modelo.Id);
 			tituloAtual.Situacao.Id = titulo.Situacao.Id;
+			tituloAtual.DiasProrrogados = titulo.DiasProrrogados;
 
 			_bus.AlterarSituacao(tituloAtual);
 

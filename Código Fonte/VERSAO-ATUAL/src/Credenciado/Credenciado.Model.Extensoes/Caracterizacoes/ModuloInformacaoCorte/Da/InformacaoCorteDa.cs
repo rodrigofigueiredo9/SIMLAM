@@ -557,18 +557,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 		{
 			var caracterizacao = new List<InformacaoCorte>();
 
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			if (esquema == null) esquema = EsquemaBanco;
+			var esquema2 = (esquema == EsquemaCredenciadoBanco ? EsquemaBanco : EsquemaCredenciadoBanco);
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, esquema))
 			{
 				#region Informação de Corte
-
-				if (esquema == null) esquema = EsquemaBanco;
-				var esquema2 = (esquema == EsquemaCredenciadoBanco ? EsquemaBanco : EsquemaCredenciadoBanco);
 
 				Comando comando = bancoDeDados.CriarComando(@"
 				select c.id, c.tid, c.codigo, c.empreendimento, c.data_informacao, c.area_flor_plantada, c.area_imovel, " +
 				(esquema == EsquemaCredenciadoBanco ? "c.interno_id, c.interno_tid," : "c.id as interno_id, c.tid as interno_tid,") + @"
-				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id) area_corte
-				from {0}crt_informacao_corte c where " + (esquema == EsquemaCredenciadoBanco ? "c.empreendimento = :id" :
+				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id and t.tipo_corte = " + (int)eTipoCorte.CorteRaso + @") area_corte,
+				(select sum(t.area_corte) from {0}crt_inf_corte_tipo t where t.corte_id = c.id and t.tipo_corte = " + (int)eTipoCorte.CorteSeletivo + @") arvores
+				from {0}crt_informacao_corte c where " + (esquema == EsquemaCredenciadoBanco ?
+				"exists(select 1 from {1}tab_empreendimento ee where ee.codigo = (select e.codigo from {1}tab_empreendimento e where e.id = :id) and c.empreendimento = ee.id)" :
 				"exists(select 1 from {1}tab_empreendimento e where e.id = :id and e.interno = c.empreendimento and c.credenciadoid is null)"), esquema, esquema2);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -585,6 +587,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 							DataInformacao = new DateTecno() { Data = reader.GetValue<DateTime>("data_informacao") },
 							AreaFlorestaPlantada = reader.GetValue<decimal>("area_flor_plantada"),
 							AreaCorteCalculada = reader.GetValue<decimal>("area_corte"),
+							Arvores = reader.GetValue<int>("arvores"),
 							AreaImovel = reader.GetValue<decimal>("area_imovel"),
 							InternoTID = reader.GetValue<string>("interno_tid"),
 							Tid = reader.GetValue<string>("tid"),
@@ -605,7 +608,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				}
 			}
 
-			return caracterizacao;
+			return caracterizacao.OrderBy(x => x.Codigo).ToList();
 		}
 
 		internal List<Lista> ObterListaInfCorteEmpreendimento(int empreendimento)

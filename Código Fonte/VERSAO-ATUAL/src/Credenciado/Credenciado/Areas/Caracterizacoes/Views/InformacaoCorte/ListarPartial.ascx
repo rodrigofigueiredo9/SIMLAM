@@ -63,7 +63,7 @@
 							<span class="dataInformacao" title="<%:informacao.DataInformacao.DataTexto%>"><%:informacao.DataInformacao.DataTexto%></span>
 						</td>
 						<td>
-							<span class="areaCorte" title="<%:informacao.AreaCorteCalculada.ToStringTrunc()%>"><%:informacao.AreaCorteCalculada.ToStringTrunc()%></span>
+							<span class="areaCorte" title="<%:String.Concat(informacao.AreaCorteCalculada.ToStringTrunc(), " (ha)", (informacao.Arvores > 0 ? String.Concat(" / ", informacao.Arvores, " (un)") : "")) %>"><%:String.Concat(informacao.AreaCorteCalculada.ToStringTrunc(), " (ha)", (informacao.Arvores > 0 ? String.Concat(" / ", informacao.Arvores, " (un)") : ""))%></span>
 						</td>
 						<td class="tdAcoes">
 							<input type="hidden" class="hdnItemJSon" value='<%: ViewModelHelper.Json(informacao)%>' />

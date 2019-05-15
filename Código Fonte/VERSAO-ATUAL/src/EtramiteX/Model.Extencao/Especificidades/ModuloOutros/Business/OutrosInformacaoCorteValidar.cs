@@ -1,4 +1,5 @@
-﻿using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
+﻿using System;
+using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloOutros;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEspecificidade.Business;
@@ -24,8 +25,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			if (especificidade.RequerimentoId <= 0)
 				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
 
-			if (especificidade.Atividades == null || especificidade.Atividades.Count == 0 || especificidade.Atividades[0].Id == 0)
-				Validacao.Add(Mensagem.Especificidade.AtividadeObrigatoria);
+			DeclaratorioRequerimentoAtividade(especificidade);
 
 			if (esp.Validade <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);

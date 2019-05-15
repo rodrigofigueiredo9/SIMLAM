@@ -47,6 +47,29 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business
 			_da.AlterarSituacao(atividade, banco);
 		}
 
+		public void AlterarSituacao(List<Atividade> lstAtividades, eAtividadeSituacao situacao, BancoDeDados banco = null)
+		{
+			GerenciadorTransacao.ObterIDAtual();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				foreach (Atividade item in lstAtividades)
+				{
+					item.SituacaoId = (int)situacao;
+					AlterarSituacao(item, bancoDeDados);
+				}
+
+				if (!Validacao.EhValido)
+				{
+					return;
+				}
+
+				bancoDeDados.Commit();
+			}
+		}
+
 		#endregion
 
 		#region Obter / Filtrar
@@ -155,6 +178,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Business
 				Validacao.AddErro(e);
 			}
 			return false;
+		}
+
+		internal bool VerificarDeferir(Atividade atividade, BancoDeDados banco = null)
+		{
+			if (atividade.Protocolo.Id == 0)
+			{
+				throw new Exception("erro ao validar deferimento atividade.Protocolo.id = 0");
+			}
+
+			return _da.VerificarDeferir(atividade, banco);
 		}
 
 		#endregion

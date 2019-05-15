@@ -318,7 +318,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				#region Licença
 
 				comando = bancoDeDados.CriarComando(@"
-					select tm.sigla ||': ' || tn.numero || '/' || tn.ano || ' - ' || to_char(t.data_vencimento, 'dd/MM/yyyy') licenca
+					select tm.sigla ||' ' || tn.numero || '/' || tn.ano || ' - ' || to_char(t.data_vencimento, 'dd/MM/yyyy') licenca
 						from tab_titulo t 
 							inner join tab_titulo_modelo tm on tm.id = t.modelo
 							inner join tab_titulo_numero tn on tn.titulo = t.id
@@ -339,7 +339,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				if (String.IsNullOrWhiteSpace(outros.InformacaoCorte.LicençaAmbiental))
 				{
 					comando = bancoDeDados.CriarComando(@"
-					select c.tipo_licenca ||': ' || c.numero_licenca || ' - ' || to_char(c.data_vencimento, 'dd/MM/yyyy') licenca
+					select c.tipo_licenca ||' ' || c.numero_licenca || ' - ' || to_char(c.data_vencimento, 'dd/MM/yyyy') licenca
 						from {0}crt_inf_corte_licenca c
 						inner join {0}crt_informacao_corte ic on c.corte_id = ic.id
 						inner join esp_out_informacao_corte o on o.crt_informacao_corte_cred = ic.id

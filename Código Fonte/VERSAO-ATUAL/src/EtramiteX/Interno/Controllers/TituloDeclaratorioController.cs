@@ -289,7 +289,18 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
 					break;
 				case eTituloSituacao.Valido:
-					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
+					{
+						if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio)).ToList();
+						else
+							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
+					}
+					break;
+				case eTituloSituacao.ProrrogadoDeclaratorio:
+					{
+						if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio)).ToList();
+					}
 					break;
 				case eTituloSituacao.SuspensoDeclaratorio:
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
@@ -320,6 +331,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			tituloAtual.Situacao.Id = titulo.Situacao.Id;
 			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId;
 			tituloAtual.MotivoSuspensao = titulo.MotivoSuspensao;
+			tituloAtual.DiasProrrogados = titulo.DiasProrrogados;
 
 			_bus.AlterarSituacao(tituloAtual);
 
