@@ -48,5 +48,16 @@
 				<%= Html.TextBox("DataSituacaoAtual", DateTime.Today.ToShortDateString(), new { @class = "text disabled", @disabled = "disabled" })%>
 			</div>
 		</div>
+		<div class="block divProrrogar hide">
+			<div class="coluna20">
+				<label for="DataVencimento">Data de vencimento *</label>
+				<%= Html.TextBox("DataVencimento", Model.DataVencimento, new { @class = "text disabled", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna20 prepend1">
+				<label for="DiasProrrogados">Dias prorrogados *</label>
+				<%= Html.TextBox("DiasProrrogados", string.Empty, new { @class = "text txtDiasProrrogados maskNumInt", @maxlength = "5" })%>
+			</div>
+		</div>
 	</fieldset>
 </div>

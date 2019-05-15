@@ -647,6 +647,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 				set t.situacao         = :situacao,
 					t.situacao_motivo  = :situacao_motivo,
 					t.motivo_suspensao = :motivo_suspensao,
+					t.data_vencimento  = :data_vencimento,
+					t.dias_prorrogados = :dias_prorrogados,
 					t.data_situacao    = sysdate,
 					t.data_emissao     = (case when :situacao = 8 then sysdate else null end),/*Válido*/
 					t.arquivo          = :arquivo,
@@ -657,6 +659,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("situacao", titulo.Situacao.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao_motivo", (titulo.MotivoEncerramentoId.GetValueOrDefault() > 0) ? titulo.MotivoEncerramentoId : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("motivo_suspensao", DbType.String, 1000, titulo.MotivoSuspensao);
+				comando.AdicionarParametroEntrada("data_vencimento", (titulo.DataVencimento.Data.HasValue) ? titulo.DataVencimento.Data : (object)DBNull.Value, DbType.DateTime);
+				comando.AdicionarParametroEntrada("dias_prorrogados", (titulo.DiasProrrogados.HasValue) ? titulo.DiasProrrogados : (object)DBNull.Value, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				comando.AdicionarParametroEntrada("arquivo", (titulo.ArquivoPdf.Id.HasValue) ? titulo.ArquivoPdf.Id : (object)DBNull.Value, DbType.Int32);
 
@@ -1830,6 +1834,26 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoID, DbType.Int32);
 
 				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) > 0;
+			}
+		}
+
+		internal int VerificarEhTituloAnterior(Titulo titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"select nvl(max(af.finalidade),0) finalidade from (
+					select f.finalidade 
+					from {0}tab_protocolo_ativ_finalida f 
+					where f.modelo = :modelo and f.titulo_anterior_tipo = 1 and f.titulo_anterior_id = :id
+					union all
+					select f.finalidade 
+					from {0}tab_protocolo_ativ_finalida f 
+					where f.modelo = :modelo and f.titulo_anterior_tipo = 1 and f.titulo_anterior_id = :id ) af", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("modelo", titulo.Modelo.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("id", titulo.Id, DbType.Int32);
+
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 			}
 		}
 

@@ -239,6 +239,71 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloAtividade.Data
 			}
 		}
 
+		internal bool VerificarDeferir(Atividade atividade, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+				List<int> modelosRequeridos = new List<int>();
+
+				if (atividade.Finalidades != null && atividade.Finalidades.Count > 0)
+				{
+					modelosRequeridos.AddRange(atividade.Finalidades.Select(x => x.TituloModelo).ToList());
+				}
+				else
+				{
+					modelosRequeridos = ObterModelosRequeridos(atividade, banco);
+				}
+
+				foreach (int item in modelosRequeridos)
+				{
+					string colunafiltro = atividade.Protocolo.IsProcesso ? "processo" : "documento";
+
+					comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_titulo t, {0}tab_titulo_atividades a 
+					where a.titulo = t.id and a.protocolo = :protocolo and t.modelo = :modelo and a.atividade = :atividade and t.situacao in (3,6)", EsquemaBanco);//3 - Concluído | 6 - Prorrogado
+
+					comando.AdicionarParametroEntrada("atividade", atividade.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("protocolo", atividade.Protocolo.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("modelo", item, DbType.Int32);
+
+					if (Convert.ToInt32(bancoDeDados.ExecutarScalar(comando)) <= 0)
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
+		private List<int> ObterModelosRequeridos(Atividade atividade, BancoDeDados banco = null)
+		{
+			Comando comando = null;
+			List<int> modelosRequeridos = new List<int>();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+
+				comando = bancoDeDados.CriarComando(@"select f.modelo from {0}tab_protocolo_atividades t, {0}tab_protocolo_ativ_finalida f 
+					where t.protocolo = :protocolo and t.atividade = :atividade and t.id = f.protocolo_ativ", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("protocolo", atividade.Protocolo.Id, DbType.Int32);
+				comando.AdicionarParametroEntrada("atividade", atividade.Id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						modelosRequeridos.Add(Convert.ToInt32(reader["modelo"]));
+					}
+
+					reader.Close();
+				}
+			}
+
+			return modelosRequeridos;
+		}
+
 		internal Atividade ObterAtividadePorCodigo(int codigo)
 		{
 			Atividade retorno = new Atividade();

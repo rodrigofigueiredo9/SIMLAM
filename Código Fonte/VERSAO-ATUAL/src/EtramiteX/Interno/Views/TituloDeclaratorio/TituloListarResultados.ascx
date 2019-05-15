@@ -1,4 +1,5 @@
-﻿<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
+﻿<%@ Import Namespace="Tecnomapas.Blocos.Entities.Etx.ModuloCore" %>
+<%@ Import Namespace="Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo" %>
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<ListarVM>" %>
 
 <input type="hidden" class="paginaAtual" value="" />
@@ -35,9 +36,9 @@
 					<%if (Model.PodeAssociar) {%><input type="button" title="Associar" class="icone associar btnAssociar" /><% } %>
 					<%if (Model.PodeVisualizar){%><input type="button" title="PDF do título" class="icone pdf btnPDF" /><% } %>
 					<%if (!Model.PodeAssociar && Model.PodeVisualizar) {%><input type="button" title="Visualizar" class="icone visualizar btnVisualizar" /><% } %>
-					<%if (Model.PodeEditar) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
-					<%if (Model.PodeExcluir) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
-					<%if (Model.PodeAlterarSituacao && item.Modelo.Sigla != "IC"){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
+					<%if (Model.PodeEditar && item.Modelo.Codigo != (int)eTituloModeloCodigo.DeclaracaoDispensaLicencaBarragem) {%><input type="button" title="Editar" class="icone editar btnEditar" /><% } %>
+					<%if (Model.PodeExcluir && item.Modelo.Codigo != (int)eTituloModeloCodigo.DeclaracaoDispensaLicencaBarragem) {%><input type="button" title="Excluir" class="icone excluir btnExcluir" /><% } %>
+					<%if (Model.PodeAlterarSituacao){%><input type="button" title="Alterar situação" class="icone sitTitulo btnAlterarSituacao" /><% } %>
 					<%if (item.Modelo.Sigla == "IC"){%><input type="button" title="Emitir DUA" class="icone notificacao btnEmitirDua" /><% } %>
 				</td>
 			</tr>

@@ -39,6 +39,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloInf
 		public String Tid { get; set; }
 
 		public Decimal AreaCorteCalculada { get; set; }
+		public int Arvores { get; set; }
 
 		public int? CredenciadoId { get; set; }
 		public bool Antigo { get; set; }

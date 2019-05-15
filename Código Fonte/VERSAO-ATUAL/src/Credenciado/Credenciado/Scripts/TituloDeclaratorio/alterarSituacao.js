@@ -18,6 +18,7 @@ TituloAlterarSituacao = {
 			$.extend(TituloAlterarSituacao.settings, options);
 		}
 
+		container.delegate('.ddlNovaSituacao', 'change', TituloAlterarSituacao.changeSituacao);
 		container.delegate('.btnSalvar', 'click', TituloAlterarSituacao.salvar);
 	},
 
@@ -30,10 +31,17 @@ TituloAlterarSituacao = {
 		});
 	},
 
+	changeSituacao: function () {
+		if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 13) {
+			$('.divProrrogar', TituloAlterarSituacao.container).removeClass('hide');
+		}
+	},
+
 	salvar: function () {
 		var objeto = {
 			Id: $('.hdnTituloId', TituloAlterarSituacao.container).val(),
-			Situacao: { Id: $('.ddlNovaSituacao', TituloAlterarSituacao.container).val() }
+			Situacao: { Id: $('.ddlNovaSituacao', TituloAlterarSituacao.container).val() },
+			DiasProrrogados: $('.txtDiasProrrogados', TituloAlterarSituacao.container).val()
 		};
 
 		MasterPage.carregando(true);

@@ -39,8 +39,11 @@ TituloAlterarSituacao = {
 		if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 9) {
 			$('.divSuspenso', TituloAlterarSituacao.container).removeClass('hide');
 		}
-		if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 10) {
+		else if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 10) {
 			$('.divEncerramento', TituloAlterarSituacao.container).removeClass('hide');
+		}
+		else if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 13) {
+			$('.divProrrogar', TituloAlterarSituacao.container).removeClass('hide');
 		}
 	},
 
@@ -48,6 +51,7 @@ TituloAlterarSituacao = {
 		var objeto = {
 			Id: $('.hdnTituloId', TituloAlterarSituacao.container).val(),
 			Situacao: { Id: $('.ddlNovaSituacao', TituloAlterarSituacao.container).val() },
+			DiasProrrogados: $('.txtDiasProrrogados', TituloAlterarSituacao.container).val(),
 			MotivoEncerramentoId: $('.ddlMotivoEncerramento', TituloAlterarSituacao.container).val(),
 			MotivoSuspensao: $('.txtMotivo', TituloAlterarSituacao.container).val()
 		};

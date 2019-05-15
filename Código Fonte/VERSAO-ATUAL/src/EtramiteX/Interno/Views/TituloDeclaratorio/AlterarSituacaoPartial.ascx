@@ -61,5 +61,17 @@
 				<%= Html.TextArea("Motivo", null, new { @class = "text media txtMotivo", maxlength = "1000" })%>
 			</div>
 		</div>
+
+		<div class="block divProrrogar  <%= Model.SituacaoId == (int)eTituloSituacao.ProrrogadoDeclaratorio ? "" : "hide" %>">
+			<div class="coluna20">
+				<label for="DataVencimento">Data de vencimento *</label>
+				<%= Html.TextBox("DataVencimento", Model.DataVencimento, new { @class = "text disabled", @disabled = "disabled" })%>
+			</div>
+
+			<div class="coluna20 prepend1">
+				<label for="DiasProrrogados">Dias prorrogados *</label>
+				<%= Html.TextBox("DiasProrrogados", string.Empty, new { @class = "text txtDiasProrrogados maskNumInt", @maxlength = "5" })%>
+			</div>
+		</div>
 	</fieldset>
 </div>
