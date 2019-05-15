@@ -1627,8 +1627,8 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			using (
 				var cmd = new OracleCommand(
-						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(G.AREA_M2, 0) ARL_DOCUMENTO, G.CODIGO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
-									t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
+						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(t.ARL_CROQUI, 0) ARL_DOCUMENTO, G.CODIGO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
+									t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp, t.arl_cedida
 										FROM CRT_DOMINIALIDADE_RESERVA				t
 											INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
 											INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
@@ -1675,6 +1675,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							{
 
 								dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
+
+								var areaCedida = Convert.ToDouble(dr["ARL_CEDIDA"]);
+								dados.area = areaCedida > 0 ? Convert.ToString(Math.Round(areaCedida / 10000, 2), CultureInfo.InvariantCulture) : "0";
 
 								dadosReceptor = dados;
 							}
