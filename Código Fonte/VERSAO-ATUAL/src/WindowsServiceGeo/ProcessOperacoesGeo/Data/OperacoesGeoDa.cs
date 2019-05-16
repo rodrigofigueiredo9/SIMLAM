@@ -198,6 +198,17 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 			}
 		}
 
+		internal void SetSemRegistroParaCanceladoNaFila()
+		{
+			string strSQL = $"begin update tab_fila f set f.situacao={ FILA_SITUACAO_CANCELADO}, f.data_fim=sysdate where f.titulo > 0 and f.situacao in ({FILA_SITUACAO_AGUARDANDO}, {FILA_SITUACAO_ERRO}, {FILA_SITUACAO_EXECUTANTO}) and not exists (select 1 from tab_titulo t where t.id = f.titulo); end;";
+
+			using (Comando comando = this.banco.CriarComando(strSQL))
+			{
+				this.banco.ExecutarNonQuery(comando);
+			}
+
+		}
+
 		internal void SetFalhaNaFila(int ticketID, int ticketType)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
