@@ -79,6 +79,7 @@
         penalidadeinfracao = 150,
 		parametrizacao = 151,
 		vrte = 152,
-		cobranca = 153
+		cobranca = 153,
+		notafiscalcaixa = 154,
 	}
 }

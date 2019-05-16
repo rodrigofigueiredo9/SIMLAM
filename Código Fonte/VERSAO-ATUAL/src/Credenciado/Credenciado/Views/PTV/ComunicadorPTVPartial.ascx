@@ -11,14 +11,17 @@
 	ComunicadorPTV.settings.Mensagens = <%= Model.Mensagens %>;
 </script>
 
-<h1 class="titTela">Comunicador PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
+<h1 class="titTela"><%= Model.IsDesbloqueio ? "Solicitar Desbloqueio" : "Comunicador" %> PTV - <%= Model.Comunicador.PTVNumero.ToString() %> </h1>
 <br />
 
 <div class="block">
+<% if (!Model.IsDesbloqueio) { %>
 <% PTVConversa conversa = null;
-	for (int i = 0; i < Model.Comunicador.Conversas.Count; i++) {
+	for (int i = 0; i < Model.Comunicador.Conversas.Count; i++)
+	{
 		conversa = Model.Comunicador.Conversas[i]; %>
-		<% if (conversa.TipoComunicador == (int)eExecutorTipo.Credenciado) { %>
+		<% if (conversa.TipoComunicador == (int)eExecutorTipo.Credenciado)
+			{ %>
 			<div class="block">
 				<fieldset class="boxVerdeEscuro" style="-ms-word-break: break-word; word-break: break-word;">
 					<legend class="fieldDireita"><%= conversa.NomeComunicador %> - <%= conversa.DataConversa.DataHoraTexto %> </legend>
@@ -37,7 +40,9 @@
 					<% } %>
 				</fieldset>
 			</div>
-		<% } else { %>
+		<% }
+			else
+			{ %>
 			<div class="block">
 				<fieldset class="box" style="-ms-word-break: break-word; word-break: break-word;">
 					<legend class="fieldEsquerda"><%= conversa.NomeComunicador %> - <%= conversa.DataConversa.DataHoraTexto %> </legend>
@@ -46,7 +51,8 @@
 							<%= conversa.Texto %>
 						</label>
 					</div>
-					<% if ((conversa.ArquivoId > 0) && (Model.Comunicador.ArquivoInterno.Id == conversa.ArquivoId)) { %>
+					<% if ((conversa.ArquivoId > 0) && (Model.Comunicador.ArquivoInterno.Id == conversa.ArquivoId))
+						{ %>
 						<div class="coluna99">
 							<%= Html.ActionLink(ViewModelHelper.StringFit(conversa.ArquivoNome, 45), "BaixarInterno", "Arquivo", new { @id = conversa.ArquivoId }, new { @Style = "display: block", @class = "lnkArquivo", @title = conversa.ArquivoNome })%>
 						</div>
@@ -56,6 +62,7 @@
 		<% } %>
 	<% } %>
 </div>
+<%} %>
 
 <% if (Model.Comunicador.liberadoCredenciado) { %>
 <div class="block box rodape">
@@ -67,6 +74,7 @@
 			<span class="spanInputFile">
 			<input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" /></span>
 			<input type="hidden" class="hdnArquivo hdnAnexoArquivoJson" name="hdnAnexoArquivoJson" value="" />
+			<input type="hidden" class="hdnDesbloqueio" name="hdnDesbloqueio" value="<%= Model.IsDesbloqueio %>" />
 		</div>
 		<div class="ultima spanBotoes">
 			<button type="button" class="inlineBotao btnArq" title="Enviar anexo" onclick="ComunicadorPTV.onEnviarAnexoArquivoClick('<%= Url.Action("arquivo", "arquivo") %>');">Anexar</button>
@@ -75,7 +83,7 @@
 	</div>
 
 	<div class="block box">
-		<label for="Mensagem">Justificativa *</label>
+		<label for="Mensagem"><%= Model.IsDesbloqueio ? "Justificativa *" : "Mensagem" %></label>
 		<% if (Model.Comunicador.liberadoCredenciado) { %>
 			<%= Html.TextArea("txtJustificativa", new { @class = "media txtJustificativa " , @maxlength = "300"  })  %>
 		<% } else {%>

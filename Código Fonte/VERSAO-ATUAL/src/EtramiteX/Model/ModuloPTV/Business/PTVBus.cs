@@ -22,10 +22,12 @@ using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using System.Web;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
+using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
-	public class PTVBus
+	public class PTVBus : HttpApplication
 	{
 		#region Propriedades
 
@@ -64,7 +66,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
-                        ptv.PossuiLaudoLaboratorial = 0;
+						ptv.PossuiLaudoLaboratorial = 0;
 
 						_da.Salvar(ptv, bancoDeDados);
 
@@ -249,6 +251,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								break;
 						}
 					}
+
 					else
 					{
 						Validacao.Add(Mensagem.PTV.NumeroDocumentoOrigemNaoExistente(origemTipoTexto));
@@ -329,10 +332,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 					{
 						bancoDeDadosCredenciado.IniciarTransacao();
 
-						_da.AnalizarEPTV(eptv, bancoDeDadosCredenciado);
+						_da.AnalisarEPTV(eptv, bancoDeDadosCredenciado);
 
-						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Aprovado)
+						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Valido)
 						{
+							eptvBanco.LacreNumero = eptv.LacreNumero;
+							eptvBanco.ContainerNumero = eptv.ContainerNumero;
+							eptvBanco.PoraoNumero = eptv.PoraoNumero;
+							eptvBanco.PartidaLacradaOrigem = eptv.PartidaLacradaOrigem;
 							eptvBanco.ValidoAte = eptv.ValidoAte;
 							eptvBanco.ResponsavelTecnicoId = eptv.ResponsavelTecnicoId;
 							eptvBanco.ResponsavelTecnicoNome = eptv.ResponsavelTecnicoNome;
@@ -343,12 +350,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							{
 								return Validacao.EhValido;
 							}
-							
+
 							if (eptvBanco.Anexos.Any())
 							{
 								var arquivoBusCred = new ArquivoBus(eExecutorTipo.Credenciado);
 								var arquivoBusInst = new ArquivoBus(eExecutorTipo.Interno);
-								foreach (var anexo in  eptvBanco.Anexos)
+								foreach (var anexo in eptvBanco.Anexos)
 								{
 									if (anexo.Arquivo.Id > 0)
 									{
@@ -368,15 +375,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							try
 							{
 								_da.Importar(eptvBanco, bancoDeDadosInterno);
+								Validacao.Add(Mensagem.PTV.AnaliseEPTVSucesso);
 							}
 							catch (Exception exc)
 							{
-								if(exc.Message.Contains("UK_TAB_PTV_EPTV"))
+								if (exc.Message.Contains("UK_TAB_PTV_EPTV"))
 								{
 									Validacao.Add(new Mensagem { Texto = "O EPTV já foi importado para o institucional.", Tipo = eTipoMensagem.Advertencia });
 									return Validacao.EhValido;
 								}
-								
+
 								throw exc;
 							}
 						}
@@ -403,23 +411,42 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 						#region [ Enviar E-mail ]
 
 						if (eptv.Situacao == (int)eSolicitarPTVSituacao.Bloqueado ||
-                            eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao ||
+							eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
 						{
 							PTVComunicador comunicador = new PTVComunicador();
 							comunicador.Id = _da.ObterIDComunicador(eptv.Id);
 							comunicador.PTVId = eptv.Id;
-							comunicador.PTVNumero = eptv.Numero;
+							comunicador.PTVNumero = eptvBanco.Numero;
 							comunicador.liberadoCredenciado = true;
 
 							var conversa = new PTVConversa();
-							conversa.Texto = eptv.SituacaoMotivo;
+
+							if (eptv.Situacao == (int)eSolicitarPTVSituacao.AgendarFiscalizacao)
+							{
+								conversa.Texto = "Foi agendada fiscalização para a E-PTV " + eptvBanco.Numero;
+								conversa.Texto += "<br />Local: " + eptv.LocalFiscalizacao;
+								conversa.Texto += "<br />Hora: " + eptv.HoraFiscalizacao;
+								conversa.Texto += "<br />Informação adicional: " + eptv.InformacoesAdicionais;
+							}
+							else if (eptv.Situacao == (int)eSolicitarPTVSituacao.Rejeitado)
+							{
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi rejeitada.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
+							}
+							else  //Situação == Bloqueado
+							{
+								conversa.Texto = "A E-PTV " + eptvBanco.Numero + " foi bloqueada. Seu empreendimento está bloqueado para emissão de novas PTVs. Favor entrar em contato com o local para onde foi solicitada a vistoria da carga.";
+								conversa.Texto += "<br />Motivo: " + eptv.SituacaoMotivo;
+							}
+
 							comunicador.Conversas.Add(conversa);
 
 							SalvarConversa(comunicador, bancoDeDadosInterno, bancoDeDadosCredenciado);
-                        }
-                        else
-                        {
-                            var emailKeys = new Dictionary<string, string>
+						}
+						else
+						{
+							var emailKeys = new Dictionary<string, string>
 							{
 								{ "[data situacao]", DateTime.Today.ToShortDateString() },
 								{ "[hora situacao]", DateTime.Now.ToShortTimeString() },
@@ -428,27 +455,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 								{ "[hora vistoria]", eptv.DataHoraVistoriaTexto }
 							};
 
-                            foreach (var item in emailKeys)
-                            {
-                                textoEmail = textoEmail.Replace(item.Key, item.Value);
-                            }
+							foreach (var item in emailKeys)
+							{
+								textoEmail = textoEmail.Replace(item.Key, item.Value);
+							}
 
-                            var email = new Email();
-                            email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
-                            email.Texto = textoEmail;
-                            email.Tipo = eEmailTipo.AnaliseEPTV;
-                            email.Codigo = eptv.Id;
+							var email = new Email();
+							email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
+							email.Texto = textoEmail;
+							email.Tipo = eEmailTipo.AnaliseEPTV;
+							email.Codigo = eptv.Id;
 
-                            List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
+							List<String> lstEmail = _da.ObterEmailsCredenciado(eptv.Id, bancoDeDadosCredenciado);
 
-                            if (lstEmail != null && lstEmail.Count > 0)
-                            {
-                                email.Destinatario = String.Join(", ", lstEmail.ToArray());
+							if (lstEmail != null && lstEmail.Count > 0)
+							{
+								email.Destinatario = String.Join(", ", lstEmail.ToArray());
 
-                                EmailBus emailBus = new EmailBus();
-                                emailBus.Enviar(email, bancoDeDadosInterno);
-                            }
-                        }
+								EmailBus emailBus = new EmailBus();
+								emailBus.Enviar(email, bancoDeDadosInterno);
+							}
+						}
 
 						#endregion
 
@@ -473,7 +500,35 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			try
 			{
-				return _da.Obter(id, simplificado);
+				PTV ptv = new PTV();
+
+				ptv = _da.Obter(id, simplificado);
+				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(id);
+				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
+				if(ptv.Produtos.Count() > 0) ptv.IsPossuiDocOrigem = (ptv.Produtos[0].OrigemTipo == (int)eDocumentoFitossanitarioTipo.SemDocOrigem) ? 0 : 1;
+
+				return ptv;
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return null;
+		}
+
+		public PTV ObterPorIDCredenciado(int id, bool simplificado = false)
+		{
+			try
+			{
+				PTV ptv = new PTV();
+				
+				ptv = _da.ObterPorIDCredenciado(id, simplificado);
+				ptv.NotaFiscalDeCaixas = ObterNotasFiscalDeCaixas(ptv.Id);
+				ptv.NFCaixa.notaFiscalCaixaApresentacao = (ptv.NotaFiscalDeCaixas.Count() > 0) ? 0 : 1;
+				if (ptv.Produtos.Count() > 0) ptv.IsPossuiDocOrigem = (ptv.Produtos[0].OrigemTipo == (int)eDocumentoFitossanitarioTipo.SemDocOrigem) ? 0 : 1;
+
+				return ptv;
 			}
 			catch (Exception ex)
 			{
@@ -761,11 +816,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public List<ListaValor> DiasHorasVistoria(int setor)
+		public List<ListaValor> DiasHorasVistoriaEPTV(int ptvId)
 		{
 			try
 			{
-				return _da.DiasHorasVistoria(setor);
+				return _da.DiasHorasVistoriaEPTV(ptvId);
 			}
 			catch (Exception exc)
 			{
@@ -775,6 +830,126 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
+		public List<ListaValor> DiasHorasVistoria(int setor, DateTime? dataVistoria = null)
+		{
+			try
+			{
+				return _da.DiasHorasVistoria(setor, dataVistoria);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			int quantidade = -1;
+
+			try
+			{
+				quantidade = _da.QuantidadeEPTVAguardandoAnaliseFuncionario(idFuncionario, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return quantidade;
+		}
+
+		public PTV ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
+		{
+			var ptv = new PTV();
+
+			try
+			{
+				ptv = _da.ObterNumeroPTVExibirMensagemFuncionario(idFuncionario, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return ptv;
+		}
+
+		public NotaFiscalCaixa VerificarNumeroNFCaixa(NotaFiscalCaixa notaFiscal)
+		{
+			try
+			{
+				return _da.VerificarNumeroNFCaixa(notaFiscal);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public List<NotaFiscalCaixa> ObterNotasFiscalDeCaixas(int idPTV)
+		{
+			try
+			{
+				return _da.ObterNFCaixas(idPTV);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+			return null;
+		}
+
+		public decimal ObterSaldoDocOrigem(PTVProduto prod)
+		{
+			decimal saldo = 0;
+			switch ((eDocumentoFitossanitarioTipo)prod.OrigemTipo)
+			{
+				case eDocumentoFitossanitarioTipo.CFO:
+					EmissaoCFOBus emissaoCFOBus = new EmissaoCFOBus();
+					EmissaoCFO cfo = emissaoCFOBus.Obter(prod.Origem);
+					saldo = cfo.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);					
+					break;
+
+				case eDocumentoFitossanitarioTipo.CFOC:
+					EmissaoCFOCBus emissaoCFOCBus = new EmissaoCFOCBus();
+					EmissaoCFOC cfoc = emissaoCFOCBus.Obter(prod.Origem);
+					saldo = cfoc.Produtos.Where(x => x.CultivarId == prod.Cultivar && x.UnidadeMedidaId == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTVOutroEstado:
+					PTVOutroBus ptvOutroBus = new PTVOutroBus();
+					PTVOutro ptvOutro = ptvOutroBus.Obter(prod.Origem);
+					saldo = ptvOutro.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);
+					break;
+
+				case eDocumentoFitossanitarioTipo.PTV:
+					PTVBus ptvBus = new PTVBus();
+					PTV ptv = ptvBus.Obter(prod.Origem);
+					saldo = ptv.Produtos.Where(x => x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida).Sum(x => x.Quantidade);					
+					break;
+			}
+
+			decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)prod.OrigemTipo, prod.Origem, prod.OrigemNumero, prod.Cultivar, prod.UnidadeMedida, 0);	//o último parâmetro, idPTV, nesse caso não importa, porque o PTV atual não deve ser desconsiderado do cálculo
+
+			saldo = saldo - saldoOutrosDoc;
+
+			//if (prod.OrigemTipo != (int)eDocumentoFitossanitarioTipo.CFCFR && prod.OrigemTipo != (int)eDocumentoFitossanitarioTipo.TF && prod.OrigemTipo != (int)eDocumentoFitossanitarioTipo.SemDocOrigem)
+			//{
+			//	decimal saldoOutrosDoc = _da.ObterOrigemQuantidade((eDocumentoFitossanitarioTipo)prod.OrigemTipo, prod.Origem, prod.OrigemNumero, prod.Cultivar, prod.UnidadeMedida, ptvData.Data.GetValueOrDefault().Year, ptvID);
+
+			//	decimal quantidadeAdicionada = lista.Where(x => x.OrigemTipo == prod.OrigemTipo && x.Origem == prod.Origem && x.Cultivar == prod.Cultivar && x.UnidadeMedida == prod.UnidadeMedida && !x.Equals(prod)).Sum(x => x.Quantidade);
+
+			//	if ((saldoOutrosDoc + quantidadeAdicionada + (prod.ExibeQtdKg ? prod.Quantidade / 1000 : prod.Quantidade)) > saldo)
+			//	{
+			//		Validacao.Add(Mensagem.PTV.SomaQuantidadeInvalida);
+			//	}
+			//}
+
+			return saldo;
+		}
 		#endregion
 
 		#region Comunicador
@@ -964,6 +1139,151 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			}
 
 			return Validacao.EhValido;
+		}
+
+		#endregion
+
+		#region Alerta de E-PTV
+
+		public bool VerificaAlertaEPTV()
+		{
+			bool houveAlerta = false;
+
+			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
+			//verifica se o usuário está habilitado para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
+
+			if (habilitado)
+			{
+				//Verifica quantas PTVs estão aguardando análise
+				int quantidade = QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+
+				if (quantidade > 0)
+				{
+					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
+					houveAlerta = true;
+				}
+			}
+			return houveAlerta;
+		}
+
+		public bool VerificarAlertaChegadaMensagemEPTV()
+		{
+			bool exibirMensagem = false;
+
+			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+
+			//verifica se o usuário está habilitado para emissão de PTV
+			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
+
+			if (habilitado)
+			{
+				//Verifica quantas PTVs estão aguardando análise
+				var ptv = ObterNumeroPTVExibirMensagemFuncionario(funcionarioId);
+
+				if (ptv?.Id > 0)
+				{
+					Validacao.Add(Mensagem.PTV.ChegadaMensagemEPTV(ptv.Numero, ptv.Id));
+					exibirMensagem = true;
+				}
+			}
+			return exibirMensagem;
+		}
+
+
+		#endregion Alerta de E-PTV
+
+		#region Retificação Nota fiscal de caixa
+
+		public Resultados<RetificacaoNFCaixaListarResultado> FiltrarNFCaixa(RetificacaoNFCaixaListarFiltro ptvListarFiltro, Paginacao paginacao)
+		{
+			try
+			{
+				Filtro<RetificacaoNFCaixaListarFiltro> filtro = new Filtro<RetificacaoNFCaixaListarFiltro>(ptvListarFiltro, paginacao);
+				Resultados<RetificacaoNFCaixaListarResultado> resultados = _da.FiltrarNFCaixa(filtro);
+
+				if (resultados.Quantidade < 1)
+				{
+					Validacao.Add(Mensagem.Padrao.NaoEncontrouRegistros);
+				}
+
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return null;
+		}
+
+		public bool ExcluirNFCaixa(int id)
+		{
+			try
+			{
+				if (!_validar.ExcluirNFCaixa(id))
+				{
+					return false;
+				}
+
+				GerenciadorTransacao.ObterIDAtual();
+
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.ExcluirNFCaixa(id, bancoDeDados);
+
+					Validacao.Add(Mensagem.RetificacaoNFCaixa.Excluido);
+
+					bancoDeDados.Commit();
+				}
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+
+			return Validacao.EhValido;
+		}
+
+		public NotaFiscalCaixa ObterNFCaixa(int id)
+		{
+			try
+			{
+				return _da.ObterNFCaixa(id);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new NotaFiscalCaixa();
+		}
+
+		public Resultados<PTVNFCaixaResultado> ObterPTVNFCaixa(Filtro<int> filtro)
+		{
+			try
+			{
+				return _da.ObterPTVNFCaixa(filtro);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new Resultados<PTVNFCaixaResultado>();
+		}
+
+		public void SalvarNFCaixa(int id, int novoSaldo)
+		{
+			try
+			{
+				_da.SalvarNFCaixa(id, novoSaldo);
+				Validacao.Add(Mensagem.RetificacaoNFCaixa.Salvar);
+			}catch(Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
 		}
 
 		#endregion

@@ -22,6 +22,7 @@ using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Configuracao.Interno.Extensoes;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloCaracterizacao.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloProjetoGeografico.Data;
+using Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloRegularizacaoFundiaria.Data;
 using Cred = Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes;
 using HistCaract = Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.Data;
 
@@ -38,6 +39,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		GerenciadorConfiguracao<ConfiguracaoProjetoGeo> _configPGeo;
 		GerenciadorConfiguracao<ConfiguracaoCaracterizacao> _caracterizacaoConfig;
 		GerenciadorArquivo _gerenciador;
+		RegularizacaoFundiariaDa _regularizacaoDa;
 
 		public GerenciadorConfiguracao<ConfiguracaoCaracterizacao> CaracterizacaoConfig
 		{
@@ -75,6 +77,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			_configPGeo = new GerenciadorConfiguracao<ConfiguracaoProjetoGeo>(new ConfiguracaoProjetoGeo());
 			_caracterizacaoConfig = new GerenciadorConfiguracao<ConfiguracaoCaracterizacao>(new ConfiguracaoCaracterizacao());
 			_gerenciador = new GerenciadorArquivo(_config.DiretorioOrtoFotoMosaico, null);
+			_regularizacaoDa = new RegularizacaoFundiariaDa();
 		}
 
 		#region Comandos DML
@@ -186,7 +189,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						if (arquivosSalvos.Count > 1)
 						{
 							_da.ExcluirArquivoDuplicados(arquivoEnviado.ProjetoId, bancoDeDados);
-							arquivosSalvos = _da.ObterArquivos(arquivoEnviado.ProjetoId, bancoDeDados).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado).ToList();
+							arquivosSalvos = _da.ObterArquivos(arquivoEnviado.ProjetoId,null, bancoDeDados).Where(x => x.Tipo == (int)eProjetoGeograficoArquivoTipo.ArquivoEnviado).ToList();
 						}
 
 						#endregion
@@ -273,10 +276,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					if (arquivoEnviado.IdRelacionamento == 0)
 					{
 						_da.InserirFila(arquivoEnviado, bancoDeDados);
-
 						ObterSituacao(arquivoEnviado);
-
 						bancoDeDados.Commit();
+					}
+					else
+					{
+						ObterSituacao(arquivoEnviado);
+						if (arquivoEnviado.Situacao == (int)eFilaSituacaoGeo.Erro)
+						{
+							_da.AlterarSituacaoFila(arquivoEnviado, bancoDeDados);
+							bancoDeDados.Commit();
+						}
 					}
 				}
 			}
@@ -410,6 +420,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				if (_validar.Refazer(projeto))
 				{
 					_da.Refazer(projeto.Id, banco);
+
+					if (projeto.CaracterizacaoId == (int)eCaracterizacao.RegularizacaoFundiaria)
+					{
+						_regularizacaoDa.Excluir(projeto.EmpreendimentoId, banco);
+					}
+
 					Validacao.Add(Mensagem.ProjetoGeografico.RefeitoSucesso);
 				}
 			}
@@ -426,6 +442,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				if (_validar.Refazer(projeto))
 				{
 					_da.Atualizar(projeto.Id, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
+		public void Reabrir(ProjetoGeografico projeto, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Refazer(projeto))
+				{
+					_da.Reabrir(projeto.Id, titulo, banco);
 					Validacao.Add(Mensagem.ProjetoGeografico.SalvoSucesso);
 				}
 			}
@@ -669,12 +701,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 		#region Obter
 
-		public ProjetoGeografico ObterProjeto(int id, bool simplificado = false)
+		public ProjetoGeografico ObterProjeto(int id,int? tipo = null, bool simplificado = false)
 		{
 			ProjetoGeografico projeto = null;
 			try
 			{
-				projeto = _da.Obter(id, null, simplificado, (!_da.ValidarProjetoGeograficoTemporario(id)));
+				projeto = _da.Obter(id, tipo, null, simplificado, (!_da.ValidarProjetoGeograficoTemporario(id)));
 
 				if (projeto.Id > 0 && !simplificado)
 				{
@@ -724,7 +756,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (lstOrtofoto == null || lstOrtofoto.Count == 0)
 				{
-					ProjetoGeografico projeto = ObterProjeto(projetoId, true);
+					ProjetoGeografico projeto = ObterProjeto(projetoId,null, true);
 					lstOrtofoto = ObterArquivosOrtofotoWebService(projeto);
 				}
 			}
@@ -830,7 +862,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (dependencia != null)
 				{
-					ProjetoGeografico dominio = _da.Obter(dependencia.DependenciaId, null, false, true);
+					ProjetoGeografico dominio = _da.Obter(dependencia.DependenciaId,null, banco:null, simplificado:false, finalizado:true);
 
 					projeto.MenorX = dominio.MenorX;
 					projeto.MenorY = dominio.MenorY;

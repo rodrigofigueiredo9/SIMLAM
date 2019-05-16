@@ -2045,7 +2045,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		internal List<Lista> ObterPTVSolicitacaoSituacao()
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select l.id, l.texto from lov_solicitacao_ptv_situacao l order by l.id", schema: UsuarioCredenciado);
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select l.id, l.texto from lov_solicitacao_ptv_situacao l where l.id != 8 order by l.id", schema: UsuarioCredenciado);
 
 			foreach (var item in daReader)
 			{
@@ -2058,7 +2058,7 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			}
 
 			return lst;
-		}		
+		}	
 
 		internal List<Lista> ObterPTVUnidadeMedida()
 		{

@@ -7,7 +7,7 @@
 
 <% Html.RenderPartial("DadosDominialidadePartial", Model); %>
 <% Html.RenderPartial("CaracteristicasOcupacaoPartial", Model); %>
-
+<% Html.RenderPartial("ConfrontacoesDominioPartial", Model); %>
 <div class="block box">
 	<% if(!Model.IsVisualizar){ %>
 		<input class="floatLeft btnConfirmarPosse" type="button" value="Confirmar Dados"/>
@@ -15,4 +15,4 @@
 	<% }else{ %>
 		<span class="cancelarCaixa"><a class="linkCancelar btnCancelarPosse" title="Cancelar">Cancelar</a></span>
 	<%} %>
-</div>
+</div>		

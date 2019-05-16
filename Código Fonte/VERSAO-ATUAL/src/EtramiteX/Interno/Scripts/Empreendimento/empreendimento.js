@@ -173,12 +173,16 @@ Empreendimento = {
 				Aux.error(XMLHttpRequest, textStatus, erroThrown, content);
 			},
 			success: function (response, textStatus, XMLHttpRequest) {
-
-				content.empty();
-				content.append(response);
-				EmpreendimentoSalvar.load();
-				MasterPage.botoes(content);
-				Mascara.load(content);
+				Mensagem.limpar(Empreendimento.settings.container);
+				if (response.Msg && response.Msg.length > 0) {
+					Mensagem.gerar(Empreendimento.settings.container, response.Msg);
+				} else {
+					content.empty();
+					content.append(response);
+					EmpreendimentoSalvar.load();
+					MasterPage.botoes(content);
+					Mascara.load(content);
+				}
 			}
 		});
 		MasterPage.carregando(false);

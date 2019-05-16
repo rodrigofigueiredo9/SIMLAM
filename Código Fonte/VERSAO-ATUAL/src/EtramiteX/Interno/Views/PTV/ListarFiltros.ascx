@@ -15,35 +15,53 @@
 		<%= Html.Hidden("Paginacao.PaginaAtual", "1", new { @class = "paginaAtual" })%>
 		<%= Html.Hidden("Paginacao.OrdenarPor", "1", new { @class = "ordenarPor" })%>
 
-		<div class="ultima">
+		<div class="coluna99">
 			<div class="block fixado">
-				<div class="coluna61">
+				<div class="coluna60">
 					<label for="Filtros_Numero">Número PTV</label>
 					<%= Html.TextBox("Filtros.Numero", string.Empty, new { @class = "text setarFoco maskNumInt", @maxlength="10" })%>
 				</div>
+				<div class="coluna20">
+						<label>Situação</label>
+						<%=Html.DropDownList("Filtros.Situacao", Model.Situacoes, new { @class="text" }) %>
+					</div>
 				<div class="coluna10">
 					<button class="inlineBotao btnBuscar">Buscar</button>
 				</div>
 			</div>
 			<div class="block hide">
 				<div class="block">
-					<div class="coluna40">
+					<div class="coluna81 append1">
+						<label for="Filtros_Nome">Interessado</label>
+						<%= Html.TextBox("Filtros.Interessado", string.Empty, new { @class = "text", @maxlength="100", @style="width:100%;"  })%>
+					</div>					
+				</div>
+
+				<div class="block">
+					<div class="coluna81 append1">
 						<label for="Filtros_Nome">Empreendimento</label>
-						<%= Html.TextBox("Filtros.Empreendimento", string.Empty, new { @class = "text", @maxlength="100" })%>
+						<%= Html.TextBox("Filtros.Empreendimento", string.Empty, new { @class = "text", @maxlength="100", @style="width:100%;" })%>
 					</div>
-					<div class="coluna20">
-						<label>Situação</label>
-						<%=Html.DropDownList("Filtros.Situacao", Model.Situacoes, new { @class="text" }) %>
-					</div>
+					
 				</div>
 				<div class="block">
-					<div class="coluna40">
+					<div class="coluna60">
 						<label for="Filtros_Destinatario">Destinatário</label>
 						<%= Html.TextBox("Filtros.Destinatario", string.Empty, new { @class = "text", @maxlength="100" })%>
 					</div>
 					<div class="coluna20">
 						<label>Cultura/Cultivar</label>
 						<%=Html.TextBox("Filtros.CulturaCultivar", string.Empty, new { @class="text ", @maxlength="100"})%>
+					</div>
+				</div>
+				<div class="block">
+					<div class="coluna60">
+						<label>Documento de origem</label>
+						<%=Html.DropDownList("Filtros.TipoDocumento", Model.TiposDocumentoOrigem, new { @class="text ddlTipoDocumento" }) %>
+					</div>
+					<div class="coluna20  txtNumeroDocumento hide">
+						<label>N° do documento de origem</label>
+						<%=Html.TextBox("Filtros.NumeroDocumento", string.Empty, new { @class="text", @maxlength="100"})%>
 					</div>
 				</div>
 			</div>

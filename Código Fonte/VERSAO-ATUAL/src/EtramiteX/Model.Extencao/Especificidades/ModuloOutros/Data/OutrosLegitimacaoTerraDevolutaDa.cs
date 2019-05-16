@@ -433,7 +433,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 					PossePDF possePDF = new PossePDF(posse);
 					outros.RegularizacaoFundiaria.Posses.Add(possePDF);
 					outros.RegularizacaoFundiaria.Posse = possePDF;
-					outros.Dominio = outros.Dominialidade.Dominios.SingleOrDefault(x => x.Id == possePDF.DominioId);
+
+					DominioPDF dominio = new DominioPDF();
+
+					dominio.Identificacao = posse.Identificacao;
+					dominio.ComprovacaoTexto = posse.ComprovacaoTexto;
+					dominio.NumeroCCIR = posse.NumeroCCIR;
+					dominio.Registro = posse.DescricaoComprovacao;
+					dominio.AreaCroquiDecimal = Convert.ToDecimal(posse.AreaCroqui);
+					dominio.AreaDocumentoDecimal = Convert.ToDecimal(posse.AreaPosseDocumento);
+					dominio.AreaCCIRDecimal = Convert.ToDecimal(posse.AreaCCIR);
+					dominio.ConfrontacaoNorte = posse.ConfrontacoesNorte;
+					dominio.ConfrontacaoSul = posse.ConfrontacoesSul;
+					dominio.ConfrontacaoLeste = posse.ConfrontacoesLeste;
+					dominio.ConfrontacaoOeste = posse.ConfrontacoesOeste;
+
+					outros.Dominio = dominio;
 				}
 
 				#endregion
@@ -447,8 +462,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			List<ListaValor> lst = new List<ListaValor>();
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@" select distinct d.id, d.identificacao || '/' || dc.texto || ' - ' texto, d.area_croqui  from {0}crt_regularizacao_dominio d, {0}crt_dominialidade_dominio dd,
-					{0}lov_crt_domin_comprovacao dc, {0}tab_protocolo p, {0}crt_regularizacao cr where d.dominio = dd.id and dd.comprovacao = dc.id and p.empreendimento = cr.empreendimento and cr.id = d.regularizacao
+				Comando comando = bancoDeDados.CriarComando(@" select distinct d.id, d.identificacao || '/' || dc.texto || ' - ' texto, d.area_croqui  from {0}crt_regularizacao_dominio d,
+					{0}lov_crt_domin_comprovacao dc, {0}tab_protocolo p, {0}crt_regularizacao cr where d.comprovacao = dc.id and p.empreendimento = cr.empreendimento and cr.id = d.regularizacao
 					and p.id = :protocoloId ", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("protocoloId", protocoloId, DbType.Int32);

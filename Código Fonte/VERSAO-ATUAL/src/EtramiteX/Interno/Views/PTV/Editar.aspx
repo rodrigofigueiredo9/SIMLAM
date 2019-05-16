@@ -33,7 +33,11 @@
 					urlObterLaboratorio: '<%= Url.Action("ObterLaboratorio","PTV") %>',
 					urlObterTratamentoFisso: '<%= Url.Action("ObterTratamentoFitossanitario","PTV") %>',
 					urlObterItinerario: '<%= Url.Action("ObterItinerario","PTV") %>',
-					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>'
+					urlVerificarDocumentoOrigem: '<%= Url.Action("VerificarDocumentoOrigem","PTV") %>',
+					urlVerificarNotaFiscalCaixa: '<%= Url.Action("VerificarNotaFiscalCaixa", "PTV") %>',
+				    urlObterSaldoDocOrigem: '<%= Url.Action("ObterSaldoDocOrigem", "PTV") %>',
+					urlValidarDestinatarioExportacao: '<%= Url.Action("ValidarDestinatarioExportacao","PTV") %>',
+				    urlObterMunicipios: '<%= Url.Action("ObterMunicipios", "PTV") %>'
 				},
 			});
 		});

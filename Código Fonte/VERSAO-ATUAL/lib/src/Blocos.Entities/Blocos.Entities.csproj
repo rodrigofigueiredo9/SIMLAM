@@ -34,12 +34,30 @@
     <Reference Include="itextsharp">
       <HintPath>..\..\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.Mvc.3.0.50813.1\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.Razor.1.0.20105.408\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\src\EtramiteX\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -337,6 +355,7 @@
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioListarResultado.cs" />
     <Compile Include="Interno\ModuloPTV\Destinatario\DestinatarioPTV.cs" />
     <Compile Include="Interno\ModuloPTV\DUARequisicao.cs" />
+    <Compile Include="Interno\ModuloPTV\eApresentacaoNotaFiscalDeCaixa.cs" />
     <Compile Include="Interno\ModuloPTV\eApresentacaoNotaFiscal.cs" />
     <Compile Include="Interno\ModuloPTV\eLaudoLaboratorial.cs" />
     <Compile Include="Interno\ModuloPTV\ePartidaLacradaOrigem.cs" />
@@ -348,12 +367,17 @@
     <Compile Include="Interno\ModuloPTV\HabilitacaoEmissao\HabilitacaoEmissaoPTVOperador.cs" />
     <Compile Include="Interno\ModuloPTV\HabilitacaoEmissao\HabilitacaoEmissaoPTV.cs" />
     <Compile Include="Interno\ModuloPTV\LaudoLaboratorial.cs" />
+    <Compile Include="Interno\ModuloPTV\NotaFiscalCaixa.cs" />
+    <Compile Include="Interno\ModuloPTV\ProdutoSemDocOrigem.cs" />
     <Compile Include="Interno\ModuloPTV\PTV.cs" />
     <Compile Include="Interno\ModuloPTVOutro\PTVOutroListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\PTVComunicador.cs" />
     <Compile Include="Interno\ModuloPTV\PTVConversa.cs" />
     <Compile Include="Interno\ModuloPTV\PTVHistorico.cs" />
     <Compile Include="Interno\ModuloPTV\PTVItemHistorico.cs" />
+    <Compile Include="Interno\ModuloPTV\PTVNFCaixaResultado.cs" />
+    <Compile Include="Interno\ModuloPTV\RetificacaoNFCaixaListarResultado.cs" />
+    <Compile Include="Interno\ModuloPTV\RetificacaoNFCaixaListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTV\PTVListarFiltro.cs" />
     <Compile Include="Interno\ModuloPTVOutro\PTVOutroListarResultado.cs" />
     <Compile Include="Interno\ModuloPTV\PTVListarResultado.cs" />
@@ -895,6 +919,9 @@
   <ItemGroup>
     <Folder Include="Configuracao\Publico\" />
     <Folder Include="Interno.Extensoes\Especificidades\ModuloParecer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

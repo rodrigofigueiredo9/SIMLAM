@@ -100,6 +100,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return 0;
 		}
 
+		public int ObterIdExportacao(String nomeDestinatario, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ObterIdExportacao(nomeDestinatario, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return 0;
+		}
+
 		public Resultados<DestinatarioListarResultado> Filtrar(DestinatarioListarFiltro destinatarioListarFiltro, Paginacao paginacao)
 		{
 			try

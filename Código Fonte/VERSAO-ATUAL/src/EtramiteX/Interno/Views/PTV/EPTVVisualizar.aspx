@@ -24,7 +24,7 @@
 		<h1 class="titTela">Visualizar Permissão de Trânsito de Vegetais</h1>
 		<br />
 
-		<%Html.RenderPartial("EPTVPartial", Model); %>
+		<%Html.RenderPartial("EPTVPartialCredenciado", Model); %>
 
 		<div class="block box">
 			<span class="cancelarCaixa">

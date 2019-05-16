@@ -44,19 +44,17 @@ namespace Tecnomapas.EtramiteX.Interno.Areas.Caracterizacoes.ViewModels.VMProjet
 					{
 						return ArquivoProcessamento.Nome + " da dominialidade (PDF)";
 					}
-					else
+					else if (ArquivoEnviadoFilaTipo == (int)eFilaTipoGeo.CAR)
 					{
-						if (ArquivoEnviadoFilaTipo == (int)eFilaTipoGeo.CAR)
-						{
-							return ArquivoProcessamento.Nome + " do CAR (PDF)";
-						}
-
-						return ArquivoProcessamento.Nome + " da atividade (PDF)";
-
+						return ArquivoProcessamento.Nome + " do CAR (PDF)";
 					}
+					else if (ArquivoEnviadoFilaTipo == (int)eFilaTipoGeo.RegularizacaoFundiaria)
+					{
+						return ArquivoProcessamento.Nome + " da Regularização Fundiária (PDF)";
+					}
+
+					return ArquivoProcessamento.Nome + " da atividade (PDF)";				
 				}
-
-
 
 				return ArquivoProcessamento.Nome;
 			}

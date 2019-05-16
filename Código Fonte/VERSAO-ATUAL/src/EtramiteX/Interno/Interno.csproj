@@ -60,6 +60,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -75,19 +78,26 @@
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.WebPages.Razor">
-      <HintPath>..\..\..\lib\System.Web.WebPages.Razor.dll</HintPath>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.3.0.50813.1\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.1.0.20105.408\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Credenciado\Credenciado\bin\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions">
@@ -108,15 +118,8 @@
     <Reference Include="Tecnomapas.Blocos.Data">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Tecnomapas.Blocos.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\src\Blocos.Entities\bin\Debug\Tecnomapas.Blocos.Entities.dll</HintPath>
-    </Reference>
     <Reference Include="Tecnomapas.Blocos.RelatorioPersonalizado">
       <HintPath>..\..\..\lib\Tecnomapas.Blocos.RelatorioPersonalizado.dll</HintPath>
-    </Reference>
-    <Reference Include="Tecnomapas.EtramiteX.Perfil">
-      <HintPath>..\..\..\lib\src\Perfil\obj\Release\Tecnomapas.EtramiteX.Perfil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +344,8 @@
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ConfigurarVM.cs" />
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ListarVM.cs" />
     <Compile Include="ViewModels\VMTitulo\RelatorioVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -409,6 +414,7 @@
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\ConsumoPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\RegistroAtividadeFlorestal.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\RegistroAtividadeFlorestal\Visualizar.aspx" />
+    <Content Include="Areas\Caracterizacoes\Views\RegularizacaoFundiaria\ConfrontacoesDominioPartial.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\Shared\TituloAdicionar.ascx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Criar.aspx" />
     <Content Include="Areas\Caracterizacoes\Views\SilviculturaATV\Editar.aspx" />
@@ -729,6 +735,7 @@
     <Content Include="Content\_img\projdigital_02.gif" />
     <Content Include="Content\_img\projdigital_03.gif" />
     <Content Include="Content\_img\projdigital_04.gif" />
+    <Content Include="Scripts\AlertaEPTV\alertaEPTV.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\barragemDispensaLicenca.js" />
     <Content Include="Scripts\Areas\Caracterizacoes\exploracaoFlorestalListar.js" />
     <Content Include="Scripts\Areas\Especificidades\Certidao\CertidaoDispensaLicenciamentoAmbiental.js" />
@@ -1480,6 +1487,7 @@
     <Content Include="Scripts\PTVOutro\listar.js" />
     <Content Include="Scripts\PTV\listarEPTV.js" />
     <Content Include="Scripts\PTV\listar.js" />
+    <Content Include="Scripts\PTV\retificacaoNFCaixa.js" />
     <Content Include="Scripts\RelatorioEspecifico\relatorioMapa.js" />
     <Content Include="Scripts\Setor\listar.js" />
     <Content Include="Scripts\Setor\listarItem.js" />
@@ -2215,11 +2223,11 @@
     <Content Include="Content\_pdfAspose\CFO_ANTERIOR_2017.doc" />
     <Content Include="Content\_pdfAspose\Laudo_de_Fiscalizacao_Novo.docx" />
     <Content Include="Content\_pdfAspose\Instrumento_Unico_Fiscalizacao.docx" />
+    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
+    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <Content Include="Content\_chave\Chaves Pública e Privada.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\_pdfAspose\ComunicacaoInterna.docx" />
-    <Content Include="Content\_pdfAspose\Oficio_Administrativo.docx" />
     <None Include="leiame.txt" />
     <Content Include="Scripts\Administrador\alterarSituacao.js" />
     <Content Include="Scripts\Administrador\listar.js" />
@@ -2455,10 +2463,16 @@
     <Content Include="Views\PTVOutro\ListarResultados.ascx" />
     <Content Include="Views\PTVOutro\PTVOutroPartial.ascx" />
     <Content Include="Views\PTVOutro\Visualizar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarListar.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaEditarPartial.ascx" />
     <Content Include="Views\PTV\ComunicadorPTVPartial.ascx" />
     <Content Include="Views\PTV\AtivarPartial.ascx" />
     <Content Include="Views\PTV\CancelarPartial.ascx" />
     <Content Include="Views\PTV\Ativar.aspx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarResultados.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixaListarFiltros.ascx" />
+    <Content Include="Views\PTV\RetificacaoNFCaixa.aspx" />
+    <Content Include="Views\PTV\EPTVPartialCredenciado.ascx" />
     <Content Include="Views\PTV\EPTVVisualizar.aspx" />
     <Content Include="Views\PTV\EPTVAnalisar.aspx" />
     <Content Include="Views\PTV\Criar.aspx" />

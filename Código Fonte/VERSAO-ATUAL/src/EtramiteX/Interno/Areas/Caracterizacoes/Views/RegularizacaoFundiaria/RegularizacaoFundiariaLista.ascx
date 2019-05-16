@@ -23,8 +23,14 @@
 			</thead>
 			<tbody>
 			<% foreach (var posse in Model.Caracterizacao.Posses) { %>
-				<tr>
+				<tr><%if (string.IsNullOrWhiteSpace(posse.ComprovacaoTexto))
+						{ %>
+					<td><span title="<%: posse.Identificacao + "" + posse.ComprovacaoTexto %>"><%: posse.Identificacao + "" + posse.ComprovacaoTexto %></span></td>
+					<%	}
+					else
+						{ %>
 					<td><span title="<%: posse.Identificacao + "/" + posse.ComprovacaoTexto %>"><%: posse.Identificacao + "/" + posse.ComprovacaoTexto %></span></td>
+					<%	} %>
 					<td><span class="areaRequerida" title="<%: posse.AreaRequerida.ToStringTrunc() %>"><%: posse.AreaRequerida.ToStringTrunc() %></span></td>
 					<td><span class="areaCroqui" title="<%: posse.AreaCroqui.ToStringTrunc(2) %>"><%: posse.AreaCroqui.ToStringTrunc(2) %></span></td>
 

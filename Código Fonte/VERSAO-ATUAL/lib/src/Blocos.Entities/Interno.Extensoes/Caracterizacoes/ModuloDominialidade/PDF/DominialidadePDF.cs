@@ -617,7 +617,82 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloDom
 				return Dominios.Exists(d => d.ReservasLegais.Exists(r => r.CompensacaoTipo.Equals(eCompensacaoTipo.Receptora)));
 			}
 		}
-		 
+
+		public String TotalReservasAreaRLPCroquiHa
+		{
+			get
+			{
+				if (TotalReservasAreaRLPCroquiDecimal > 0)
+				{
+					return TotalReservasAreaRLPCroquiDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
+				}
+
+				return "0";
+			}
+		}
+		public Decimal TotalReservasAreaRLPCroquiDecimal
+		{
+			get
+			{
+				if (Dominios != null && Dominios.Count > 0)
+				{
+					return Dominios.Sum(dominio => dominio.ReservasAreaRLPCroquiDecimal);
+				}
+
+				return Decimal.Zero;
+			}
+		}
+
+		public String TotalReservasAreaRLFCroquiHa
+		{
+			get
+			{
+				if (TotalReservasAreaRLFCroquiDecimal > 0)
+				{
+					return TotalReservasAreaRLFCroquiDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
+				}
+
+				return "0";
+			}
+		}
+		public Decimal TotalReservasAreaRLFCroquiDecimal
+		{
+			get
+			{
+				if (Dominios != null && Dominios.Count > 0)
+				{
+					return Dominios.Sum(dominio => dominio.ReservasAreaRLFCroquiDecimal);
+				}
+
+				return Decimal.Zero;
+			}
+		}
+
+		public String TotalReservasAreaRLUCroquiHa
+		{
+			get
+			{
+				if (TotalReservasAreaRLUCroquiDecimal > 0)
+				{
+					return TotalReservasAreaRLUCroquiDecimal.Convert(eMetrica.M2ToHa).ToStringTrunc(4);
+				}
+
+				return "0";
+			}
+		}
+		public Decimal TotalReservasAreaRLUCroquiDecimal
+		{
+			get
+			{
+				if (Dominios != null && Dominios.Count > 0)
+				{
+					return Dominios.Sum(dominio => dominio.ReservasAreaRLUCroquiDecimal);
+				}
+
+				return Decimal.Zero;
+			}
+		}
+
 		public DominialidadePDF() { }
 
 		public DominialidadePDF(Dominialidade dominialidade)

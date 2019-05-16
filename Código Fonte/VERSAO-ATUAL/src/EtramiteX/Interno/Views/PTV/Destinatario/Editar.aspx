@@ -13,7 +13,8 @@
 			DestinatarioPTV.load($("#central"), {
 				urls: {
 					verificarCPFCNPJ:'<%= Url.Action("VerificarDestinatarioCPFCNPJ", "PTV") %>',
-					salvar: '<%= Url.Action("DestinatarioSalvar", "PTV") %>'
+					salvar: '<%= Url.Action("DestinatarioSalvar", "PTV") %>',
+					verificarExportacao:'<%= Url.Action("VerificarDestinatarioExportacao", "PTV") %>'
 				}
 			});
 		});

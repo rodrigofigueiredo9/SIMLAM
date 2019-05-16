@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Arquivo;
@@ -19,21 +21,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
         {
             string msg = string.Empty;
             Arquivo arquivo = null;
-            try
-            {
-                ArquivoBus _bus;
-                string url = HttpContext.Request.UrlReferrer.ToString();
-                if (url.IndexOf("PTVOutro") >= 0)
-                    _bus = new ArquivoBus(eExecutorTipo.Interno);
-                else
-                    _bus = new ArquivoBus(eExecutorTipo.Credenciado);
+			try
+			{
+				ArquivoBus _bus;
+				string url = HttpContext.Request.UrlReferrer.ToString();
+				if (url.IndexOf("PTVOutro") >= 0)
+					_bus = new ArquivoBus(eExecutorTipo.Interno);
+				else
+					_bus = new ArquivoBus(eExecutorTipo.Credenciado);
 
-                arquivo = _bus.SalvarTemp(file);
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+				arquivo = _bus.SalvarTemp(file);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
             return ViewModelHelper.JsSerializer.Serialize(new { Msg = Validacao.Erros, Arquivo = arquivo });
         }

@@ -460,7 +460,7 @@
 			</siteMapNode>
 			<siteMapNode url="~/PTV/Criar" title="Emitir PTV" description="linkMenu" roles="PTVCriar"/>
 
-			<siteMapNode url="~/PTV/EPTVListar/" title="EPTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
+			<siteMapNode url="~/PTV/EPTVListar" title="EPTVs" description="linkMenu" roles="PTVCriar,PTVEditar,PTVExcluir,PTVListar,PTVVisualizar">
 				<siteMapNode url="~/EPTVListar" description="linkMenu" roles="PTVListar" />
 				<siteMapNode url="~/PTV/EPTVVisualizar" description="linkMenu" roles="PTVVisualizar" />
 				<siteMapNode url="~/PTV/EPTVAnalisar" description="linkMenu" roles="PTVEditar" />
@@ -486,6 +486,8 @@
 				<siteMapNode url="~/PTVOutro/Cancelar" description="linkMenu" roles="PTVOutroCancelar" />
 			</siteMapNode>
 			<siteMapNode url="~/PTVOutro/Criar" title="Emitir PTV Outro Estado" description="linkMenu" roles="PTVOutroCriar"/>
+			
+			<siteMapNode url="~/PTV/RetificacaoNotaFiscalDeCaixa" title="Retificação de nota fiscal de caixa" description="linkMenu" roles="Praga" />
 		</siteMapNode>
 
 		<siteMapNode url="~/CFO/" title="CFO/CFOC"  description="linkMenu num_cfo_cfoc_ptv" roles="CFOListar, CFOCListar">

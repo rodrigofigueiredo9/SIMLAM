@@ -242,7 +242,7 @@
 		ConfigurarCampo,
 		ConfigurarPergunta,
 		ConfigurarResposta,
-        ConfigurarProdutosDestinacao,
+		ConfigurarProdutosDestinacao,
 		ConfigurarFiscCriar,
 		ConfigurarFiscEditar,
 		ConfigurarFiscVisualizar,
@@ -288,7 +288,7 @@
 		AcompanhamentoEditar,
 		AcompanhamentoExcluir,
 		AcompanhamentoAlterarSituacao,
-		
+
 		CadastroAmbientalRuralSolicitacaoCriar,
 		CadastroAmbientalRuralSolicitacaoListar,
 		CadastroAmbientalRuralSolicitacaoVisualizar,
@@ -379,7 +379,7 @@
 		PTVOutroListar,
 		PTVOutroVisualizar,
 		PTVOutroCancelar,
-        PTVOutroEditar,
+		PTVOutroEditar,
 
 		LocalVistoriaOperar,
 		LocalVistoriaListar,
@@ -387,9 +387,9 @@
 
 		RelatorioMapa,
 
-        DeclaracaoAdicional,
-        ConfigurarCodigoReceita,
-        ConfigurarPenalidade,
+		DeclaracaoAdicional,
+		ConfigurarCodigoReceita,
+		ConfigurarPenalidade,
 
 
 

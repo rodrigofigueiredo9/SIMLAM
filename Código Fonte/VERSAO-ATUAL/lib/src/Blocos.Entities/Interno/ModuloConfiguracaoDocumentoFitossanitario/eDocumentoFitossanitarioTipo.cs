@@ -7,6 +7,7 @@
 		PTV = 3,
 		PTVOutroEstado = 4,
 		CFCFR = 5,
-		TF = 6
+		TF = 6,
+		SemDocOrigem = 7
 	}
 }

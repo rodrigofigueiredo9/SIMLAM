@@ -1,5 +1,6 @@
-﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="Tecnomapas.EtramiteX.Credenciado.ViewModels" %>
+<%@ Import Namespace="Tecnomapas.Blocos.Etx.ModuloValidacao" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
@@ -53,6 +54,54 @@
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/globalize.js")%>"></script>
 		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/Lib/jquery-globalize/cultures/globalize.culture.pt-BR.js")%>"></script>
 		<%--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>--%>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/PTV/comunicadorptv.js") %>"></script>
+		<script type="text/javascript" language="javascript" src="<%= Url.Content("~/Scripts/containerAcoes.js") %>" ></script>
+
+		<script> 
+			$(function () {
+				if ($(".containerAcoes").length == 0) {
+					$.get('<%= Url.Action("AlertaEPTV", "PTV") %>')
+						.done(function (response) {
+							if (response.Msg.length == 0) return;
+
+							Mensagem.gerar($(".containerAcoes"), response.Msg);
+							var mensagem = response.Msg[0];
+
+							if ($(".containerAcoes").length == 0) {
+								var msgSistema = '\
+								<!-- REDIRECIONAMENTO ========================================================== -->\
+								<div class="redirecinamento block containerAcoes hide">\
+									<h5>O que deseja fazer agora?</h5>\
+									<p class="hide">#DESCRICAO</p>\
+									<input type="hidden" class="hdnIdAcao" value="" />\
+									<div class="coluna100 margem0 divAcoesContainer">\
+										<p class="floatLeft margem0 append1"><button title="[title]" class="btnTemplateAcao hide">[ACAO]</button></p>\
+										<div class="containerBotoes"></div>\
+									</div>\
+								</div><!-- .redirecinamento -->';
+								$('.mensagemSistema').append(msgSistema);
+							}
+							
+							if (mensagem.Campo == 'AlertaEPTVAprovada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Imprimir E-PTV', url: '<%= Url.Action("GerarPdf", "PTV")%>' + '/' + mensagem.Id }]
+								});
+							} else if (mensagem.Campo == 'AlertaEPTVBloqueada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Entrar em contato', url: '<%= Url.Action("ComunicadorPTV", "PTV")%>', abrirModal: function () { ContainerAcoes.onAbrirModal('<%= Url.Action("ComunicadorPTV", "PTV")%>', mensagem.Id); } }]
+								});
+							} else if (mensagem.Campo == 'AlertaEPTVRejeitada') {
+								ContainerAcoes.load($(".containerAcoes"), {
+									botoes: [
+										{ label: 'Editar E-PTV', url: '<%= Url.Action("Editar", "PTV")%>' + '/' + mensagem.Id }]
+								});
+							}
+						});
+				}
+			}); 
+        </script>
 
 		<!-- Timer -->
 		<% if (HttpContext.Current.User.Identity.IsAuthenticated) { %>

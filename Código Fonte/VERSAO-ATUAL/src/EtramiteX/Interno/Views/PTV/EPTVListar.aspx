@@ -14,9 +14,26 @@
 				urls: {
 					urlAnalisar: '<%= Url.Action("EPTVAnalisar", "PTV") %>',
 					urlValidarAcessoComunicador: '<%= Url.Action("ValidarAcessoComunicador", "PTV") %>',
-					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>'
+					urlComunicadorPTV: '<%= Url.Action("ComunicadorPTV", "PTV") %>',
+					urlAnalisarDesbloqueio: '<%= Url.Action("AnalisarDesbloqueio", "PTV") %>',
+					urlVisualizar: '<%= Url.Action("EPTVVisualizar", "PTV") %>',
+					urlPDFEPTV: '<%= Url.Action("GerarPdfEPTV", "PTV") %>',
+					urlValidarAcessoAnalisarDesbloqueio: '<%= Url.Action("ValidarAcessoAnalisarDesbloqueio", "PTV") %>',
 				}
 			});
+
+			
+			<% if (!String.IsNullOrEmpty(Request.Params["acaoGerarPdfId"])) { %>
+			PTVListar.gerarPDFLoad(<%= Request.Params["acaoGerarPdfId"] %>);
+			<% } %>
+
+			<% if (!String.IsNullOrEmpty(Request.Params["acaoId"])) { %>
+				ContainerAcoes.load($(".containerAcoes"), {
+					botoes: [
+						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdfEPTV", "PTV", new {id = Request.Params["acaoId"].ToString() }) %>' }
+					]
+				});
+			<% } %>
 		});
 	</script>
 </asp:Content>

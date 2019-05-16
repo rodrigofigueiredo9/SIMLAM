@@ -11,9 +11,11 @@
 				urls: {
 					pdfTitulo: '<%= Url.Action("GerarPdf", "Titulo") %>',
 					validarObterSituacao: '<%= Url.Action("ValidarObterSituacao", "Titulo") %>',
+					validarAlterarSituacao: '<%= Url.Action("ValidarAlterarSituacaoTela", "Titulo") %>',
 					salvar: '<%= Url.Action("AlterarSituacao", "Titulo") %>',
 					redirecionar: '<%= Url.Action("Index", "Titulo") %>',
-					integracaoSinaflor: '<%= System.Configuration.ConfigurationManager.AppSettings["integracaoSinaflor"].ToString() %>'
+					api: '<%= System.Configuration.ConfigurationManager.AppSettings["api"].ToString() %>',
+					token: '<%= System.Configuration.ConfigurationManager.AppSettings["token"].ToString() %>'
 			}
 		});
 	});

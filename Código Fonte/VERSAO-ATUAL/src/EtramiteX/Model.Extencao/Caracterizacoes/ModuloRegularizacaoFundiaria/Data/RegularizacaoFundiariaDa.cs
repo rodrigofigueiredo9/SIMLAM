@@ -67,6 +67,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			{
 				#region Regularização fundiária
 
+
+
 				bancoDeDados.IniciarTransacao();
 
 				Comando comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao c (id, empreendimento, tid) values
@@ -89,13 +91,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					foreach (Posse item in regularizacao.Posses)
 					{
 						#region Domínios/Posse
-
+						//ver se vai retirar o dominio
 						comando = bancoDeDados.CriarComando(@"
 						insert into {0}crt_regularizacao_dominio d (id, regularizacao, dominio, zona, identificacao, area_requerida, area_croqui, perimetro, regularizacao_tipo, 
-						relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid) 
+						relacao_trabalho, benfeitorias, possui_dominio_avulso, tid, comprovacao, area_documento, data_ultima_atualizacao, registro,
+						numero_ccri, area_ccri, confrontante_norte, confrontante_sul, confrontante_leste, confrontante_oeste) 
 						values 
 						({0}seq_crt_regularizacao_dominio.nextval, :regularizacao, :dominio, :zona, :identificacao, :area_requerida, :area_croqui, :perimetro, :regularizacao_tipo, 
-						:relacao_trabalho, :benfeitorias, :observacoes, :possui_dominio_avulso, :tid) returning d.id into :id", EsquemaBanco);
+						:relacao_trabalho, :benfeitorias, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
+						:area_ccri, :confrontante_norte, :confrontante_sul, :confrontante_leste, :confrontante_oeste) returning d.id into :id", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 						comando.AdicionarParametroEntrada("dominio", item.Dominio, DbType.Int32);
@@ -107,14 +111,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
 						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 500, item.Observacoes);
+						//comando.AdicionarParametroEntrada("observacoes", DbType.AnsiString, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 						comando.AdicionarParametroSaida("id", DbType.Int32);
 
+						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
+						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
+						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
+						comando.AdicionarParametroEntrada("registro", DbType.AnsiString, 400, item.DescricaoComprovacao);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
+						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
+						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
+						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
+						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
+						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
+
 						bancoDeDados.ExecutarNonQuery(comando);
 
 						item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+
+						comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set observacoes = '" + item.Observacoes + "' where id = " + item.Id, EsquemaBanco);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
 
 						#endregion
 
@@ -281,7 +301,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_transmite c where c.dominio in 
 				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x=>x.Transmitentes).Select(x => x.Id).ToList());
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Transmitentes).Select(x => x.Id).ToList());
 
 				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -303,7 +323,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_edifica c where c.dominio in 
 				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x=>x.Edificacoes).Select(x => x.Id).ToList());
+				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Edificacoes).Select(x => x.Id).ToList());
 
 				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
@@ -339,7 +359,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						{
 							comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set d.dominio = :dominio, d.zona = :zona, d.identificacao = :identificacao, 
 							d.area_requerida = :area_requerida, d.area_croqui = :area_croqui, d.perimetro = :perimetro, d.regularizacao_tipo = :regularizacao_tipo, d.relacao_trabalho= :relacao_trabalho, 
-							d.benfeitorias = :benfeitorias, d.observacoes = :observacoes, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid where d.id = :id", EsquemaBanco);
+							d.benfeitorias = :benfeitorias, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao = :data_ultima_atualizacao,
+							d.registro = :registro, d.numero_ccri = :numero_ccri, d.area_ccri = :area_ccri, d.confrontante_norte = :confrontante_norte,  d.confrontante_sul = :confrontante_sul, d.confrontante_leste = :confrontante_leste, d.confrontante_oeste = :confrontante_oeste where d.id = :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
 						}
@@ -347,10 +368,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						{
 							comando = bancoDeDados.CriarComando(@"
 							insert into {0}crt_regularizacao_dominio d (id, regularizacao, dominio, zona, identificacao, area_requerida, area_croqui, perimetro, regularizacao_tipo, 
-							relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid) 
+							relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid, comprovacao, area_documento, data_ultima_atualizacao, registro,
+							numero_ccri, area_ccri, confrontante_norte, confrontante_sul, confrontante_leste, confrontante_oeste) 
 							values 
 							({0}seq_crt_regularizacao_dominio.nextval, :regularizacao, :dominio, :zona, :identificacao, :area_requerida, :area_croqui, :perimetro, :regularizacao_tipo, 
-							:relacao_trabalho, :benfeitorias, :observacoes, :possui_dominio_avulso, :tid) returning d.id into :id", EsquemaBanco);
+							:relacao_trabalho, :benfeitorias, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
+							:area_ccri, :confrontante_norte, :confrontante_sul, :confrontante_leste, :confrontante_oeste) returning d.id into :id", EsquemaBanco);
 
 							comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
 							comando.AdicionarParametroSaida("id", DbType.Int32);
@@ -364,10 +387,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						comando.AdicionarParametroEntrada("perimetro", item.Perimetro, DbType.Decimal);
 						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
 						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
-						comando.AdicionarParametroEntrada("benfeitorias", DbType.String, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", DbType.String, 500, item.Observacoes);
+						comando.AdicionarParametroEntrada("benfeitorias", DbType.AnsiString, 500, item.Benfeitorias);
+						//comando.AdicionarParametroEntrada("observacoes", DbType.AnsiString, 4000, item.Observacoes);
 						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
 						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
+						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
+						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
+						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
+						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
+						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
+						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
+						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
+						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
+						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
+
+						bancoDeDados.ExecutarNonQuery(comando);
+
+						comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set observacoes = '" + item.Observacoes + "' where id = " + item.Id, EsquemaBanco);
 
 						bancoDeDados.ExecutarNonQuery(comando);
 
@@ -573,7 +611,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 					return;
 				}
 
-				id = Convert.ToInt32(retorno);;
+				id = Convert.ToInt32(retorno); ;
 
 				#endregion
 
@@ -672,195 +710,238 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 				#region Domínios/Posse
 
-				comando = bancoDeDados.CriarComando(@"select d.id, d.dominio, d.zona, d.identificacao, dc.texto comprovacao_texto, d.area_requerida, d.area_croqui, d.perimetro, 
-				d.regularizacao_tipo, d.relacao_trabalho, d.centro_comercial_km, d.br_km, d.es_km, d.benfeitorias, d.observacoes, d.possui_dominio_avulso, d.tid
-				from {0}crt_regularizacao_dominio d, {0}crt_dominialidade_dominio dd, {0}lov_crt_domin_comprovacao dc
-				where d.dominio = dd.id and dd.comprovacao = dc.id and d.regularizacao = :id", EsquemaBanco);
+				comando = bancoDeDados.CriarComando(@"select p.id, p.regularizacao, p.dominio, p.zona, p.identificacao, p.area_requerida, p.area_croqui, p.regularizacao_tipo,
+					p.relacao_trabalho, p.centro_comercial_km, p.br_km, p.es_km, p.benfeitorias, p.observacoes, p.tid, p.possui_dominio_avulso, p.perimetro, p.comprovacao, lc.texto as comprovacaotexto, p.area_documento,
+					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
+					from {0}crt_regularizacao_dominio p
+					inner join crt_regularizacao r on r.id = p.regularizacao
+					inner join lov_crt_domin_comprovacao lc on lc.id  = p.comprovacao
+					where r.empreendimento = :empreendimento", EsquemaBanco);
 
-				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("empreendimento", regularizacao.EmpreendimentoId, DbType.Int32);
 
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					Posse posse = null;
 
-					while (reader.Read())
+					if (((System.Data.Common.DbDataReader)reader).HasRows)
 					{
-						#region Domínios/Posse
-
-						posse = new Posse();
-						posse.Id = reader.GetValue<int>("id");
-						posse.Dominio = reader.GetValue<int>("dominio");
-						posse.Tid = reader.GetValue<string>("tid");
-						posse.Identificacao = reader.GetValue<string>("identificacao");
-						posse.ComprovacaoTexto = reader.GetValue<string>("comprovacao_texto");
-						posse.Benfeitorias = reader.GetValue<string>("benfeitorias");
-						posse.Observacoes = reader.GetValue<string>("observacoes");
-						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
-						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
-						posse.Perimetro = reader.GetValue<decimal>("perimetro");
-						posse.Zona = reader.GetValue<int>("zona");
-						posse.RegularizacaoTipo = reader.GetValue<int>("regularizacao_tipo");
-						posse.RelacaoTrabalho = reader.GetValue<int>("relacao_trabalho");
-						posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
-						posse.Distancia.PosseCentroComercial = reader.GetValue<decimal>("centro_comercial_km");
-						posse.Distancia.BrAPosse = reader.GetValue<decimal>("br_km");
-						posse.Distancia.EsAPosse = reader.GetValue<decimal>("es_km");
-
-						#endregion
-
-						#region Dominios Avulsos
-
-						comando = bancoDeDados.CriarComando(@"
-						select d.id, d.tid, d.matricula, d.folha, d.livro, d.cartorio, d.documento_area, d.ccir, d.area_ccir, 
-						to_char(d.data_ultima_atualizacao, 'dd/MM/yyyy') data_ultima_atualizacao 
-						from crt_regula_dominio_avulso d where d.dominio = :id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+						while (reader.Read())
 						{
-							Dominio dominio = null;
-							while (readerAux.Read())
-							{
-								dominio = new Dominio();
-								dominio.Id = readerAux.GetValue<int>("id");
-								dominio.Tid = readerAux.GetValue<string>("tid");
-								dominio.Matricula = readerAux.GetValue<string>("matricula");
-								dominio.Folha = readerAux.GetValue<string>("folha");
-								dominio.Livro = readerAux.GetValue<string>("livro");
-								dominio.Cartorio = readerAux.GetValue<string>("cartorio");
-								dominio.AreaDocumento = readerAux.GetValue<decimal>("documento_area");
-								dominio.NumeroCCIR = readerAux.GetValue<long?>("ccir");
-								dominio.AreaCCIR = readerAux.GetValue<decimal>("area_ccir");
-								dominio.DataUltimaAtualizacao.DataTexto = readerAux.GetValue<String>("data_ultima_atualizacao");
+							#region Domínios/Posse
 
-								posse.DominiosAvulsos.Add(dominio);
-							}
+							posse = new Posse();
 
-							readerAux.Close();
+							posse.Id = Convert.ToInt32(reader["id"]);
+							posse.Dominio = reader.GetValue<int>("dominio");
+							posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
+							posse.NumeroCCIR = reader.GetValue<long?>("numero_ccri");
+							posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
+							posse.ComprovacaoTexto = reader["comprovacaotexto"].ToString();
+							posse.ComprovacaoId = Convert.ToInt32(reader["comprovacao"]);
+							posse.AreaPosseDocumento = reader.GetValue<decimal>("area_documento");
+							posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
+							posse.Identificacao = reader["identificacao"].ToString();
+							posse.DescricaoComprovacao = reader["registro"].ToString();
+							posse.RegularizacaoTipo = Convert.ToInt32(reader["regularizacao_tipo"]);
+							posse.RelacaoTrabalho = Convert.ToInt32(reader["relacao_trabalho"]);
+							posse.Benfeitorias = reader["benfeitorias"].ToString();
+							posse.Observacoes = reader["observacoes"].ToString();
+							posse.Tid = reader["tid"].ToString();
+							posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
+							posse.Perimetro = reader.GetValue<decimal?>("perimetro");
+							posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
+							posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
+							posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
+							posse.ConfrontacoesNorte = reader["confrontante_norte"].ToString();
+							posse.ConfrontacoesSul = reader["confrontante_sul"].ToString();
+							posse.ConfrontacoesLeste = reader["confrontante_leste"].ToString();
+							posse.ConfrontacoesOeste = reader["confrontante_oeste"].ToString();
+
+							#endregion
+
+							ObterDadosDominio(posse, bancoDeDados);
+
+							regularizacao.Posses.Add(posse);
 						}
+					}
+					else
+					{
+						comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo, sdo_geom.sdo_length(a.geometry, 0.00001) perimetro
+							FROM IDAFGEO.geo_aativ a
+							INNER JOIN crt_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO =
+							" + (int)eCaracterizacao.RegularizacaoFundiaria + " AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
 
-						#endregion
+						comando.AdicionarParametroEntrada("empreendimento", regularizacao.EmpreendimentoId, DbType.Int32);
 
-						#region Ocupações/Opções
-
-						comando = bancoDeDados.CriarComando(@"select o.id, o.tipo, o.valor, o.outro, o.tid 
-						from {0}crt_regularizacao_ocupacao o where o.dominio = :id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+						while (reader.Read())
 						{
-							Opcao opcao = null;
-							while (readerAux.Read())
-							{
-								opcao = new Opcao();
-								opcao.Tid = readerAux.GetValue<string>("tid");
-								opcao.Outro = readerAux.GetValue<string>("outro");
-								opcao.Id = readerAux.GetValue<int>("id");
-								opcao.Tipo = readerAux.GetValue<int>("tipo");
-								opcao.Valor = readerAux.GetValue<int>("valor");
+							posse = new Posse();
+							posse.Id = Convert.ToInt32(reader["id"]);
+							posse.Identificacao = reader["codigo"].ToString();
+							posse.AreaCroqui = reader.GetValue<decimal>("area_m2");
+							posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 
-								posse.Opcoes.Add(opcao);
-							}
-
-							readerAux.Close();
+							regularizacao.Posses.Add(posse);
 						}
-
-						#endregion Ocupações/Opções
-
-						#region Transmitentes de Posse
-
-						comando = bancoDeDados.CriarComando(@"select t.id, t.pessoa, t.tempo, nvl(p.nome,p.razao_social) nome , nvl( p.cpf, p.cnpj ) cpfCnpj , t.tid 
-						from crt_regularizacao_transmite t, tab_pessoa p where t.pessoa = p.id AND t.dominio = :id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							TransmitentePosse transmitente = null;
-							while (readerAux.Read())
-							{
-								transmitente = new TransmitentePosse();
-								transmitente.Tid = readerAux.GetValue<string>("tid");
-								transmitente.Id = readerAux.GetValue<int>("id");
-								transmitente.Transmitente.Id = readerAux.GetValue<int>("pessoa");
-								transmitente.Transmitente.Fisica.Nome = readerAux.GetValue<string>("nome");
-								transmitente.Transmitente.Fisica.CPF = readerAux.GetValue<string>("cpfCnpj");
-								transmitente.TempoOcupacao = readerAux.GetValue<int>("tempo");
-
-								posse.Transmitentes.Add(transmitente);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						#region Uso atual do solo
-
-						comando = bancoDeDados.CriarComando(@"select u.id, u.tipo, l.tipo_geo, l.id, l.texto tipo_texto, u.area, u.tid 
-						from {0}crt_regularizacao_uso_solo u, {0}lov_crt_regularizacao_tip_uso l where u.dominio = :id and u.tipo = l.id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							UsoAtualSolo uso = null;
-							while (readerAux.Read())
-							{
-								uso = new UsoAtualSolo();
-								uso.Tid = readerAux.GetValue<string>("tid");
-								uso.Id = readerAux.GetValue<int>("id");
-								uso.TipoDeUso = readerAux.GetValue<int>("tipo");
-								uso.TipoDeUsoTexto = readerAux.GetValue<string>("tipo_texto");
-								uso.TipoDeUsoGeo = readerAux.GetValue<string>("tipo_geo");
-								uso.AreaPorcentagem = readerAux.GetValue<int>("area");
-
-								posse.UsoAtualSolo.Add(uso);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						#region Edificações
-
-						comando = bancoDeDados.CriarComando(@"select e.id, e.tipo, e.quantidade, e.tid 
-						from {0}crt_regularizacao_edifica e where e.dominio = :id", EsquemaBanco);
-
-						comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
-
-						using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
-						{
-							Edificacao edificacao = null;
-							while (readerAux.Read())
-							{
-								edificacao = new Edificacao();
-								edificacao.Tid = readerAux.GetValue<string>("tid");
-								edificacao.Tipo = readerAux.GetValue<string>("tipo");
-								edificacao.Id = readerAux.GetValue<int>("id");
-								edificacao.Quantidade = readerAux.GetValue<int>("quantidade");
-
-								posse.Edificacoes.Add(edificacao);
-							}
-
-							readerAux.Close();
-						}
-
-						#endregion
-
-						regularizacao.Posses.Add(posse);
 					}
 
 					reader.Close();
 				}
-
 				#endregion
 			}
 
 			return regularizacao;
+		}
+
+		internal Posse ObterDadosDominio(Posse posse, BancoDeDados bancoDeDados)
+		{
+			Comando comando;
+
+			#region Dominios Avulsos
+
+			comando = bancoDeDados.CriarComando(@"
+						select d.id, d.tid, d.matricula, d.folha, d.livro, d.cartorio, d.documento_area, d.ccir, d.area_ccir, 
+						to_char(d.data_ultima_atualizacao, 'dd/MM/yyyy') data_ultima_atualizacao 
+						from crt_regula_dominio_avulso d where d.dominio = :id", EsquemaBanco);
+
+			comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
+
+			using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+			{
+				Dominio dominio = null;
+				while (readerAux.Read())
+				{
+					dominio = new Dominio();
+					dominio.Id = readerAux.GetValue<int>("id");
+					dominio.Tid = readerAux.GetValue<string>("tid");
+					dominio.Matricula = readerAux.GetValue<string>("matricula");
+					dominio.Folha = readerAux.GetValue<string>("folha");
+					dominio.Livro = readerAux.GetValue<string>("livro");
+					dominio.Cartorio = readerAux.GetValue<string>("cartorio");
+					dominio.AreaDocumento = readerAux.GetValue<decimal>("documento_area");
+					dominio.NumeroCCIR = readerAux.GetValue<long?>("ccir");
+					dominio.AreaCCIR = readerAux.GetValue<decimal>("area_ccir");
+					dominio.DataUltimaAtualizacao.DataTexto = readerAux.GetValue<String>("data_ultima_atualizacao");
+
+					posse.DominiosAvulsos.Add(dominio);
+				}
+
+				readerAux.Close();
+			}
+
+			#endregion
+
+			#region Ocupações/Opções
+
+			comando = bancoDeDados.CriarComando(@"select o.id, o.tipo, o.valor, o.outro, o.tid 
+						from {0}crt_regularizacao_ocupacao o where o.dominio = :id", EsquemaBanco);
+
+			comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
+
+			using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+			{
+				Opcao opcao = null;
+				while (readerAux.Read())
+				{
+					opcao = new Opcao();
+					opcao.Tid = readerAux.GetValue<string>("tid");
+					opcao.Outro = readerAux.GetValue<string>("outro");
+					opcao.Id = readerAux.GetValue<int>("id");
+					opcao.Tipo = readerAux.GetValue<int>("tipo");
+					opcao.Valor = readerAux.GetValue<int>("valor");
+
+					posse.Opcoes.Add(opcao);
+				}
+
+				readerAux.Close();
+			}
+
+			#endregion Ocupações/Opções
+
+			#region Transmitentes de Posse
+
+			comando = bancoDeDados.CriarComando(@"select t.id, t.pessoa, t.tempo, nvl(p.nome,p.razao_social) nome , nvl( p.cpf, p.cnpj ) cpfCnpj , t.tid 
+						from crt_regularizacao_transmite t, tab_pessoa p where t.pessoa = p.id AND t.dominio = :id", EsquemaBanco);
+
+			comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
+
+			using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+			{
+				TransmitentePosse transmitente = null;
+				while (readerAux.Read())
+				{
+					transmitente = new TransmitentePosse();
+					transmitente.Tid = readerAux.GetValue<string>("tid");
+					transmitente.Id = readerAux.GetValue<int>("id");
+					transmitente.Transmitente.Id = readerAux.GetValue<int>("pessoa");
+					transmitente.Transmitente.Fisica.Nome = readerAux.GetValue<string>("nome");
+					transmitente.Transmitente.Fisica.CPF = readerAux.GetValue<string>("cpfCnpj");
+					transmitente.TempoOcupacao = readerAux.GetValue<int>("tempo");
+
+					posse.Transmitentes.Add(transmitente);
+				}
+
+				readerAux.Close();
+			}
+
+			#endregion
+
+			#region Uso atual do solo
+
+			comando = bancoDeDados.CriarComando(@"select u.id, u.tipo, l.tipo_geo, l.id, l.texto tipo_texto, u.area, u.tid 
+						from {0}crt_regularizacao_uso_solo u, {0}lov_crt_regularizacao_tip_uso l where u.dominio = :id and u.tipo = l.id", EsquemaBanco);
+
+			comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
+
+			using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+			{
+				UsoAtualSolo uso = null;
+				while (readerAux.Read())
+				{
+					uso = new UsoAtualSolo();
+					uso.Tid = readerAux.GetValue<string>("tid");
+					uso.Id = readerAux.GetValue<int>("id");
+					uso.TipoDeUso = readerAux.GetValue<int>("tipo");
+					uso.TipoDeUsoTexto = readerAux.GetValue<string>("tipo_texto");
+					uso.TipoDeUsoGeo = readerAux.GetValue<string>("tipo_geo");
+					uso.AreaPorcentagem = readerAux.GetValue<int>("area");
+
+					posse.UsoAtualSolo.Add(uso);
+				}
+
+				readerAux.Close();
+			}
+
+			#endregion
+
+			#region Edificações
+
+			comando = bancoDeDados.CriarComando(@"select e.id, e.tipo, e.quantidade, e.tid 
+						from {0}crt_regularizacao_edifica e where e.dominio = :id", EsquemaBanco);
+
+			comando.AdicionarParametroEntrada("id", posse.Id, DbType.Int32);
+
+			using (IDataReader readerAux = bancoDeDados.ExecutarReader(comando))
+			{
+				Edificacao edificacao = null;
+				while (readerAux.Read())
+				{
+					edificacao = new Edificacao();
+					edificacao.Tid = readerAux.GetValue<string>("tid");
+					edificacao.Tipo = readerAux.GetValue<string>("tipo");
+					edificacao.Id = readerAux.GetValue<int>("id");
+					edificacao.Quantidade = readerAux.GetValue<int>("quantidade");
+
+					posse.Edificacoes.Add(edificacao);
+				}
+
+				readerAux.Close();
+			}
+
+			#endregion
+
+			return posse;
 		}
 
 		internal RegularizacaoFundiaria ObterHistorico(int id, string tid, bool simplificado = false, BancoDeDados banco = null)
@@ -926,7 +1007,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 						posse.Observacoes = reader.GetValue<string>("observacoes");
 						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
 						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
-						posse.Perimetro = reader.GetValue<decimal>("perimetro");
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
 						posse.Zona = reader.GetValue<int>("zona");
 						posse.RegularizacaoTipo = reader.GetValue<int>("regularizacao_tipo_id");
 						posse.RelacaoTrabalho = reader.GetValue<int>("relacao_trabalho");
@@ -1142,6 +1223,107 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 			}
 
 			return listArea;
+		}
+
+		internal List<Posse> ObterPosses(int empreendimento, int zona, BancoDeDados banco = null)
+		{
+			RegularizacaoFundiaria regularizacao = new RegularizacaoFundiaria();
+			Posse posse;
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+
+				Comando comando = null;
+				comando = bancoDeDados.CriarComando(@"select p.id, p.regularizacao, p.dominio, p.zona, p.identificacao, p.area_requerida, p.area_croqui, p.regularizacao_tipo,
+					p.relacao_trabalho, p.centro_comercial_km, p.br_km, p.es_km, p.benfeitorias, p.observacoes, p.tid, p.possui_dominio_avulso, p.perimetro, p.comprovacao, lc.texto as comprovacaotexto, p.area_documento,
+					p.data_ultima_atualizacao, p.registro, p.numero_ccri, p.area_ccri, p.confrontante_norte, p.confrontante_sul, p.confrontante_leste, p.confrontante_oeste, p.registro, p.comprovacao
+					from {0}crt_regularizacao_dominio p
+					inner join crt_regularizacao r on r.id = p.regularizacao
+					inner join lov_crt_domin_comprovacao lc on lc.id  = p.comprovacao
+					where r.empreendimento = :empreendimento", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						posse = new Posse();
+
+						posse.Id = Convert.ToInt32(reader["id"]);
+						posse.Dominio = reader.GetValue<int>("dominio");
+						posse.AreaCCIR = reader.GetValue<decimal>("area_ccri");
+						posse.NumeroCCIR = reader.GetValue<long?>("numero_ccri");
+						posse.AreaRequerida = reader.GetValue<decimal>("area_requerida");
+						posse.ComprovacaoTexto = reader["comprovacaotexto"].ToString();
+						posse.ComprovacaoId = Convert.ToInt32(reader["comprovacao"]);
+						posse.AreaPosseDocumento = reader.GetValue<decimal>("area_documento");
+						posse.AreaCroqui = reader.GetValue<decimal>("area_croqui");
+						posse.Identificacao = reader["identificacao"].ToString();
+						posse.DescricaoComprovacao = reader["registro"].ToString();
+						posse.RegularizacaoTipo = Convert.ToInt32(reader["regularizacao_tipo"]);
+						posse.RelacaoTrabalho = Convert.ToInt32(reader["relacao_trabalho"]);
+						posse.Benfeitorias = reader["benfeitorias"].ToString();
+						posse.Observacoes = reader["observacoes"].ToString();
+						posse.Tid = reader["tid"].ToString();
+						posse.PossuiDominioAvulso = reader.GetValue<int?>("possui_dominio_avulso");
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
+						posse.Distancia.BrAPosse = reader.GetValue<decimal?>("br_km");
+						posse.Distancia.EsAPosse = reader.GetValue<decimal?>("es_km");
+						posse.DataUltimaAtualizacaoCCIR.DataTexto = reader.GetValue<string>("data_ultima_atualizacao");
+						posse.ConfrontacoesNorte = reader["confrontante_norte"].ToString();
+						posse.ConfrontacoesSul = reader["confrontante_sul"].ToString();
+						posse.ConfrontacoesLeste = reader["confrontante_leste"].ToString();
+						posse.ConfrontacoesOeste = reader["confrontante_oeste"].ToString();
+						posse.Zona = zona;
+
+						regularizacao.Posses.Add(posse);
+					}
+					reader.Close();
+
+				}
+			}
+
+			if (regularizacao.Posses?.Count == 0)
+				return ConsultaPosseObterPosseGeoAATIV(empreendimento, zona, banco);
+
+			return regularizacao.Posses;
+		}
+
+		private List<Posse> ConsultaPosseObterPosseGeoAATIV(int empreendimento, int zona, BancoDeDados banco = null)
+		{
+			RegularizacaoFundiaria regularizacao = new RegularizacaoFundiaria();
+			Posse posse;
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = null;
+
+				comando = bancoDeDados.CriarComando(@"SELECT a.id, a.area_m2, a.codigo, sdo_geom.sdo_length(a.geometry, 0.0001) perimetro FROM IDAFGEO.geo_aativ a INNER JOIN crt_projeto_geo b ON a.projeto = b.id WHERE b.CARACTERIZACAO = 2 AND b.EMPREENDIMENTO = :empreendimento", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+
+					while (reader.Read())
+					{
+						posse = new Posse();
+
+						posse.Id = Convert.ToInt32(reader["id"]);
+						posse.Identificacao = reader["codigo"].ToString();
+						posse.AreaCroqui = reader.GetValue<decimal>("area_m2");
+						posse.Perimetro = reader.GetValue<decimal?>("perimetro");
+						posse.Zona = zona;
+
+						regularizacao.Posses.Add(posse);
+
+					}
+					reader.Close();
+				}
+
+			}
+
+			return regularizacao.Posses;
 		}
 
 		#endregion

@@ -515,6 +515,110 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			}
 		}
 
+		internal void Reabrir(int id, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Atualizar o projeto geográfico
+
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				declare 
+					v_fila_tipo number:=0;
+					v_caract_tipo number:=0;
+					v_mecanismo number:=0;
+				begin 
+					delete from {0}tmp_projeto_geo_ortofoto t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_sobrepos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo_arquivos t where t.projeto = :projeto; 
+					delete from {0}tmp_projeto_geo t where t.id = :projeto; 
+
+					insert into {0}tmp_projeto_geo (id, empreendimento, caracterizacao, situacao, nivel_precisao, mecanismo_elaboracao, sobreposicoes_data, menor_x, menor_y, 
+					maior_x, maior_y, tid) (select g.id, g.empreendimento, g.caracterizacao, 4, g.nivel_precisao, g.mecanismo_elaboracao, g.sobreposicoes_data, g.menor_x, 
+					g.menor_y, g.maior_x, g.maior_y, g.tid from {0}crt_projeto_geo g where g.id = :projeto); 
+
+					insert into {0}tmp_projeto_geo_arquivos (id, projeto, tipo, arquivo, valido, tid) 
+					(select g.id, g.projeto, g.tipo, g.arquivo, g.valido, g.tid from {0}crt_projeto_geo_arquivos g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_ortofoto (id, projeto, caminho, tid) 
+					(select g.id, g.projeto, g.caminho, g.tid from {0}crt_projeto_geo_ortofoto g where g.projeto = :projeto); 
+
+					insert into {0}tmp_projeto_geo_sobrepos (id, projeto, base, tipo, identificacao, tid) 
+					(select g.id, g.projeto, g.base, g.tipo, g.identificacao, g.tid from {0}crt_projeto_geo_sobrepos g where g.projeto = :projeto); 
+
+					select c.mecanismo_elaboracao, c.caracterizacao into v_mecanismo, v_caract_tipo from {0}crt_projeto_geo c where c.id = :projeto;
+
+					v_fila_tipo := :filaTipoAtividade;
+					if v_caract_tipo = :dominialidadeTipo then 
+						v_fila_tipo := :filaTipoDominialidade;
+					end if;
+
+					insert into {1}DES_PATIV (id, projeto, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
+						(select a.id, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+							from {1}GEO_PATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_pativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal)))
+							and not exists(select 1 from {1}DES_PATIV d where d.id = a.id));
+					insert into {1}DES_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
+						(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+							from {1}GEO_AATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_aativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal)))
+							and not exists(select 1 from {1}DES_AATIV d where d.id = a.id));
+
+					delete from {1}GEO_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					delete from {1}GEO_AATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_aativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					--Apaga tabelas oficiais
+					delete {0}crt_projeto_geo_arquivos g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo_ortofoto g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo_sobrepos g where g.projeto = :projeto;
+					delete {0}crt_projeto_geo g where g.id = :projeto;   
+				end; ", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+
+				#endregion
+			}
+		}
+
 		internal void ExcluirRascunho(int id, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -534,9 +638,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					update {1}tab_fila f set f.etapa = (case when f.tipo in (1,2) then 2 else 3 end), f.situacao = 4 where f.projeto = :projeto; 
 					
 					select c.caracterizacao into v_caract_tipo from {0}crt_projeto_geo c where c.id = :projeto;					
-					v_fila_tipo := :filaTipoAtividade;
+					
 					if v_caract_tipo = :dominialidadeTipo then 
 						v_fila_tipo := :filaTipoDominialidade;
+					elsif v_caract_tipo = :regularizacaoTipo then
+						v_fila_tipo := :filaTipoRegularizacao;
+					else
+						v_fila_tipo := :filaTipoAtividade;
 					end if;					
 					
 					{0}geo_operacoesprocessamentogeo.ApagarGeometriasTMP(:projeto, v_fila_tipo);
@@ -549,6 +657,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				comando.AdicionarParametroEntrada("dominialidadeTipo", (int)eCaracterizacao.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoDominialidade", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
 				comando.AdicionarParametroEntrada("filaTipoAtividade", (int)eFilaTipoGeo.Atividade, DbType.Int32);
+				comando.AdicionarParametroEntrada("regularizacaoTipo", (int)eCaracterizacao.RegularizacaoFundiaria, DbType.Int32);
+				comando.AdicionarParametroEntrada("filaTipoRegularizacao", (int)eFilaTipoGeo.RegularizacaoFundiaria, DbType.Int32);
 
 				bancoDeDados.ExecutarNonQuery(comando);
 
@@ -688,7 +798,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			{
 				bancoDeDados.IniciarTransacao();
 
-				Comando comando = bancoDeDados.CriarComando("begin update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;" +
+				Comando comando = bancoDeDados.CriarComando("begin " + (arquivo.TituloId > 0 ? "" : "update {1}tmp_projeto_geo tt set tt.mecanismo_elaboracao = :mecanismo where tt.id = :projeto;") +
 				"update {0}tab_fila t set t.etapa = :etapa, t.situacao = :situacao, t.data_fila = sysdate, t.data_inicio = null, t.data_fim = null, t.mecanismo_elaboracao = :mecanismo " +
 				"where t.projeto = :projeto and t.tipo = :tipo returning t.id into :id; end;", EsquemaBancoGeo, EsquemaBanco);
 
@@ -771,7 +881,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return projeto;
 		}
 
-		internal ProjetoGeografico Obter(int id, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
+		internal ProjetoGeografico Obter(int id, int? tipo = null, BancoDeDados banco = null, bool simplificado = false, bool finalizado = false)
 		{
 			ProjetoGeografico projeto = new ProjetoGeografico();
 
@@ -867,7 +977,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				//Busca os arquivos
 				if (projeto.Id > 0)
 				{
-					projeto.Arquivos = ObterArquivos(projeto.Id, banco: bancoDeDados, finalizado: finalizado);
+					projeto.Arquivos = ObterArquivos(projeto.Id, tipo, banco: bancoDeDados, finalizado: finalizado);
 
 					projeto.ArquivosOrtofotos = ObterOrtofotos(projeto.Id, banco: bancoDeDados, finalizado: finalizado);
 
@@ -897,7 +1007,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				if (tid == null)
 				{
-					projeto = Obter(id, bancoDeDados, simplificado, finalizado);
+					projeto = Obter(id, null, bancoDeDados, simplificado, finalizado);
 				}
 				else
 				{
@@ -906,7 +1016,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, tid);
 
-					projeto = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id, bancoDeDados, simplificado, finalizado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
+					projeto = (Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando))) ? Obter(id, null, bancoDeDados, simplificado, finalizado) : ObterHistorico(id, bancoDeDados, tid, simplificado);
 				}
 
 				#endregion
@@ -1176,7 +1286,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			return arquivo;
 		}
 
-		public List<ArquivoProjeto> ObterArquivos(int projetoId, BancoDeDados banco = null, bool finalizado = false)
+		public List<ArquivoProjeto> ObterArquivos(int projetoId, int? tipo = null, BancoDeDados banco = null, bool finalizado = false)
 		{
 			List<ArquivoProjeto> arquivos = new List<ArquivoProjeto>();
 
@@ -1185,11 +1295,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				#region Projeto Geográfico/Arquivos
+				Comando comando = null;
 
-				Comando comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
-				lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
-				{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and t.tipo = tf.tipo(+) 
-				and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				if (tipo == (int)eCaracterizacao.RegularizacaoFundiaria)
+				{
+					comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
+						lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
+						{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and tf.tipo(+) = " + (int)eFilaTipoGeo.RegularizacaoFundiaria +
+						"and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				}
+				else
+				{
+					comando = bancoDeDados.CriarComando(@"select  tf.id, t.tipo, lc.texto  tipo_texto, tf.tipo fila_tipo, t.arquivo, t.valido, 
+						lcp.id situacao_id, lcp.texto situacao_texto from {0}" + tabela + @" t, {0}lov_crt_projeto_geo_arquivos lc, {1}tab_fila tf, 
+						{0}lov_crt_projeto_geo_sit_proce lcp where t.tipo = lc.id and t.projeto = tf.projeto(+) and t.tipo = tf.tipo(+) 
+						and tf.etapa = lcp.etapa(+) and tf.situacao = lcp.situacao(+) and t.projeto = :projeto and t.valido = 1 and t.tipo <> 5 order by lc.id", EsquemaBanco, EsquemaBancoGeo);
+				}
 
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
 
@@ -1672,7 +1793,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 				comando.AdicionarParametroEntrada("projeto", arquivo.ProjetoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tipo", arquivo.FilaTipo, DbType.Int32);
-				if(arquivo.TituloId > 0)
+				if (arquivo.TituloId > 0)
 					comando.AdicionarParametroEntrada("titulo", arquivo.TituloId, DbType.Int32);
 
 				object valor = bancoDeDados.ExecutarScalar(comando);
@@ -1688,8 +1809,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				Comando comando = bancoDeDados.CriarComando(@"select count(*) from {0}tab_fila t where t.projeto = :projeto and t.etapa = 3 and t.situacao = 4 and t.tipo = :tipo", EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", projetoId, DbType.Int32);
-				comando.AdicionarParametroEntrada("tipo", (tipo == eCaracterizacao.Dominialidade) ? (int)eFilaTipoGeo.Dominialidade :
-					(int)eFilaTipoGeo.Atividade, DbType.Int32);
+
+				if (tipo == eCaracterizacao.Dominialidade)
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.Dominialidade, DbType.Int32);
+				else if (tipo == eCaracterizacao.RegularizacaoFundiaria)
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.RegularizacaoFundiaria, DbType.Int32);
+				else
+					comando.AdicionarParametroEntrada("tipo", (int)eFilaTipoGeo.Atividade, DbType.Int32);
 
 				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));
 			}

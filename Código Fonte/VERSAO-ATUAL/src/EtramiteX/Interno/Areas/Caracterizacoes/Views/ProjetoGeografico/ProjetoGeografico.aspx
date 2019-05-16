@@ -23,7 +23,8 @@
 			ProjetoGeografico.settings.isVisualizar = <%= Model.IsVisualizar.ToString().ToLower() %>;
 			ProjetoGeografico.settings.isFinalizado = <%= Model.IsFinalizado.ToString().ToLower() %>;
 			ProjetoGeografico.settings.isVisualizarCredenciado = <%= Model.IsVisualizarCredenciado.ToString().ToLower() %>;
-
+			ProjetoGeografico.settings.ArquivoEnviadoFilaTipo = <%= Model.ArquivoEnviadoFilaTipo %>;
+			
 			EnviarProjeto.mensagens =  <%= Model.MensagensImportador %>;
 			Desenhador.mensagens = <%= Model.MensagensDesenhador %>;
 
@@ -245,7 +246,7 @@
 			</span>
 
 			<span class="spanBotoes floatRight spanAtualizar">
-				<input class="btnAtualizar <%: Model.IsFinalizado && !Model.IsVisualizar && Model.CaracterizacaoTipo == (int)Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloCaracterizacao.eCaracterizacao.ExploracaoFlorestal ? "" : "hide" %>" type="button" value="Novo" />
+				<input class="btnAtualizar <%: Model.ExibirBotaoNovo ? "" : "hide" %>" type="button" value="Novo" />
 			</span>
 
 			<span class="spanBotoes floatRight spanRecaregar <%: Model.Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmRascunho && !Model.IsVisualizar ? "" : "hide" %>">

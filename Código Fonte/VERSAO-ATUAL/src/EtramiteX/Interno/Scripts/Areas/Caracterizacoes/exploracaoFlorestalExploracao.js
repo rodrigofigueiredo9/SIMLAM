@@ -6,7 +6,8 @@ ExploracaoFlorestalExploracao = {
 	settings: {
 		mensagens: null,
 		idsTela: null,
-		getEspecie: null
+		api: null,
+		token: null
 	},
 	container: null,
 
@@ -106,7 +107,7 @@ ExploracaoFlorestalExploracao = {
 			$('.txtQuantidade', container).removeClass('disabled').removeAttr('disabled');
 
 			if (produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoMouroesEstacas ||
-				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoEscoras ||
+				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoMudaPlanta ||
 				produto == ExploracaoFlorestalExploracao.settings.idsTela.ProdutoPalmito) {
 
 				$('.txtQuantidade', container).addClass('maskInteger').removeClass('maskDecimalPonto').attr('maxlength', '9');
@@ -279,17 +280,20 @@ ExploracaoFlorestalExploracao = {
 			source: function (request, response) {
 				var tags = [];
 				$.ajax({
-					url: ExploracaoFlorestalExploracao.settings.getEspecie,
+					url: ExploracaoFlorestalExploracao.settings.api + "/Especie",
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader('Authorization', 'Bearer ' + ExploracaoFlorestalExploracao.settings.token);
+					},
 					data: { "Search": request.term, "PageSize": 20 },
 					type: 'GET',
 					dataType: 'json',
 					contentType: 'application/json;charset=UTF-8',
 					success: function (result) {
 						if (result.data != null) {
-							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId +'\" }'));
+							tags = result.data.map(x => JSON.parse('{ "label": \"' + x.nomeAmigavel + '\", "value": \"' + x.nomeAmigavel + '\", "id": \"' + x.especiePopularId + '\", "cientifico": \"' + x.especieCientificoId + '\" }'));
 						}
 						response(tags);
-					},
+					}
 				});
 			},
 			select: function (event, ui) {
