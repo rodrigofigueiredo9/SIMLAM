@@ -231,6 +231,7 @@
 				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Criar"></siteMapNode>
 				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Editar"></siteMapNode>
 				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Visualizar"></siteMapNode>
+				<siteMapNode url="~/Caracterizacoes/BarragemDispensaLicenca/Listar"></siteMapNode>
 			</siteMapNode>
 			<siteMapNode url="~/Empreendimento/Criar" title="Cadastrar Empreendimento" description="linkMenu" roles="EmpreendimentoCriar"/>
 		</siteMapNode>
