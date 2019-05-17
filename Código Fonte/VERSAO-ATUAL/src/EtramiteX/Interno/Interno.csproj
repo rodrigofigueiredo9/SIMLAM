@@ -57,6 +57,9 @@
       <HintPath>..\Model.WebService\bin\Debug\Interno.Model.WebService.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
@@ -359,6 +362,8 @@
     <Compile Include="ViewModels\VMTItuloDeclaratorioConfiguracao\ConfigurarVM.cs" />
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ListarVM.cs" />
     <Compile Include="ViewModels\VMTitulo\RelatorioVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
+    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

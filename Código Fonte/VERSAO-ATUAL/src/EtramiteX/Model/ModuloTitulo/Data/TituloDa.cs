@@ -2604,8 +2604,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				if(filtro.modelo > 0)
 					comandtxt += comando.FiltroAnd("tm.id", "modelo", filtro.modelo);
 
-				if(filtro.municipio > 0)
-					comandtxt += comando.FiltroAnd("mp.id", "municipio", filtro.municipio);
+				if (filtro.municipio > 0)
+					comandtxt += $@"AND EXISTS (SELECT 1 FROM TAB_EMPREENDIMENTO_ENDERECO EE WHERE EE.CORRESPONDENCIA = 0 AND EE.EMPREENDIMENTO = BD.EMPREENDIMENTO AND EE.MUNICIPIO = {filtro.municipio} )";
+					//	comando.FiltroAnd("mp.id", "", "municipio", filtro.municipio.ToString());
 
 				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo) && !string.IsNullOrWhiteSpace(filtro.fimPeriodo))
 					comandtxt += $@"AND tt.data_criacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
