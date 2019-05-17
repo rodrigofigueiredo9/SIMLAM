@@ -362,8 +362,6 @@
     <Compile Include="ViewModels\VMTItuloDeclaratorioConfiguracao\ConfigurarVM.cs" />
     <Compile Include="ViewModels\VMTituloDeclaratorioConfiguracao\ListarVM.cs" />
     <Compile Include="ViewModels\VMTitulo\RelatorioVM.cs" />
-    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaEditarVM.cs" />
-    <Compile Include="ViewModels\VMPTV\RetificacaoNFCaixaVM.cs" />
     <Compile Include="Views\ConfiguracaoDocumentoFitossanitario\EditarNumeracao.ascx.cs">
       <DependentUpon>EditarNumeracao.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
