@@ -190,7 +190,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 
 		internal void SetComErroParaAguardandoEtapaNaFila()
 		{
-			string strSQL = $"begin update tab_fila t set t.situacao={FILA_SITUACAO_AGUARDANDO}, t.data_inicio=null, t.data_fim=null where t.situacao <> {FILA_SITUACAO_CONCLUIDO} and t.titulo > 0; end;";
+			string strSQL = $"begin update tab_fila t set t.situacao={FILA_SITUACAO_AGUARDANDO}, t.data_inicio=null, t.data_fim=null where t.situacao = {FILA_SITUACAO_ERRO} and t.titulo > 0; end;";
 
 			using (Comando comando = this.banco.CriarComando(strSQL))
 			{

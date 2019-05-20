@@ -363,13 +363,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 						--Importa as tabelas do da temporária para as tabelas oficiais
 						{0}geo_operacoesprocessamentogeo.ExportarParaTabelasGEO(i.id, i.tid);
-
-						--Atualiza relacionamento com exploracoes
-						update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
-							where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = i.id);
-						update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
-							where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = i.id);
-	
+						
 						--Apaga o rascunho
 						delete {0}tmp_projeto_geo_arquivos g where g.projeto = i.id;
 						delete {0}tmp_projeto_geo_ortofoto g where g.projeto = i.id;
@@ -451,6 +445,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 							where t.titulo = :titulo
 							and t.exploracao_florestal = ep.exploracao_florestal)));
 
+					--Atualiza relacionamento com exploracoes
+					update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
+						where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = i.id);
+					update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
+						where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = i.id);
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
