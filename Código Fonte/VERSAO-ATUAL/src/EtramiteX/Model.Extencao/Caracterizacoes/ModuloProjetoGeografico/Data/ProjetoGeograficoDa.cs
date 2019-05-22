@@ -447,9 +447,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 					--Atualiza relacionamento com exploracoes
 					update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
-						where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = i.id);
+						where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = :projeto);
 					update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
-						where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = i.id);
+						where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = :projeto);
 				end; ", EsquemaBanco, EsquemaBancoGeo);
 
 				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
