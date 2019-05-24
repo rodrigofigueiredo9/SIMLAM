@@ -35,8 +35,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloAut
 
 			if ((esp.TitulosAssociado.FirstOrDefault() ?? new TituloAssociadoEsp()).Id <= 0)
 				Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVistoriaObrigatorio);
-			else if (_daEspecificidade.ObterTituloAssociado(esp.TitulosAssociado.FirstOrDefault().Id).Situacao != (int) eTituloSituacao.Concluido)
-				Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVIstoriaDeveEstarConcluiddo);
+			else
+			{
+				var situacaoLaudo = _daEspecificidade.ObterTituloAssociado(esp.TitulosAssociado.FirstOrDefault().Id).Situacao;
+				if (situacaoLaudo != (int)eTituloSituacao.Concluido && situacaoLaudo != (int)eTituloSituacao.Prorrogado)
+					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVistoriaDeveEstarConcluidoOuProrrogado);
+			}
 
 			idCaracterizacao = caracterizacaoBus.Existe(especificidade.Titulo.EmpreendimentoId.GetValueOrDefault(), eCaracterizacao.ExploracaoFlorestal);
 			if (idCaracterizacao == 0)

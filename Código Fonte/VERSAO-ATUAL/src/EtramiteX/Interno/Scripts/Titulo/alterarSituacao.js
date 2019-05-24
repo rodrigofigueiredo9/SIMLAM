@@ -76,6 +76,7 @@ TituloAlterarSituacao = {
 				break;
 
 			case 5:
+				$('.motivoCancelamento', TituloAlterarSituacao.container).show();
 				dataEncerramento[0].textContent = 'Data do encerramento *';
 				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');
@@ -87,6 +88,7 @@ TituloAlterarSituacao = {
 				break;
 
 			case 8:
+				$('.motivoCancelamento', TituloAlterarSituacao.container).hide();
 				dataEncerramento[0].textContent = 'Data da suspensão *';
 				container = $('.divEncerrar', TituloAlterarSituacao.container);
 				container.removeClass('hide');

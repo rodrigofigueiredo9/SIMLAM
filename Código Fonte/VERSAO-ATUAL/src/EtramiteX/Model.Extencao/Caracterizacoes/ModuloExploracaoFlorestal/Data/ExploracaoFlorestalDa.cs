@@ -819,9 +819,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 				Comando comando = bancoDeDados.CriarComando(@"
 					select tab.*,
 						   (case
-								when substr(tab.avn,1,1) = 'I' then 2/*Floresta Nativa - Estágio inicial*/
-								when substr(tab.avn,1,1) = 'M' then 3/*Floresta Nativa - Estágio médio*/
-								when substr(tab.avn,1,1) = 'A' then 4/*Floresta Nativa - Estágio avançado*/
+								when Instr(tab.avn, 'Inicial [FLORESTA]') > 0 then 2/*Floresta Nativa - Estágio inicial*/
+								when Instr(tab.avn, 'Médio [FLORESTA]') > 0 then 3/*Floresta Nativa - Estágio médio*/
+								when Instr(tab.avn, 'Avançado [FLORESTA]') > 0 then 4/*Floresta Nativa - Estágio avançado*/
+								when Instr(tab.avn, 'Inicial [BREJO]') > 0 then 11
+								when Instr(tab.avn, 'Médio [BREJO]') > 0 then 12
+								when Instr(tab.avn, 'Avançado [BREJO]') > 0 then 13
+								when Instr(tab.avn, 'Inicial [RESTINGA]') > 0 then 14
+								when Instr(tab.avn, 'Médio [RESTINGA]') > 0 then 15
+								when Instr(tab.avn, 'Avançado [RESTINGA]') > 0 then 16
+								when Instr(tab.avn, 'Inicial [CAMPO]') > 0 then 17
+								when Instr(tab.avn, 'Médio [CAMPO]') > 0 then 18
+								when Instr(tab.avn, 'Avançado [CAMPO]') > 0 then 19
+								when Instr(tab.avn, 'Inicial [MUSSUNUNGA]') > 0 then 20
+								when Instr(tab.avn, 'Médio [MUSSUNUNGA]') > 0 then 21
+								when Instr(tab.avn, 'Avançado [MUSSUNUNGA]') > 0 then 22
+								when Instr(tab.avn, 'Inicial [MANGUE]') > 0 then 23
+								when Instr(tab.avn, 'Médio [MANGUE]') > 0 then 24
+								when Instr(tab.avn, 'Avançado [MANGUE]') > 0 then 25
+								when Instr(tab.avn, 'Inicial [RESTINGA-APP]') > 0 then 26
+								when Instr(tab.avn, 'Médio [RESTINGA-APP]') > 0 then 27
+								when Instr(tab.avn, 'Avançado [RESTINGA-APP]') > 0 then 28
+								when Instr(tab.avn, 'Inicial [OUTRO]') > 0 then 29
+								when Instr(tab.avn, 'Médio [OUTRO]') > 0 then 30
+								when Instr(tab.avn, 'Avançado [OUTRO]') > 0 then 31
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'FLORESTA-PLANTADA') > 0	then 1/*aa - Floresta Plantada*/
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'CULTURAS-PERENES') > 0	then 6/*aa - CULTURAS-PERENES*/
 								when substr(tab.avn,1,1) = 'N' and Instr(tab.aa, 'CULTURAS-ANUAIS') > 0		then 9/*aa - CULTURAS-ANUAIS*/
@@ -1002,12 +1023,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 
 				#region Ordenação
 				List<String> ordenar = new List<String>();
-				List<String> colunas = new List<String>() { "tipo_exploracao_texto", "codigo_exploracao", "data_cadastro" };
+				List<String> colunas = new List<String>() { "tipo_exploracao_texto", "codigo_exploracao", "data_cadastro", "geometria_texto" };
 
 				if (filtros.OdenarPor > 0)
 					ordenar.Add(colunas.ElementAtOrDefault(filtros.OdenarPor - 1));
 				else
-					ordenar.Add("tipo_exploracao_texto");
+					ordenar.AddRange(colunas);
 				#endregion Ordenação
 
 				comando.DbCommand.CommandText = String.Format(@"select count(*) from (select c.id, c.empreendimento, c.codigo_exploracao, c.tipo_exploracao,

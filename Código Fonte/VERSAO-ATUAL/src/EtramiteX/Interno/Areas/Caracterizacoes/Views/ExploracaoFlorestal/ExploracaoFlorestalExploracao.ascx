@@ -135,8 +135,8 @@
 								<% var qtd = "";
 									if (!String.IsNullOrEmpty(produto.Quantidade)) {
 										qtd = Convert.ToDecimal(produto.Quantidade).ToString("N2");
-
-										if ((Convert.ToDecimal(produto.Quantidade) % 2) == 0)
+										var mod = (Convert.ToDecimal(produto.Quantidade) % 2);
+										if (mod == 0 || mod == 1)
 										{
 											if (produto.ProdutoId == (int)eProduto.MudaPlanta || produto.ProdutoId == (int)eProduto.Palmito)
 												qtd = Convert.ToDecimal(produto.Quantidade).ToString("N0");

@@ -592,7 +592,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			}
 		}
 
-		public ProtocoloPDF ObterDadosProtocolo(int titulo, BancoDeDados banco = null)
+		public ProtocoloPDF ObterDadosProtocolo(int protocolo, int titulo, BancoDeDados banco = null)
 		{
 			var dados = new ProtocoloPDF();
 
@@ -600,14 +600,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 			{
 				#region Dados do Título - Protocolo
 
-				if (dados.Id.HasValue)
+				if (protocolo > 0)
 				{
 					var comando = bancoDeDados.CriarComando(@"select p.id protocolo_id, p.numero||'/'||p.ano protocolo_numero, r.numero requerimento_numero, 
 					to_char(r.data_criacao, 'dd/MM/yyyy') requerimento_data, p.data_autuacao, p.numero_autuacao, data_autuacao, to_char(p.data_criacao) data_criacao, 
 					p.protocolo, (select lt.texto from {0}lov_protocolo_tipo lt where lt.id = p.tipo) protocolo_tipo
 					from {0}tab_protocolo p, {0}tab_requerimento r where p.requerimento = r.id(+) and p.id = :protocolo", EsquemaBanco);
 
-					comando.AdicionarParametroEntrada("protocolo", dados.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("protocolo", protocolo, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{

@@ -1029,13 +1029,21 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			Titulo tituloAtual = _bus.Obter(titulo.Id);
 			tituloAtual.Modelo = _busModelo.Obter(tituloAtual.Modelo.Id);
 
-			tituloAtual.Prazo = titulo.Prazo.HasValue ? titulo.Prazo : tituloAtual.Prazo;
-			tituloAtual.DiasProrrogados = titulo.DiasProrrogados.HasValue ? titulo.DiasProrrogados : tituloAtual.DiasProrrogados;
-			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId.HasValue ? titulo.MotivoEncerramentoId : tituloAtual.MotivoEncerramentoId;
+			if (acao == (int)eAlterarSituacaoAcao.CancelarSuspensao)
+				tituloAtual.DataEncerramento = new DateTecno();
+			else
+			{
+				tituloAtual.Prazo = titulo.Prazo.HasValue ? titulo.Prazo : tituloAtual.Prazo;
+				tituloAtual.DiasProrrogados = titulo.DiasProrrogados.HasValue ? titulo.DiasProrrogados : tituloAtual.DiasProrrogados;
+				tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId.HasValue ? titulo.MotivoEncerramentoId : tituloAtual.MotivoEncerramentoId;
 
-			tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
-			tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
-			tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+				tituloAtual.DataEncerramento = (titulo.DataEncerramento.IsEmpty && acao == (int)eAlterarSituacaoAcao.Encerrar) ? tituloAtual.DataEncerramento : titulo.DataEncerramento;
+				if (acao != (int)eAlterarSituacaoAcao.Suspender)
+				{
+					tituloAtual.DataAssinatura = (titulo.DataAssinatura.IsEmpty) ? tituloAtual.DataAssinatura : titulo.DataAssinatura;
+					tituloAtual.DataEmissao = (titulo.DataEmissao.IsEmpty && acao == (int)eAlterarSituacaoAcao.Concluir) ? tituloAtual.DataEmissao : titulo.DataEmissao;
+				}
+			}
 
 			_tituloSituacaoBus.AlterarSituacao(tituloAtual, acao, gerouPdf);
 

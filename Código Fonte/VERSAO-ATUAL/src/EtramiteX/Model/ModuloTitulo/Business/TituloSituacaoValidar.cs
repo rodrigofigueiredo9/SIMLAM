@@ -127,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					acaoPermissao.Add(ePermissao.TituloProrrogar);
 					break;
 
-					#endregion
+				#endregion
 			}
 
 			if (!_permissaoValdiar.ValidarAny(acaoPermissao.ToArray()))
@@ -386,11 +386,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							}
 
 						}
-					}
-
-					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
-					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoSuspensaoObrigatorio);
 					}
 
 					break;
