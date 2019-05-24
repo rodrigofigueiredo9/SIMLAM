@@ -15,9 +15,9 @@
 				<th width="15%">Código Exploração</th>
 				<th width="18%">Data Cadastro da Exploração</th>
 				<th width="17%">Geometria</th>
-				<th width="17%">Área Requerida (ha)</th>
-				<th width="19%">N° de Árvores Requeridas (und)</th>
-				<th width="10%">Ações</th>
+				<th class="semOrdenacao" width="17%">Área Requerida (ha)</th>
+				<th class="semOrdenacao" width="19%">N° de Árvores Requeridas (und)</th>
+				<th class="semOrdenacao" width="10%">Ações</th>
 			</tr>
 		</thead>
 
