@@ -152,7 +152,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 								comando.AdicionarParametroEntrada("exp_florestal_exploracao", item.Id, DbType.Int32);
 								comando.AdicionarParametroEntrada("produto", itemAux.ProdutoId, DbType.Int32);
 								comando.AdicionarParametroEntrada("quantidade", itemAux.Quantidade, DbType.Decimal);
-								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId, DbType.Int32);
+								comando.AdicionarParametroEntrada("especie_popular_id", itemAux.EspeciePopularId > 0 ? itemAux.EspeciePopularId : null, DbType.Int32);
 								comando.AdicionarParametroEntrada("destinacao_material_id", itemAux.DestinacaoMaterialId > 0 ? itemAux.DestinacaoMaterialId : null, DbType.Int32);
 								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
