@@ -195,33 +195,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 		public void AlterarSituacao(Titulo titulo, BancoDeDados banco = null, bool validar = true)
 		{
-			Titulo atualTitulo = _da.ObterSimplificado(titulo.Id);
-
-			bool isGerarNumero = false;
-			bool isGerarPdf = false;
-
-			if (validar)
+			try
 			{
-				if (!_validar.AlterarSituacao(titulo, atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || atualTitulo.Situacao.Id == (int)eTituloSituacao.Valido)
+				Titulo atualTitulo = _da.ObterSimplificado(titulo.Id);
+
+				bool isGerarNumero = false;
+				bool isGerarPdf = false;
+
+				if (validar)
 				{
-					return;
-				}
-			}
-
-			#region Configurar Nova Situacao
-
-			//Situação Nova
-			switch ((eTituloSituacao)titulo.Situacao.Id)
-			{
-				#region 3 - Valido
-
-				case eTituloSituacao.Valido:
-					if (atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro)
+					if (!_validar.AlterarSituacao(titulo, atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || atualTitulo.Situacao.Id == (int)eTituloSituacao.Valido)
 					{
-						isGerarNumero = true;
-						isGerarPdf = true;
+						return;
 					}
-					break;
+				}
+
+				#region Configurar Nova Situacao
+
+				//Situação Nova
+				switch ((eTituloSituacao)titulo.Situacao.Id)
+				{
+					#region 3 - Valido
+
+					case eTituloSituacao.Valido:
+						if (atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro)
+						{
+							isGerarNumero = true;
+							isGerarPdf = true;
+						}
+						break;
 
 				#endregion
 
@@ -241,82 +243,82 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 			#region Numero de Titulo
 
-			if (isGerarNumero)
-			{
-				titulo.Numero.ReiniciaPorAno = titulo.Modelo.Regra(eRegra.NumeracaoReiniciada);
-
-				if (titulo.Modelo.Regra(eRegra.NumeracaoAutomatica))
+				if (isGerarNumero)
 				{
-					titulo.Numero.Automatico = true;
-					TituloModeloResposta iniciarEm = titulo.Modelo.Resposta(eRegra.NumeracaoAutomatica, eResposta.InicioNumeracao);
-					titulo.Numero.IniciaEm = null;
-					titulo.Numero.IniciaEmAno = null;
+					titulo.Numero.ReiniciaPorAno = titulo.Modelo.Regra(eRegra.NumeracaoReiniciada);
 
-					if (iniciarEm != null)
+					if (titulo.Modelo.Regra(eRegra.NumeracaoAutomatica))
 					{
-						if (iniciarEm.Valor == null || !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(iniciarEm.Valor.ToString()))
+						titulo.Numero.Automatico = true;
+						TituloModeloResposta iniciarEm = titulo.Modelo.Resposta(eRegra.NumeracaoAutomatica, eResposta.InicioNumeracao);
+						titulo.Numero.IniciaEm = null;
+						titulo.Numero.IniciaEmAno = null;
+
+						if (iniciarEm != null)
 						{
-							Validacao.Add(Mensagem.Titulo.IniciarEmInvalido);
-							return;
-						}
-
-						string[] iniciar = iniciarEm.Valor.ToString().Split('/');
-						titulo.Numero.IniciaEm = Convert.ToInt32(iniciar[0]);
-						titulo.Numero.IniciaEmAno = Convert.ToInt32(iniciar[1]);
-
-						if (titulo.Numero.IniciaEmAno.GetValueOrDefault() != DateTime.Now.Year)
-						{
-							titulo.Numero.IniciaEm = null;
-							titulo.Numero.IniciaEmAno = null;
-						}
-					}
-				}
-
-				titulo.Numero.Ano = DateTime.Today.Year;
-			}
-
-			#endregion
-
-			GerenciadorTransacao.ObterIDAtual();
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-			{
-				bancoDeDados.IniciarTransacao();
-
-				_da.DeclaratorioAlterarSituacao(titulo, bancoDeDados);
-
-				#region Atividades
-
-				AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
-
-				#region Título Valido
-
-				if (titulo.Situacao.Id == (int)eTituloSituacao.Valido)
-				{
-					if (titulo.Atividades != null && titulo.Atividades.Count > 0)
-					{
-						foreach (Atividade atividade in titulo.Atividades)
-						{
-							if (VerificarDeclaratorioSituacao(atividade, eTituloSituacao.Valido, titulo.EmpreendimentoId.GetValueOrDefault(), bancoDeDados))
+							if (iniciarEm.Valor == null || !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(iniciarEm.Valor.ToString()))
 							{
-								atividade.SituacaoId = (int)eAtividadeSituacao.Regular;
-								atividadeBus.AlterarSituacao(atividade, bancoDeDados);
+								Validacao.Add(Mensagem.Titulo.IniciarEmInvalido);
+								return;
+							}
+
+							string[] iniciar = iniciarEm.Valor.ToString().Split('/');
+							titulo.Numero.IniciaEm = Convert.ToInt32(iniciar[0]);
+							titulo.Numero.IniciaEmAno = Convert.ToInt32(iniciar[1]);
+
+							if (titulo.Numero.IniciaEmAno.GetValueOrDefault() != DateTime.Now.Year)
+							{
+								titulo.Numero.IniciaEm = null;
+								titulo.Numero.IniciaEmAno = null;
 							}
 						}
 					}
 
-					if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
-					{
-						ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
-
-						var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
-						projetoDigital.Situacao = 11; /*Finalizado*/
-						_proj.AlterarSituacao(projetoDigital);
-					}
+					titulo.Numero.Ano = DateTime.Today.Year;
 				}
 
 				#endregion
 
-				#region Título Suspenso
+				GerenciadorTransacao.ObterIDAtual();
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+				{
+					bancoDeDados.IniciarTransacao();
+
+					_da.DeclaratorioAlterarSituacao(titulo, bancoDeDados);
+
+					#region Atividades
+
+					AtividadeInternoBus atividadeBus = new AtividadeInternoBus();
+
+					#region Título Valido
+
+					if (titulo.Situacao.Id == (int)eTituloSituacao.Valido)
+					{
+						if (titulo.Atividades != null && titulo.Atividades.Count > 0)
+						{
+							foreach (Atividade atividade in titulo.Atividades)
+							{
+								if (VerificarDeclaratorioSituacao(atividade, eTituloSituacao.Valido, titulo.EmpreendimentoId.GetValueOrDefault(), bancoDeDados))
+								{
+									atividade.SituacaoId = (int)eAtividadeSituacao.Regular;
+									atividadeBus.AlterarSituacao(atividade, bancoDeDados);
+								}
+							}
+						}
+
+						if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
+						{
+							ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
+
+							var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
+							projetoDigital.Situacao = 11; /*Finalizado*/
+							_proj.AlterarSituacao(projetoDigital);
+						}
+					}
+
+					#endregion
+
+					#region Título Suspenso
 
 				if (titulo.Situacao.Id == (int)eTituloSituacao.SuspensoDeclaratorio)
 				{
@@ -333,9 +335,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					}
 				}
 
-				#endregion
+					#endregion
 
-				#region Título Encerrado
+					#region Título Encerrado
 
 				if (titulo.Situacao.Id == (int)eTituloSituacao.EncerradoDeclaratorio)
 				{
@@ -385,144 +387,157 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					}
 				}
 
-				#endregion
+					#endregion
 
-				#endregion
+					#endregion
 
-				#region Gerar Pdf de Titulo
+					#region Gerar Pdf de Titulo
 
-				ArquivoBus arqBus = new ArquivoBus(eExecutorTipo.Interno);
+					ArquivoBus arqBus = new ArquivoBus(eExecutorTipo.Interno);
 
-				if (isGerarPdf && titulo.Modelo.Regra(eRegra.PdfGeradoSistema))
-				{
-					TituloInternoBus bus = new TituloInternoBus();
-
-					titulo.ArquivoPdf.Nome = "Titulo.pdf";
-					titulo.ArquivoPdf.Extensao = ".pdf";
-					titulo.ArquivoPdf.ContentType = "application/pdf";
-					titulo.ArquivoPdf.Buffer = bus.GerarPdf(titulo, bancoDeDados);
-
-					if (titulo.ArquivoPdf.Buffer != null)
+					if (isGerarPdf && titulo.Modelo.Regra(eRegra.PdfGeradoSistema))
 					{
-						arqBus.Salvar(titulo.ArquivoPdf);
+						TituloInternoBus bus = new TituloInternoBus();
 
-						ArquivoDa _arquivoDa = new ArquivoDa();
-						_arquivoDa.Salvar(titulo.ArquivoPdf, User.FuncionarioId, User.Name,
-							User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+						titulo.ArquivoPdf.Nome = "Titulo.pdf";
+						titulo.ArquivoPdf.Extensao = ".pdf";
+						titulo.ArquivoPdf.ContentType = "application/pdf";
+						titulo.ArquivoPdf.Buffer = bus.GerarPdf(titulo, bancoDeDados);
 
-						_da.SalvarPdfTitulo(titulo, bancoDeDados);
-					}
-				}
-
-				#endregion
-
-				#region Gerar/Enviar Email
-
-				#region Gerar Email
-
-				Email email = null;
-				if (titulo.Situacao.Id == (int)eTituloSituacao.Valido && titulo.Modelo.Regra(eRegra.EnviarEmail))
-				{
-					if (titulo.Modelo.Resposta(eRegra.EnviarEmail, eResposta.TextoEmail).Valor != null)
-					{
-						string textoEmail = titulo.Modelo.Resposta(eRegra.EnviarEmail, eResposta.TextoEmail).Valor.ToString();
-
-						if (!String.IsNullOrWhiteSpace(textoEmail))
+						if (titulo.ArquivoPdf.Buffer != null)
 						{
-							Dictionary<String, String> emailKeys = new Dictionary<string, string>();
+							arqBus.Salvar(titulo.ArquivoPdf);
 
-							emailKeys.Add("[orgão sigla]", _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla));
-							emailKeys.Add("[data da conclusão]", titulo.Modelo.Regra(eRegra.Prazo) ? titulo.DataInicioPrazo.DataTexto : titulo.DataEmissao.DataTexto);
-							emailKeys.Add("[nome do modelo]", titulo.Modelo.Nome);
-							emailKeys.Add("[nome do subtipo]", titulo.Modelo.SubTipo);
-							emailKeys.Add("[nº do título]", titulo.Numero.Texto);
-							emailKeys.Add("[nº processo/documento do título]", titulo.Protocolo.Numero);
-							emailKeys.Add("[nome do empreendimento]", titulo.EmpreendimentoTexto);
+							ArquivoDa _arquivoDa = new ArquivoDa();
+							_arquivoDa.Salvar(titulo.ArquivoPdf, User.FuncionarioId, User.Name,
+								User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
 
-							foreach (string key in emailKeys.Keys)
+							_da.SalvarPdfTitulo(titulo, bancoDeDados);
+						}
+					}
+
+					#endregion
+
+					#region Gerar/Enviar Email
+
+					#region Gerar Email
+
+					Email email = null;
+					if (titulo.Situacao.Id == (int)eTituloSituacao.Valido && titulo.Modelo.Regra(eRegra.EnviarEmail))
+					{
+						if (titulo.Modelo.Resposta(eRegra.EnviarEmail, eResposta.TextoEmail).Valor != null)
+						{
+							string textoEmail = titulo.Modelo.Resposta(eRegra.EnviarEmail, eResposta.TextoEmail).Valor.ToString();
+
+							if (!String.IsNullOrWhiteSpace(textoEmail))
 							{
-								textoEmail = textoEmail.Replace(key, emailKeys[key]);
+								Dictionary<String, String> emailKeys = new Dictionary<string, string>();
+
+								emailKeys.Add("[orgão sigla]", _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla));
+								emailKeys.Add("[data da conclusão]", titulo.Modelo.Regra(eRegra.Prazo) ? titulo.DataInicioPrazo.DataTexto : titulo.DataEmissao.DataTexto);
+								emailKeys.Add("[nome do modelo]", titulo.Modelo.Nome);
+								emailKeys.Add("[nome do subtipo]", titulo.Modelo.SubTipo);
+								emailKeys.Add("[nº do título]", titulo.Numero.Texto);
+								emailKeys.Add("[nº processo/documento do título]", titulo.Protocolo.Numero);
+								emailKeys.Add("[nome do empreendimento]", titulo.EmpreendimentoTexto);
+
+								foreach (string key in emailKeys.Keys)
+								{
+									textoEmail = textoEmail.Replace(key, emailKeys[key]);
+								}
+
+								email = new Email();
+								email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
+								email.Texto = textoEmail;
+								email.Tipo = eEmailTipo.TituloConcluir;
+								email.Codigo = titulo.Id;
+							}
+						}
+					}
+
+					#endregion
+
+					if (email != null)
+					{
+						List<String> lstEmail = _da.ObterEmails(titulo.Id, bancoDeDados);
+
+						if (lstEmail != null && lstEmail.Count > 0)
+						{
+							email.Destinatario = String.Join(", ", lstEmail.ToArray());
+
+							if (titulo.Modelo.Regra(eRegra.AnexarPDFTitulo))
+							{
+								email.Anexos.Add(titulo.ArquivoPdf);
 							}
 
-							email = new Email();
-							email.Assunto = _configSys.Obter<String>(ConfiguracaoSistema.KeyOrgaoSigla);
-							email.Texto = textoEmail;
-							email.Tipo = eEmailTipo.TituloConcluir;
-							email.Codigo = titulo.Id;
+							EmailBus emailBus = new EmailBus();
+							emailBus.Enviar(email, bancoDeDados);
 						}
 					}
-				}
 
-				#endregion
+					#endregion
 
-				if (email != null)
-				{
-					List<String> lstEmail = _da.ObterEmails(titulo.Id, bancoDeDados);
+					#region Salvar A especificidade
 
-					if (lstEmail != null && lstEmail.Count > 0)
+					if (EspecificiadadeBusFactory.Possui(titulo.Modelo.Codigo.GetValueOrDefault()))
 					{
-						email.Destinatario = String.Join(", ", lstEmail.ToArray());
+						IEspecificidadeBus busEsp = EspecificiadadeBusFactory.Criar(titulo.Modelo.Codigo.GetValueOrDefault());
+						titulo.Especificidade = busEsp.Obter(titulo.Id) as Especificidade;
+						titulo.Especificidade = titulo.ToEspecificidade();
+						busEsp.Salvar(titulo.Especificidade, bancoDeDados);
 
-						if (titulo.Modelo.Regra(eRegra.AnexarPDFTitulo))
+						List<DependenciaLst> lstDependencias = busEsp.ObterDependencias(titulo.Especificidade);
+						if (isGerarPdf && lstDependencias != null && lstDependencias.Count > 0)
 						{
-							email.Anexos.Add(titulo.ArquivoPdf);
+							if (!lstDependencias.Exists(x => x.TipoId == (int)eTituloDependenciaTipo.Caracterizacao && x.DependenciaTipo == (int)eCaracterizacao.Dominialidade))
+							{
+								lstDependencias.Add(new DependenciaLst() { TipoId = (int)eTituloDependenciaTipo.Caracterizacao, DependenciaTipo = (int)eCaracterizacao.Dominialidade });
+							}
+							_da.Dependencias(titulo.Id, titulo.Modelo.Id, titulo.EmpreendimentoId.GetValueOrDefault(), lstDependencias);
 						}
-
-						EmailBus emailBus = new EmailBus();
-						emailBus.Enviar(email, bancoDeDados);
+						if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
+							busEsp.AlterarSituacao(titulo.Id);
 					}
-				}
 
-				#endregion
+					#endregion
 
-				#region Salvar A especificidade
-
-				if (EspecificiadadeBusFactory.Possui(titulo.Modelo.Codigo.GetValueOrDefault()))
-				{
-					IEspecificidadeBus busEsp = EspecificiadadeBusFactory.Criar(titulo.Modelo.Codigo.GetValueOrDefault());
-					titulo.Especificidade = busEsp.Obter(titulo.Id) as Especificidade;
-					titulo.Especificidade = titulo.ToEspecificidade();
-					busEsp.Salvar(titulo.Especificidade, bancoDeDados);
-
-					List<DependenciaLst> lstDependencias = busEsp.ObterDependencias(titulo.Especificidade);
-					if (isGerarPdf && lstDependencias != null && lstDependencias.Count > 0)
+					if (!Validacao.EhValido)
 					{
-						if (!lstDependencias.Exists(x => x.TipoId == (int)eTituloDependenciaTipo.Caracterizacao && x.DependenciaTipo == (int)eCaracterizacao.Dominialidade))
+						bancoDeDados.Rollback();
+						if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
 						{
-							lstDependencias.Add(new DependenciaLst() { TipoId = (int)eTituloDependenciaTipo.Caracterizacao, DependenciaTipo = (int)eCaracterizacao.Dominialidade });
+							ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
+
+							var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
+							projetoDigital.Situacao = 2; /*Finalizado*/
+							_proj.AlterarSituacao(projetoDigital);
 						}
-						_da.Dependencias(titulo.Id, titulo.Modelo.Id, titulo.EmpreendimentoId.GetValueOrDefault(), lstDependencias);
+						return;
 					}
-					if(titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
-						busEsp.AlterarSituacao(titulo.Id);
+
+					#region Histórico
+
+					_da.Historico.Gerar(titulo.Id, eHistoricoArtefato.titulo, eHistoricoAcao.alterarsituacao, bancoDeDados);
+					_da.Consulta.Gerar(titulo.Id, eHistoricoArtefato.titulo, bancoDeDados);
+
+					#endregion
+
+					bancoDeDados.Commit();
+
+					Validacao.Add(Mensagem.TituloAlterarSituacao.TituloAltSituacaoSucesso);
 				}
-
-				#endregion
-
-				if (!Validacao.EhValido)
+			}
+			catch (Exception ex)
+			{
+				if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
 				{
-					bancoDeDados.Rollback();
-					if (titulo.Especificidade.Atividades.Exists(x => x.Id == 327)) /*Certidão de barragem*/
-					{
-						ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
+					ProjetoDigitalCredenciadoBus _proj = new ProjetoDigitalCredenciadoBus();
 
-						var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
-						projetoDigital.Situacao = 2; /*Finalizado*/
-						_proj.AlterarSituacao(projetoDigital);
-					}
-					return;
+					var projetoDigital = _proj.Obter(idRequerimento: titulo.RequerimetoId ?? 0);
+					projetoDigital.Situacao = 2; /*Finalizado*/
+					_proj.AlterarSituacao(projetoDigital);
 				}
-
-				#region Histórico
-
-				_da.Historico.Gerar(titulo.Id, eHistoricoArtefato.titulo, eHistoricoAcao.alterarsituacao, bancoDeDados);
-				_da.Consulta.Gerar(titulo.Id, eHistoricoArtefato.titulo, bancoDeDados);
-
-				#endregion
-
-				bancoDeDados.Commit();
-
-				Validacao.Add(Mensagem.TituloAlterarSituacao.TituloAltSituacaoSucesso);
+				Validacao.Add(eTipoMensagem.Erro, ex.Message);
 			}
 		}
 
@@ -580,7 +595,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 		{
 			try
 			{
-				if(!_validar.Filtrar(filtrosListar))
+				if (!_validar.Filtrar(filtrosListar))
 				{
 					return new Resultados<Titulo>();
 				}
