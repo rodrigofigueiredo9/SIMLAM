@@ -27,6 +27,7 @@ Cobranca = {
 
 	container: null,
 	pessoaModalInte: null,
+	flagObterFiscalizacao: false,
 
 	load: function (container, options) {
 		if (options) { $.extend(Cobranca.settings, options); }
@@ -45,7 +46,8 @@ Cobranca = {
 		container.delegate('.btnEditarAutuado', 'click', Cobranca.onClickEditarVisualizar);
 		container.delegate('.ddlParcelas', 'change', Cobranca.alterarParcelas);
 		container.delegate('.linkCancelar', 'click', Cobranca.cancelar);
-		
+		$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
+
 		$('.txtProcessoNumero', container).focus();
 	},
 
@@ -56,6 +58,8 @@ Cobranca = {
 
 	obter: function () {
 		var container = Cobranca.container;
+
+		if (!Cobranca.flagObterFiscalizacao) Cobranca.flagObterFiscalizacao = false;
 
 		var obj = {
 			Id: $('.hdnCobrancaId', container).val(),
@@ -71,7 +75,9 @@ Cobranca = {
 			CodigoReceitaId: $('.ddlCodigoReceita :selected', container).val(),
 			AutuadoPessoa: { NomeRazaoSocial: $('.txtAutuadoNome', container).val(), CPFCNPJ: $('.txtAutuadoCpfCnpj', container).val()  },
 			AutuadoPessoaId: $('.hdnAutuadoPessoaId', container).val(),
-			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val())
+			UltimoParcelamento: JSON.parse($('.hdnParcelamento', container).val()),
+			Anexos: $('.fsArquivos', container).arquivo('obterObjeto'),
+			ObterFiscalizacao: Cobranca.flagObterFiscalizacao
 		}
 		obj.UltimoParcelamento.ValorMulta = $('.txtValorMulta', container).val();
 		obj.UltimoParcelamento.ValorMultaAtualizado = $('.txtValorMultaAtualizado', container).val();
@@ -79,7 +85,7 @@ Cobranca = {
 		obj.UltimoParcelamento.Data1Vencimento = { DataTexto: $('.txtData1Vencimento', container).val() };
 		obj.UltimoParcelamento.DataEmissao = { DataTexto: $('.txtDataEmissao', container).val() };
 		obj.UltimoParcelamento.DUAS = Cobranca.obterListaParcelamento();
-		
+
 		return obj;
 	},
 
@@ -146,6 +152,7 @@ Cobranca = {
 	},
 
 	alterarParcelas: function () {
+		debugger;
 		Modal.confirma({
 			btCancelLabel: 'Não',
 			url: Cobranca.settings.urls.confirm,
@@ -188,8 +195,8 @@ Cobranca = {
 		MasterPage.carregando(true);
 
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + fiscalizacaoId);
+		var cobrancaId = $('.hdnCobrancaId', container).val();
+		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + cobrancaId);
 
 		MasterPage.carregando(false);
 	},
@@ -198,8 +205,8 @@ Cobranca = {
 		MasterPage.carregando(true);
 
 		if ($('.hdnOrigem', Cobranca.container).val() == 'notificacao') {
-			var fiscalizacaoId = $('.txtFiscalizacao', Cobranca.container).val();
-			MasterPage.redireciona(Cobranca.settings.urls.notificacao + "/" + fiscalizacaoId);
+            var fiscalizacaoId = $('.txtFiscalizacao', Cobranca.container).val();
+            MasterPage.redireciona(Cobranca.settings.urls.notificacao + "/" + fiscalizacaoId);
 		}
 		else 
 			MasterPage.redireciona(Cobranca.settings.urls.lista);
@@ -216,6 +223,7 @@ Cobranca = {
 			btnOkCallback: function (modalContent) {
 				Modal.fechar(modalContent);
 
+				Cobranca.flagObterFiscalizacao = false;
 				MasterPage.carregando(true);
 				$.ajax({
 					url: Cobranca.settings.urls.recalcular,
@@ -238,6 +246,7 @@ Cobranca = {
 						}
 						MasterPage.load();
 						MasterPage.redimensionar();
+						$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
 						Mascara.load(Cobranca.container);
 					}
 				});
@@ -247,7 +256,7 @@ Cobranca = {
 	},
 
 	atualizar: function () {
-		MasterPage.carregando(true);
+		MasterPage.carregando(true);		
 		$.ajax({
 			url: Cobranca.settings.urls.recalcular,
 			data: JSON.stringify(Cobranca.obter()),
@@ -269,6 +278,7 @@ Cobranca = {
 				}
 				MasterPage.load();
 				MasterPage.redimensionar();
+				$('.fsArquivos', Cobranca.container).arquivo({ extPermitidas: ['pdf'] });
 				Mascara.load(Cobranca.container);
 			}
 		});
@@ -344,16 +354,14 @@ Cobranca = {
 	parcelamentoAnterior: function () {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() - 1));
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) - 1));
 		MasterPage.carregando(false);
 	},
 
 	parcelamentoPosterior: function () {
 		MasterPage.carregando(true);
 		var container = Cobranca.container;
-		var fiscalizacaoId = $('.txtFiscalizacao', container).val();
-		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + ($('.hdnIndexParcelamento', container).val() + 1));
+		MasterPage.redireciona(Cobranca.settings.urls.visualizar + "?index=" + (parseInt($('.hdnIndexParcelamento', container).val()) + 1));
 		MasterPage.carregando(false);
 	},
 
@@ -362,13 +370,13 @@ Cobranca = {
 
 		//Quando tipoCadastro = 1, o modal Pessoa exibirá apenas a busca por pessoa física.
 		//Se o objeto não for passado para o modal (null), ele exibe a busca normal (CPF/CNPJ).
-		var dataPessoa = {
-			cpfCnpj: null,
-			tipoPessoa: null,
-			tipoCadastro: '1'
-		};
+		//var dataPessoa = {
+		//	cpfCnpj: null,
+		//	tipoPessoa: null,
+		//	tipoCadastro: '1'
+		//};
 
-		Modal.abrir(Cobranca.settings.urls.associarAutuado, dataPessoa, function (container) {
+		Modal.abrir(Cobranca.settings.urls.associarAutuado, null, function (container) {
 			Cobranca.pessoaModalInte.load(container, {
 				tituloCriar: 'Cadastrar Autuado',
 				tituloEditar: 'Editar Autuado',
@@ -402,7 +410,11 @@ Cobranca = {
 			return retorno.Msg;
 		}
 
-		MasterPage.redireciona(Cobranca.settings.urls.carregar + "/" + Fiscalizacao.Id);
+		$('.txtFiscalizacao', Cobranca.container).val(Fiscalizacao.Id);
+		
+		Cobranca.flagObterFiscalizacao = true;
+		Cobranca.atualizar();
+		Cobranca.flagObterFiscalizacao = false;
 		MasterPage.carregando(false);
 
 		return true;

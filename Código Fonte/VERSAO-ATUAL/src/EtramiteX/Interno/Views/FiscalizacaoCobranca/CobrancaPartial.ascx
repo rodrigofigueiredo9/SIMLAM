@@ -9,27 +9,27 @@
     <div class="block">
         <div class="coluna15">
             <label>N° de Registro do Processo</label><br />
-            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtProcessoNumero setarFoco" }))%>
+            <%= Html.TextBox("Cobranca.ProcessoNumero", Model.Entidade.ProcessoNumero, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtProcessoNumero setarFoco" }))%>
         </div>
         <div class="coluna15">
             <label>N° Autuação (SEP)</label><br />
-            <%= Html.TextBox("Cobranca.NumeroAutuacao", Model.Entidade.NumeroAutuacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroAutuacao" }))%>
+            <%= Html.TextBox("Cobranca.NumeroAutuacao", Model.Entidade.NumeroAutuacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtNumeroAutuacao" }))%>
         </div>
         <div class="coluna15">
             <label>N° Fiscalização</label><br />
-            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtFiscalizacao" }))%>
+            <%= Html.TextBox("Cobranca.NumeroFiscalizacao", Model.Entidade.NumeroFiscalizacao, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtFiscalizacao" }))%>
         </div>
         <div class="coluna15">
-            <label>N° AI / IUF</label><br />
-            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtNumeroIUF" }))%>
+            <label>N° AI / IUF *</label><br />
+            <%= Html.TextBox("Cobranca.NumeroIUF", Model.Entidade.NumeroIUF, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtNumeroIUF" }))%>
         </div>
         <div class="coluna15">
             <label>Série</label><br />
-			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0), new { @class = "text ddlSeries" }))%>
+			<%= Html.DropDownList("Cobranca.Serie", Model.Series, ViewModelHelper.SetaDisabled((Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0), new { @class = "text ddlSeries" }))%>
         </div>
         <div class="coluna15">
-            <label>Data Emissão AI / IUF</label><br />
-            <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.NumeroFiscalizacao > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
+            <label>Data Emissão AI / IUF *</label><br />
+            <%= Html.TextBox("Cobranca.DataEmissaoIUF", Model.Entidade.DataEmissaoIUF.DataTexto, ViewModelHelper.SetaDisabled(Model.IsVisualizar || Model.Entidade.FiscalizacaoId > 0, new { @class = "text txtDataEmissaoIUF maskData" }))%>
         </div>
         <div class="coluna31">
             <label>Nome / Razão Social autuado *</label><br />
@@ -120,15 +120,20 @@
     <div class="block">
         <% var indexParcelamento = Model.Entidade.Parcelamentos.IndexOf(Model.Parcelamento); %>
         <div class="coluna2">
-            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" <%= indexParcelamento == 0 ? "disabled" : "" %> />
+            <input class="icone floatLeft setaEsquerda btnParcelamentoAnterior" type="button" value="" <%= indexParcelamento <= 0 ? "disabled" : "" %> />
         </div>
         <div class="coluna9">
             Parcelamento <%= indexParcelamento + 1 %>/<%= Model.Entidade.Parcelamentos.Count%>
         </div>
-        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento == (Model.Entidade.Parcelamentos.Count - 1) ? "disabled" : "" %> />
+        <input class="icone floatLeft setaDireita btnParcelamentoPosterior" type="button" value="" <%= indexParcelamento == (Model.Entidade.Parcelamentos.Count - 1) || indexParcelamento < 0 ? "disabled" : "" %> />
         <input type="hidden" class="hdnIndexParcelamento" value="<%= indexParcelamento %>" />
     </div>
     <%} %>
+</fieldset>
+
+<fieldset class="block box fsArquivos">
+    <legend style="color: #000000"><b>Cópia de Notificação</b></legend>
+    <% Html.RenderPartial("~/Views/Arquivo/Arquivo.ascx", Model.ArquivoVM); %>
 </fieldset>
 
 <div class="block box">

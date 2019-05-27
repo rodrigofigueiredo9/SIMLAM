@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Data;
@@ -57,7 +59,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			{
 				if (_validar.Salvar(entidade))
 				{
-					if (_da.GetIdCobrancaByFiscalizacao(entidade.NumeroFiscalizacao, entidade.Id) > 0)
+					if (_da.GetIdCobrancaByFiscalizacao(entidade.NumeroFiscalizacao.GetValueOrDefault(0), entidade.Id) > 0)
 					{
 						Validacao.Add(Mensagem.CobrancaMsg.CobrancaDuplicada);
 						return Validacao.EhValido;
@@ -75,11 +77,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 						return Validacao.EhValido;
 					}
 
+					this.CopiarArquivosParaDiretorioPadrao(entidade);
+
 					GerenciadorTransacao.ObterIDAtual();
 
 					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 					{
 						bancoDeDados.IniciarTransacao();
+						this.SalvarArquivos(entidade, bancoDeDados);
 						_da.Salvar(entidade, bancoDeDados);
 						entidade.UltimoParcelamento.CobrancaId = entidade.Id;
 						this.Salvar(entidade.UltimoParcelamento, bancoDeDados);
@@ -224,17 +229,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			return Validacao.EhValido;
 		}
 
+		private void CopiarArquivosParaDiretorioPadrao(Cobranca entidade)
+		{
+			if (entidade?.Anexos == null) return;
+
+			var _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
+			foreach (var anexo in entidade.Anexos)
+			{
+				if (anexo.Arquivo.Id == 0)
+					anexo.Arquivo = _busArquivo.Copiar(anexo.Arquivo);
+			}
+		}
+
+		private void SalvarArquivos(Cobranca entidade, BancoDeDados bancoDeDados)
+		{
+			if (entidade?.Anexos == null) return;
+
+			var _arquivoDa = new ArquivoDa();
+			foreach (var anexo in entidade.Anexos)
+			{
+				if (anexo.Arquivo.Id == 0)
+					_arquivoDa.Salvar(anexo.Arquivo, User.FuncionarioId, User.Name, User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid, bancoDeDados);
+			}
+		}
+
 		#endregion
 
 		#region Obter
 
-		public Cobranca Obter(int fiscalizacao, BancoDeDados banco = null)
+		public Cobranca Obter(int cobrancaId, BancoDeDados banco = null)
 		{
 			Cobranca entidade = new Cobranca();
 
 			try
 			{
-				entidade = _da.Obter(fiscalizacao, banco);
+				entidade = _da.Obter(cobrancaId, 0, banco);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return entidade;
+		}
+
+		public Cobranca ObterByFiscalizacao(int fiscalizacaoId, BancoDeDados banco = null)
+		{
+			Cobranca entidade = new Cobranca();
+
+			try
+			{
+				entidade = _da.Obter(0, fiscalizacaoId, banco);
 			}
 			catch (Exception exc)
 			{
@@ -473,7 +518,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 			var vrte = _busConfiguracao.ObterVrte(cobranca.DataIUF.Data.Value.Year);
 			if ((vrte?.Id ?? 0) == 0) return 0;
 
-			if (parcelamento.ValorMultaAtualizado == 0)
+			if (parcelamento.ValorMultaAtualizado == 0 && Convert.ToBoolean(parcelamento.Data1Vencimento?.IsValido))
 				parcelamento.ValorMultaAtualizado = this.GetValorTotalAtualizadoEmReais(cobranca, parcelamento, parametrizacao);
 
 			var valorAtualizadoVRTE = parcelamento.ValorMultaAtualizado / vrte.VrteEmReais;
@@ -497,12 +542,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool AlterarSituacaoFiscalizacao(Cobranca cobranca, BancoDeDados banco = null)
 		{
-			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao);
+			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0));
 			if ((fiscalizacao?.Id ?? 0) == 0) return false;
 
 			if ((cobranca.UltimoParcelamento?.DUAS?.Count ?? 0) == 0) return false;
 
-			if (cobranca.UltimoParcelamento.DUAS.FindAll(x => !x.DataPagamento.IsValido && x.ValorPago == 0).Count == 0)
+			if (cobranca.UltimoParcelamento.DUAS.FindAll(x => !x.DataPagamento.IsValido && x.ValorPago < x.ValorDUA).Count == 0)
 				fiscalizacao.SituacaoNovaTipo = (int)eFiscalizacaoSituacao.MultaPaga;
 			else if (cobranca.UltimoParcelamento.DUAS.Count > 1)
 			{
@@ -520,9 +565,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFiscalizacao.Business
 
 		public bool ValidarAssociar(int fiscalizacaoId)
 		{
-			var cobranca = _da.Obter(fiscalizacaoId);
-			if (cobranca?.Id > 0)
-				Validacao.AddErro(new Exception("Já existe uma cobrança cadastrada para esta fiscalização."));
+			if (fiscalizacaoId > 0)
+			{
+				var cobranca = _da.Obter(0, fiscalizacaoId);
+				if (cobranca?.Id > 0)
+					Validacao.AddErro(new Exception("Já existe uma cobrança cadastrada para esta fiscalização."));
+			}
 
 			return Validacao.EhValido;
 		}

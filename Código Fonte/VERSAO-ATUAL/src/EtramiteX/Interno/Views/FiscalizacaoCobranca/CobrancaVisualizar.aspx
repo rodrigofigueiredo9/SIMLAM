@@ -9,6 +9,8 @@
     <script src="<%= Url.Content("~/Scripts/Pessoa/pessoa.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Fiscalizacao/fiscalizacaoListar.js") %>"></script>
     <script src="<%= Url.Content("~/Scripts/Processo/processo.js") %>"></script>
+	<script src="<%= Url.Content("~/Scripts/containerAcoes.js") %>"></script>
+    <script src="<%= Url.Content("~/Scripts/arquivo.js") %>"></script>
     <script>
 		$(function () {
 			Cobranca.load($('#central'), {

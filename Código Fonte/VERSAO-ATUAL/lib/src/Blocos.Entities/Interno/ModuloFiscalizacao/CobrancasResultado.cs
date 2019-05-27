@@ -10,6 +10,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao
 		#endregion
 
 		#region Properties
+		public int Id { get; set; }
 		public String Fiscalizacao { get; set; }
 		public string ProcNumero { get; set; }
 		public string NomeRazaoSocial { get; set; }

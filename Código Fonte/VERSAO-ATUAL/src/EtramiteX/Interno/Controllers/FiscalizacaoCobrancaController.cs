@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Tecnomapas.Blocos.Entities.Etx.ModuloArquivo;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloFiscalizacao;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
@@ -16,7 +17,6 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao;
-using Tecnomapas.EtramiteX.Interno.ViewModels.VMFiscalizacao.VMConfiguracoes;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -36,11 +36,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult Cobranca(int? id) => View(this.GetCobrancaVM(id));
+		public ActionResult Cobranca(int? id, int? fiscalizacaoId) => View(this.GetCobrancaVM(id, fiscalizacaoId));
 
 		[HttpGet]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar, ePermissao.FiscalizacaoEditar })]
-		public ActionResult CobrancaVisualizar(int id, int? index) => View(this.GetCobrancaVM(id, true, index));
+		public ActionResult CobrancaVisualizar(int id, int? fiscalizacaoId, int? index) => View(this.GetCobrancaVM(id, fiscalizacaoId, visualizar: true, index: index));
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
@@ -52,14 +52,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca", new { id = cobranca.NumeroFiscalizacao, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.Salvar }) })
+				@UrlRedirecionar = Url.Action("CobrancaVisualizar", "FiscalizacaoCobranca", new { id = cobranca.Id, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.Salvar }) })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult CobrancaRecalcular(Cobranca cobranca) =>
-			Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "CobrancaPartial", this.GetCobrancaVM(cobranca.NumeroFiscalizacao, false, null, cobranca)) }, JsonRequestBehavior.AllowGet);
+			Json(new { @Msg = Validacao.Erros, @Html = ViewModelHelper.RenderPartialViewToString(ControllerContext, "CobrancaPartial", this.GetCobrancaVM(cobranca.NumeroFiscalizacao, visualizar: false, index: null, entidade: cobranca)) }, JsonRequestBehavior.AllowGet);
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
@@ -71,13 +71,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			{
 				@EhValido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@UrlRedirecionar = Url.Action("Cobranca", "FiscalizacaoCobranca", new { id = cobranca.NumeroFiscalizacao, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.NovoParcelamento }) })
+				@UrlRedirecionar = Url.Action("Cobranca", "FiscalizacaoCobranca", new { id = cobranca.Id, Msg = Validacao.QueryParam(new List<Mensagem>() { Mensagem.CobrancaMsg.NovoParcelamento }) })
 			}, JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpPost]
 		[Permite(RoleArray = new Object[] { ePermissao.PessoaVisualizar })]
-		public ActionResult FiscalizacaoPessoaModal(Cobranca cobranca) => PartialView("FiscalizacaoPessoaModal", this.GetCobrancaVM(cobranca.NumeroFiscalizacao, true));
+		public ActionResult FiscalizacaoPessoaModal(Cobranca cobranca) => PartialView("FiscalizacaoPessoaModal", this.GetCobrancaVM(cobranca.Id, visualizar: true));
 
 		[Permite(RoleArray = new Object[] { ePermissao.ProcessoCriar, ePermissao.ProcessoEditar })]
 		public ActionResult ObterFiscalizacao(int fiscalizacaoId)
@@ -94,24 +94,31 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return PartialView("Confirmar", vm);
 		}
 
-		private CobrancaVM GetCobrancaVM(int? fiscalizacaoId, bool visualizar = false, int? index = null, Cobranca entidade = null)
+		private CobrancaVM GetCobrancaVM(int? cobrancaId, int? fiscalizacaoId = null, bool visualizar = false, int? index = null, Cobranca entidade = null)
 		{
-			var cobranca = entidade ?? _bus.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Cobranca();
+			var cobranca = entidade ?? (fiscalizacaoId > 0 ? _bus.ObterByFiscalizacao(fiscalizacaoId.GetValueOrDefault(0)) :
+				_bus.Obter(cobrancaId.GetValueOrDefault(0))) ?? new Cobranca();
+
+			if (fiscalizacaoId > 0)
+				cobranca.NumeroFiscalizacao = fiscalizacaoId;
+
 			if (entidade != null)
 			{
-				cobranca.Notificacao = _busNotificacao.Obter(fiscalizacaoId.GetValueOrDefault(0));
+				cobranca.Notificacao = _busNotificacao.Obter(entidade.NumeroFiscalizacao.GetValueOrDefault(0));
 				cobranca.Parcelamentos = _bus.ObterCobrancaParcelamento(cobranca.Id);
 			}
 			var maximoParcelas = 0;
 
-			var fiscalizacao = _busFiscalizacao.Obter(fiscalizacaoId.GetValueOrDefault(0));
+			var fiscalizacao = _busFiscalizacao.Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0));
 			fiscalizacao.AutuadoPessoa = fiscalizacao.AutuadoPessoa.Id > 0 ? fiscalizacao.AutuadoPessoa : _busPessoa.Obter(fiscalizacao.LocalInfracao.ResponsavelId.GetValueOrDefault(0));
 			if (cobranca.Id == 0)
 			{
-				var notificacao = _busNotificacao.Obter(fiscalizacaoId.GetValueOrDefault(0)) ?? new Notificacao();
+				var notificacao = _busNotificacao.Obter(cobranca.NumeroFiscalizacao.GetValueOrDefault(0)) ?? new Notificacao();
 				var protocolo = fiscalizacao.ProtocoloId > 0 ? _busProtocolo.Obter(fiscalizacao.ProtocoloId) : new Protocolo();
 				cobranca = entidade ?? new Cobranca(fiscalizacao, protocolo, notificacao);
-				cobranca.NumeroAutuacao = protocolo.NumeroAutuacao;
+				if (entidade != null && entidade.ObterFiscalizacao)
+					cobranca = new Cobranca(fiscalizacao, protocolo, notificacao);
+				cobranca.NumeroAutuacao = protocolo?.NumeroAutuacao;
 				if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 				{
 					cobranca.Parcelamentos = new List<CobrancaParcelamento>();
@@ -131,15 +138,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				if ((cobranca.Parcelamentos?.Count ?? 0) == 0)
 				{
 					cobranca.Parcelamentos = new List<CobrancaParcelamento>();
-					if (cobranca.UltimoParcelamento.ValorMulta == 0)
+					if (cobranca.UltimoParcelamento?.ValorMulta == 0)
 						cobranca.UltimoParcelamento.ValorMulta = cobranca.UltimoParcelamento.ValorMultaAtualizado;
 					cobranca.Parcelamentos.Add(cobranca.UltimoParcelamento);
 				}
 
-				var parcelamento = index.HasValue ? cobranca.Parcelamentos[index.Value] : cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido) ?? new CobrancaParcelamento(fiscalizacao);
+				var parcelamento = index.HasValue ? cobranca.Parcelamentos[index.Value] : cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => Convert.ToBoolean(x?.DataEmissao?.IsValido)) ?? new CobrancaParcelamento(fiscalizacao);
 				maximoParcelas = _bus.GetMaximoParcelas(cobranca, parcelamento);
 
-				if (cobranca.Parcelamentos.Count == 0 || parcelamento?.DUAS?.Count == 0)
+				if (cobranca.Parcelamentos?.Count == 0 || parcelamento?.DUAS?.Count == 0)
 				{
 					if(parcelamento.QuantidadeParcelas == 0)
 						parcelamento.QuantidadeParcelas = 1;
@@ -152,17 +159,21 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				}
 			}
 
-			var ultimoParcelamento = cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => x.DataEmissao.IsValido);
+			var ultimoParcelamento = cobranca.UltimoParcelamento ?? cobranca.Parcelamentos.FindLast(x => Convert.ToBoolean(x?.DataEmissao?.IsValido)) ?? new CobrancaParcelamento(fiscalizacao);
 			if ((ultimoParcelamento.QuantidadeParcelas > 0 && ultimoParcelamento.DUAS.Count == 0) || entidade != null)
 			{
-				ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);
+				if((ultimoParcelamento.DUAS?.Count(x => x.Id > 0) ?? 0) == 0)
+					ultimoParcelamento.DUAS = _bus.GerarParcelas(cobranca, ultimoParcelamento);
 				_bus.CalcularParcelas(cobranca, ultimoParcelamento);
 			}
 
+			if (fiscalizacao?.Id > 0) cobranca.FiscalizacaoId = fiscalizacao.Id;
 			var vm = new CobrancaVM(cobranca, _busLista.InfracaoCodigoReceita, maximoParcelas, visualizar, index);
 			if(fiscalizacao != null)
 				vm.SituacaoFiscalizacao = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSituacao.Where(x => x.Id == fiscalizacao.SituacaoId.ToString()).ToList(), null, false);
 			vm.Series = ViewModelHelper.CriarSelectList(_busLista.FiscalizacaoSerie, true, true, selecionado: cobranca.SerieId?.ToString());
+			vm.ArquivoVM.Anexos = cobranca.Anexos ?? new List<Anexo>();
+			vm.ArquivoVM.IsVisualizar = visualizar;
 
 			return vm;
 		}

@@ -16,8 +16,8 @@
 		public Mensagem NovoParcelamento { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Novo parcelamento gerado com sucesso." }; } }
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Cobrança removida com sucesso." }; } }
 
-		public Mensagem NumeroFiscalizacaoObrigatorio { get { return new Mensagem() { Campo = "Cobranca_NumeroFiscalizacao", Tipo = eTipoMensagem.Advertencia, Texto = "Nº Fiscalização é obrigatório." }; } }
 		public Mensagem NumeroIUFObrigatorio { get { return new Mensagem() { Campo = "Cobranca_NumeroIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Nº AI/IUF é obrigatório." }; } }
+		public Mensagem DataEmissaoIUFObrigatorio { get { return new Mensagem() { Campo = "Cobranca_DataEmissaoIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Data Emissão AI/IUF é obrigatória." }; } }
 		public Mensagem DataIUFObrigatorio { get { return new Mensagem() { Campo = "Cobranca_DataIUF", Tipo = eTipoMensagem.Advertencia, Texto = "Data da Notificação IUF é obrigatória." }; } }
 		public Mensagem CodigoReceitaObrigatorio { get { return new Mensagem() { Campo = "Cobranca_CodigoReceita", Tipo = eTipoMensagem.Advertencia, Texto = "Código Receita é obrigatório." }; } }
 		public Mensagem QuantidadeParcelasObrigatorio { get { return new Mensagem() { Campo = "Cobranca_QuantidadeParcelas", Tipo = eTipoMensagem.Advertencia, Texto = "Parcelas é obrigatório." }; } }
