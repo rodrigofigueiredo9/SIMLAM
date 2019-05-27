@@ -1624,10 +1624,18 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var IsValido = false;
 			var bancoGeo = (schema == CarUtils.GetEsquemaInstitucional()) ? "IDAFGEO." : "IDAFCREDENCIADOGEO.";
 
+			var scriptAverbacaoNumero = @"SELECT DISTINCT t.averbacao_numero
+											FROM CRT_DOMINIALIDADE_RESERVA				t
+												INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
+												INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
+												LEFT JOIN crt_projeto_geo				p  ON p.empreendimento = d.empreendimento and p.caracterizacao = 1
+												LEFT JOIN idafgeo.geo_apmp			a  ON p.id = a.projeto
+												LEFT JOIN idafgeo.geo_arl				g  ON a.id = g.COD_APMP and t.IDENTIFICACAO = g.codigo
+											WHERE t.situacao = 3 AND t.DOMINIO = :dominio_id";
 			using (
 				var cmd = new OracleCommand(
-						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(t.ARL_CROQUI, 0) ARL_DOCUMENTO, G.CODIGO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
-									t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp, t.arl_cedida
+						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(dd.ARL_DOCUMENTO, 0) ARL_DOCUMENTO, /*G.CODIGO,*/ (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
+									/*t.cedente_receptor,*/ t.emp_compensacao, t.cedente_possui_emp, t.arl_cedida
 										FROM CRT_DOMINIALIDADE_RESERVA				t
 											INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
 											INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
@@ -1652,9 +1660,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						{
 							resultado.resposta = "Sim";
 
+							// Concatenando todas os numeros de averbacao da matricula
+							List<string> lstAverbacao = new List<string>();
+
+							using ( var cmdd = new OracleCommand(scriptAverbacaoNumero , conn))
+							{
+								cmdd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
+								using (var drr = cmdd.ExecuteReader())
+								{
+									while (drr.Read())
+									{
+										lstAverbacao.Add(drr["averbacao_numero"].ToString());
+									}
+								}
+							}
+
 							var dados = new DadosReserva()
 							{
-								numero = dr.GetValue<string>("averbacao_numero"),
+								numero = String.Join(", ", lstAverbacao), //dr.GetValue<string>("averbacao_numero"),
 								data = new DateTime(1900, 01, 01),
 								//reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
 								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não")//"Não" : "Sim") compensada = 0 - cedente								
