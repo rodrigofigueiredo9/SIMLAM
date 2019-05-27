@@ -946,7 +946,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 							}
 						}
 
-						detalhe.ExploracaoFlorestalGeo = new ExploracaoFlorestalGeo();						
+						detalhe.ExploracaoFlorestalGeo = new ExploracaoFlorestalGeo();
 						switch (Convert.ToInt32(reader["tabela"]))
 						{
 							case (int)eTabelaRelacionamento.tmp_aativ:
@@ -1218,7 +1218,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						order by c.identificacao", EsquemaBanco);
 
 						comando.AdicionarParametroEntrada("exploracao_florestal", exploracao.Id, DbType.Int32);
-						if(modelo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+						if (modelo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
 							comando.AdicionarParametroEntrada("titulo_id", tituloId, DbType.Int32);
 
 						using (IDataReader readerChild = bancoDeDados.ExecutarReader(comando))
