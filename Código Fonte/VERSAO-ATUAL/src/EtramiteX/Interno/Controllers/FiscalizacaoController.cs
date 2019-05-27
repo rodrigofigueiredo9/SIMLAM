@@ -2749,7 +2749,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#region Vrte
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarCodigoReceita })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult ConfigurarVrte()
 		{
 			VrteVM vm = new VrteVM();
@@ -2759,7 +2759,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult ConfigurarVrte(List<Vrte> listaVrte)
 		{
 			if (listaVrte == null)
@@ -2777,7 +2777,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarProdutosDestinacao })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoExcluir })]
 		public ActionResult ExcluirVrte(Vrte vrteExcluido)
 		{
 			if (vrteExcluido != null && vrteExcluido.Id != 0)
@@ -2831,7 +2831,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 		#endregion
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult ConfigurarParametrizacao(int? id)
 		{
 			var entidade = _busConfiguracao.ObterParametrizacao(id.GetValueOrDefault(0)) ?? new Parametrizacao();
@@ -2840,7 +2840,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			return View(vm);
 		}
 
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoVisualizar })]
 		public ActionResult ConfigurarParametrizacaoVisualizar(int id)
 		{
 			ParametrizacaoVM vm = new ParametrizacaoVM(_busConfiguracao.ObterParametrizacao(id), _busLista.InfracaoCodigoReceita, true);
@@ -2848,7 +2848,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
 		public ActionResult ConfigurarParametrizacao(Parametrizacao entidade)
 		{
 			_busConfiguracao.SalvarParametrizacao(entidade);
@@ -2865,7 +2865,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		#region Excluir
 
 		[HttpGet]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoExcluir })]
 		public ActionResult ExcluirParametrizacaoConfirm(int id)
 		{
 			var vm = new ExcluirVM();
@@ -2880,7 +2880,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.ConfigurarPergunta })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoExcluir })]
 		public ActionResult ExcluirParametrizacao(int id)
 		{
 			string urlRedireciona = string.Empty;
@@ -2892,7 +2892,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		}
 
 		[HttpPost]
-		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoCriar })]
+		[Permite(RoleArray = new Object[] { ePermissao.FiscalizacaoExcluir })]
 		public ActionResult ExcluirParametrizacaoDetalhe(ParametrizacaoDetalhe detalhe)
 		{
 			return Json(new
