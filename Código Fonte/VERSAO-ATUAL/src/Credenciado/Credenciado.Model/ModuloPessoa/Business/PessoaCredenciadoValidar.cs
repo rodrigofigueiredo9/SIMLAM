@@ -295,22 +295,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			return Validacao.EhValido;
 		}
 
-		public bool SalvarInformacaoDeCorte(Pessoa pessoa, bool isConjuge = false)
-		{
-			if (pessoa.Id > 0)
-			{
-				VerificarPessoaEditar(pessoa, isConjuge);
-			}
-			else
-			{
-				VerificarPessoaCriar(pessoa, isConjuge);
-			}
-
-			VerificarEnderecoInformacaoDecorte(pessoa.Endereco, isConjuge);
-
-			return Validacao.EhValido;
-		}
-
 		private bool VerificarEndereco(Endereco endereco, bool isConjuge = false)
 		{
 			if (!String.IsNullOrWhiteSpace(endereco.Cep) && !(new Regex("^[0-9]{2}\\.[0-9]{3}-[0-9]{3}$").IsMatch(endereco.Cep)))
@@ -361,53 +345,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			{
 				Validacao.Add(Mensagem.Pessoa.LocalidadeObrigatorioMsg(isConjuge));
 			}
-
-			return Validacao.EhValido;
-		}
-
-		private bool VerificarEnderecoInformacaoDecorte(Endereco endereco, bool isConjuge = false)
-		{
-			if (string.IsNullOrWhiteSpace(endereco.Logradouro))
-			{
-				Validacao.Add(Mensagem.Pessoa.LogradouroObrigatorioMsg(isConjuge));
-			}
-
-			if (endereco.EstadoId <= 0)
-			{
-				Validacao.Add(Mensagem.Pessoa.EnderecoEstadoObrigatorioMsg(isConjuge));
-			}
-
-			bool existeEstado = ListaCredenciadoBus.Estados.Exists(x => x.Id == endereco.EstadoId);
-
-			if (endereco.EstadoId > 0 && !existeEstado)
-			{
-				Validacao.Add(Msg.EnderecoEstadoInvalidoMsg(isConjuge));
-			}
-
-			if (endereco.MunicipioId <= 0)
-			{
-				Validacao.Add(Mensagem.Pessoa.EnderecoMunicipioObrigatorioMsg(isConjuge));
-			}
-
-			bool existeMunicipio = ListaCredenciadoBus.Municipios(endereco.EstadoId).Exists(x => x.Id == endereco.MunicipioId);
-
-			if (endereco.MunicipioId > 0 && !existeMunicipio)
-			{
-				Validacao.Add(Msg.EnderecoMunicipioInvalidoMsg(isConjuge));
-			}
-
-			if (endereco.MunicipioId > 0 && endereco.EstadoId > 0 && !existeMunicipio)
-			{
-				Validacao.Add(Msg.EnderecoMunicipioOutroEstadoMsg(isConjuge));
-			}
-
-			if (string.IsNullOrWhiteSpace(endereco.DistritoLocalizacao))
-			{
-				Validacao.Add(Mensagem.Pessoa.LocalidadeObrigatorioMsg(isConjuge));
-			}
-
-			if(!Validacao.EhValido)
-				Validacao.Add(Mensagem.Pessoa.ContatoComIdaf);
 
 			return Validacao.EhValido;
 		}

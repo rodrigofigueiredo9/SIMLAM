@@ -906,7 +906,7 @@ RequerimentoInteressado = {
 
 	SalvarInteressado: function () {
 		var retorno = true;
-
+		debugger;
 		var param = { requerimentoId: null, interessadoId: null };
 
 		param.interessadoId = RequerimentoInteressado.pessoaInLineObj.onSalvarClick(Requerimento.ReqInterEmp.requerimentoId);

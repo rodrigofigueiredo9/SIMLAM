@@ -142,7 +142,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			{
 				Requerimento req = Obter(requerimento.Id);
 				req.SituacaoId = (int)eRequerimentoSituacao.EmAndamento;
-				req.Interessado.Id = requerimento.Interessado.Id;
+				req.Interessado = requerimento.Interessado;
 
 				req.Responsaveis = requerimento.Responsaveis;
 

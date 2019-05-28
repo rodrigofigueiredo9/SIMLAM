@@ -159,9 +159,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 				#endregion
 
 				#endregion
-				if (isAtividadeDeCorte)
-					_validar.SalvarInformacaoDeCorte(pessoa);
-				else
+				if (!isAtividadeDeCorte)
 					_validar.Salvar(pessoa);
 
 				if (Validacao.EhValido)

@@ -135,7 +135,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						from {0}crt_inf_corte_dest_material c
 						left join {0}lov_crt_inf_corte_inf_dest_mat lv
 							on(c.dest_material = lv.id)
-						left join {0}lov_crt_produto lvp
+						left join {0}lov_crt_produto_inf_corte lvp
 							on(c.produto = lvp.id)
 						where c.tipo_corte_id = :tipo_corte_id", EsquemaBanco);
 

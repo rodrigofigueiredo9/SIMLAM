@@ -203,12 +203,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 				vm.Pessoa.Fisica.ConjugeId = -1;
 			}
 
+			bool isAtividadeDeCorte = _requerimentoBus.IsRequerimentoAtividadeCorte(vm.requerimentoId);
+
 			if (vm.Pessoa.IsFisica)
 			{
-				vm.Pessoa.IsValidarConjuge = !vm.IsConjuge;
+				if (isAtividadeDeCorte && string.IsNullOrWhiteSpace(vm.Pessoa.Fisica.Conjuge?.CPFCNPJ))
+					vm.Pessoa.IsValidarConjuge = false;
+				else
+					vm.Pessoa.IsValidarConjuge = !vm.IsConjuge;
 			}
-
-			bool isAtividadeDeCorte = _requerimentoBus.IsRequerimentoAtividadeCorte(vm.requerimentoId);
 
 			if (_bus.Salvar(vm.Pessoa, isAtividadeDeCorte: isAtividadeDeCorte))
 			{

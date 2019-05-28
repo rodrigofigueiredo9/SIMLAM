@@ -512,7 +512,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 						from {0}crt_inf_corte_dest_material c
 						left join {1}lov_crt_inf_corte_inf_dest_mat lv
 							on(c.dest_material = lv.id)
-						left join {1}lov_crt_produto lvp
+						left join {1}lov_crt_produto_inf_corte lvp
 							on(c.produto = lvp.id)
 						where c.tipo_corte_id = :tipo_corte_id", EsquemaCredenciadoBanco, "idaf");
 
@@ -1018,6 +1018,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				select t.id, t.data_vencimento, 
 					(select m.codigo from tab_titulo_modelo m where m.id = t.modelo and rownum = 1) modelo,
 					(select a.atividade from tab_atividade a where rownum = 1
+					and  a.atividade like 'Silvicultura%'
 					and exists (select 1 from tab_titulo_atividades ta where ta.titulo = t.id and ta.atividade = a.id)) atividade,
 					concat(concat(numero, '/'), ano) numero,
 					(select sum(area_croqui) from crt_silvicultura_silv c
@@ -1026,7 +1027,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 				from tab_titulo t
 				left join tab_titulo_numero n
 				on (n.titulo = t.id)
-				where t.empreendimento = :empreendimento", EsquemaBanco);
+				where exists
+				(select 1 from tab_atividade a where a.atividade like 'Silvicultura%'
+					and exists (select 1 from tab_titulo_atividades ta where ta.titulo = t.id and ta.atividade = a.id)) 
+				and t.empreendimento = :empreendimento", EsquemaBanco);
 
 				comando.DbCommand.CommandText += String.Format(@" and exists (select 1 from tab_titulo_modelo m where m.id = t.modelo {0})",
 					comando.AdicionarIn("and", "m.codigo", DbType.Int32,

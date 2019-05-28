@@ -394,7 +394,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			switch ((eTituloSituacao)titulo.Situacao.Id)
 			{
-#region Valido
+				#region Valido
 
 				case eTituloSituacao.Valido:
 					if (titulo.Modelo.Id == 72)   //Declaração de Dispensa de Licenciamento Ambiental de Barragem
@@ -420,9 +420,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-#endregion
+				#endregion
 
-#region Suspenso
+				#region Suspenso
 
 				case eTituloSituacao.SuspensoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
@@ -436,9 +436,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-#endregion
+				#endregion
 
-#region Encerrado
+				#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
@@ -452,7 +452,26 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-#endregion
+				#endregion
+
+				#region Prorrogado
+
+				case eTituloSituacao.ProrrogadoDeclaratorio:
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido )
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Prorrogado", "Válido"));
+
+					if(titulo.DataVencimento.Data < DateTime.Now.Date.AddDays(1))
+						Validacao.Add(Mensagem.TituloAlterarSituacao.TituloVencido);
+
+					if (titulo.DiasProrrogados.GetValueOrDefault() <= 0)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.DiasProrrogadosObrigatorio);
+
+					if (titulo.DiasProrrogados > 180)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.DiasProrrogadosSuperior);
+
+					break;
+
+				#endregion
 			}
 
 			if (!Validacao.EhValido)

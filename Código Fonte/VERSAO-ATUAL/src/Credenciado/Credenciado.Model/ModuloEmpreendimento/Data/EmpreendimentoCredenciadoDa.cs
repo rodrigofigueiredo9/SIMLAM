@@ -1121,17 +1121,17 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data
 			return retorno;
 		}
 
-		public List<int> ObterEmpreendimentoResponsavel(int pessoa, BancoDeDados banco = null)
+		public List<int> ObterEmpreendimentoResponsavel(string cpfCnpj, bool isPessoaFisica, BancoDeDados banco = null)
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					SELECT E.ID FROM TAB_PESSOA PE
-						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R ON R.RESPONSAVEL = PE.INTERNO
-						INNER JOIN IDAF.TAB_EMPREENDIMENTO				E ON E.ID = R.EMPREENDIMENTO
-					WHERE PE.ID = :pessoa", UsuarioCredenciado);
+					SELECT E.ID FROM {0}TAB_PESSOA PE
+						INNER JOIN {0}TAB_EMPREENDIMENTO_RESPONSAVEL	R ON R.RESPONSAVEL = PE.ID
+						INNER JOIN {0}TAB_EMPREENDIMENTO				E ON E.ID = R.EMPREENDIMENTO
+					WHERE " + (isPessoaFisica ? "PE.CPF like :cpf_cnpj" : "PE.CNPJ like :cpf_cnpj"), "idaf");
 
-				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+				comando.AdicionarParametroEntrada("cpf_cnpj", cpfCnpj, DbType.String);
 
 				return bancoDeDados.ExecutarList<int>(comando);
 			}
@@ -1324,18 +1324,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Data
 			}
 		}
 
-		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento, BancoDeDados banco = null)
+		public bool EmpreendimentoAssociadoResponsavel(string cpfCnpj, bool isPessoaFisica, int empreendimento, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
-					SELECT count(1) FROM TAB_PESSOA PE
-						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R   ON R.RESPONSAVEL = PE.INTERNO
+					SELECT count(1) FROM IDAF.TAB_PESSOA PE
+						INNER JOIN IDAF.TAB_EMPREENDIMENTO_RESPONSAVEL	R   ON R.RESPONSAVEL = PE.ID
 						INNER JOIN IDAF.TAB_EMPREENDIMENTO				EI  ON EI.ID = R.EMPREENDIMENTO
 						INNER JOIN TAB_EMPREENDIMENTO                   EC  ON EC.CODIGO = EI.CODIGO
-					WHERE PE.ID = :pessoa AND EC.ID = :empreendimento", UsuarioCredenciado);
+					WHERE " + (isPessoaFisica ? "PE.CPF like :cpf_cnpj" : "PE.CNPJ like :cpf_cnpj")  + " AND EC.ID = :empreendimento", UsuarioCredenciado);
 
-				comando.AdicionarParametroEntrada("pessoa", pessoa, DbType.Int32);
+				comando.AdicionarParametroEntrada("cpf_cnpj", cpfCnpj, DbType.String);
 				comando.AdicionarParametroEntrada("empreendimento", empreendimento, DbType.Int32);
 
 				return Convert.ToBoolean(bancoDeDados.ExecutarScalar(comando));

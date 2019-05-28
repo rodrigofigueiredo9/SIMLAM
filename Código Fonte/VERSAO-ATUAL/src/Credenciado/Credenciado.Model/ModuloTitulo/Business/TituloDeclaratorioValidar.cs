@@ -316,6 +316,25 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					break;
 
 				#endregion
+
+				#region Prorrogado
+
+				case eTituloSituacao.ProrrogadoDeclaratorio:
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Prorrogado", "Válido"));
+
+					if (titulo.DataVencimento.Data < DateTime.Now.Date.AddDays(1))
+						Validacao.Add(Mensagem.TituloAlterarSituacao.TituloVencido);
+
+					if (titulo.DiasProrrogados.GetValueOrDefault() <= 0)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.DiasProrrogadosObrigatorio);
+
+					if (titulo.DiasProrrogados > 180)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.DiasProrrogadosSuperior);
+
+					break;
+
+				#endregion
 			}
 
 			if (!Validacao.EhValido)

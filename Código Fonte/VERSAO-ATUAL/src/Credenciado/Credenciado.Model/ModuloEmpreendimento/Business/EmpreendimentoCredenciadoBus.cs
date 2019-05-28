@@ -501,21 +501,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return resposta;
 		}
 
-		public List<Empreendimento> ObterEmpreendimentoResponsavel(int interessado)
+		public List<Empreendimento> ObterEmpreendimentoResponsavel(string cpfCnpj, bool isPessoaFisica)
 		{
-			
+
 			List<Empreendimento> retorno = new List<Empreendimento>();
 
 			try
 			{
-				foreach(int emp in _da.ObterEmpreendimentoResponsavel(interessado))
+				foreach (int emp in _da.ObterEmpreendimentoResponsavel(cpfCnpj, isPessoaFisica))
 				{
 					Empreendimento empreendimento = new Empreendimento();
 					empreendimento = ObterEmpreendimento(0, emp);
 
 					retorno.Add(empreendimento);
 				}
-			}catch(Exception ex)
+			}
+			catch (Exception ex)
 			{
 				Validacao.AddErro(ex);
 			}
@@ -660,11 +661,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return new Mensagem();
 		}
 
-		public bool ExisteEmpreendimentoResponsavel(int pessoa)
+		public bool ExisteEmpreendimentoResponsavel(string cpfCnpj, bool isPessoaFisica)
 		{
 			try
 			{
-				return _da.ObterEmpreendimentoResponsavel(pessoa).Count > 0 ? true : false;
+				return _da.ObterEmpreendimentoResponsavel(cpfCnpj, isPessoaFisica).Count > 0 ? true : false;
 			}
 			catch (Exception ex)
 			{
@@ -673,11 +674,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 			return false;
 		}
 
-		public bool EmpreendimentoAssociadoResponsavel(int pessoa, int empreendimento)
+		public bool EmpreendimentoAssociadoResponsavel(string cpfCnpj, bool isPessoaFisica, int empreendimento)
 		{
 			try
 			{
-				return _da.EmpreendimentoAssociadoResponsavel(pessoa, empreendimento);
+				return _da.EmpreendimentoAssociadoResponsavel(cpfCnpj, isPessoaFisica, empreendimento);
 			}
 			catch (Exception ex)
 			{

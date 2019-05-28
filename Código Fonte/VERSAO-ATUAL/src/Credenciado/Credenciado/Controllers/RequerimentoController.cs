@@ -313,7 +313,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
 			Requerimento requerimento = new Requerimento() { Id = requerimentoId };
 
-			requerimento.Interessado.Id = interessadoId;
+			requerimento.Interessado = _busPessoa.Obter(interessadoId);
 
 			_busRequerimento.AssociarInteressado(requerimento);
 			_busRequerimento.DesassociarEmpreendimento(requerimentoId);
