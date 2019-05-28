@@ -79,7 +79,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			}
 
 			if (requerimento.Atividades.Any(item => item.Id == 209) &&
-				!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.Id)) 
+				!_busEmpreendimento.ExisteEmpreendimentoResponsavel(requerimento.Interessado.CPFCNPJ, requerimento.Interessado.IsFisica)) 
 				Validacao.Add(Msg.NaoExisteEmpreendimentoAssociadoResponsavel);
 
 			return Validacao.EhValido;
@@ -532,7 +532,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloRequerimento.Business
 			//if (!_busEmpreendimento.EmpreendimentoPossuiCodigoSicar(requerimento.Empreendimento.Codigo ?? 0))
 			//	Validacao.Add(Msg.EmpreendimentoNaoIntegradoAoSicar);
 
-			if(!_busEmpreendimento.EmpreendimentoAssociadoResponsavel(requerimento.Interessado.Id, requerimento.Empreendimento.Id))
+			if (!_busEmpreendimento.EmpreendimentoAssociadoResponsavel(requerimento.Interessado.CPFCNPJ, requerimento.Interessado.IsFisica, requerimento.Empreendimento.Id))
 				Validacao.Add(Msg.EmpreendimentoNaoAssociadoAoResponsavel);
 		}
 	}

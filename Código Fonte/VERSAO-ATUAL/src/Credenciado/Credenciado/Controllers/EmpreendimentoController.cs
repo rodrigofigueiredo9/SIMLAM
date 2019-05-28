@@ -667,8 +667,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 
 			if(requerimentoId > 0 && id <= 0)
 			{
-				var interessado = _busRequerimento.ObterSimplificado(requerimentoId).Interessado.Id;
-				vm.ListarVM.Resultados = _bus.ObterEmpreendimentoResponsavel(interessado);
+				var interessado = _busRequerimento.ObterSimplificado(requerimentoId).Interessado;
+				vm.ListarVM.Resultados = _bus.ObterEmpreendimentoResponsavel(interessado?.CPFCNPJ, interessado?.IsFisica ?? false);
 			}else
 			{
 				if (id > 0)

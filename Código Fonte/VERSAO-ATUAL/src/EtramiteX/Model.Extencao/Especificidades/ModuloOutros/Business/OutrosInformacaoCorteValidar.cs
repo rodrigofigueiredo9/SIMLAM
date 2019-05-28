@@ -20,7 +20,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			if (especificidade.RequerimentoId <= 0)
 				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
 
-			DeclaratorioRequerimentoAtividade(especificidade);
+			var tituloAssociadoRequerimento = _da.ObterTituloDeclaratorioAssociadoARequerimento(especificidade.RequerimentoId, especificidade.Titulo.Id);
+			if (!string.IsNullOrWhiteSpace(tituloAssociadoRequerimento))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.RequerimentoJaAssociado(tituloAssociadoRequerimento));
+			else if (_da.RequerimentoJaAssociado(especificidade.RequerimentoId, especificidade.Titulo.Id))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.RequerimentoJaAssociadoTituloNaoEmitido);
 
 			if (esp.InformacaoCorte <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
@@ -35,11 +39,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 		public bool Emitir(IEspecificidade especificidade)
 		{
-			//if (ExisteProcDocFilhoQueFoiDesassociado(especificidade.Titulo.Id))
-			//{
-			//	Validacao.Add(Mensagem.Especificidade.ProtocoloReqFoiDesassociado);
-			//}
-
 			return Salvar(especificidade);
 		}
 	}

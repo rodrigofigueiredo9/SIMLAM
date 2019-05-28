@@ -290,6 +290,61 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			return lst;
 		}
 
+		internal string ObterTituloDeclaratorioAssociadoACaracterizacao(int id, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select n.numero || '/' || n.ano from {0}tab_titulo_numero n
+				where exists
+				(select 1 from {0}esp_out_informacao_corte e where
+				e.titulo = n.titulo
+				and e.crt_informacao_corte = :id)
+				and not exists
+				(select 1 from tab_titulo t 
+				where t.id = n.titulo
+				and t.situacao = :situacao)", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
+		}
+
+		internal string ObterTituloDeclaratorioAssociadoARequerimento(int requerimento, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select n.numero || '/' || n.ano from {0}tab_titulo_numero n
+				where exists
+				(select 1 from tab_titulo t 
+				where t.id = n.titulo
+				and t.requerimento = :requerimento
+				and t.situacao <> :situacao
+				and t.id <> :titulo)
+				and rownum = 1", EsquemaBanco);
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
+		}
+
+		internal bool RequerimentoJaAssociado(int requerimento, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select count(*) from tab_titulo t where t.requerimento = :requerimento and t.id <> :titulo", EsquemaBanco);
+				comando.AdicionarParametroEntrada("requerimento", requerimento, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
 		#endregion
 
 		#region Validação

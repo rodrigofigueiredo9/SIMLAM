@@ -40,7 +40,7 @@
 		<div class="block">
 			<div class="coluna20">
 				<label for="NovaSituacao">Nova situação *</label>
-				<%= Html.DropDownList("NovaSituacao", Model.Situacoes, ViewModelHelper.SetaDisabled(Model.SituacaoId == (int)eTituloSituacao.Valido, new { @class = "text ddlNovaSituacao" }))%>
+				<%= Html.DropDownList("NovaSituacao", Model.Situacoes, ViewModelHelper.SetaDisabled(false, new { @class = "text ddlNovaSituacao" }))%>
 			</div>
 			
 			<div class="coluna20 prepend1">

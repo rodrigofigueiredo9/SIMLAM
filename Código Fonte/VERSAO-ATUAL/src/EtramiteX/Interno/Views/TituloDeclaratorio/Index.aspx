@@ -22,12 +22,10 @@
 				{
 					%>
 				ContainerAcoes.load($(".containerAcoes"), {
-						
-					botoes: [
-						{ label: 'Gerar PDF', url: '<%= Url.Action("GerarPdf", "Titulo", new { id = Request.Params["acaoId"].ToString() })%>' },
-						{ label: 'Editar', url: '<%= Url.Action("Editar", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() })%>' },
-						{ label: 'Emitir DUA', url: '<%= Url.Action("Listar", "DUA", new { id = Request.Params["acaoId"].ToString() })%>' }
-					]
+						urls:{
+							urlGerarPdf: '<%= Url.Action("GerarPdf", "Titulo", new { id = Request.Params["acaoId"].ToString() }) %>',
+							urlAlterarSituacao: '<%= Url.Action("AlterarSituacao", "TituloDeclaratorio", new { id = Request.Params["acaoId"].ToString() }) %>'
+						}
 					});
 			<% }
 			else

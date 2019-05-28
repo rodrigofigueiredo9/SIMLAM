@@ -32,11 +32,15 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		public Mensagem MotivoSuspensaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Motivo", Texto = "Motivo da suspensão é obrigatório." }; } }
 		public Mensagem PrazoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Prazo", Texto = "Prazo é obrigatório." }; } }
 		public Mensagem PrazoInvalido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Prazo", Texto = "Prazo é inválido." }; } }
+		public Mensagem PrazoSuperiorAoLaudo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Prazo", Texto = "O Prazo não pode ser superior a data de vencimento do Laudo de Vistoria Florestal associado." }; } }
 		public Mensagem DiasProrrogadosObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DiasProrrogados", Texto = "Dias prorrogados é obrigatório." }; } }
+		public Mensagem DiasProrrogadosSuperior { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DiasProrrogados", Texto = "Os dias prorrogados devem ser no máximo até 180 dias." }; } }
 		public Mensagem CondicionantesRemover { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Este título não possui mais condicionantes. Favor removê-las." }; } }
 
 		public Mensagem TituloNaoPossuiSolicitacaoDeInscricao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título não possui uma Solicitação de Inscrição do CAR com situação \"Válido\" e situação do Arquivo \"Arquivo Entregue\"." }; } }
 		public Mensagem TituloPossuiSolicitacaoEmCadastro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título possui uma Solicitação de Inscrição do CAR com situação \"Em cadastro\". Aguarde o envio da mesma ao SICAR para fazer o cadastro do título CAR." }; } }
+		public Mensagem TituloPossuiAssociadoNaoEncerrado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O título não pode ser encerrado pois está associado a um título de AEF." }; } }
+		public Mensagem TituloVencido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O título não pode ser prorrogado pois está vencido." }; } }
 
 		public Mensagem NumeroAnoEmissaoAno { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataEmissao", Texto = "O ano do número do título deve ser igual ao ano da emissão." }; } }
 
@@ -57,7 +61,12 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem SituacaoInvalida(string situacaoNova, string situacaoNecessaria)
 		{
-			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, so é possivel mudar o titulo para {0} com a situação {1}.", situacaoNova, situacaoNecessaria) };
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, só é possivel mudar o titulo para {0} com a situação {1}.", situacaoNova, situacaoNecessaria) };
+		}
+
+		public Mensagem CaracterizacaoExcluida(string situacaoNova)
+		{
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = String.Format("Situação inválida, só é possivel mudar o titulo para {0} se a caracterização não tiver sido excluída do sistema.", situacaoNova) };
 		}
 
 		public Mensagem DataDeveSerSuperior(string campo, string dataValidar, string dataInferior)
