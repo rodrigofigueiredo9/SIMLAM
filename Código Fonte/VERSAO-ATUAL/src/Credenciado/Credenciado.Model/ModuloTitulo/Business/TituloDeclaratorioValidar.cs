@@ -122,7 +122,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					return;
 				}
 
-				if (!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
+				if (!String.IsNullOrWhiteSpace(titulo.Numero.Texto) && !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
 				{
 					Validacao.Add(Mensagem.Titulo.NumeroInvalido);
 				}
@@ -268,7 +268,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				#region Valido
 
 				case eTituloSituacao.Valido:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Em cadastro ou Suspenso"));
 					}
@@ -278,7 +278,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 				#region Suspenso
 
-				case eTituloSituacao.Suspenso:
+				case eTituloSituacao.SuspensoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Válido"));
@@ -295,7 +295,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido ou Suspenso"));
 					}
@@ -306,7 +306,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					}
 					break;
 
-				#endregion
+					#endregion
 			}
 
 			if (!Validacao.EhValido)

@@ -81,6 +81,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
 						break;
 
+					case (int)eTituloSituacao.SuspensoDeclaratorio:
+						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
+						break;
+
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
 						break;
@@ -123,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ToEspecificidade();
 			IConfiguradorPdf configurador = busEspecificiade.ObterConfiguradorPdf(titulo.Especificidade) ?? new ConfiguracaoDefault();
 
-			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
+			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || (titulo.Situacao.Id == (int)eTituloSituacao.AguardandoPagamento);
 
 			Object dataSource = busEspecificiade.ObterDadosPdf(titulo.Especificidade, banco);
 
@@ -185,21 +189,21 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			return null;
 		}
 
-        public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
-        {
-            try
-            {
-                Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
+		public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
+		{
+			try
+			{
+				Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
 
-                return resultados;
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public Titulo ObterSimplificado(int id, BancoDeDados banco = null)
 		{

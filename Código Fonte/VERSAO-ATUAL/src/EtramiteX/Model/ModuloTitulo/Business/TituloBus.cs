@@ -264,7 +264,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (LstCadastroAmbientalRuralTituloCodigo.Any(x => x == titulo.Modelo.Codigo))
 					{
 						Validacao.Add(Mensagem.Retificacao.msgInst4());
-					}					
+					}
 				}
 			}
 			catch (Exception exc)
@@ -307,6 +307,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
 						break;
 
+					case (int)eTituloSituacao.SuspensoDeclaratorio:
+						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
+						break;
+
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
 						break;
@@ -315,8 +319,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						break;
 				}
 
-				titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
-                return titulo.ArquivoPdf;
+				titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome, "");
+				return titulo.ArquivoPdf;
 			}
 
 			if ((titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal ||
@@ -340,7 +344,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				}
 			}
 
-			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome,"");
+			titulo.ArquivoPdf.Nome = String.Concat(titulo.Modelo.Nome, "");
 			titulo.ArquivoPdf.Extensao = "";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
@@ -370,7 +374,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			titulo.ToEspecificidade();
 			IConfiguradorPdf configurador = busEspecificiade.ObterConfiguradorPdf(titulo.Especificidade) ?? new ConfiguracaoDefault();
 
-			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro);
+			configurador.ExibirSimplesConferencia = (titulo.Situacao.Id == (int)eTituloSituacao.Cadastrado) || (titulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || (titulo.Situacao.Id == (int)eTituloSituacao.AguardandoPagamento);
 
 			Object dataSource = busEspecificiade.ObterDadosPdf(titulo.Especificidade, banco);
 
@@ -865,43 +869,43 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			return null;
 		}
-        
-        public bool ExistePorEmpreendimento(int empreendimentoId)
-        {
-            try
-            {
-                Resultados<Titulo> titulos = ObterPorEmpreendimento(empreendimentoId);
-                if (titulos == null)
-                    return false;
-                if (titulos.Itens.Count() > 0)
-                    return true;
-                else
-                    return false;
+
+		public bool ExistePorEmpreendimento(int empreendimentoId)
+		{
+			try
+			{
+				Resultados<Titulo> titulos = ObterPorEmpreendimento(empreendimentoId);
+				if (titulos == null)
+					return false;
+				if (titulos.Itens.Count() > 0)
+					return true;
+				else
+					return false;
 
 
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
-            return false;
-        }
-        public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
-        {
-            try
-            {
-                Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
+			return false;
+		}
+		public Resultados<Titulo> ObterPorEmpreendimento(int empreendimentoId)
+		{
+			try
+			{
+				Resultados<Titulo> resultados = _da.ObterPorEmpreendimento(empreendimentoId);
 
-                return resultados;
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+				return resultados;
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public List<Titulo> Obter(TituloFiltro filtrosListar)
 		{

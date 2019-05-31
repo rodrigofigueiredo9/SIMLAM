@@ -127,7 +127,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					acaoPermissao.Add(ePermissao.TituloProrrogar);
 					break;
 
-				#endregion
+					#endregion
 			}
 
 			if (!_permissaoValdiar.ValidarAny(acaoPermissao.ToArray()))
@@ -232,12 +232,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						Validacao.Add(Mensagem.TituloAlterarSituacao.GerarPdfObrigatorio);
 					}
 
-					if (tituloAux.Situacao.Id != 1 && tituloAux.Situacao.Id != 2 && tituloAux.Situacao.Id != 4)
+					if (tituloAux.Situacao.Id != 1 && tituloAux.Situacao.Id != 2 && tituloAux.Situacao.Id != 4 && tituloAux.Situacao.Id != 11)
 					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Concluído", "Cadastrado, Emitido para assinatura ou Assinado"));
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Concluído", "Cadastrado, Suspenso, Emitido para assinatura ou Assinado"));
 					}
 
-					if (tituloAux.Situacao.Id == 1)
+					if (tituloAux.Situacao.Id == 1 || tituloAux.Situacao.Id == 11)
 					{
 						if (ValidarDatas(titulo.DataEmissao, "DataEmissao", "emissão"))
 						{
@@ -386,6 +386,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							}
 
 						}
+					}
+
+					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
+					{
+						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoSuspensaoObrigatorio);
 					}
 
 					break;
