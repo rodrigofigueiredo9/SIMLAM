@@ -370,8 +370,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 				{
 					bancoDeDados.IniciarTransacao();
 
-					Int64 id = 3218000082;
-
 					#region [ Declaracao Adicional ]
 					var listDeclaracoesAdicionais = new List<string>();
 					foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
@@ -396,8 +394,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
 					comando.AdicionarParametroEntrada("situacao", (int)ePTVSituacao.Valido, DbType.Int32);
 					comando.AdicionarParametroEntrada("data_ativacao", PTV.DataAtivacao.Data, DbType.DateTime);
-					//comando.AdicionarParametroEntrada("numero", PTV.Numero, DbType.Int64);
-					comando.AdicionarParametroEntrada("numero", id, DbType.Int64);
+					comando.AdicionarParametroEntrada("numero", PTV.Numero, DbType.Int64);
 					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 					comando.AdicionarParametroEntrada("declaracao_adicional", declaracaoAdicional, DbType.String);
 					comando.AdicionarParametroEntrada("declaracao_adicional_formatado", declaracaoAdicionalHtml, DbType.String);
@@ -411,7 +408,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 					return true;
 				} catch(Exception ex)
 				{
-					if (ex.Message.Contains("UNIQUE"))
+					if (ex.Message.Contains("unique constraint (IDAF.UK_PTV_NUMERO) violated"))
 						return false;
 					else
 						throw new Exception(ex.Message, ex);

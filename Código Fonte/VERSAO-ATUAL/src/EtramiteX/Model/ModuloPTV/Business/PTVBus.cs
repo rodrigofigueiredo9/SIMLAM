@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using System.Linq;
+using System.Threading;
 using System.Collections.Generic;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
@@ -24,7 +25,6 @@ using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
-using System.Diagnostics;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 {
@@ -95,7 +95,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 				var tentativas = 0;
 				var numeroGerado = false;
-				Stopwatch sw = new Stopwatch();
 
 				while (tentativas < 5 && !numeroGerado)
 				{
@@ -123,11 +122,17 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 							numeroGerado = _da.Ativar(ptv, bancoDeDados);
 							bancoDeDados.Commit();
 
-							Validacao.Add(Mensagem.PTV.AtivadoSucesso(ptv.Numero.ToString()));
 						}
 					}
-					
-				} 
+					 Thread.Sleep(1000);
+
+					tentativas++;
+				}
+
+				if(tentativas == 5)
+					Validacao.Add(Mensagem.PTV.ErroAoGerarNumero);
+				else
+					Validacao.Add(Mensagem.PTV.AtivadoSucesso(ptv.Numero.ToString()));
 			}
 			catch (Exception ex)
 			{
