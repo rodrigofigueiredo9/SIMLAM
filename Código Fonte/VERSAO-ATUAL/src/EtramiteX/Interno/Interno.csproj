@@ -317,6 +317,8 @@
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalListarVM.cs" />
     <Compile Include="ViewModels\VMConfiguracaoVegetal\DeclaracaoAdicionalVM.cs" />
     <Compile Include="ViewModels\VMCredenciado\HistoricoEmissaoCFOCFOCVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
+    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\NotificacaoVM.cs" />
     <Compile Include="ViewModels\VMDUA\DUAVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />

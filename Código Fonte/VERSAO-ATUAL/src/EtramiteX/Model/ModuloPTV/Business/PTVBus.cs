@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Web;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Credenciado.ModuloCFOCFOC;
@@ -21,7 +23,6 @@ using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFO.Business;
 using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
-using System.Web;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmissaoCFOC.Business;
 using Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTVOutro.Business;
 
@@ -92,35 +93,46 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 				ptv.Numero = PTVBanco.Numero;
 				ptv.Produtos = PTVBanco.Produtos;
 
-				if (PTVBanco.NumeroTipo == (int)eDocumentoFitossanitarioTipoNumero.Digital && PTVBanco.Situacao == (int)ePTVSituacao.EmElaboracao)
+				var tentativas = 0;
+				var numeroGerado = false;
+
+				while (tentativas < 5 && !numeroGerado)
 				{
-					string numero = VerificarNumeroPTV(string.Empty, ptv.NumeroTipo.GetValueOrDefault());
-					if (!string.IsNullOrEmpty(numero))
+					if (PTVBanco.NumeroTipo == (int)eDocumentoFitossanitarioTipoNumero.Digital && PTVBanco.Situacao == (int)ePTVSituacao.EmElaboracao)
 					{
-						ptv.Numero = Convert.ToInt64(numero);
+						string numero = VerificarNumeroPTV(string.Empty, ptv.NumeroTipo.GetValueOrDefault());
+						if (!string.IsNullOrEmpty(numero))
+						{
+							ptv.Numero = Convert.ToInt64(numero);
+						}
+
+						if (!Validacao.EhValido)
+						{
+							return Validacao.EhValido;
+						}
 					}
 
-					if (!Validacao.EhValido)
+					if (Validacao.EhValido && _validar.Ativar(ptv.DataAtivacao, PTVBanco))
 					{
-						return Validacao.EhValido;
+						GerenciadorTransacao.ObterIDAtual();
+
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+						{
+							bancoDeDados.IniciarTransacao();
+							numeroGerado = _da.Ativar(ptv, bancoDeDados);
+							bancoDeDados.Commit();
+
+						}
 					}
+					 Thread.Sleep(1000);
+
+					tentativas++;
 				}
 
-				if (Validacao.EhValido && _validar.Ativar(ptv.DataAtivacao, PTVBanco))
-				{
-					GerenciadorTransacao.ObterIDAtual();
-
-					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-					{
-						bancoDeDados.IniciarTransacao();
-
-						_da.Ativar(ptv, bancoDeDados);
-
-						bancoDeDados.Commit();
-
-						Validacao.Add(Mensagem.PTV.AtivadoSucesso(ptv.Numero.ToString()));
-					}
-				}
+				if(tentativas == 5)
+					Validacao.Add(Mensagem.PTV.ErroAoGerarNumero);
+				else
+					Validacao.Add(Mensagem.PTV.AtivadoSucesso(ptv.Numero.ToString()));
 			}
 			catch (Exception ex)
 			{

@@ -31,6 +31,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		public Mensagem EnviadoSucesso { get { return new Mensagem() { Texto = "PTV enviado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
+		public Mensagem ErroAoGerarNumero { get { return new Mensagem() { Texto = "Não foi possível gerar um número de PTV válido. Por favor, tente novamente.", Tipo = eTipoMensagem.Advertencia }; } }
 
 		public Mensagem AnaliseEPTVSucesso { get { return new Mensagem() { Texto = "EPTV analisado com sucesso.", Tipo = eTipoMensagem.Sucesso }; } }
 
