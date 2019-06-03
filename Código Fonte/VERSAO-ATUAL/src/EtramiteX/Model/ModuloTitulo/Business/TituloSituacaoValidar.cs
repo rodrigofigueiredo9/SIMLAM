@@ -342,7 +342,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
 					{
 						if (_da.ExistsTituloAssociadoNaoEncerrado(titulo.Id))
-							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiAssociadoNaoEncerrado);
+							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiAssociadoNaoEncerrado("encerrado"));
 					}
 
 					break;
@@ -388,9 +388,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						}
 					}
 
-					if (titulo.MotivoEncerramentoId.GetValueOrDefault() <= 0)
+					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal)
 					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.MotivoSuspensaoObrigatorio);
+						if (_da.ExistsTituloAssociadoNaoEncerrado(titulo.Id))
+							Validacao.Add(Mensagem.TituloAlterarSituacao.TituloPossuiAssociadoNaoEncerrado("suspenso"));
 					}
 
 					break;
