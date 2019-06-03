@@ -570,7 +570,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					{
 						bancoDeDados.IniciarTransacao();
 
-						_da.Finalizar(projeto.Id);
+						_da.Finalizar(projeto.Id, banco);
 
 						//Gerencia as dependências da caracterização
 						_caracterizacaoBus.Dependencias(new Caracterizacao()
@@ -584,6 +584,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 						Validacao.Add(Mensagem.ProjetoGeografico.FinalizadoSucesso);
 						bancoDeDados.Commit();
 					}
+				}
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+		}
+
+		public void FinalizarGeometrias(ProjetoGeografico projeto, int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				if (_validar.Finalizar(projeto))
+				{
+					_da.FinalizarGeometrias(projeto.Id, titulo, banco);
+					Validacao.Add(Mensagem.ProjetoGeografico.FinalizadoSucesso);
 				}
 			}
 			catch (Exception exc)
@@ -852,10 +868,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		{
 			try
 			{
-				if (projeto.Dependencias == null || projeto.Dependencias.Count == 0 || atual)
-				{
+				if (!projeto.Dependencias.Any() || atual)
 					projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(projeto.EmpreendimentoId, (eCaracterizacao)projeto.CaracterizacaoId, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
-				}
 
 				Dependencia dependencia = projeto.Dependencias.SingleOrDefault(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico
 					&& x.DependenciaCaracterizacao == (int)eCaracterizacao.Dominialidade);

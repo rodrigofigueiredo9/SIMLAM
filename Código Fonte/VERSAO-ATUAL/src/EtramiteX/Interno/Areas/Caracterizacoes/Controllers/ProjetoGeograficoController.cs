@@ -144,12 +144,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			#endregion
 
-			if (vm.Projeto.Dependencias == null || vm.Projeto.Dependencias.Count == 0)
-			{
-				vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
-			}
-
-			if (vm.Projeto.Id > 0 && mostrarModalDependencias && tipo != eCaracterizacao.ExploracaoFlorestal)
+			var semDependencia = !vm.Projeto.Dependencias.Any();
+			if (vm.Projeto.Dependencias.Any() && vm.Projeto.Id > 0)
 			{
 				vm.TextoMerge = _caracterizacaoValidar.DependenciasAlteradas(
 						vm.Projeto.EmpreendimentoId,
@@ -157,11 +153,24 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 						eCaracterizacaoDependenciaTipo.ProjetoGeografico,
 						vm.Projeto.Dependencias, isVisualizar);
 			}
-
-			vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
+			else
+				vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
 
 			//Busca as dependencias desse projeto geográfico
 			_bus.ObterDependencias(vm.Projeto, true);
+
+			if (string.IsNullOrWhiteSpace(vm.TextoMerge) && vm.Projeto.Dependencias.Any() && vm.Projeto.SituacaoId == (int)eProjetoGeograficoSituacao.EmElaboracao && semDependencia)
+			{
+				var item = vm.Projeto.Dependencias.FirstOrDefault(x => x.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico);
+				var caracterizacoes = new List<CaracterizacaoLst>(){ new CaracterizacaoLst() {
+					IsProjeto = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.ProjetoGeografico,
+					IsDescricao = item.DependenciaTipo == (int)eCaracterizacaoDependenciaTipo.DescricaoLicenciamentoAtividade,
+					Texto = "Dominialidade"}
+				};
+
+				vm.TextoMerge = Mensagem.Caracterizacao.AtualizacaoDadosGeografico(caracterizacoes,
+					true, true, isVisualizar).Texto;
+			}
 
 			if (vm.Projeto.Id > 0)
 			{

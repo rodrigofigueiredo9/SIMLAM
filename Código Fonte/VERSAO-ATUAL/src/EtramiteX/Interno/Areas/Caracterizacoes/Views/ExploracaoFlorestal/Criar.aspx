@@ -13,7 +13,7 @@
 				urls: {
 					salvar: '<%= Url.Action("Criar", "ExploracaoFlorestal") %>'
 				},
-				idsTela: '<%= Model.IdsTela %>'
+				idsTela: <%= Model.IdsTela %>
 			});
 		});
 	</script>

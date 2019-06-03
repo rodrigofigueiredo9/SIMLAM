@@ -126,7 +126,8 @@ TituloAlterarSituacao = {
 		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
 		var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 		if (situacao == 4) situacao = 6;
-		var realizarIntegracao = modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 8);
+		if (situacao == 8) situacao = 7;
+		var realizarIntegracao = modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 7);
 		if (situacao != 1 && realizarIntegracao) {
 			var codigoIntegracao = $('.txtCodigoSinaflor', TituloAlterarSituacao.container).val();
 			if (codigoIntegracao == "") realizarIntegracao = false;
@@ -152,7 +153,7 @@ TituloAlterarSituacao = {
 						$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
 						MasterPage.carregando(true);
 						var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
-						if (situacao == 5 || situacao == 8) //Cancelar ou Suspender
+						if (situacao == 5 || situacao == 7) //Cancelar ou Suspender
 							data = $('.txtDataEncerramento', TituloAlterarSituacao.container).val();
 						var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
 						var prazo = objeto.Prazo;

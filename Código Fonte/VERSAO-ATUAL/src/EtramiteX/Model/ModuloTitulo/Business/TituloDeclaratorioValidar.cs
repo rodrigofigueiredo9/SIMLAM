@@ -145,7 +145,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					return;
 				}
 
-				if (!ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
+				if (!String.IsNullOrEmpty(titulo.Numero.Texto) && !ValidacoesGenericasBus.ValidarMaskNumeroBarraAno(titulo.Numero.Texto))
 				{
 					Validacao.Add(Mensagem.Titulo.NumeroInvalido);
 				}
@@ -264,7 +264,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			return Validacao.EhValido;
 		}
 
-#endregion
+		#endregion
 
 		//Validacoes de Cadastro/Edição
 		public bool Salvar(Titulo titulo)
@@ -346,7 +346,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 
 			if(titulo.Autor.Id != User.FuncionarioId)
-			{
+			{ 
 				Validacao.Add(Mensagem.Titulo.AutorDiferenteExcluir);
 			}
 
@@ -384,20 +384,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			switch ((eTituloSituacao)titulo.Situacao.Id)
 			{
-#region Valido
+				#region Valido
 
 				case eTituloSituacao.Valido:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.EmCadastro && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Válido", "Em cadastro ou Suspenso"));
 					}
 					break;
 
-#endregion
+				#endregion
 
-#region Suspenso
+				#region Suspenso
 
-				case eTituloSituacao.Suspenso:
+				case eTituloSituacao.SuspensoDeclaratorio:
 					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Válido"));
@@ -409,12 +409,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-#endregion
+				#endregion
 
-#region Encerrado
+				#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.Suspenso)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
 					{
 						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido ou Suspenso"));
 					}
@@ -425,7 +425,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					}
 					break;
 
-#endregion
+					#endregion
 			}
 
 			if (!Validacao.EhValido)

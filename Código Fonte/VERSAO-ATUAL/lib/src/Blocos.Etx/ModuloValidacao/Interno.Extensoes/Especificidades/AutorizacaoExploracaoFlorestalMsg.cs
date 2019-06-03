@@ -24,7 +24,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem LaudoVistoriaObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria Florestal é obrigatório" }; } }
 		public Mensagem LaudoVistoriaModelo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Modelo de título associado deve ser Laudo de Vistoria Florestal" }; } }
-		public Mensagem LaudoVIstoriaDeveEstarConcluiddo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria deve estar com a situação concluido" }; } }
+		public Mensagem LaudoVistoriaDeveEstarConcluidoOuProrrogado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Autorizacao_LaudoVistoriaFlorestalTexto", Texto = "O Laudo de Vistoria deve estar com a situação concluido ou prorrogado" }; } }
 
 		public Mensagem CaracterizacaoDeveEstarValida (String caracterizacao)
 		{

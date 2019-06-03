@@ -9,6 +9,7 @@
 		Encerrar,
 		Concluir,
 		Entregar,
-		Suspender
+		Suspender,
+		CancelarSuspensao
 	}
 }

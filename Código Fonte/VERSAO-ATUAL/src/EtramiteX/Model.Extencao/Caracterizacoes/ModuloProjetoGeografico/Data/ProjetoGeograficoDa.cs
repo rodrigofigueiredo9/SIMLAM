@@ -363,13 +363,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 
 						--Importa as tabelas do da temporária para as tabelas oficiais
 						{0}geo_operacoesprocessamentogeo.ExportarParaTabelasGEO(i.id, i.tid);
-
-						--Atualiza relacionamento com exploracoes
-						update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
-							where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = i.id);
-						update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
-							where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = i.id);
-	
+						
 						--Apaga o rascunho
 						delete {0}tmp_projeto_geo_arquivos g where g.projeto = i.id;
 						delete {0}tmp_projeto_geo_ortofoto g where g.projeto = i.id;
@@ -395,6 +389,78 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				#endregion
 
 				bancoDeDados.Commit();
+			}
+		}
+
+		internal void FinalizarGeometrias(int id, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Atualizar o projeto geográfico
+
+				bancoDeDados.IniciarTransacao();
+				Comando comando = bancoDeDados.CriarComandoPlSql(@"
+				begin
+					insert into {1}GEO_PATIV (id, projeto, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry, data, tid)
+					(select a.id, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry, sysdate, :tid
+						from {1}TMP_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal))));
+
+					insert into {1}GEO_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry, data, tid)
+					(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry, sysdate, :tid
+					from {1}TMP_AATIV a where a.projeto = :projeto
+							and exists
+							(select 1 from {0}crt_exp_florestal_geo g
+								where g.geo_aativ_id = a.id
+								and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+								where ep.id = g.exp_florestal_exploracao
+								and exists(select 1 from {0}tab_titulo_exp_florestal t
+								where t.titulo = :titulo
+								and t.exploracao_florestal = ep.exploracao_florestal))));
+
+					delete from {1}TMP_PATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_pativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					delete from {1}TMP_AATIV a where a.projeto = :projeto
+						and exists
+						(select 1 from {0}crt_exp_florestal_geo g
+							where g.geo_aativ_id = a.id
+							and exists(select 1 from {0}crt_exp_florestal_exploracao ep
+							where ep.id = g.exp_florestal_exploracao
+							and exists(select 1 from {0}tab_titulo_exp_florestal t
+							where t.titulo = :titulo
+							and t.exploracao_florestal = ep.exploracao_florestal)));
+
+					--Atualiza relacionamento com exploracoes
+					update {0}crt_exp_florestal_geo c set c.geo_pativ_id = c.tmp_pativ_id
+						where exists(select 1 from {1}geo_pativ g where g.id = c.tmp_pativ_id and g.projeto = :projeto);
+					update {0}crt_exp_florestal_geo c set c.geo_aativ_id = c.tmp_aativ_id
+						where exists(select 1 from {1}geo_aativ g where g.id = c.tmp_aativ_id and g.projeto = :projeto);
+				end; ", EsquemaBanco, EsquemaBancoGeo);
+
+				comando.AdicionarParametroEntrada("projeto", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+
+				#endregion
 			}
 		}
 
@@ -554,7 +620,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 					end if;
 
 					insert into {1}DES_PATIV (id, projeto, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
-						(select a.id, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+						(select {1}seq_des_pativ.nextval, a.projeto, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
 							from {1}GEO_PATIV a where a.projeto = :projeto
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo g
@@ -563,10 +629,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 								where ep.id = g.exp_florestal_exploracao
 								and exists(select 1 from {0}tab_titulo_exp_florestal t
 								where t.titulo = :titulo
-								and t.exploracao_florestal = ep.exploracao_florestal)))
-							and not exists(select 1 from {1}DES_PATIV d where d.id = a.id));
+								and t.exploracao_florestal = ep.exploracao_florestal))));
 					insert into {1}DES_AATIV (id, projeto, area_m2, cod_apmp, codigo, atividade, rocha, massa_dagua, avn, aa, afs, rest_declividade, arl, rppn, app, tipo_exploracao, geometry)
-						(select a.id, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
+						(select {1}seq_des_aativ.nextval, a.projeto, a.area_m2, a.cod_apmp, a.codigo, a.atividade, a.rocha, a.massa_dagua, a.avn, a.aa, a.afs, a.rest_declividade, a.arl, a.rppn, a.app, a.tipo_exploracao, a.geometry
 							from {1}GEO_AATIV a where a.projeto = :projeto
 							and exists
 							(select 1 from {0}crt_exp_florestal_geo g
@@ -575,8 +640,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 								where ep.id = g.exp_florestal_exploracao
 								and exists(select 1 from {0}tab_titulo_exp_florestal t
 								where t.titulo = :titulo
-								and t.exploracao_florestal = ep.exploracao_florestal)))
-							and not exists(select 1 from {1}DES_AATIV d where d.id = a.id));
+								and t.exploracao_florestal = ep.exploracao_florestal))));
 
 					delete from {1}GEO_PATIV a where a.projeto = :projeto
 						and exists

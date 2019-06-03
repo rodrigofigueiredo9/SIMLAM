@@ -152,6 +152,20 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo
 			_banco.Commit();
 		}
 
+		public void SetComErroParaAguardandoEtapaNaFila()
+		{
+			_banco.IniciarTransacao();
+			_dataAccess.SetComErroParaAguardandoEtapaNaFila();
+			_banco.Commit();
+		}
+
+		public void SetSemRegistroParaCanceladoNaFila()
+		{
+			_banco.IniciarTransacao();
+			_dataAccess.SetSemRegistroParaCanceladoNaFila();
+			_banco.Commit();
+		}
+
 		public void SetFalhaNaFila(int projeto, int tipo)
 		{
 			try

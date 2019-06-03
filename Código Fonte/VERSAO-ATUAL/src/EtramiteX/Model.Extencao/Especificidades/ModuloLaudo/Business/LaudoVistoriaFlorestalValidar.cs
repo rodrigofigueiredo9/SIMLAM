@@ -23,10 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloLau
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			LaudoVistoriaFlorestal esp = especificidade as LaudoVistoriaFlorestal;
-			if(esp.Titulo.Modelo == "12") //Laudo de Vistoria de Exploração Florestal
-				RequerimentoAtividade(esp, jaAssociado: true, apenasObrigatoriedade: true);
-			else
-				RequerimentoAtividade(esp, apenasObrigatoriedade: true);
+			RequerimentoAtividade(esp, solicitado: false);
 
 			Destinatario(especificidade.ProtocoloReq.Id, esp.Destinatario, "Laudo_Destinatario");
 

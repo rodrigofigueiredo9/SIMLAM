@@ -52,9 +52,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVistoriaModelo);
 				}
 
-				if (tituloAssociado.Situacao.Id != (int) eTituloSituacao.Concluido)
+				if (tituloAssociado.Situacao.Id != (int) eTituloSituacao.Concluido && tituloAssociado.Situacao.Id != (int)eTituloSituacao.Prorrogado)
 				{
-					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVIstoriaDeveEstarConcluiddo);
+					Validacao.Add(Mensagem.AutorizacaoExploracaoFlorestal.LaudoVistoriaDeveEstarConcluidoOuProrrogado);
 				}
 			}
 			catch (Exception exc)

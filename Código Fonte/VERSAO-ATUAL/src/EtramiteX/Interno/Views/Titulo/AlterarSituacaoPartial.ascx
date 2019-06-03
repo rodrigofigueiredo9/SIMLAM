@@ -140,7 +140,7 @@
 				</div>
 			</div>
 
-			<div class="block">
+			<div class="block motivoCancelamento">
 				<div class="coluna43">
 					<label for="Motivo">Motivo *</label>
 					<%= Html.DropDownList("Motivo", Model.MotivosEncerramento, new { @class = "text ddlMotivo" })%>
