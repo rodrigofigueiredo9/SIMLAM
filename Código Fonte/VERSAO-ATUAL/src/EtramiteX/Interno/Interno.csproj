@@ -323,8 +323,6 @@
     <Compile Include="ViewModels\VMDUA\DUAVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\OutrasPenalidadesVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\MultaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\CobrancaVM.cs" />
-    <Compile Include="ViewModels\VMFiscalizacao\ListarCobrancasVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\ParametrizacaoListarVM.cs" />
     <Compile Include="ViewModels\VMFiscalizacao\VMConfiguracoes\VrteVM.cs" />
