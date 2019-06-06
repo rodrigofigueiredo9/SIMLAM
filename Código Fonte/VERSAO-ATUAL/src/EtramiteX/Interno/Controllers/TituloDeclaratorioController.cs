@@ -286,7 +286,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			switch ((eTituloSituacao)titulo.Situacao.Id)
 			{
 				case eTituloSituacao.EmCadastro:
-					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
+					{
+						if (titulo.Modelo.Codigo != (int)eTituloModeloCodigo.OutrosInformacaoCorte)
+							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
+					}
 					break;
 				case eTituloSituacao.Valido:
 					{
@@ -299,14 +302,14 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				case eTituloSituacao.ProrrogadoDeclaratorio:
 					{
 						if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
-							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio)).ToList();
+							situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.SuspensoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					}
 					break;
 				case eTituloSituacao.SuspensoDeclaratorio:
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					break;
-				case eTituloSituacao.EncerradoDeclaratorio:
-					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
+				case eTituloSituacao.AguardandoPagamento:
+					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					break;
 				default:
 					break;

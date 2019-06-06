@@ -199,13 +199,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			bool isGerarNumero = false;
 			bool isGerarPdf = false;
 
-			if (validar)
-			{
-				if (!_validar.AlterarSituacao(titulo, atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || atualTitulo.Situacao.Id == (int)eTituloSituacao.Valido)
+				if (validar)
 				{
-					return;
+					var alterarSituacaoValido = _validar.AlterarSituacao(titulo, atualTitulo.Situacao.Id == (int)eTituloSituacao.EmCadastro) || atualTitulo.Situacao.Id == (int)eTituloSituacao.Valido;
+					if (!alterarSituacaoValido) return;
 				}
-			}
 
 			#region Configurar Nova Situacao
 
