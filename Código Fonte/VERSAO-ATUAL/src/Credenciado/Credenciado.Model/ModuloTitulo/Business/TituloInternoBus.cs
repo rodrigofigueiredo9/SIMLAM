@@ -74,25 +74,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				switch (titulo.Situacao.Id)
 				{
 					case (int)eTituloSituacao.Encerrado:
+					case (int)eTituloSituacao.EncerradoDeclaratorio:
 						auxiliar = ListaCredenciadoBus.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
 						break;
 
 					case (int)eTituloSituacao.Prorrogado:
+					case (int)eTituloSituacao.ProrrogadoDeclaratorio:
 						auxiliar = String.Format("{0} até {1}", titulo.Situacao.Nome, titulo.DataVencimento.DataTexto);
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVerde(titulo.ArquivoPdf.Buffer, auxiliar);
 						break;
 
 					case (int)eTituloSituacao.Suspenso:
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
-						break;
-
 					case (int)eTituloSituacao.SuspensoDeclaratorio:
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
-						break;
-
-					case (int)eTituloSituacao.EncerradoDeclaratorio:
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
 						break;
 
 					default:

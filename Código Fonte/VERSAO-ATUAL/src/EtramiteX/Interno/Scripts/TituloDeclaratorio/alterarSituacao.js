@@ -33,6 +33,8 @@ TituloAlterarSituacao = {
 
 	changeSituacao: function () {
 		$('.divEncerramento, .divSuspenso', TituloAlterarSituacao.container).addClass('hide');
+		$('.divProrrogar', TituloAlterarSituacao.container).addClass('hide');
+		$('.divSuspenso', TituloAlterarSituacao.container).addClass('hide');
 		$('.ddlMotivoEncerramento', TituloAlterarSituacao.container).ddlFirst();
 		$('.txtMotivo', TituloAlterarSituacao.container).val('');
 
