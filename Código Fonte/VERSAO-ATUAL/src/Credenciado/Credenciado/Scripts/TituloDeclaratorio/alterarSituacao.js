@@ -32,6 +32,7 @@ TituloAlterarSituacao = {
 	},
 
 	changeSituacao: function () {
+		$('.divProrrogar', TituloAlterarSituacao.container).addClass('hide');
 		if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 13) {
 			$('.divProrrogar', TituloAlterarSituacao.container).removeClass('hide');
 		}

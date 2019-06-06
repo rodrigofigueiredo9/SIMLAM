@@ -304,9 +304,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio && tituloAux.Situacao.Id != (int)eTituloSituacao.AguardandoPagamento)
 					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido ou Suspenso"));
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido, Suspenso ou Aguardando pagamento"));
 					}
 
 					if (titulo.MotivoEncerramentoId <= 0)
