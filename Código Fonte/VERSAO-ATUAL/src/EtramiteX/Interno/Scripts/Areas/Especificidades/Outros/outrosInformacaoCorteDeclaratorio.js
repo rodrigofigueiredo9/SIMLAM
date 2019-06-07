@@ -51,6 +51,7 @@ OutrosInformacaoCorte = {
 			success: function (response, textStatus, XMLHttpRequest) {
 				if (response.Atividades) {
 					ddlAtividades.ddlLoad(response.Atividades).addClass('disabled').attr('disabled', 'disabled');
+					ddlAtividades.val(209);
 				}
 				if (response.Interessado) {
 					interessado.val(response.Interessado.Fisica.Nome || response.Interessado.Juridica.RazaoSocial);
