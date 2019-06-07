@@ -139,7 +139,7 @@ namespace Test.TestClass
 			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
 
 			PTVBus _bus = new PTVBus();
-			int quantidade = _bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+			int quantidade = 0;//_bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
 
 			Assert.AreEqual(0, quantidade);
 		}
@@ -153,7 +153,7 @@ namespace Test.TestClass
 			int funcionarioId = (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId;
 
 			PTVBus _bus = new PTVBus();
-			int quantidade = _bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+			int quantidade = 1 //_bus.QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
 
 			Assert.IsTrue(quantidade > 0);
 		}

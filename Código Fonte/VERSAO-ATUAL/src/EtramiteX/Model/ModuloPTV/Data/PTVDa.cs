@@ -3074,12 +3074,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 
 		#region Alerta EPTV
 
-		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		public string EPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = null;
-				comando = bancoDeDados.CriarComando(@"select count(1) qtd
+				List<Int64> listaPtv = new List<Int64>();
+
+				comando = bancoDeDados.CriarComando(@"select pt.numero
 													  from {0}Tab_Ptv pt
 													  where Pt.Local_Vistoria in ( select S.Setor
 													                               from {1}Tab_Funcionario_Setor s
@@ -3087,9 +3089,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 													  and pt.situacao = 2", UsuarioCredenciado, EsquemaBanco);
 				comando.AdicionarParametroEntrada("idFuncionario", idFuncionario, DbType.Int32);
 
-				int quantidade = bancoDeDados.ExecutarScalar<int>(comando);
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					while (reader.Read())
+					{
+						listaPtv.Add(reader.GetValue<Int64>("numero"));
+					}
+				}
 
-				return quantidade;
+				return String.Join(", ", listaPtv);
 			}
 		}
 

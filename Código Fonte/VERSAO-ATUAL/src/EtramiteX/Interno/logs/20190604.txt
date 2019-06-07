@@ -1,0 +1,21 @@
+
+04/06/2019 11:55:27 [19] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2669347490 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 11:55:55 [8] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2669347490 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 11:56:38 [8] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2670727594 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 11:56:46 [8] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2670727594 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 11:57:06 [8] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2670727675 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 11:57:23 [8] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2655361622 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado
+
+04/06/2019 12:04:27 [20] - Classe origem: Tecnomapas.EtramiteX.Credenciado.Model.WebService.ModuloWSDUA.WSDUA - ERROR: DUA: 2655361622 - CPF/CNPJ: 137.972.587-98
+System.Exception: Dua não pertence ao contribuinte informado

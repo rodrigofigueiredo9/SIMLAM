@@ -844,20 +844,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			return null;
 		}
 
-		public int QuantidadeEPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
+		public string EPTVAguardandoAnaliseFuncionario(int idFuncionario, BancoDeDados banco = null)
 		{
-			int quantidade = -1;
+			string eptvs = String.Empty;
 
 			try
 			{
-				quantidade = _da.QuantidadeEPTVAguardandoAnaliseFuncionario(idFuncionario, banco);
+				eptvs = _da.EPTVAguardandoAnaliseFuncionario(idFuncionario, banco);
 			}
 			catch (Exception ex)
 			{
 				Validacao.AddErro(ex);
 			}
 
-			return quantidade;
+			return eptvs;
 		}
 
 		public PTV ObterNumeroPTVExibirMensagemFuncionario(int idFuncionario, BancoDeDados banco = null)
@@ -1157,11 +1157,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 			if (habilitado)
 			{
 				//Verifica quantas PTVs estão aguardando análise
-				int quantidade = QuantidadeEPTVAguardandoAnaliseFuncionario(funcionarioId);
+				string eptvs = EPTVAguardandoAnaliseFuncionario(funcionarioId);
 
-				if (quantidade > 0)
+				if (!String.IsNullOrWhiteSpace(eptvs))
 				{
-					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
+					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(eptvs));
 					houveAlerta = true;
 				}
 			}

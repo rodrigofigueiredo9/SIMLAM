@@ -204,10 +204,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		#region Alerta de E-PTV
 
-		public Mensagem ExistemEPTVsAguardandoAnalise(int qtd)
+		public Mensagem ExistemEPTVsAguardandoAnalise(string eptvs)
 		{
 			return new Mensagem() {
-				Texto = String.Format("Existem {0} E-PTVs aguardando análise.", qtd),
+				Texto = String.Format("Existem E-PTVs aguardando análise. [ {0} ] ", eptvs),
 				Tipo = eTipoMensagem.Informacao,
 				Campo = "AlertaEPTV"
 			};
