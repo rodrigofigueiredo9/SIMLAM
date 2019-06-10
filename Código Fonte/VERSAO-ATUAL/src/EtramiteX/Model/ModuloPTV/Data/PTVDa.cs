@@ -362,47 +362,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Data
 			}
 		}
 
-		internal void Ativar(PTV PTV, BancoDeDados banco)
+		internal bool Ativar(PTV PTV, BancoDeDados banco)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, EsquemaBanco))
 			{
-				bancoDeDados.IniciarTransacao();
-
-				#region [ Declaracao Adicional ]
-
-				var listDeclaracoesAdicionais = new List<string>();
-                foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+				try
 				{
-					listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, true));
-				}
-				var declaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
+					bancoDeDados.IniciarTransacao();
 
-				listDeclaracoesAdicionais.Clear();
-                foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+					#region [ Declaracao Adicional ]
+					var listDeclaracoesAdicionais = new List<string>();
+					foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+					{
+						listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, true));
+					}
+					var declaracaoAdicionalHtml = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
+
+					listDeclaracoesAdicionais.Clear();
+					foreach (var item in PTV.Produtos.Where(xx => (xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFO || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.CFOC || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTV || xx.OrigemTipo == (int)eDocumentoFitossanitarioTipo.PTVOutroEstado)))
+					{
+						listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, false));
+					}
+					var declaracaoAdicional = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
+
+					#endregion
+
+					Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.data_ativacao = :data_ativacao, 
+						p.numero = :numero, p.declaracao_adicional = :declaracao_adicional, p.declaracao_adicional_formatado = :declaracao_adicional_formatado
+						where p.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("situacao", (int)ePTVSituacao.Valido, DbType.Int32);
+					comando.AdicionarParametroEntrada("data_ativacao", PTV.DataAtivacao.Data, DbType.DateTime);
+					comando.AdicionarParametroEntrada("numero", PTV.Numero, DbType.Int64);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+					comando.AdicionarParametroEntrada("declaracao_adicional", declaracaoAdicional, DbType.String);
+					comando.AdicionarParametroEntrada("declaracao_adicional_formatado", declaracaoAdicionalHtml, DbType.String);
+
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.ativar, bancoDeDados);
+
+					bancoDeDados.Commit();
+
+					return true;
+				} catch(Exception ex)
 				{
-					listDeclaracoesAdicionais.AddRange(ObterDeclaracaoAdicional(item.Origem, item.OrigemTipo, (int)ValidacoesGenericasBus.ObterTipoProducao(item.UnidadeMedida), item.Cultivar, false));
+					if (ex.Message.Contains("unique constraint (IDAF.UK_PTV_NUMERO) violated"))
+						return false;
+					else
+						throw new Exception(ex.Message, ex);
 				}
-				var declaracaoAdicional = String.Join(" ", listDeclaracoesAdicionais.Distinct().ToList());
-
-				#endregion
-
-				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_ptv p set p.tid = :tid, p.situacao = :situacao, p.data_ativacao = :data_ativacao, 
-					p.numero = :numero, p.declaracao_adicional = :declaracao_adicional, p.declaracao_adicional_formatado = :declaracao_adicional_formatado
-					where p.id = :id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("id", PTV.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("situacao", (int)ePTVSituacao.Valido, DbType.Int32);
-				comando.AdicionarParametroEntrada("data_ativacao", PTV.DataAtivacao.Data, DbType.DateTime);
-				comando.AdicionarParametroEntrada("numero", PTV.Numero, DbType.Int64);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-				comando.AdicionarParametroEntrada("declaracao_adicional", declaracaoAdicional, DbType.String);
-				comando.AdicionarParametroEntrada("declaracao_adicional_formatado", declaracaoAdicionalHtml, DbType.String);
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				Historico.Gerar(PTV.Id, eHistoricoArtefato.emitirptv, eHistoricoAcao.ativar, bancoDeDados);
-
-				bancoDeDados.Commit();
 			}
 		}
 

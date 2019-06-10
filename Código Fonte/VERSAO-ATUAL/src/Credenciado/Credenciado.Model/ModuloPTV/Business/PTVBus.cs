@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Xml.Serialization;
 using Tecnomapas.Blocos.Arquivo.Data;
@@ -109,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 						}
 						#endregion
 
-                        ptv.PossuiLaudoLaboratorial = 0;
+						ptv.PossuiLaudoLaboratorial = 0;
 
 						_da.Salvar(ptv, bancoDeDados);
 
@@ -139,33 +140,44 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				}
 
 				ptv.Situacao = (int)eSolicitarPTVSituacao.AguardandoAnalise;
+				var tentativas = 0;
+				var numeroGerado = false;
 
-				if (ptv.NumeroTipo == (int)eDocumentoFitossanitarioTipoNumero.Digital && ptv.Numero <= 0)
+				while (tentativas < 5 && !numeroGerado)
 				{
-					string numero = VerificarNumeroPTV(string.Empty, ptv.NumeroTipo.GetValueOrDefault());
-					if (!string.IsNullOrEmpty(numero))
+					if (ptv.NumeroTipo == (int)eDocumentoFitossanitarioTipoNumero.Digital && ptv.Numero <= 0)
 					{
-						ptv.Numero = Convert.ToInt64(numero);
+						string numero = VerificarNumeroPTV(string.Empty, ptv.NumeroTipo.GetValueOrDefault());
+						if (!string.IsNullOrEmpty(numero))
+						{
+							ptv.Numero = Convert.ToInt64(numero);
+						}
+
+						if (!Validacao.EhValido)
+						{
+							return Validacao.EhValido;
+						}
 					}
 
-					if (!Validacao.EhValido)
+					GerenciadorTransacao.ObterIDAtual();
+
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 					{
-						return Validacao.EhValido;
+						bancoDeDados.IniciarTransacao();
+
+						numeroGerado = _da.Enviar(ptv, bancoDeDados);
+
+						bancoDeDados.Commit();
 					}
+					Thread.Sleep(1000);
+
+					tentativas++;
 				}
 
-				GerenciadorTransacao.ObterIDAtual();
-
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
-				{
-					bancoDeDados.IniciarTransacao();
-
-					_da.Enviar(ptv, bancoDeDados);
-
-					bancoDeDados.Commit();
-
-					Validacao.Add(Mensagem.PTV.EnviadoSucesso);
-				}
+				if (tentativas == 5)
+					Validacao.Add(Mensagem.PTV.ErroAoGerarNumero);
+				else
+					Validacao.Add(Mensagem.PTV.AtivadoSucesso(ptv.Numero.ToString()));
 			}
 			catch (Exception ex)
 			{
@@ -220,20 +232,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			return numeroDigital;
 		}
 
-        public string ObterDeclaracaoAdicionaisPTVOutro(int numero)        
-        {
-            string numeroDigital = string.Empty;
-            try
-            {
-                numeroDigital = _da.ObterDeclaracaoAdicional(numero);
-            }
-            catch (Exception exc)
-            {
-                Validacao.AddErro(exc);
-            }
+		public string ObterDeclaracaoAdicionaisPTVOutro(int numero)
+		{
+			string numeroDigital = string.Empty;
+			try
+			{
+				numeroDigital = _da.ObterDeclaracaoAdicional(numero);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
 
-            return numeroDigital;
-        }
+			return numeroDigital;
+		}
 
 		public string VerificarNumeroPTV(string numero, int tipoNumero)
 		{
@@ -349,7 +361,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					retorno.Add("empreendimento_id", 0);
 					retorno.Add("empreendimento_denominador", string.Empty);
 					retorno.Add("listaCulturas", new List<Lista>());
-                    retorno.Add("declaracao_adicional", " ");
+					retorno.Add("declaracao_adicional", " ");
 				}
 				else
 				{
@@ -357,7 +369,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 					retorno.Add("empreendimento_id", documentoOrigem["empreendimento_id"]);
 					retorno.Add("empreendimento_denominador", documentoOrigem["empreendimento_denominador"]);
 					retorno.Add("listaCulturas", _da.ObterCultura((int)origemTipo, (int)documentoOrigem["id"]));
-                    retorno.Add("declaracao_adicional", _da.ObterDeclaracaoAdicional((int)documentoOrigem["id"]));
+					retorno.Add("declaracao_adicional", _da.ObterDeclaracaoAdicional((int)documentoOrigem["id"]));
 
 				}
 
@@ -724,7 +736,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			try
 			{
-				if(_validar.VerificarCPFCNPJ((int)notaFiscal.PessoaAssociadaTipo, notaFiscal.PessoaAssociadaCpfCnpj))
+				if (_validar.VerificarCPFCNPJ((int)notaFiscal.PessoaAssociadaTipo, notaFiscal.PessoaAssociadaCpfCnpj))
 					return _da.VerificarNumeroNFCaixa(notaFiscal);
 			}
 			catch (Exception exc)
@@ -857,7 +869,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Blocos.Arquivo.Arquivo arq;
 
 				arq = comunicador.ArquivoCredenciado;
-				
+
 				PTVConversa conversa;
 				conversa = comunicador.Conversas[0];
 
@@ -934,7 +946,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				var wSDUA = new WSDUA();
 				var dua = wSDUA.ObterDUA(numero, cpfCnpj, tipo == "1" ? eTipoPessoa.Fisica : eTipoPessoa.Juridica);
 
-				if(Validacao.EhValido)
+				if (Validacao.EhValido)
 					_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
 			}
 			catch (Exception exc)
@@ -942,7 +954,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.AddErro(exc);
 			}
 		}
-		
+
 		#endregion
 
 		#region Alerta de E-PTV
