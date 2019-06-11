@@ -48,21 +48,21 @@
 			</div>
 		</div>
 
-		<div class="block divEncerramento <%= Model.SituacaoId == (int)eTituloSituacao.EncerradoDeclaratorio ? "" : "hide" %>">
+		<div class="block divEncerramento hide">
 			<div class="coluna43">
 				<label for="MotivoEncerramento">Motivo de encerramento *</label>
 				<%= Html.DropDownList("MotivoEncerramento", Model.MotivosEncerramento, new { @class = "text ddlMotivoEncerramento" })%>
 			</div>
 		</div>
 
-		<div class="block divSuspenso <%= Model.SituacaoId == (int)eTituloSituacao.Suspenso ? "" : "hide" %>">
+		<div class="block divSuspenso hide">
 			<div class="coluna80">
 				<label for="Motivo">Motivo *</label>
 				<%= Html.TextArea("Motivo", null, new { @class = "text media txtMotivo", maxlength = "1000" })%>
 			</div>
 		</div>
 
-		<div class="block divProrrogar  <%= Model.SituacaoId == (int)eTituloSituacao.ProrrogadoDeclaratorio ? "" : "hide" %>">
+		<div class="block divProrrogar hide">
 			<div class="coluna20">
 				<label for="DataVencimento">Data de vencimento *</label>
 				<%= Html.TextBox("DataVencimento", Model.DataVencimento, new { @class = "text disabled", @disabled = "disabled" })%>
