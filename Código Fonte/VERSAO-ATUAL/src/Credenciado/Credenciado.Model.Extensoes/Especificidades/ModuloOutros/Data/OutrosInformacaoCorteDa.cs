@@ -385,7 +385,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			return outros;
 		}
 
-		internal string ObterTituloDeclaratorioAssociadoACaracterizacao(int id, BancoDeDados banco = null)
+		internal string ObterTituloDeclaratorioAssociadoACaracterizacao(int id, int titulo, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
@@ -398,11 +398,33 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				and not exists
 				(select 1 from tab_titulo t 
 				where t.id = n.titulo
-				and t.situacao = :situacao)", EsquemaBanco);
+				and t.situacao = :situacao)
+				and n.titulo <> :titulo", EsquemaBanco);
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<string>(comando);
+			}
+		}
+
+		internal bool TituloJaAssociadoACaracterizacaoNaoEmitido(int id, int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+				select count(*) from {0}tab_titulo t
+				where exists
+				(select 1 from {0}esp_out_informacao_corte e where
+				e.titulo = t.id
+				and e.crt_informacao_corte_cred = :id)
+				and t.situacao <> :situacao
+				and t.id <> :titulo", EsquemaBanco);
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+				comando.AdicionarParametroEntrada("situacao", (int)eTituloSituacao.EncerradoDeclaratorio, DbType.Int32);
+
+				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
 			}
 		}
 

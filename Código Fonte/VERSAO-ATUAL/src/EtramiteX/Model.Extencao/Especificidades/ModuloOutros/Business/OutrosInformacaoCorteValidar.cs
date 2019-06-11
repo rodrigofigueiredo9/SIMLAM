@@ -18,9 +18,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 			if (esp.InformacaoCorte <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 
-			var tituloAssociado = _da.ObterTituloDeclaratorioAssociadoACaracterizacao(esp.InformacaoCorte);
+			var tituloAssociado = _da.ObterTituloDeclaratorioAssociadoACaracterizacao(esp.InformacaoCorte, especificidade.Titulo.Id);
 			if (!string.IsNullOrWhiteSpace(tituloAssociado))
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoJaAssociada(tituloAssociado));
+			else if (_da.TituloJaAssociadoACaracterizacaoNaoEmitido(esp.InformacaoCorte, especificidade.Titulo.Id))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoJaAssociadaNaoEmitido);
 
 			if (especificidade.RequerimentoId <= 0)
 				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
