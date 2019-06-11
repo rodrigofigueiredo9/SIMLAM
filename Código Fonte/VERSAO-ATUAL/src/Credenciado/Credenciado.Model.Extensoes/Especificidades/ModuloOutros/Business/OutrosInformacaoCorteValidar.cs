@@ -18,8 +18,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 		public bool Salvar(IEspecificidade especificidade)
 		{
 			var esp = especificidade as OutrosInformacaoCorte;
-			
-			DeclaratorioRequerimentoAtividade(esp);
+
+			if (esp.InformacaoCorte <= 0)
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
+
+			var tituloAssociado = _da.ObterTituloDeclaratorioAssociadoACaracterizacao(esp.InformacaoCorte, especificidade.Titulo.Id);
+			if (!string.IsNullOrWhiteSpace(tituloAssociado))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoJaAssociada(tituloAssociado));
+			else if (_da.TituloJaAssociadoACaracterizacaoNaoEmitido(esp.InformacaoCorte, especificidade.Titulo.Id))
+				Validacao.Add(Mensagem.OutrosInformacaoCorte.CaracterizacaoJaAssociadaNaoEmitido);
 
 			if (especificidade.RequerimentoId <= 0)
 				Validacao.Add(Mensagem.Especificidade.RequerimentoPradroObrigatoria);
@@ -29,9 +36,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.RequerimentoJaAssociado(tituloAssociadoRequerimento));
 			else if(_da.RequerimentoJaAssociado(especificidade.RequerimentoId, especificidade.Titulo.Id))
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.RequerimentoJaAssociadoTituloNaoEmitido);
-
-			if (esp.InformacaoCorte <= 0)
-				Validacao.Add(Mensagem.OutrosInformacaoCorte.InformacaoCorteObrigatorio);
 
 			if (esp.Validade <= 0)
 				Validacao.Add(Mensagem.OutrosInformacaoCorte.ValidadeObrigatoria);

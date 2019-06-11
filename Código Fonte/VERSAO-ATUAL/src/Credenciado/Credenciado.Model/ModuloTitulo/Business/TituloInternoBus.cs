@@ -154,6 +154,35 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				msPdf = GeradorAspose.AnexarPdf(msPdf, dataAnexos.AnexosPdfs);
 			}
 
+
+			string auxiliar = string.Empty;
+
+			switch (titulo.Situacao.Id)
+			{
+				case (int)eTituloSituacao.Encerrado:
+				case (int)eTituloSituacao.EncerradoDeclaratorio:
+					auxiliar = ListaCredenciadoBus.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+					msPdf.Position = 0;
+					msPdf = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(msPdf, auxiliar);
+					break;
+
+				case (int)eTituloSituacao.Prorrogado:
+				case (int)eTituloSituacao.ProrrogadoDeclaratorio:
+					auxiliar = String.Format("{0} até {1}", titulo.Situacao.Nome, titulo.DataVencimento.DataTexto);
+					msPdf.Position = 0;
+					msPdf = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVerde(msPdf, auxiliar);
+					break;
+
+				case (int)eTituloSituacao.Suspenso:
+				case (int)eTituloSituacao.SuspensoDeclaratorio:
+					msPdf.Position = 0;
+					msPdf = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(msPdf, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
+					break;
+
+				default:
+					break;
+			}
+
 			return msPdf;
 		}
 
