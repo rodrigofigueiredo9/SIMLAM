@@ -19,6 +19,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 		public int RequerimentoId { get; set; }
 		public string TituloNumero { get; set; }
 		public int TituloId { get; set; }
+		public string TituloSituacao { get; set; }
 		public int AtividadeID { get; set; }
 		public string Atividade { get; set; }
 		public int Associado { get; set; }

@@ -323,11 +323,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 							b.id, 
 							b.empreendimento,
 							b.area_alagada, 
-							b.volume_armazenado
+							b.volume_armazenado,
+							lv.texto situacao							
 					from tab_titulo t 
 					left join tab_titulo_numero n on t.id = n.titulo
 					inner join tab_requerimento_barragem rb on rb.requerimento = t.requerimento
 					inner join crt_barragem_dispensa_lic b on b.id = rb.barragem
+					inner join lov_titulo_situacao lv on lv.id = t.situacao
 
 					where b.empreendimento = :empreendimento");
 
@@ -346,6 +348,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloBar
 						caracterizacao.EmpreendimentoID = empreendimentoId;
 						caracterizacao.areaAlagada = reader.GetValue<decimal>("area_alagada");
 						caracterizacao.volumeArmazanado = reader.GetValue<decimal>("volume_armazenado");
+						caracterizacao.TituloSituacao = reader.GetValue<string>("situacao"); ;
 
 						caracterizacao.Atividade = String.Join(" / ", ObterListaFinalidadeAtividade(caracterizacao.Id));
 
