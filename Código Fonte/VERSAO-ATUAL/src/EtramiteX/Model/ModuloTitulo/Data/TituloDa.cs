@@ -2682,7 +2682,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					"largura_demarcada_legislacao",
 					"faixa_cercada",
 					"descricao_estagio_desenv",
-					"barragem_dentro_das_normas",
+					"barramento_dentro_das_normas",
 					"barramento_adequacoes",
 					"vazao_min_tipo",
 					"vazao_min_diametro",
@@ -2694,11 +2694,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					"vazao_max_instalado",
 					"vazao_max_normas",
 					"vazao_max_adequacoes",
-					"supressao_app_implant_barragem",
-					//"vazao_min_tipo",
-					//"vazao_min_diametro",
-					//"vazao_max_tipo",
-					//"vazao_max_larg_alt_diametro",
 					"periodo_inicio_obra",
 				   "periodo_termino_obra",
 					"atividades",
@@ -2803,11 +2798,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						(case bc.vazao_max_instalado when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_instalado,
 						(case bc.vazao_max_normas when 1 then 'Sim' when 0 then 'Não' else 'null' end) vazao_max_normas,
 						bc.vazao_max_adequacoes,
-						(case bc.supressao_app when 1 then 'Sim'when 0 then 'Não' else 'null' end) supressao_app_implant_barragem,
-						/*li.texto vazao_min_tipo,
-						bc.vazao_min_diametro,
-						la.texto vazao_max_tipo,
-						bc.vazao_max_diametro vazao_max_larg_alt_diametro,*/
 						bc.periodo_inicio_obra,
 						bc.periodo_termino_obra
         

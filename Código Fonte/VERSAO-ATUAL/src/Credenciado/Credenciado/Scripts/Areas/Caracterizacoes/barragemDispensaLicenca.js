@@ -336,21 +336,26 @@ BarragemDispensaLicenca = {
 					($('.rbLarguraDemarcadaLegislacao:checked').val() == 0 ? false : null),
 				faixaCercada: $('.rbFaixaCercada:checked').val(),
 				descricaoDesenvolvimentoAPP: $('.txtDescricaoDesenvolvimento').val(),
-				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true : false,
+				barramentoNormas: $('.rbBarramentoNormas:checked').val() == 1 ? true :
+					($('.rbBarramentoNormas:checked').val() == 0 ? false : null),
 				barramentoAdequacoes: $('.txtAdequacoesDimensionamentoBarramento').val(),
 				vazaoMinTipo: ($('.rbFase:checked')).val() == 1 ?
 					$('.ddlTipoDispositivoVazaoMin:visible').val() : $('.ddlTipoDispositivoVazaoMinAConstruir:visible').val(),
 				vazaoMinDiametro: ($('.rbFase:checked')).val() == 1 ?
 					$('.txtDiametroTubulacaoVazaoMin').val() : $('.txtDiametroTubulacaoVazaoMinAConstruir').val(),
-				vazaoMinInstalado: $('.rbVazaoMinInstalado:checked').val() == 1 ? true : false,
-				vazaoMinNormas: $('.rbVazaoMinNormas:checked').val() == 1 ? true : false,
+				vazaoMinInstalado: $('.rbVazaoMinInstalado:checked').val() == 1 ? true :
+					($('.rbVazaoMinInstalado:checked').val() == 0 ? false : null),
+				vazaoMinNormas: $('.rbVazaoMinNormas:checked').val() == 1 ? true :
+					($('.rbVazaoMinNormas:checked').val() == 0 ? false : null),
 				vazaoMinAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMin').val(),
 				vazaoMaxTipo: ($('.rbFase:checked')).val() == 1 ?
-					$('.ddlTipoDispositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
+					$('.ddlTipoDisp ositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
 				vazaoMaxDiametro: ($('.rbFase:checked')).val() == 1 ?
 					$('.txtDiametroTubulacaoVazaoMax').val() : $('.txtDiametroTubulacaoVazaoMaxAConstruir').val(),
-				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true : false,
-				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val() == 1 ? true : false,
+				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true :
+					($('.rbVazaoMaxInstalado:checked').val() == 0 ? false : null),
+				vazaoMaxNormas: $('.rbVazaoMaxNormas:checked').val() == 1 ? true :
+					($('.rbVazaoMaxNormas:checked').val() == 0 ? false : null),
 				vazaoMaxAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMax').val(),
 				periodoInicioObra: $('.txtperiodoInicioObra').val(),
 				periodoTerminoObra: $('.txtperiodoTerminoObra').val()

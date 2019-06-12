@@ -32,7 +32,7 @@
 		<input type="hidden" class="hdnEmpreendimentoId" value="<%: Model.Caracterizacao.EmpreendimentoID %>" />
 		<input type="hidden" class="hdnCaracterizacaoId" value="<%: Model.Caracterizacao.Id %>" />
 		<%=Html.Hidden("ProjetoDigitalId", Request.Params["ProjetoDigitalId"], new { @class="hdnProjetoDigitalId" })%>
-		<h1 class="titTela">Barragem dispensada de Licenciamento Ambiental</h1>
+		<h1 class="titTela">Barragem Dispensada de Licenciamento Ambiental</h1>
 		<br />
 
 		<div class="divCaracterizacao">

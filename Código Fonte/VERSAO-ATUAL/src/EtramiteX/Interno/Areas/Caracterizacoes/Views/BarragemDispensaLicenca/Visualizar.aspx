@@ -15,7 +15,7 @@
 
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
 	<div id="central">
-		<h1 class="titTela">Barragem para Dispensa de Licença Ambiental</h1>
+		<h1 class="titTela">Barragem Dispensada de Licenciamento Ambiental</h1>
 		<br />
 
 		<div class="divCaracterizacao">
