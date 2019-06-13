@@ -195,7 +195,7 @@ TituloAlterarSituacao = {
 									ExibirMensagemValidacao(msg);
 								}
 							},
-							timeout: 25000
+							timeout: 250000
 						});
 					} else {
 						if (retorno.Msg && retorno.Msg.length > 0) {
