@@ -349,7 +349,7 @@ BarragemDispensaLicenca = {
 					($('.rbVazaoMinNormas:checked').val() == 0 ? false : null),
 				vazaoMinAdequacoes: $('.txtAdequacoesDimensionamentoVazaoMin').val(),
 				vazaoMaxTipo: ($('.rbFase:checked')).val() == 1 ?
-					$('.ddlTipoDisp ositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
+					$('.ddlTipoDispositivoVazaoMax:visible').val() : $('.ddlTipoDispositivoVazaoMaxAConstruir:visible').val(),
 				vazaoMaxDiametro: ($('.rbFase:checked')).val() == 1 ?
 					$('.txtDiametroTubulacaoVazaoMax').val() : $('.txtDiametroTubulacaoVazaoMaxAConstruir').val(),
 				vazaoMaxInstalado: $('.rbVazaoMaxInstalado:checked').val() == 1 ? true :
