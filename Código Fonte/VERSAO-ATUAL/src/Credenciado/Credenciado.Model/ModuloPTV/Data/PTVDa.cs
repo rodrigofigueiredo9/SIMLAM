@@ -2291,7 +2291,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			{
 				Comando comando = bancoDeDados.CriarComando(@"
 				select c.id, c.nome, c.sigla, c.responsavel, c.unidade_convenio 
-				from tab_setor c where c.id in (select l.setor from cnf_local_vistoria l)
+				from tab_setor c where c.id in (select l.setor from cnf_local_vistoria l WHERE l.SITUACAO != 0)
 				order by c.nome");
 
 				List<Setor> retorno = null;

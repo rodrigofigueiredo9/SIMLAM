@@ -38,7 +38,7 @@
 						<td title="<%=Html.Encode(item.Atividade)%>"><%=Html.Encode(item.Atividade)%></td>
 						<td title="<%=Html.Encode(item.areaAlagada)%>"><%=Html.Encode(item.areaAlagada)%></td>
 						<td title="<%=Html.Encode(item.volumeArmazanado)%>"><%=Html.Encode(item.volumeArmazanado)%></td>
-						<td title="Valido">Válido</td>
+						<td title="<%=Html.Encode(item.TituloSituacao)%>"><%=Html.Encode(item.TituloSituacao)%></td>
 
 						<td>
 							<input type="hidden" class="hdnId" value="<%= item.Id %>" />

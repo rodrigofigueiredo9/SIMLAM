@@ -39,8 +39,11 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 
 		public Mensagem TituloNaoPossuiSolicitacaoDeInscricao { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título não possui uma Solicitação de Inscrição do CAR com situação \"Válido\" e situação do Arquivo \"Arquivo Entregue\"." }; } }
 		public Mensagem TituloPossuiSolicitacaoEmCadastro { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O Empreendimento do Título possui uma Solicitação de Inscrição do CAR com situação \"Em cadastro\". Aguarde o envio da mesma ao SICAR para fazer o cadastro do título CAR." }; } }
-		public Mensagem TituloPossuiAssociadoNaoEncerrado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O título não pode ser encerrado pois está associado a um título de AEF." }; } }
 		public Mensagem TituloVencido { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "O título não pode ser prorrogado pois está vencido." }; } }
+		public Mensagem TituloPossuiAssociadoNaoEncerrado(string acao)
+		{
+			return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = $"O título não pode ser {acao} pois está associado a um título de AEF." };
+		}
 
 		public Mensagem NumeroAnoEmissaoAno { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "DataEmissao", Texto = "O ano do número do título deve ser igual ao ano da emissão." }; } }
 

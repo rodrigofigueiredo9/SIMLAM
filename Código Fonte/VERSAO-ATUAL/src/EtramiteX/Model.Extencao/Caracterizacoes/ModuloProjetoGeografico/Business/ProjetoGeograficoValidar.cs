@@ -90,7 +90,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 				return false;
 			}
 
-			if (projeto.Sobreposicoes == null || projeto.Sobreposicoes.Itens == null || projeto.Sobreposicoes.Itens.Count == 0 || !ValidarDataVerificacao(projeto.Sobreposicoes))
+			if (projeto.Sobreposicoes == null || projeto.Sobreposicoes.Itens == null || projeto.Sobreposicoes.Itens.Count == 0 ||
+				(!ValidarDataVerificacao(projeto.Sobreposicoes) && projeto.CaracterizacaoId != (int)eCaracterizacao.ExploracaoFlorestal))
 			{
 				Validacao.Add(Mensagem.ProjetoGeografico.VerificarSobreposicao);
 			}
