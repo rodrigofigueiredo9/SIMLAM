@@ -244,12 +244,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 					break;
 				case eTituloSituacao.Valido:
 					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
-							situacoes = ListaCredenciadoBus.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
-					break;
-				case eTituloSituacao.AguardandoPagamento:
-				case eTituloSituacao.ProrrogadoDeclaratorio:
-					if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte)
-						situacoes = ListaCredenciadoBus.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
+							situacoes = ListaCredenciadoBus.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio)).ToList();
 					break;
 				default:
 					break;
