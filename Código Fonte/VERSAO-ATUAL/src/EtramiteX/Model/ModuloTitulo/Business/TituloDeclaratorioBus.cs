@@ -248,7 +248,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				case eTituloSituacao.ProrrogadoDeclaratorio:
 					if (titulo.Modelo.Regra(eRegra.Prazo))
 					{
-						titulo.DataVencimento.Data = titulo.DataVencimento.Data.Value.AddDays(titulo.DiasProrrogados.GetValueOrDefault());
+						if(atualTitulo.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
+							titulo.DataVencimento.Data = titulo.DataVencimento.Data.Value.AddDays(titulo.DiasProrrogados.GetValueOrDefault());
 					}
 					break;
 

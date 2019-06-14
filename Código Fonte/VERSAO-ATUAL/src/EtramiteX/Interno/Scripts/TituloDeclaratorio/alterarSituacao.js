@@ -44,7 +44,7 @@ TituloAlterarSituacao = {
 		else if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 10) {
 			$('.divEncerramento', TituloAlterarSituacao.container).removeClass('hide');
 		}
-		else if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 13) {
+		else if ($('.ddlNovaSituacao', TituloAlterarSituacao.container).val() == 13 && $('#SituacaoAtual', TituloAlterarSituacao.container).val() != "Suspenso") {
 			$('.divProrrogar', TituloAlterarSituacao.container).removeClass('hide');
 		}
 	},

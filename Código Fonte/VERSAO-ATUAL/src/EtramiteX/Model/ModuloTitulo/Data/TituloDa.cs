@@ -1273,7 +1273,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						and s.autorizacao_sinaflor is not null and exists
 						(select 1 from tab_titulo_exp_florestal tt
 							where tt.titulo = t.id
-							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor
+							and tt.id = s.titulo_exp_florestal)) codigo_sinaflor,
+						(select count(*) from HST_TITULO where titulo_id = t.id and SITUACAO_ID = :situacao_prorrogado) ja_prorrogado
                       from (select t.titulo_id id,
                                    t.titulo_tid tid,
                                    t.numero,
@@ -1332,7 +1333,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
                                and ta.id = :id) ta", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
-
+				comando.AdicionarParametroEntrada("situacao_prorrogado", (int)eTituloSituacao.ProrrogadoDeclaratorio, DbType.Int32);
+				
 				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 				{
 					if (reader.Read())
@@ -1458,6 +1460,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						titulo.RequerimetoId = reader.GetValue<int?>("requerimento_titulo");
 						titulo.CredenciadoId = reader.GetValue<int?>("credenciado");
 						titulo.CodigoSinaflor = reader["codigo_sinaflor"].ToString();
+						titulo.JaFoiProrrogado = reader.GetValue<bool>("ja_prorrogado");
 
 						#endregion
 					}

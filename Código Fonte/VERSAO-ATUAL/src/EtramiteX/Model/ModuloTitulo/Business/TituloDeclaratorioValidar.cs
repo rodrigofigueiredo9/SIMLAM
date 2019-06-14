@@ -425,9 +425,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				#region Suspenso
 
 				case eTituloSituacao.SuspensoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.ProrrogadoDeclaratorio)
 					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Válido"));
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Suspenso", "Válido ou Prorrogado"));
 					}
 
 					if (string.IsNullOrWhiteSpace(titulo.MotivoSuspensao))
@@ -441,9 +441,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				#region Encerrado
 
 				case eTituloSituacao.EncerradoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio && tituloAux.Situacao.Id != (int)eTituloSituacao.AguardandoPagamento)
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido &&
+						tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio &&
+						tituloAux.Situacao.Id != (int)eTituloSituacao.ProrrogadoDeclaratorio &&
+						tituloAux.Situacao.Id != (int)eTituloSituacao.AguardandoPagamento)
 					{
-						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido, Suspenso ou Aguardando pagamento"));
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Encerrado", "Válido, Prorrogado, Suspenso ou Aguardando pagamento"));
 					}
 
 					if (titulo.MotivoEncerramentoId <= 0)
@@ -457,8 +460,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				#region Prorrogado
 
 				case eTituloSituacao.ProrrogadoDeclaratorio:
-					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido )
-						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Prorrogado", "Válido"));
+					if (tituloAux.Situacao.Id != (int)eTituloSituacao.Valido && tituloAux.Situacao.Id != (int)eTituloSituacao.SuspensoDeclaratorio)
+						Validacao.Add(Mensagem.TituloAlterarSituacao.SituacaoInvalida("Prorrogado", "Válido ou Suspenso"));
 
 					if(titulo.DataVencimento.Data < DateTime.Now.Date.AddDays(1))
 						Validacao.Add(Mensagem.TituloAlterarSituacao.TituloVencido);

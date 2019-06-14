@@ -364,13 +364,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloOut
 
 				#region Informação de corte
 
-				comando = bancoDeDados.CriarComando(@"
+				var corteId = 0;
+				try
+				{
+					comando = bancoDeDados.CriarComando(@"
 					select  ic.id
 						from {0}crt_informacao_corte ic
 							inner join esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte
 						where oic.titulo = :titulo", EsquemaBanco);
-				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
-				var corteId = bancoDeDados.ExecutarScalar<int>(comando);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+					corteId = bancoDeDados.ExecutarScalar<int>(comando);
+				}
+				catch
+				{
+					comando = bancoDeDados.CriarComando(@"
+					select  ic.id
+						from idafcredenciado.crt_informacao_corte ic
+							inner join idafcredenciado.esp_out_informacao_corte       oic on ic.id = oic.crt_informacao_corte_cred
+						where oic.titulo = :titulo", EsquemaBanco);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+					corteId = bancoDeDados.ExecutarScalar<int>(comando);
+				}
 
 				var corte = infoCorteBus.Obter(corteId);
 

@@ -306,7 +306,10 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					}
 					break;
 				case eTituloSituacao.SuspensoDeclaratorio:
-					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
+					if(titulo.JaFoiProrrogado)
+						situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.ProrrogadoDeclaratorio) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
+					else
+						situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					break;
 				case eTituloSituacao.AguardandoPagamento:
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
@@ -332,9 +335,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			Titulo tituloAtual = _bus.Obter(titulo.Id);
 			tituloAtual.Modelo = _busModelo.Obter(tituloAtual.Modelo.Id);
 			tituloAtual.Situacao.Id = titulo.Situacao.Id;
-			tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId;
-			tituloAtual.MotivoSuspensao = titulo.MotivoSuspensao;
-			tituloAtual.DiasProrrogados = titulo.DiasProrrogados;
+			switch (titulo.Situacao.Id)
+			{
+				case (int)eTituloSituacao.EncerradoDeclaratorio:
+					tituloAtual.MotivoEncerramentoId = titulo.MotivoEncerramentoId;
+					break;
+				case (int)eTituloSituacao.SuspensoDeclaratorio:
+					tituloAtual.MotivoSuspensao = titulo.MotivoSuspensao;
+					break;
+				case (int)eTituloSituacao.ProrrogadoDeclaratorio:
+					if(titulo.DiasProrrogados > 0)
+						tituloAtual.DiasProrrogados = titulo.DiasProrrogados;
+					break;
+			}
 
 			_bus.AlterarSituacao(tituloAtual);
 
