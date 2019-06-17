@@ -113,12 +113,13 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 				if (x.Tipo == eCaracterizacao.ExploracaoFlorestal)
 				{
-					var exploracao = _exploracaoFlorestalBus.ObterPorEmpreendimento(id, simplificado: true);
-					if(exploracao?.Id > 0)
-					{
+					var exploracoes = _exploracaoFlorestalBus.ObterPorEmpreendimentoList(id, true);
+					var exploracoesEmAberto = exploracoes?.Where(i => i.DataConclusao.IsValido == false);
+					var exploracoesPodemExcluir = exploracoesEmAberto?.Where(i => i.PossuiVinculoComTitulo == false);
+					if (exploracoesEmAberto?.Count() > 0)
 						x.PodeEditar = User.IsInRole(String.Format("{0}Editar", x.Tipo.ToString()));
+					if (exploracoesPodemExcluir?.Count() > 0)
 						x.PodeExcluir = User.IsInRole(String.Format("{0}Excluir", x.Tipo.ToString()));
-					}
 				}
 				else
 				{
