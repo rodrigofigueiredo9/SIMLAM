@@ -27,6 +27,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessValidacaoGeo
 				var _bus = new ProjetoBus(BancoDeDados.ObterInstancia());
 				_bus.SetSemRegistroParaCanceladoNaFila();
 				_bus.SetComErroParaAguardandoEtapaNaFila();
+				_bus.SetRegistroTravadoParaParaAguardandoEtapaNaFila();
 
 				if (args == null || args.Length <= 0)
 				{
