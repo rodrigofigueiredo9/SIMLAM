@@ -201,7 +201,7 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 		internal void SetRegistroTravadoParaParaAguardandoEtapaNaFila()
 		{
 			//atualiza registro para aguardando na fila caso esteja processando a mais de 10 minutos
-			string strSQL = $"begin update tab_fila t set t.situacao={FILA_SITUACAO_AGUARDANDO}, t.data_inicio=null, t.data_fim=null where t.situacao = {FILA_SITUACAO_EXECUTANTO} and t.tipo in ({OPERACAO_ATIVIDADE_TITULO},{OPERACAO_REGULARIZACAO}) and t.data_inicio > (sysdate - ((1/24/60) * 10)); end;";
+			string strSQL = $"begin update tab_fila t set t.situacao={FILA_SITUACAO_AGUARDANDO}, t.data_inicio=null, t.data_fim=null where t.situacao = {FILA_SITUACAO_EXECUTANTO} and t.tipo in ({OPERACAO_ATIVIDADE_TITULO},{OPERACAO_REGULARIZACAO}) and t.data_inicio < (sysdate - ((1/24/60) * 10)); end;";
 
 			using (Comando comando = this.banco.CriarComando(strSQL))
 			{
