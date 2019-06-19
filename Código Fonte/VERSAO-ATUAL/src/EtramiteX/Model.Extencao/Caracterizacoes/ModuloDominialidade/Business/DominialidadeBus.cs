@@ -155,76 +155,83 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloDom
 
 		public bool CopiarDadosCredenciado(Dependencia dependencia, int empreendimentoInternoId, BancoDeDados banco, BancoDeDados bancoCredenciado)
 		{
-			if (banco == null)
+			try
 			{
+				if (banco == null)
+				{
+					return false;
+				}
+
+				if (_validar == null)
+				{
+					_validar = new DominialidadeValidar();
+				}
+
+				#region Configurar Caracterização
+
+				DominialidadeCred.Business.DominialidadeBus dominialidadeCredBus = new DominialidadeCred.Business.DominialidadeBus();
+				Dominialidade caracterizacao = dominialidadeCredBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
+
+				int dominialidadeCredenciadoId = dependencia.DependenciaId;
+				int empreendimentoCredenciadoId = caracterizacao.EmpreendimentoId;
+
+				caracterizacao.EmpreendimentoId = empreendimentoInternoId;
+				caracterizacao.CredenciadoID = caracterizacao.Id;
+				caracterizacao.Id = 0;
+				caracterizacao.Tid = string.Empty;
+				caracterizacao.Areas.ForEach(r => { r.Id = 0; });
+				caracterizacao.Dominios.ForEach(r => { r.Id = 0; });
+				caracterizacao.Dominios.SelectMany(x => x.ReservasLegais).ToList().ForEach(r => { r.Id = 0; });
+
+				#endregion
+
+				if (_validar.CopiarDadosCredenciado(caracterizacao))
+				{
+					GerenciadorTransacao.ObterIDAtual();
+
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+					{
+						bancoDeDados.IniciarTransacao();
+
+						//Setar ID 
+						caracterizacao.Id = ObterPorEmpreendimento(empreendimentoInternoId, simplificado: true, banco: bancoDeDados).Id;
+
+						_da.CopiarDadosCredenciado(caracterizacao, bancoDeDados);
+
+						dominialidadeCredBus.AtualizarInternoIdTid(empreendimentoCredenciadoId, dominialidadeCredenciadoId, caracterizacao.Id, GerenciadorTransacao.ObterIDAtual(), bancoCredenciado);
+
+						#region Dependencias
+
+						//Gerencia as dependências da caracterização
+						caracterizacao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(empreendimentoInternoId, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao);
+						_busCaracterizacao.Dependencias(new Caracterizacao()
+						{
+							Id = caracterizacao.Id,
+							Tipo = eCaracterizacao.Dominialidade,
+							DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
+							Dependencias = caracterizacao.Dependencias
+						}, bancoDeDados);
+
+						if (caracterizacao.InternoID > 0)
+						{
+							if (!Desatualizado(caracterizacao.InternoID, caracterizacao.InternoTID) && !caracterizacao.AlteradoCopiar)
+							{
+								CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
+								caracterizacaoBus.AtualizarDependentes(caracterizacao.InternoID, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao, caracterizacao.Tid, bancoDeDados);
+							}
+						}
+
+						#endregion
+
+						bancoDeDados.Commit();
+					}
+				}
+			} catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
 				return false;
 			}
-
-			if (_validar == null)
-			{
-				_validar = new DominialidadeValidar();
-			}
-
-			#region Configurar Caracterização
-
-			DominialidadeCred.Business.DominialidadeBus dominialidadeCredBus = new DominialidadeCred.Business.DominialidadeBus();
-			Dominialidade caracterizacao = dominialidadeCredBus.ObterHistorico(dependencia.DependenciaId, dependencia.DependenciaTid);
-
-			int dominialidadeCredenciadoId = dependencia.DependenciaId;
-			int empreendimentoCredenciadoId = caracterizacao.EmpreendimentoId;
-
-			caracterizacao.EmpreendimentoId = empreendimentoInternoId;
-			caracterizacao.CredenciadoID = caracterizacao.Id;
-			caracterizacao.Id = 0;
-			caracterizacao.Tid = string.Empty;
-			caracterizacao.Areas.ForEach(r => { r.Id = 0; });
-			caracterizacao.Dominios.ForEach(r => { r.Id = 0; });
-			caracterizacao.Dominios.SelectMany(x => x.ReservasLegais).ToList().ForEach(r => { r.Id = 0; });
-
-			#endregion
-
-			if (_validar.CopiarDadosCredenciado(caracterizacao))
-			{
-				GerenciadorTransacao.ObterIDAtual();
-
-				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-				{
-					bancoDeDados.IniciarTransacao();
-
-					//Setar ID 
-					caracterizacao.Id = ObterPorEmpreendimento(empreendimentoInternoId, simplificado: true, banco: bancoDeDados).Id;
-
-					_da.CopiarDadosCredenciado(caracterizacao, bancoDeDados);
-
-					dominialidadeCredBus.AtualizarInternoIdTid(empreendimentoCredenciadoId, dominialidadeCredenciadoId, caracterizacao.Id, GerenciadorTransacao.ObterIDAtual(), bancoCredenciado);
-
-					#region Dependencias
-
-					//Gerencia as dependências da caracterização
-					caracterizacao.Dependencias = _busCaracterizacao.ObterDependenciasAtual(empreendimentoInternoId, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao);
-					_busCaracterizacao.Dependencias(new Caracterizacao()
-					{
-						Id = caracterizacao.Id,
-						Tipo = eCaracterizacao.Dominialidade,
-						DependenteTipo = eCaracterizacaoDependenciaTipo.Caracterizacao,
-						Dependencias = caracterizacao.Dependencias
-					}, bancoDeDados);
-
-					if (caracterizacao.InternoID > 0)
-					{
-						if (!Desatualizado(caracterizacao.InternoID, caracterizacao.InternoTID) && !caracterizacao.AlteradoCopiar)
-						{
-							CaracterizacaoBus caracterizacaoBus = new CaracterizacaoBus();
-							caracterizacaoBus.AtualizarDependentes(caracterizacao.InternoID, eCaracterizacao.Dominialidade, eCaracterizacaoDependenciaTipo.Caracterizacao, caracterizacao.Tid, bancoDeDados);
-						}
-					}
-
-					#endregion
-
-					bancoDeDados.Commit();
-				}
-			}
-
+			
 			return Validacao.EhValido;
 		}
 
