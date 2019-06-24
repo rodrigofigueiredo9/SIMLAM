@@ -596,11 +596,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloPro
 		{
 			try
 			{
-				if (_validar.Finalizar(projeto))
-				{
-					_da.FinalizarGeometrias(projeto.Id, titulo, banco);
-					Validacao.Add(Mensagem.ProjetoGeografico.FinalizadoSucesso);
-				}
+				_da.FinalizarGeometrias(projeto.Id, titulo, banco);
+				Validacao.Add(Mensagem.ProjetoGeografico.FinalizadoSucesso);
 			}
 			catch (Exception exc)
 			{
