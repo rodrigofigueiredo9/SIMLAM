@@ -181,6 +181,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloLista.Business
 			}
 		}
 
+		public static List<Motivo> DeclaratorioMotivosEncerramento
+		{
+			get
+			{
+				GerenciadorConfiguracao<ConfiguracaoTitulo> configTitulo = new GerenciadorConfiguracao<ConfiguracaoTitulo>(new ConfiguracaoTitulo());
+				return configTitulo.Obter<List<Motivo>>(ConfiguracaoTitulo.KeyDeclaratorioMotivosEncerramento);
+			}
+		}
+
 		public static List<Situacao> SituacoesRequerimento
 		{
 			get

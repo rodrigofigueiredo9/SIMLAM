@@ -277,6 +277,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 		public Arquivo GerarPdf(int id)
 		{
+			ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 			Titulo titulo = _da.ObterSimplificado(id);
 			titulo.Modelo = ObterModelo(titulo.Modelo.Id);
 			titulo.Anexos = _da.ObterAnexos(id);
@@ -289,7 +290,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 
 			if (titulo.ArquivoPdf.Id > 0)
 			{
-				ArquivoBus busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 				titulo.ArquivoPdf = busArquivo.Obter(titulo.ArquivoPdf.Id.Value);
 				string auxiliar = string.Empty;
 
@@ -348,6 +348,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Extensao = "";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
+
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte &&
+				titulo.Situacao.Id == (int)eTituloSituacao.Valido &&
+				titulo.ArquivoPdf.Buffer != null)
+			{
+				busArquivo.Salvar(titulo.ArquivoPdf);
+
+				ArquivoDa _arquivoDa = new ArquivoDa();
+				_arquivoDa.Salvar(titulo.ArquivoPdf, User.FuncionarioId, User.Name,
+					User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid);
+
+				_da.SalvarPdfTitulo(titulo);
+			}
 
 			return titulo.ArquivoPdf;
 		}

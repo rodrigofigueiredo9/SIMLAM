@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using Tecnomapas.Blocos.Arquivo;
+using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio;
+using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade;
 using Tecnomapas.Blocos.Entities.Interno.Extensoes.Especificidades.ModuloEspecificidade.PDF;
@@ -43,6 +45,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioInterno); }
 		}
 
+		public EtramiteIdentity User
+		{
+			get
+			{
+				try
+				{
+					return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity;
+				}
+				catch (Exception exc)
+				{
+					Validacao.AddErro(exc);
+					return null;
+				}
+			}
+		}
+
 		#endregion
 
 		public TituloInternoBus()
@@ -59,7 +77,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			Titulo titulo = _da.ObterSimplificado(id);
 			titulo.Modelo = ObterModelo(titulo.Modelo.Id);
 			titulo.Anexos = _da.ObterAnexos(id);
-
+			
 			if (titulo.Modelo.Regra(eRegra.PdfGeradoSistema) && (titulo.Modelo.Arquivo.Id ?? 0) <= 0)
 			{
 				Validacao.Add(Mensagem.Titulo.ModeloNaoPossuiPdf);
@@ -74,8 +92,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 				switch (titulo.Situacao.Id)
 				{
 					case (int)eTituloSituacao.Encerrado:
-					case (int)eTituloSituacao.EncerradoDeclaratorio:
 						auxiliar = ListaCredenciadoBus.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+						break;
+
+					case (int)eTituloSituacao.EncerradoDeclaratorio:
+						auxiliar = ListaCredenciadoBus.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
 						break;
 
@@ -102,6 +124,19 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			titulo.ArquivoPdf.Extensao = ".pdf";
 			titulo.ArquivoPdf.ContentType = "application/pdf";
 			titulo.ArquivoPdf.Buffer = GerarPdf(titulo);
+
+			if( titulo.Modelo.Codigo == (int)eTituloModeloCodigo.OutrosInformacaoCorte &&
+				titulo.Situacao.Id == (int)eTituloSituacao.Valido &&
+				titulo.ArquivoPdf.Buffer != null)
+			{
+				busArquivo.Salvar(titulo.ArquivoPdf);
+
+				ArquivoDa _arquivoDa = new ArquivoDa();
+				_arquivoDa.Salvar(titulo.ArquivoPdf, User.FuncionarioId, User.Name,
+					User.Login, (int)eExecutorTipo.Interno, User.FuncionarioTid);
+
+				_da.SalvarPdfTitulo(titulo);
+			}
 
 			return titulo.ArquivoPdf;
 		}
@@ -194,8 +229,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 			switch (titulo.Situacao.Id)
 			{
 				case (int)eTituloSituacao.Encerrado:
-				case (int)eTituloSituacao.EncerradoDeclaratorio:
-					auxiliar = ListaCredenciadoBus.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+                    auxiliar = ListaCredenciadoBus.MotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+                    msPdf.Position = 0;
+                    msPdf = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(msPdf, auxiliar);
+                    break;
+
+                case (int)eTituloSituacao.EncerradoDeclaratorio:
+					auxiliar = ListaCredenciadoBus.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
 					msPdf.Position = 0;
 					msPdf = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(msPdf, auxiliar);
 					break;
