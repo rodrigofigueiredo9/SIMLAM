@@ -66,8 +66,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 				return Validacao.EhValido;
 			}
 
-			ValidacoesBasicas(empreendimento);
-			VerificarCoordenada(empreendimento.Coordenada, "Empreendimento");
 			if (isInfCorte)
 			{
 				VerificarEnderecosInformacaoDeCorte(empreendimento);
@@ -75,6 +73,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloEmpreendimento.Business
 					Validacao.Add(Mensagem.Empreendimento.ContatoComIdaf);
 			}else
 			{
+				ValidacoesBasicas(empreendimento);
+				VerificarCoordenada(empreendimento.Coordenada, "Empreendimento");
 				VerificarResponsaveis(empreendimento.Responsaveis);
 				VerificarEnderecos(empreendimento);
 			}
