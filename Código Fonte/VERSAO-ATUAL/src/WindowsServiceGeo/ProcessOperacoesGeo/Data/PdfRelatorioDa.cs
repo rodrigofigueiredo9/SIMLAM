@@ -894,11 +894,21 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 				}
 
 				//coordenadas
-				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_pativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_pativ t
+							inner join {0}CRT_EXP_FLORESTAL_GEO ge
+									on ge.GEO_PATIV_ID = t.id
+							inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
+									on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+							inner join {0}TAB_TITULO_EXP_FLORESTAL te
+									on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+							where t.projeto=:projeto and t.codigo=:codigo and te.titulo = :titulo) t";
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
 					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_PATIV"])
 					{
 						comando.SetarValorParametro("codigo", hs["CODIGO"]);
@@ -955,11 +965,19 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 				}
 
 				//coordenadas
-				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_aativ t where t.projeto=:projeto and t.codigo=:codigo) t";
+				strSQL = @"select t.column_value ordenada from table(select t.geometry.sdo_ordinates from geo_aativ t
+								inner join {0}CRT_EXP_FLORESTAL_GEO ge
+									on ge.GEO_AATIV_ID = t.id 
+								inner join {0}TAB_TITULO_EXP_FLOR_EXP ted
+									on ted.EXP_FLORESTAL_EXPLORACAO = ge.EXP_FLORESTAL_EXPLORACAO
+								inner join {0}TAB_TITULO_EXP_FLORESTAL te
+									on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
+								where t.projeto=:projeto and t.codigo=:codigo and te.titulo = :titulo) t";
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
 					comando.AdicionarParametroEntrada("codigo", "-", DbType.String);
+					comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
 					foreach (Hashtable hs in (List<Hashtable>)result["QUADRO_AATIV"])
 					{
 						comando.SetarValorParametro("codigo", hs["CODIGO"]);
