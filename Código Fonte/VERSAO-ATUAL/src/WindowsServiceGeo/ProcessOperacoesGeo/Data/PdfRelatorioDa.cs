@@ -973,6 +973,8 @@ namespace Tecnomapas.EtramiteX.WindowsService.ProcessOperacoesGeo.Data
 								inner join {0}TAB_TITULO_EXP_FLORESTAL te
 									on te.id = ted.TITULO_EXPLORACAO_FLORESTAL
 								where t.projeto=:projeto and t.codigo=:codigo and te.titulo = :titulo) t";
+				strSQL = strSQL.Replace("\r", "").Replace("\n", "");
+				strSQL = String.Format(strSQL, EsquemaOficialComPonto);
 				using (Comando comando = this.banco.CriarComando(strSQL))
 				{
 					comando.AdicionarParametroEntrada("projeto", ticketID, DbType.Int32);
