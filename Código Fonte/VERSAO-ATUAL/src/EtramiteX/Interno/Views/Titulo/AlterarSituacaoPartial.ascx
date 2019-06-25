@@ -77,7 +77,7 @@
 
 			<div class="coluna20 append2">
 				<label for="DataEmissao">Data de emissão *</label>
-				<%= Html.TextBox("DataEmissao", DateTime.Now.ToString("dd/MM/yyyy"), new { @class = "text txtDataEmissao maskData disabled", @disabled = "disabled" })%>
+				<%= Html.TextBox("DataEmissao", Model.DataEmissao, new { @class = "text txtDataEmissao maskData disabled", @disabled = "disabled" })%>
 			</div>
 
 			<div class="coluna20">

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
+using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloTitulo;
 
 namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
@@ -17,6 +18,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 		public Int32 SituacaoId { get; set; }
 		public String Situacao { get; set; }
 		public String DataSituacaoAtual { get; set; }
+		public String DataEmissao { get; set; }
 		public String DataVencimento { get; set; }
 		public String DataConclusao { get; set; }
 		public String LabelPrazo { get; set; }
@@ -56,13 +58,23 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 				Situacoes = ViewModelHelper.CriarSelectList(situacoes, true);
 			}
 
+			var dataEmissao = DateTime.Now;
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				if (titulo.DiasProrrogados > 0)
+					dataEmissao = titulo.DataEmissao.Data.Value.AddDays(titulo.DiasProrrogados.Value * -1);
+				else if (titulo.DataEmissao.IsValido)
+					dataEmissao = titulo.DataEmissao.Data.Value;
+			}
+
 			this.Id = titulo.Id;
 			this.Numero = titulo.Numero.Texto;
 			this.Modelo = titulo.Modelo.Nome;
 			this.ModeloId = titulo.Modelo.Id;
 			this.ModeloCodigo = titulo.Modelo.Codigo;
 			this.SituacaoId = titulo.Situacao.Id;
-			this.Situacao = titulo.Situacao.Texto;
+			this.Situacao = titulo.Situacao.Texto;			
+			this.DataEmissao = dataEmissao.ToString("dd/MM/yyyy");
 			this.DataVencimento = titulo.DataVencimento.DataTexto;
 			this.DataSituacaoAtual = titulo.DataSituacao.DataTexto;
 			this.CodigoSinaflor = titulo.CodigoSinaflor;
