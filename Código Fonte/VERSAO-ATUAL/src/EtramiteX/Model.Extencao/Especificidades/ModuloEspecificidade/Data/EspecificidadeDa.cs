@@ -147,12 +147,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 				(select lp.texto from lov_protocolo lp where lp.id = t.protocolo) protocolo_tipo, t.empreendimento_id from {0}lst_titulo t where t.titulo_id = :id) t,
 				(select (select n.numero||'/'||n.ano from {0}tab_titulo_numero n where n.titulo = :id) numero,
 				ta.local_emissao local_emissao_id, (select m.texto from {0}lov_municipio m where m.id = ta.local_emissao) local_emissao_texto,
-				ta.prazo_unidade, ta.prazo, ta.dias_prorrogados, ta.data_criacao, to_char(da.data_emissao, 'DD/MM/YYYY') data_emissao,
-				(case when ta.modelo = 74 and da.data_emissao is null then null 
-					when ta.modelo = 74 and da.data_emissao is not null and ta.dias_prorrogados is not null then to_char(ta.data_vencimento - ta.dias_prorrogados, 'dd/MM/yyyy')
+				ta.prazo_unidade, ta.prazo, ta.dias_prorrogados, ta.data_criacao, to_char(coalesce(ta.data_emissao, da.data_emissao), 'DD/MM/YYYY') data_emissao,
+				(case when ta.modelo = 74 and coalesce(ta.data_emissao, da.data_emissao) is null then null 
+					when ta.modelo = 74 and ta.dias_prorrogados is not null then to_char(ta.data_vencimento - ta.dias_prorrogados, 'dd/MM/yyyy')
 					else to_char(ta.data_vencimento, 'dd/MM/yyyy') end) data_vencimento, ta.data_assinatura, 
-				ta.data_inicio, ta.data_encerramento, to_char(da.data_emissao, 'DD') diaemissao, to_char(da.data_emissao, 'MM') mesemissao, 
-				to_char(da.data_emissao, 'YYYY') anoemissao, ta.setor from {0}tab_titulo ta
+				ta.data_inicio, ta.data_encerramento, to_char(coalesce(ta.data_emissao, da.data_emissao), 'DD') diaemissao,
+				to_char(coalesce(ta.data_emissao, da.data_emissao), 'MM') mesemissao, 
+				to_char(coalesce(ta.data_emissao, da.data_emissao), 'YYYY') anoemissao, ta.setor from {0}tab_titulo ta
 				left join (select h.titulo_id, h.data_emissao from hst_titulo h where h.titulo_id = :id
 					and h.data_emissao is not null and rownum = 1) da
 					on da.titulo_id = ta.id
