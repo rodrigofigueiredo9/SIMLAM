@@ -221,11 +221,13 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 			//verifica se objeto já foi instanciado
 			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
+			Log.Info($"URL::: {sicarUrl} \n\n ---");
 			if (_client == null)
 			{
 				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now} ");
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 				_client.DefaultRequestHeaders.Clear();
+				_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mozilla", "5.0"));
 
 				count++;
 			}

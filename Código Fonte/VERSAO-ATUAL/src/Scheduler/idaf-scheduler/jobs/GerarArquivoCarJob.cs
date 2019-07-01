@@ -1601,7 +1601,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 					connAux.Close();
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				Log.Error($" Obter Documentos ::: Empreendimento - {empreendimentoId} * Dominilidade - {dominialidadeId} * Schema {schema} * DominialidadeOrigem {dominialidadeOrigem}");
 			}
@@ -1622,17 +1622,27 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			var resultado = new ReservaLegal();
 			var dadosReceptor = new DadosReserva();
 			var IsValido = false;
+			var bancoGeo = (schema == CarUtils.GetEsquemaInstitucional()) ? "IDAFGEO." : "IDAFCREDENCIADOGEO.";
+
+			var scriptAverbacaoNumero = @"SELECT DISTINCT t.averbacao_numero
+											FROM CRT_DOMINIALIDADE_RESERVA				t
+												INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
+												INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
+												LEFT JOIN crt_projeto_geo				p  ON p.empreendimento = d.empreendimento and p.caracterizacao = 1
+												LEFT JOIN idafgeo.geo_apmp			a  ON p.id = a.projeto
+												LEFT JOIN idafgeo.geo_arl				g  ON a.id = g.COD_APMP and t.IDENTIFICACAO = g.codigo
+											WHERE t.situacao = 3 AND t.DOMINIO = :dominio_id";
 			using (
 				var cmd = new OracleCommand(
-						/*"SELECT situacao_id, numero_termo, arl_croqui, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, cedente_receptor, emp_compensacao_id FROM " + schema +
-						".HST_CRT_DOMINIALIDADE_RESERVA t WHERE t.dominio_id = :dominio_id AND t.dominio_tid = :dominio_tid", conn))
-                         */
-
-						@"SELECT t.situacao, t.averbacao_numero, c.ARL_DOCUMENTO, (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, t.cedente_receptor, t.emp_compensacao, t.cedente_possui_emp
-                          FROM CRT_DOMINIALIDADE_RESERVA t
-                              INNER JOIN CRT_DOMINIALIDADE_DOMINIO  d   ON  t.DOMINIO = d.ID
-                              INNER JOIN CRT_DOMINIALIDADE          c   ON  d.DOMINIALIDADE = c.id
-                          WHERE t.DOMINIO = :dominio_id /* AND  t.TID = :dominio_tid */ ", conn))
+						$@"SELECT distinct t.situacao, t.averbacao_numero, nvl(dd.ARL_DOCUMENTO, 0) ARL_DOCUMENTO, /*G.CODIGO,*/ (case when t.compensada = 0 and t.cedente_receptor = 2 then 1 else 0 end) compensada, 
+									/*t.cedente_receptor,*/ t.emp_compensacao, t.cedente_possui_emp, t.arl_cedida
+										FROM CRT_DOMINIALIDADE_RESERVA				t
+											INNER JOIN crt_dominialidade_dominio	dd ON dd.id = t.dominio
+											INNER JOIN crt_dominialidade			d  ON d.id = dd.dominialidade
+											LEFT JOIN crt_projeto_geo				p  ON p.empreendimento = d.empreendimento and p.caracterizacao = 1
+											LEFT JOIN {bancoGeo}geo_apmp			a  ON p.id = a.projeto
+											LEFT JOIN {bancoGeo}geo_arl				g  ON a.id = g.COD_APMP and t.IDENTIFICACAO = g.codigo
+										WHERE t.DOMINIO = :dominio_id ", conn))
 			{
 				cmd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
 				//cmd.Parameters.Add(new OracleParameter("dominio_tid", dominioTid));
@@ -1650,9 +1660,24 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 						{
 							resultado.resposta = "Sim";
 
+							// Concatenando todas os numeros de averbacao da matricula
+							List<string> lstAverbacao = new List<string>();
+
+							using ( var cmdd = new OracleCommand(scriptAverbacaoNumero , conn))
+							{
+								cmdd.Parameters.Add(new OracleParameter("dominio_id", dominioId));
+								using (var drr = cmdd.ExecuteReader())
+								{
+									while (drr.Read())
+									{
+										lstAverbacao.Add(drr["averbacao_numero"].ToString());
+									}
+								}
+							}
+
 							var dados = new DadosReserva()
 							{
-								numero = dr.GetValue<string>("averbacao_numero"),
+								numero = String.Join(", ", lstAverbacao), //dr.GetValue<string>("averbacao_numero"),
 								data = new DateTime(1900, 01, 01),
 								//reservaDentroImovel = ((Convert.ToInt32(dr["compensada"]) == 0 && (dr.GetValue<double>("arl_croqui") > 0) ? "Sim" : "Não"))  //"Não" : "Sim") compensada = 0 - cedente
 								reservaDentroImovel = (Convert.ToInt32(dr["compensada"]) == 0 ? "Sim" : "Não")//"Não" : "Sim") compensada = 0 - cedente								
@@ -1672,6 +1697,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 							{
 
 								dados.numeroCAR = ObterNumeroSICAR(conn, schema, Convert.ToInt32(empreendimentoCedente), requisicaoOrigem);
+
+								var areaCedida = Convert.ToDouble(dr["ARL_CEDIDA"]);
+								dados.area = areaCedida > 0 ? Convert.ToString(Math.Round(areaCedida / 10000, 2), CultureInfo.InvariantCulture) : "0";
 
 								dadosReceptor = dados;
 							}
