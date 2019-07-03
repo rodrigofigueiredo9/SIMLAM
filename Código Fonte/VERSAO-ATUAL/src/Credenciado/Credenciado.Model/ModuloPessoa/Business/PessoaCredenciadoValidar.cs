@@ -45,7 +45,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			_da = new PessoaCredenciadoDa(UsuarioCredenciado);
 		}
 
-		public bool VerificarPessoaFisica(Pessoa pessoa, bool isConjuge = false)
+		public bool VerificarPessoaFisica(Pessoa pessoa, bool isConjuge = false, BancoDeDados bancoDeDados = null)
 		{
 			VerificarCriarCpf(pessoa, isConjuge);
 
@@ -122,7 +122,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 
             if (!pessoa.IsCopiado && pessoa.Fisica.ConjugeId.GetValueOrDefault() > 0 && !isConjuge && User != null) 
             {
-                pessoa.Fisica.Conjuge = _da.Obter(pessoa.Fisica.ConjugeId.GetValueOrDefault(), null, simplificado:false);
+                pessoa.Fisica.Conjuge = _da.Obter(pessoa.Fisica.ConjugeId.GetValueOrDefault(), bancoDeDados, simplificado:false);
                 VerificarPessoaFisica(pessoa.Fisica.Conjuge, true);
             }
 
@@ -238,7 +238,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			return Validacao.EhValido;
 		}
 
-		public bool VerificarPessoaCriar(Pessoa pessoa, bool isConjuge = false)
+		public bool VerificarPessoaCriar(Pessoa pessoa, bool isConjuge = false, BancoDeDados bancoDeDados = null)
 		{
 			if (_da.ExistePessoa(pessoa.CPFCNPJ, pessoa.CredenciadoId.GetValueOrDefault()) > 0)
 			{
@@ -254,7 +254,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 
 			if (pessoa.IsFisica)
 			{
-				VerificarPessoaFisica(pessoa, isConjuge);
+				VerificarPessoaFisica(pessoa, isConjuge, bancoDeDados);
 			}
 			else
 			{
@@ -278,7 +278,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			return Validacao.EhValido;
 		}
 
-		public bool Salvar(Pessoa pessoa, bool isConjuge = false)
+		public bool Salvar(Pessoa pessoa, bool isConjuge = false, BancoDeDados bancoDeDados = null)
 		{
 			if (pessoa.Id > 0)
 			{
@@ -286,7 +286,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 			}
 			else
 			{
-				VerificarPessoaCriar(pessoa, isConjuge);
+				VerificarPessoaCriar(pessoa, isConjuge, bancoDeDados);
 			}
 
 			VerificarEndereco(pessoa.Endereco, isConjuge);

@@ -244,7 +244,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 									aux.InternoId = aux.Id;
 									aux.Id = 0;
 
-									if (!_validar.Salvar(aux))
+									if (!_validar.Salvar(aux, bancoDeDados: bancoDeDados))
 									{
 										bancoDeDados.Rollback();
 										return false;
