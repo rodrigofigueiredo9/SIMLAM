@@ -358,24 +358,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				MemoryStream resultado = null;
 
 				if (_bus.ExisteCredenciado(id))
-				{
-					CARSolicitacao solicitacao = _busCredenciado.Obter(id);
-					int situacaoId = solicitacao.SituacaoId;
-					string situacaoTexto = solicitacao.SituacaoTexto;
-					resultado = new PdfCARSolicitacaoCredenciado().Gerar(id, situacaoId, situacaoTexto);
-				}
+					resultado = new PdfCARSolicitacaoCredenciado().Gerar(_busCredenciado.Obter(id));
 				else
-				{
-					CARSolicitacao solicitacao = _bus.Obter(id, true);
-					int situacaoId = solicitacao.SituacaoId;
-					string situacaoTexto = solicitacao.SituacaoTexto;
-					resultado = new PdfCARSolicitacao().Gerar(id, situacaoId, situacaoTexto);
-				}
+					resultado = new PdfCARSolicitacao().Gerar(_bus.Obter(id, true));
 
 				if (!Validacao.EhValido)
-				{
 					return RedirectToAction("Index", Validacao.QueryParamSerializer());
-				}
 
 				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR.pdf", resultado, "application/pdf", dataHoraControleAcesso: true);
 

@@ -583,7 +583,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 					   s.motivo,
 					   tr.data_criacao requerimento_data_cadastro,
-					   pg.ID projeto_digital
+					   pg.ID projeto_digital,
+					   s.arquivo
 
                     from tab_car_solicitacao s 
                         INNER JOIN          lov_car_solicitacao_situacao l      ON  s.SITUACAO =  l.ID
@@ -635,6 +636,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                         solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
 
                         solicitacao.Motivo = reader.GetValue<String>("motivo");
+                        solicitacao.Arquivo = reader.GetValue<int>("arquivo");
                         //solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_digital");
                     }
 

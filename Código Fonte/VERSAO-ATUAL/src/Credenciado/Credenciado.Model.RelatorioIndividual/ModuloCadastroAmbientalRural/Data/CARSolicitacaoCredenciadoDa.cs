@@ -183,6 +183,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						hcs.numero,
 						hcs.data_emissao,
 						hcs.situacao_texto,
+						hcs.motivo,
 						(select count(*)
 							from hst_empreendimento_responsavel her
 							where her.id_hst = he.id
@@ -221,6 +222,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						lfc.texto emp_local_coleta,
 						llc.texto emp_forma_coleta,
 						hcs.requerimento_id,
+						hcsicar.situacao_envio situacao_sicar,
 						hcsicar.codigo_imovel numero_sicar,
 						hcsicar.pendencias pendencias_sicar,
 						nvl(hcsicar.data_envio, hcsicar.data_gerado ) data_envio_sicar
@@ -272,6 +274,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						entidade.Numero = reader.GetValue<int>("numero");
 						entidade.DataEmissao = reader.GetValue<string>("data_emissao");
 						entidade.SituacaoTexto = reader.GetValue<string>("situacao_texto");
+						entidade.Motivo = reader.GetValue<string>("Motivo");
 						entidade.DominialidadeId = reader.GetValue<int>("dominialidade_id");
 						entidade.DominialidadeTid = reader.GetValue<string>("dominialidade_tid");
 
@@ -310,6 +313,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						entidade.Empreendimento.Coordenada.FormaColetaTexto = reader.GetValue<string>("emp_forma_coleta");
 						entidade.Empreendimento.Coordenada.DatumTexto = reader.GetValue<string>("emp_datum_texto");
 
+                        entidade.Sicar.SituacaoId = reader.GetValue<int>("situacao_sicar");
                         entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
 						entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
 						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
@@ -323,6 +327,23 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 				#endregion Solicitação
 
 				return entidade;
+			}
+		}
+
+		public void SalvarPdfSolicitacaoCar(int solicitacaoId, int arquivoId)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_car_solicitacao s set s.arquivo = :arquivo where s.id = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", solicitacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", arquivoId, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
 			}
 		}
 	}
