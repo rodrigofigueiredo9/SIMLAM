@@ -97,7 +97,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.TituloDeclaratorioCriar })]
 		public ActionResult Criar()
 		{
-			SalvarVM vm = new SalvarVM(new List<Setor>(), _busModelo.ObterModelosDeclaratorios(), _bus.ObterLocais());
+			var listaModelos = _busModelo.ObterModelosDeclaratorios().Where(x => x.Id != 72).ToList();
+			SalvarVM vm = new SalvarVM(new List<Setor>(), listaModelos, _bus.ObterLocais());
 			vm.Titulo.DataCriacao.Data = DateTime.Now;
 			vm.Titulo.Autor.Nome = _bus.User.Name;
 			vm.Titulo.Situacao = _busLista.TituloDeclaratorioSituacoes.Single(x => x.Id == (int)eTituloSituacao.EmCadastro);
@@ -129,7 +130,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			List<Setor> lstSetores = _bus.ObterFuncionarioSetores();
 
-			vm = new SalvarVM(lstSetores, _busModelo.ObterModelosDeclaratorios(), _bus.ObterLocais(), titulo.Setor.Id, titulo.Modelo.Id, titulo.LocalEmissao.Id);
+			var listaModelos = _busModelo.ObterModelosDeclaratorios().Where(x => x.Id != 72).ToList();
+			vm = new SalvarVM(lstSetores, listaModelos, _bus.ObterLocais(), titulo.Setor.Id, titulo.Modelo.Id, titulo.LocalEmissao.Id);
 			vm.SetoresEditar = lstSetores.Count > 1;
 			vm.Titulo = titulo;
 			vm.Modelo = _busModelo.Obter(titulo.Modelo.Id);
