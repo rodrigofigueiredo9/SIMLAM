@@ -295,9 +295,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido) || x.Id == Convert.ToInt32(eTituloSituacao.EncerradoDeclaratorio)).ToList();
 					break;
 				case eTituloSituacao.EncerradoDeclaratorio:
-					situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
-					break;
-				case eTituloSituacao.EncerradoDeclaratorio:
 					if(titulo.Modelo.Codigo == (int)eTituloModeloCodigo.DeclaracaoDispensaLicencaBarragem)
 						situacoes = _busLista.TituloDeclaratorioSituacoes.Where(x => x.Id == Convert.ToInt32(eTituloSituacao.Valido)).ToList();
 					break;
