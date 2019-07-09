@@ -117,6 +117,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 						_projetoGeoBus.ExcluirRascunho(projeto, bancoDeDados);
 					}
 
+					if (exploracoesEmAberto?.Count() == 0 && exploracoes?.Count() > 0)
+					{
+						bancoDeDados.Rollback();
+						Validacao.Add(Mensagem.ExploracaoFlorestal.PossuiTituloVinculado);
+						return Validacao.EhValido;
+					}
+
 					Validacao.Add(Mensagem.ExploracaoFlorestal.Excluir);
 
 					bancoDeDados.Commit();

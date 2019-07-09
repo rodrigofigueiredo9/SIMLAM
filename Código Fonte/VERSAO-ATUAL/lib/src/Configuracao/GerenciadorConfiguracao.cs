@@ -6,7 +6,6 @@ namespace Tecnomapas.EtramiteX.Configuracao
 	public class GerenciadorConfiguracao
 	{
 		IConfiguracao _config;
-
 		public GerenciadorConfiguracao(IConfiguracao confg) => _config = confg;
 
 		public TRet Obter<TRet>(String idx) => (TRet)_config[idx];

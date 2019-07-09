@@ -7,6 +7,8 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
+using Tecnomapas.EtramiteX.Scheduler.models;
 using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using Tecnomapas.EtramiteX.Scheduler.jobs.Class;
 
@@ -610,13 +612,16 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc
 
 		internal static void AtualizarSolicitacaoCar(OracleConnection conn, RequisicaoJobCar requisicao, int situacao, string tid)
 		{
-			//var controleCAR = ObterItemControleCar(conn, requisicao);
+			// Gerar arquivo PDF
+			if(situacao == (int)eCARSolicitacaoSituacao.Valido)
+			{
+				jobs.CARSolicitacaoFunc _busCar = new jobs.CARSolicitacaoFunc();
 
-			//if (situacao == ControleCarDB.SITUACAO_SOLICITACAO_VALIDO && controleCAR.solicitacao_passivo > 0)
-			//{
-			//	situacao = controleCAR.solicitacao_situacao_aprovado;
-			//}	
-
+				if (requisicao.origem.ToLower() == Values.Origem.Institucional.ToString().ToLower())
+					_busCar.GerarPdfSolicitacaoCarInstitucional(new jobs.Class.CARSolicita() { Id = requisicao.solicitacao_car });
+				else
+					_busCar.GerarPdfSolicitacaoCarCredenciado(new jobs.Class.CARSolicita() { Id = requisicao.solicitacao_car });
+			}
 			AtualizarSolicitacaoCar(conn, requisicao.origem, requisicao.solicitacao_car, situacao, tid);
 		}
 

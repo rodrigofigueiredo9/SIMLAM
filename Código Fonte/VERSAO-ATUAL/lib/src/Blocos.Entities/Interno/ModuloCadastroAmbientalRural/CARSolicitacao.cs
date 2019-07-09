@@ -20,6 +20,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public Int32 ProjetoId { get; set; }
 		public String ProjetoTid { get; set; }
         public int Esquema { get; set; }
+        public int Arquivo { get; set; }
+		
 
 		/*Autor*/
 		public Int32 AutorId { get; set; }
@@ -111,6 +113,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		{
 			get { return _declarante; }
 			set { _declarante = value; }
+		}
+
+		private ControleArquivoSICAR _sicar = new ControleArquivoSICAR();
+		public ControleArquivoSICAR SICAR
+		{
+			get { return _sicar; }
+			set { _sicar = value; }
 		}
 
 		public CARSolicitacao(){}

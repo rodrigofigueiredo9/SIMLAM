@@ -6,6 +6,7 @@ using System.ServiceProcess;
 using log4net;
 using Quartz;
 using Quartz.Impl;
+using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.EtramiteX.Scheduler.jobs;
 
 namespace Tecnomapas.EtramiteX.Scheduler
@@ -69,6 +70,9 @@ namespace Tecnomapas.EtramiteX.Scheduler
 			var reenvioCar = JobBuilder.Create<EnviarArquivoCarJob>().WithIdentity("ReenvioCarJob").Build();
 			JobDictionary.Add("ReenvioCarJob", reenvioCar);
 
+			//var GerarPdfSolicitacaoCarJob = JobBuilder.Create<GerarPdfSolicitacaoCarJob>().WithIdentity("GerarPdfSolicitacaoCarJob").Build();
+			//JobDictionary.Add("GerarPdfSolicitacaoCarJob", GerarPdfSolicitacaoCarJob);
+
 			//var ajustarStatusCar = JobBuilder.Create<AjustarStatusCarJob>().WithIdentity("AjustarStatusCarJob").Build();
 			//JobDictionary.Add("AjustarStatusCarJob", ajustarStatusCar);
 
@@ -78,9 +82,11 @@ namespace Tecnomapas.EtramiteX.Scheduler
 
 		private static void ScheduleJobs()
 		{
-			_scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   //("A cada 15 Segundos"));
+			GeradorAspose.Autorizacao();
+			_scheduler.ScheduleJob(JobDictionary["GerarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));   
 			_scheduler.ScheduleJob(JobDictionary["EnviarArquivoCarJob"], CreateTrigger("A CADA 1 HORA"));
 			_scheduler.ScheduleJob(JobDictionary["ReenvioCarJob"], CreateTrigger("TODO DIA AS 5AM (UTC-4)"));
+			//_scheduler.ScheduleJob(JobDictionary["GerarPdfSolicitacaoCarJob"], CreateTrigger("A CADA 1 HORA"));
 			//_scheduler.ScheduleJob(JobDictionary["AjustarStatusCarJob"], CreateTrigger("A cada 15 Segundos"));
 			//_scheduler.ScheduleJob(JobDictionary["ConsultarDUAJob"], CreateTrigger("A cada 5 Segundos"));
 		}

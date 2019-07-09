@@ -18,6 +18,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 	{
 		public Mensagem Excluir { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização exploração florestal excluida com sucesso" }; } }
 		public Mensagem Salvar { get { return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = "Caracterização exploração florestal salva com sucesso" }; } }
+		public Mensagem PossuiTituloVinculado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = @"Não é possivel excluir a caracterização pois possui título vinculado." }; } }
 		public Mensagem FinalidadeExploracaoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "exploracaoFlorestalFinalidade", Texto = @"Finalidade da exploração florestal é obrigatório." }; } }
 		public Mensagem ExploracaoTipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "exploracaoFlorestalTipoExploracao", Texto = @"Tipo de exploração florestal é obrigatório." }; } }		
 		public Mensagem ProdutoTipoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Campo = "Produto", Texto = @"Tipo do Produto é obrigatório." }; } }
