@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Etx.ModuloExtensao.Data;
 using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.Entities;
@@ -23,8 +19,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 {
 	class RelatorioSolicitacao : PdfPadraoRelatorio
 	{
-		public RelatorioSolicitacao () { }
-
 		public CARSolicitacaoRelatorio ObterHistoricoInstitucional(int id, BancoDeDados banco = null)
 		{
 			CARSolicitacaoRelatorio entidade = new CARSolicitacaoRelatorio();
@@ -164,6 +158,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 						entidade.Sicar.NumeroSICAR = reader.GetValue<string>("numero_sicar");
 						entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
+						entidade.Origem = 1;
 					}
 
 					reader.Close();
@@ -233,7 +228,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 				}
 				#region ATP
 				comando = bancoDeDados.CriarComando(@"SELECT (ATP.AREA_M2) ATP FROM CRT_PROJETO_GEO CRP
-														  INNER JOIN  GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
+														  INNER JOIN  IDAFGEO.GEO_ATP   ATP ON ATP.PROJETO = CRP.ID  
 														  INNER JOIN CRT_DOMINIALIDADE  CRD ON CRD.EMPREENDIMENTO = CRP.EMPREENDIMENTO
 														WHERE CRD.ID  = :id");
 
@@ -595,7 +590,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 						entidade.Sicar.Pendencias = reader.GetValue<string>("pendencias_sicar");
 						entidade.Sicar.DataEnvio = reader.GetValue<string>("data_envio_sicar");
 						entidade.RequerimentoNumero = reader.GetValue<Int32>("requerimento_id");
-
+						entidade.Origem = 2;
 					}
 
 					reader.Close();
@@ -1055,6 +1050,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 				}
 			});
 
+			ConfiguracaoDefault.ExibirSimplesConferencia = false;
 			return dataSource;
 		}
 
@@ -1074,7 +1070,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 
 			_arquivoDa.Salvar(arquivo, Values.UsuarioScheduler.Id, Values.UsuarioScheduler.Nome, Values.UsuarioScheduler.Login, solicitacao.Origem, Values.UsuarioScheduler.Tid);
 
-			SalvarPdfSolicitacaoCar(solicitacao.Id, arquivo.Id ?? 0, solicitacao.Origem == 1 ? "IDAFCREDENCIADO" : "");
+			SalvarPdfSolicitacaoCar(solicitacao.Id, arquivo.Id ?? 0, solicitacao.Origem == 1 ? "" : "IDAFCREDENCIADO");
 		}
 
 		public static void CopyStream(Stream input, Stream output)

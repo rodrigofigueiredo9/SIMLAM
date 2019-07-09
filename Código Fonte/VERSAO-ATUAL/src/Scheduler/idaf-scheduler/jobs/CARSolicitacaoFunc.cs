@@ -1,19 +1,14 @@
 ﻿using System.Data;
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Aspose.Words;
 using Tecnomapas.Blocos.Data;
-using Tecnomapas.EtramiteX.Scheduler.models.misc;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Oracle.ManagedDataAccess.Client;
 using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCadastroAmbientalRural;
-using Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.Entities;
 using Tecnomapas.EtramiteX.Scheduler.jobs.Class;
 using Tecnomapas.EtramiteX.Scheduler.misc.Relatorio;
-using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 using System.IO;
 using Common.Logging;
 using System.Reflection;
@@ -820,7 +815,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			{
 				RelatorioSolicitacao _busRelatorio = new RelatorioSolicitacao();
 				CARSolicitacaoRelatorio dataSource = new CARSolicitacaoRelatorio();
-				dataSource = _busRelatorio.ObterHistoricoCredenciado(solicitacao.Id);
+				dataSource = _busRelatorio.ObterHistoricoInstitucional(solicitacao.Id);
 				dataSource.Dominialidade = _busRelatorio.ObterCaracterizacaoInstitucional(dataSource.DominialidadeId, tid: dataSource.DominialidadeTid);
 
 				MemoryStream stream = _busRelatorio.GerarPdf(dataSource, "~/Content/_pdfAspose/SolicitacaoInscricaoCAR.docx");

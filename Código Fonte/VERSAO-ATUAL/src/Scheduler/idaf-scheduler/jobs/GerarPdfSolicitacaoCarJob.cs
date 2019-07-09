@@ -1,13 +1,9 @@
 ﻿using log4net;
-using Oracle.ManagedDataAccess.Client;
 using Quartz;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.EtramiteX.Scheduler.jobs.Class;
-using Tecnomapas.EtramiteX.Scheduler.models.misc;
 
 namespace Tecnomapas.EtramiteX.Scheduler.jobs
 {
@@ -23,7 +19,6 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 		private void Gerar ()
 		{
-			GeradorAspose.Autorizacao();
 			CARSolicitacaoFunc _busSolicitacaoCar = new CARSolicitacaoFunc();
 			List<CARSolicita> solicitacoes = _busSolicitacaoCar.ObterSolicitacaoValida();
 

@@ -445,58 +445,59 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			{
 				#region Solicitação
 
-				Comando comando = bancoDeDados.CriarComando("select s.tid," + 
-					  " s.numero,"+
-					  " s.data_emissao,"+
-					  " s.situacao_data,"+
-					  " l.id situacao,"+
-					  " l.texto situacao_texto,"+
-					  " s.situacao_anterior,"+
-					  " la.texto situacao_anterior_texto,"+
-					  " s.situacao_anterior_data,"+
-					  " nvl(pes.nome, pes.razao_social) declarante_nome_razao,"+
-					  " s.requerimento,"+
-					  " s.atividade,"+
-					  " e.id empreendimento_id,"+
-					  " e.denominador empreendimento_nome,"+
-					  " e.codigo empreendimento_codigo,"+
-					  " s.declarante,"+
+				Comando comando = bancoDeDados.CriarComando(@"select s.tid, 
+					  s.numero,
+					  s.data_emissao,
+					  s.situacao_data,
+					  l.id situacao,
+					  l.texto situacao_texto,
+					  s.situacao_anterior,
+					  la.texto situacao_anterior_texto,
+					  s.situacao_anterior_data,
+					  nvl(pes.nome, pes.razao_social) declarante_nome_razao,
+					  s.requerimento,
+					  s.atividade,
+					  e.id empreendimento_id,
+					  e.denominador empreendimento_nome,
+					  e.codigo empreendimento_codigo,
+					  s.declarante,
 
-					  " p.id protocolo_id,"+
-					  " p.protocolo,"+
-                      " p.numero protocolo_numero,"+
-                      " p.ano protocolo_ano,"+
+					  p.id protocolo_id,
+					  p.protocolo,
+                      p.numero protocolo_numero,
+                      p.ano protocolo_ano,
 
-					  " s.credenciado autor_id,"+
-					  " nvl(f.nome, f.razao_social) autor_nome,"+
-					  " lct.texto  autor_tipo,"+
-					  " 'Credenciado' autor_modulo,"+
+					  s.credenciado autor_id,
+					  nvl(f.nome, f.razao_social) autor_nome,
+					  lct.texto  autor_tipo,
+					  'Credenciado' autor_modulo,
 
-					  " s.motivo,"+
-					  " tr.data_criacao requerimento_data_cadastro,"+
-					  " s.projeto_digital"+
-					" from "+
-					  " tab_car_solicitacao          s,"+
-					  " lov_car_solicitacao_situacao l,"+
-					  " lov_car_solicitacao_situacao la,"+
-					  " tab_empreendimento           e,"+
-					  " tab_pessoa                   pes,"+
-					  " tab_requerimento             tr,"+
-					  " tab_credenciado              tc,"+
-					  " tab_pessoa                   f,"+
-					  " lov_credenciado_tipo         lct,"+
-					  " ins_protocolo                p"+
-					" where s.situacao = l.id"+
-					" and s.situacao_anterior = la.id(+)"+
-					" and s.empreendimento = e.id"+
-					" and s.declarante = pes.id"+
-					" and s.requerimento = tr.id"+
-					" and s.empreendimento = e.id"+
-					" and tc.id = s.credenciado"+
-					" and f.id = tc.pessoa"+
-					" and lct.id = tc.tipo"+
-					" and s.requerimento=p.requerimento(+)"+
-					" and s.id = :id", UsuarioCredenciado);
+					  s.motivo,
+					  tr.data_criacao requerimento_data_cadastro,
+					  s.projeto_digital,
+					  s.arquivo
+					 from 
+					  tab_car_solicitacao          s,
+					  lov_car_solicitacao_situacao l,
+					  lov_car_solicitacao_situacao la,
+					  tab_empreendimento           e,
+					  tab_pessoa                   pes,
+					  tab_requerimento             tr,
+					  tab_credenciado              tc,
+					  tab_pessoa                   f,
+					  lov_credenciado_tipo         lct,
+					  ins_protocolo                p
+					where s.situacao = l.id
+					and s.situacao_anterior = la.id(+)
+					and s.empreendimento = e.id
+					and s.declarante = pes.id
+					and s.requerimento = tr.id
+					and s.empreendimento = e.id
+					and tc.id = s.credenciado
+					and f.id = tc.pessoa
+					and lct.id = tc.tipo
+					and s.requerimento=p.requerimento(+)
+					and s.id = :id", UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
 
@@ -535,6 +536,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
 						solicitacao.Motivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 					}
 
 					reader.Close();

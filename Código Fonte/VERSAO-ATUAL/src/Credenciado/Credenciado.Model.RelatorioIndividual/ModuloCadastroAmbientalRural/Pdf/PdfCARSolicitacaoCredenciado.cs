@@ -23,7 +23,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 		public PdfCARSolicitacaoCredenciado(CARSolicitacaoCredenciadoDa da = null)
 		{
 			_da = da ?? new CARSolicitacaoCredenciadoDa();
-			_busArquivo = new ArquivoBus(eExecutorTipo.Credenciado);
+			_busArquivo = new ArquivoBus(eExecutorTipo.Interno);
 		}
 
 		public MemoryStream Gerar(CARSolicitacao solicitacao)
@@ -34,7 +34,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
 				if (solicitacao.Arquivo > 0)
 				{
-					Arquivo arquivo = _busArquivo.Obter(solicitacao.Id);
+					Arquivo arquivo = _busArquivo.Obter(solicitacao.Arquivo);
 					CopyStream(arquivo.Buffer, stream);
 				}
 				else
