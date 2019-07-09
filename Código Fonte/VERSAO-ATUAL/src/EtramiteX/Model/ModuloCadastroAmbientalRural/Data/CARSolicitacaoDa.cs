@@ -433,6 +433,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 		internal CARSolicitacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
+			if (simplificado)
+				return Obter(id, banco);
+
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -543,6 +546,79 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 						solicitacao.Motivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
+						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
+						solicitacao.SICAR.SituacaoEnvio = (eStatusArquivoSICAR)reader.GetValue<Int32>("situacao_envio");
+					}
+
+					reader.Close();
+				}
+
+				#endregion
+			}
+
+			return solicitacao;
+		}
+
+		private CARSolicitacao Obter(int id, BancoDeDados banco = null)
+		{
+			CARSolicitacao solicitacao = new CARSolicitacao();
+
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				#region Solicitação
+
+				Comando comando = bancoDeDados.CriarComando(@"
+				select s.tid,
+					s.numero,
+					s.data_emissao,
+					s.situacao_data,
+					l.id situacao,
+					l.texto situacao_texto,
+					nvl(pes.nome, pes.razao_social) declarante_nome_razao,
+					s.requerimento,
+					s.atividade,
+					e.id empreendimento_id,
+					e.denominador empreendimento_nome,
+					e.codigo empreendimento_codigo,
+					s.declarante,
+					s.autor,
+					s.motivo,
+					s.arquivo,
+					cs.situacao_envio
+				from tab_car_solicitacao         s,
+					tab_controle_sicar			 cs,
+					lov_car_solicitacao_situacao l,
+					tab_empreendimento           e,
+					tab_pessoa                   pes
+				where s.id = cs.solicitacao_car
+				and s.situacao = l.id
+				and s.empreendimento = e.id
+				and s.declarante = pes.id
+				and s.id = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
+
+				using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+				{
+					if (reader.Read())
+					{
+						solicitacao.Id = id;
+						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Numero = reader.GetValue<String>("numero");
+						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
+						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
+						solicitacao.SituacaoTexto = reader.GetValue<String>("situacao_texto");
+						solicitacao.DataSituacao.DataTexto = reader.GetValue<String>("situacao_data");
+
+						solicitacao.Requerimento.Id = reader.GetValue<Int32>("requerimento");
+						solicitacao.Atividade.Id = reader.GetValue<Int32>("atividade");
+						solicitacao.Empreendimento.Id = reader.GetValue<Int32>("empreendimento_id");
+						solicitacao.Empreendimento.NomeRazao = reader.GetValue<String>("empreendimento_nome");
+						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
+						solicitacao.Declarante.Id = reader.GetValue<Int32>("declarante");
+						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nome_razao");
+
+						solicitacao.Motivo = reader.GetValue<String>("motivo");
 						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 						solicitacao.SICAR.SituacaoEnvio = (eStatusArquivoSICAR)reader.GetValue<Int32>("situacao_envio");
 					}
