@@ -162,5 +162,10 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx
 		{
 			OnExecuted += Acao;
 		}
+
+		//public ConfiguracaoDefault(bool local = false)
+		//{
+		//	_cabecalhoRodape = CabecalhoRodapeFactory.Criar(local: local);
+		//}
 	}
 }

@@ -11,6 +11,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs.Class
 
         public Int32 Id { get; set; }
         public String Tid { get; set; }
+        public Int32 Origem { get; set; }
 
         public String Numero { get; set; }
         public String Motivo { get; set; }
@@ -66,6 +67,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs.Class
 
         public Int32 SituacaoId { get; set; }
         public String SituacaoTexto { get; set; }
+        public Int32 SituacaoEnvioId { get; set; }
 
         private Protocolo _protocolo = new Protocolo();
         public Protocolo Protocolo
@@ -108,7 +110,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs.Class
             get { return _declarante; }
             set { _declarante = value; }
         }
-        
+
         public CARSolicita() { }
     }
 }

@@ -13,6 +13,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.RelatorioIndividual.ModuloCadastroA
 		public Int32 Id { get; set; }
 		public String Tid { get; set; }
 		public Int32 Numero { get; set; }
+		public Int32 Origem { get; set; }
 		public String DataEmissao { get; set; }
 		public String DataEnvio { get; set; }
 		public Int32 DominialidadeId { get; set; }

@@ -39,12 +39,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 			{
 				ArquivoDocCaminho = @"~/Content/_pdfAspose/SolicitacaoInscricaoCAR.docx";
 
-				CARSolicitacaoRelatorio dataSource = new CARSolicitacaoRelatorio();
-				if (_da.ObterSituacao(solicitacao.Id) == (int)eCARSolicitacaoSituacaoRelatorio.EmCadastro)
-					dataSource = _da.Obter(solicitacao.Id);
-				else
-					dataSource = _da.ObterHistorico(solicitacao.Id);
-
+				CARSolicitacaoRelatorio dataSource = (_da.ObterSituacao(solicitacao.Id) == (int)eCARSolicitacaoSituacaoRelatorio.EmCadastro)
+					? _da.Obter(solicitacao.Id) : _da.ObterHistorico(solicitacao.Id);
 				dataSource.Dominialidade = new DominialidadeDa().Obter(dataSource.DominialidadeId, tid: dataSource.DominialidadeTid);
 
 				ObterArquivoTemplate();
