@@ -89,7 +89,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
 						if (titulo.Modelo.Id == 72) {
-							titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
+							titulo.ArquivoPdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
 						}
 						break;
 
