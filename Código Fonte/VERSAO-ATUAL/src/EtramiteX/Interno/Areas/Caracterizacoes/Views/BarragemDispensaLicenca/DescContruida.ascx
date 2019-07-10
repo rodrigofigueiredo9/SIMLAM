@@ -98,7 +98,7 @@
 	<div class="block">		
 		<div class="coluna60 AdequacoesDimensionamentoVazaoMin <%= (Model.Caracterizacao.construidaConstruir.vazaoMinNormas == false || Model.Caracterizacao.construidaConstruir.vazaoMinInstalado == false) ? "" : "hide"%>">
 			<label for="AdequacoesDimensionamentoVazaoMin">Quais adequações serão realizadas? *</label>
-			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.barramentoAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin ", maxlength = "2000" })) %>
+			<%= Html.TextArea("AdequacoesDimensionamentoVazaoMin", Model.Caracterizacao.construidaConstruir.vazaoMinAdequacoes, ViewModelHelper.SetaDisabled(Model.IsVisualizar, new { @class = "text txtAdequacoesDimensionamentoVazaoMin ", maxlength = "2000" })) %>
 		</div>
 		<br />
 	</div>
