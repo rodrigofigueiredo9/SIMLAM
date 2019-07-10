@@ -97,8 +97,15 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 						break;
 
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
-						auxiliar = ListaCredenciadoBus.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+                        if (titulo.Modelo.Id == 72)
+                        {
+                            titulo.ArquivoPdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
+                        }
+                        else
+                        {
+                            auxiliar = ListaCredenciadoBus.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+                            titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+                        }
 						break;
 
 					case (int)eTituloSituacao.Prorrogado:
@@ -110,6 +117,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 					case (int)eTituloSituacao.Suspenso:
 					case (int)eTituloSituacao.SuspensoDeclaratorio:
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaLaranjaEscuro(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Suspenso");
+						break;
+
+					case (int)eTituloSituacao.EncerradoDeclaratorio:
+						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
 						break;
 
 					default:
