@@ -88,8 +88,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloTitulo.Business
 						break;
 
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
-						if (titulo.Modelo.Id == 72) {
-							titulo.ArquivoPdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
+						if (titulo.Modelo.Id == 72)
+						{
+							auxiliar = "Encerrado - " + ListaCredenciadoBus.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+							titulo.ArquivoPdf.Buffer = PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), auxiliar);
 						}
 						break;
 
