@@ -461,7 +461,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			}
 
 			#endregion
-			using (var connInst = new OracleConnection(Tecnomapas.EtramiteX.Scheduler.jobs.Class.CarUtils.GetBancoInstitucional()))
+			using (var connInst = new OracleConnection(models.misc.CarUtils.GetBancoInstitucional()))
 			{
 				connInst.Open();
 				if (controleArquivoSICAR.Id == 0)
@@ -775,7 +775,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 
 		internal List<CARSolicita> ObterSolicitacaoValida()
 		{
-			using (var conn = new OracleConnection(Class.CarUtils.GetBancoInstitucional()))
+			using (var conn = new OracleConnection(models.misc.CarUtils.GetBancoInstitucional()))
 			{
 				conn.Open();
 				List<CARSolicita> retorno = new List<CARSolicita>();

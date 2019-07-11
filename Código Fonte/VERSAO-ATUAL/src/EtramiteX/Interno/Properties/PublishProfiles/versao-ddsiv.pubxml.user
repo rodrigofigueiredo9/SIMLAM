@@ -65,8 +65,26 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/Criar.aspx">
       <publishTime>02/08/2019 11:29:17</publishTime>
     </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/DescAContruir.ascx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/DescContruida.ascx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/DescricaoGeralBarragem.ascx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
     <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/Editar.aspx">
       <publishTime>02/08/2019 11:29:17</publishTime>
+    </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/ListagemBarragem.ascx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/Listar.aspx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
+    <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/ResponsabilidadeTecnica.ascx">
+      <publishTime>07/09/2019 19:57:38</publishTime>
     </File>
     <File Include="Areas/Caracterizacoes/Views/BarragemDispensaLicenca/Visualizar.aspx">
       <publishTime>02/08/2019 11:29:17</publishTime>
@@ -4832,6 +4850,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/mensagem.js">
       <publishTime>02/11/2019 15:15:30</publishTime>
     </File>
+    <File Include="Scripts/moment.min.js">
+      <publishTime>07/09/2019 19:57:38</publishTime>
+    </File>
     <File Include="Scripts/Motosserra/motosserra.js">
       <publishTime>02/08/2019 11:29:20</publishTime>
     </File>
@@ -6700,6 +6721,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Views/TituloDeclaratorio/Index.aspx">
       <publishTime>02/11/2019 16:32:43</publishTime>
+    </File>
+    <File Include="Views/TituloDeclaratorio/Relatorio.aspx">
+      <publishTime>07/09/2019 19:57:39</publishTime>
+    </File>
+    <File Include="Views/TituloDeclaratorio/RelatorioListarFiltros.ascx">
+      <publishTime>07/09/2019 19:57:39</publishTime>
     </File>
     <File Include="Views/TituloDeclaratorio/TituloCamposModelo.ascx">
       <publishTime>02/11/2019 16:32:43</publishTime>

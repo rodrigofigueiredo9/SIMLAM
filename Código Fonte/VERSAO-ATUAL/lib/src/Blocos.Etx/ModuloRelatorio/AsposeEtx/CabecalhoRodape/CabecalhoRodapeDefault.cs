@@ -4,11 +4,13 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Entities.Home;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 {
 	public class CabecalhoRodapeDefault : ICabecalhoRodape
-	{
+	{			
 		public byte[] LogoOrgao { get; set; }
 		public byte[] LogoBrasao { get; set; }
 		public byte[] LogoSimlam { get; set; }
@@ -35,7 +37,13 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 		public CabecalhoRodapeDefault(bool isBrasao = false, bool isLogo = false, bool isCredenciado = false)
 		{
-			string caminhoRaiz = System.Web.HttpContext.Current == null ? Directory.GetCurrentDirectory() : System.Web.HttpContext.Current.Request.MapPath("~");
+			//var log = new LogBus();
+			//log.Inserir($@"1 - {AppDomain.CurrentDomain.BaseDirectory} \n
+			//			   2 - {Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)} \n
+			//			   3 - {Assembly.GetExecutingAssembly().Location.Substring(0, Assembly.GetExecutingAssembly().Location.LastIndexOf('\\'))}");
+			string caminhoRaiz = System.Web.HttpContext.Current == null ?
+				AppDomain.CurrentDomain.BaseDirectory :
+				System.Web.HttpContext.Current.Request.MapPath("~");
 			string pathImg = $"{caminhoRaiz}/Content/_imgLogo/logobrasao.jpg";
 
 			if (isBrasao)
@@ -45,9 +53,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 			}
 
 			pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logomarca.png";
-			//pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca.png");
-			//pathImg = System.Web.HttpContext.Current.Request.MapPath("") + "~/Content/_imgLogo/logomarca.png";
-
 
 			if (isLogo || (!isLogo && !isBrasao))
 			{
