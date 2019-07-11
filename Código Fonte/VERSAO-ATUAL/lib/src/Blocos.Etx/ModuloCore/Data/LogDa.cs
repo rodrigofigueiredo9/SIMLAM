@@ -52,8 +52,19 @@ namespace Tecnomapas.Blocos.Etx.ModuloCore.Data
 			return lstDyn;
 		}
 
+		public void Inserir(string log)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+			{
+				Comando comando = bancoDeDados.CriarComando(@"insert into log_servicos (id, data, source, mensagem)
+					values (seq_log_servicos.nextval, sysdate, 'SIMLAM', :mensagem)");
+				comando.AdicionarParametroEntrada("mensagem", log, System.Data.DbType.String);
 
-        public List<string> ObterListaSource()
+				bancoDeDados.ExecutarNonQuery(comando);
+			}
+		}
+
+		public List<string> ObterListaSource()
         {
             List<string> lst = new List<string>();
 
