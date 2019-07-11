@@ -28,7 +28,9 @@ namespace Tecnomapas.EtramiteX.Scheduler.misc.Relatorio
 		protected Arquivo ObterArquivoTemplate()
 		{
 			string caminhoDoc = System.Web.HttpContext.Current == null ?
-				Directory.GetCurrentDirectory() + ArquivoDocCaminho.Remove(0,1).Replace('/', '\\') : System.Web.HttpContext.Current.Request.MapPath(ArquivoDocCaminho);
+				AppDomain.CurrentDomain.BaseDirectory +
+				//Directory.GetCurrentDirectory() +
+				ArquivoDocCaminho.Remove(0,1).Replace('/', '\\') : System.Web.HttpContext.Current.Request.MapPath(ArquivoDocCaminho);
 			FileStream file = File.OpenRead(caminhoDoc);
 			Arquivo templatePdf = new Arquivo();
 			templatePdf.Buffer = (Stream)file;
