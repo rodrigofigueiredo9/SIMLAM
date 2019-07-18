@@ -258,115 +258,117 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 
 		internal void Editar(RegularizacaoFundiaria regularizacao, BancoDeDados banco = null)
 		{
-			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			try
 			{
-				#region Regularização fundiária
-
-				bancoDeDados.IniciarTransacao();
-
-				Comando comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao c set c.tid = :tid where c.id = :id", EsquemaBanco);
-
-				comando.AdicionarParametroEntrada("id", regularizacao.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Limpar os dados do banco
-
-				#region Dominios Avulsos
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regula_dominio_avulso c where c.dominio in 
-				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.DominiosAvulsos).Select(y => y.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Ocupações/Opções
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_ocupacao c where c.dominio in 
-				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Opcoes).Select(y => y.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Transmitentes de Posse
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_transmite c where c.dominio in 
-				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Transmitentes).Select(x => x.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Uso atual do solo
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_uso_solo c where c.dominio in 
-				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.UsoAtualSolo).Select(x => x.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Edificações
-
-				comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_edifica c where c.dominio in 
-				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Edificacoes).Select(x => x.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#region Domínios/Posse
-
-				comando = bancoDeDados.CriarComando("delete from {0}crt_regularizacao_dominio c where c.regularizacao = :regularizacao", EsquemaBanco);
-				comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.Select(x => x.Id).ToList());
-
-				comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-				bancoDeDados.ExecutarNonQuery(comando);
-
-				#endregion
-
-				#endregion
-
-				#region Domínios/Posse
-
-				if (regularizacao.Posses != null && regularizacao.Posses.Count > 0)
+				using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 				{
-					foreach (Posse item in regularizacao.Posses)
+					#region Regularização fundiária
+
+					bancoDeDados.IniciarTransacao();
+
+					Comando comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao c set c.tid = :tid where c.id = :id", EsquemaBanco);
+
+					comando.AdicionarParametroEntrada("id", regularizacao.Id, DbType.Int32);
+					comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Limpar os dados do banco
+
+					#region Dominios Avulsos
+
+					comando = bancoDeDados.CriarComando(@"delete from {0}crt_regula_dominio_avulso c where c.dominio in 
+				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.DominiosAvulsos).Select(y => y.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Ocupações/Opções
+
+					comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_ocupacao c where c.dominio in 
+				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Opcoes).Select(y => y.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Transmitentes de Posse
+
+					comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_transmite c where c.dominio in 
+				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Transmitentes).Select(x => x.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Uso atual do solo
+
+					comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_uso_solo c where c.dominio in 
+				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.UsoAtualSolo).Select(x => x.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Edificações
+
+					comando = bancoDeDados.CriarComando(@"delete from {0}crt_regularizacao_edifica c where c.dominio in 
+				(select a.id from {0}crt_regularizacao_dominio a where a.regularizacao = :regularizacao)", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.SelectMany(x => x.Edificacoes).Select(x => x.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#region Domínios/Posse
+
+					comando = bancoDeDados.CriarComando("delete from {0}crt_regularizacao_dominio c where c.regularizacao = :regularizacao", EsquemaBanco);
+					comando.DbCommand.CommandText += comando.AdicionarNotIn("and", "c.id", DbType.Int32, regularizacao.Posses.Select(x => x.Id).ToList());
+
+					comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+					bancoDeDados.ExecutarNonQuery(comando);
+
+					#endregion
+
+					#endregion
+
+					#region Domínios/Posse
+
+					if (regularizacao.Posses != null && regularizacao.Posses.Count > 0)
 					{
-						if (!string.IsNullOrWhiteSpace(item.Tid))
+						foreach (Posse item in regularizacao.Posses)
 						{
-							continue;
-						}
+							if (!string.IsNullOrWhiteSpace(item.Tid))
+							{
+								continue;
+							}
 
-						#region Domínios/Posse
+							#region Domínios/Posse
 
-						if (item.Id > 0)
-						{
-							comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set d.dominio = :dominio, d.zona = :zona, d.identificacao = :identificacao, 
+							if (item.Id > 0)
+							{
+								comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_dominio d set d.dominio = :dominio, d.zona = :zona, d.identificacao = :identificacao, 
 							d.area_requerida = :area_requerida, d.area_croqui = :area_croqui, d.perimetro = :perimetro, d.regularizacao_tipo = :regularizacao_tipo, d.relacao_trabalho= :relacao_trabalho, 
 							d.benfeitorias = :benfeitorias, d.possui_dominio_avulso = :possui_dominio_avulso, d.tid = :tid, d.comprovacao = :comprovacao, d.area_documento = :area_documento, d.data_ultima_atualizacao = :data_ultima_atualizacao,
 							d.registro = :registro, d.numero_ccri = :numero_ccri, d.area_ccri = :area_ccri, d.confrontante_norte = :confrontante_norte,  d.confrontante_sul = :confrontante_sul, d.confrontante_leste = :confrontante_leste, d.confrontante_oeste = :confrontante_oeste, d.observacoes = :observacoes where d.id = :id", EsquemaBanco);
 
-							comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
-						}
-						else
-						{
-							comando = bancoDeDados.CriarComando(@"
+								comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+							}
+							else
+							{
+								comando = bancoDeDados.CriarComando(@"
 							insert into {0}crt_regularizacao_dominio d (id, regularizacao, dominio, zona, identificacao, area_requerida, area_croqui, perimetro, regularizacao_tipo, 
 							relacao_trabalho, benfeitorias, observacoes, possui_dominio_avulso, tid, comprovacao, area_documento, data_ultima_atualizacao, registro,
 							numero_ccri, area_ccri, confrontante_norte, confrontante_sul, confrontante_leste, confrontante_oeste, observacoes) 
@@ -375,216 +377,221 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloReg
 							:relacao_trabalho, :benfeitorias, :possui_dominio_avulso, :tid, :comprovacao, :area_documento, :data_ultima_atualizacao, :registro, :numero_ccri,
 							:area_ccri, :confrontante_norte, :confrontante_sul, :confrontante_leste, :confrontante_oeste, :observacoes) returning d.id into :id", EsquemaBanco);
 
-							comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
-							comando.AdicionarParametroSaida("id", DbType.Int32);
-						}
+								comando.AdicionarParametroEntrada("regularizacao", regularizacao.Id, DbType.Int32);
+								comando.AdicionarParametroSaida("id", DbType.Int32);
+							}
 
-						comando.AdicionarParametroEntrada("dominio", item.Dominio, DbType.Int32);
-						comando.AdicionarParametroEntrada("zona", item.Zona, DbType.Int32);
-						comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
-						comando.AdicionarParametroEntrada("area_requerida", item.AreaRequerida, DbType.Decimal);
-						comando.AdicionarParametroEntrada("area_croqui", item.AreaCroqui, DbType.Decimal);
-						comando.AdicionarParametroEntrada("perimetro", item.Perimetro, DbType.Decimal);
-						comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
-						comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
-						comando.AdicionarParametroEntrada("benfeitorias", DbType.AnsiString, 500, item.Benfeitorias);
-						comando.AdicionarParametroEntrada("observacoes", (item.Observacoes.Length > 4000) ? item.Observacoes.Remove(4000) : item.Observacoes, DbType.AnsiString);
-						comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
-						comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+							comando.AdicionarParametroEntrada("dominio", item.Dominio, DbType.Int32);
+							comando.AdicionarParametroEntrada("zona", item.Zona, DbType.Int32);
+							comando.AdicionarParametroEntrada("identificacao", DbType.String, 100, item.Identificacao);
+							comando.AdicionarParametroEntrada("area_requerida", item.AreaRequerida, DbType.Decimal);
+							comando.AdicionarParametroEntrada("area_croqui", item.AreaCroqui, DbType.Decimal);
+							comando.AdicionarParametroEntrada("perimetro", item.Perimetro, DbType.Decimal);
+							comando.AdicionarParametroEntrada("regularizacao_tipo", item.RegularizacaoTipo, DbType.Int32);
+							comando.AdicionarParametroEntrada("relacao_trabalho", item.RelacaoTrabalho, DbType.Int32);
+							comando.AdicionarParametroEntrada("benfeitorias", DbType.AnsiString, 500, item.Benfeitorias);
+							comando.AdicionarParametroEntrada("observacoes", (item.Observacoes?.Length > 4000) ? item.Observacoes?.Remove(4000) : item.Observacoes, DbType.AnsiString);
+							comando.AdicionarParametroEntrada("possui_dominio_avulso", item.PossuiDominioAvulso, DbType.Int32);
+							comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 
-						comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
-						comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
-						comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
-						comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
-						comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
-						comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
-						comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
-						comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
-						comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
-						comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
+							comando.AdicionarParametroEntrada("comprovacao", item.ComprovacaoId > 0 ? item.ComprovacaoId : (object)DBNull.Value, DbType.Int32);
+							comando.AdicionarParametroEntrada("area_documento", item.AreaPosseDocumento, DbType.Decimal);
+							comando.AdicionarParametroEntrada("data_ultima_atualizacao", item.DataUltimaAtualizacaoCCIR.Data, DbType.DateTime);
+							comando.AdicionarParametroEntrada("registro", DbType.String, 400, item.DescricaoComprovacao);
+							comando.AdicionarParametroEntrada("numero_ccri", item.NumeroCCIR, DbType.Int64);
+							comando.AdicionarParametroEntrada("area_ccri", item.AreaCCIR, DbType.Decimal);
+							comando.AdicionarParametroEntrada("confrontante_norte", DbType.String, 400, item.ConfrontacoesNorte);
+							comando.AdicionarParametroEntrada("confrontante_sul", DbType.String, 400, item.ConfrontacoesSul);
+							comando.AdicionarParametroEntrada("confrontante_leste", DbType.String, 400, item.ConfrontacoesLeste);
+							comando.AdicionarParametroEntrada("confrontante_oeste", DbType.String, 400, item.ConfrontacoesOeste);
 
-						bancoDeDados.ExecutarNonQuery(comando);
+							bancoDeDados.ExecutarNonQuery(comando);
 
 
-						if (item.Id.GetValueOrDefault() <= 0)
-						{
-							item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
-						}
-
-						#endregion
-
-						#region Dominios Avulsos
-
-						if (item.DominiosAvulsos != null && item.DominiosAvulsos.Count > 0)
-						{
-							foreach (Dominio itemAux in item.DominiosAvulsos)
+							if (item.Id.GetValueOrDefault() <= 0)
 							{
-								if (itemAux.Id > 0)
+								item.Id = Convert.ToInt32(comando.ObterValorParametro("id"));
+							}
+
+							#endregion
+
+							#region Dominios Avulsos
+
+							if (item.DominiosAvulsos != null && item.DominiosAvulsos.Count > 0)
+							{
+								foreach (Dominio itemAux in item.DominiosAvulsos)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_regula_dominio_avulso d 
+									if (itemAux.Id > 0)
+									{
+										comando = bancoDeDados.CriarComando(@"update {0}crt_regula_dominio_avulso d 
 									set d.tid = :tid, d.matricula = :matricula, d.folha = :folha, d.livro = :livro, d.cartorio = :cartorio, d.documento_area = :documento_area, 
 									d.ccir = :ccir, d.area_ccir = :area_ccir, d.data_ultima_atualizacao = :data_ultima_atualizacao where d.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", itemAux.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"
+										comando.AdicionarParametroEntrada("id", itemAux.Id, DbType.Int32);
+									}
+									else
+									{
+										comando = bancoDeDados.CriarComando(@"
 									insert into {0}crt_regula_dominio_avulso d (id, tid, dominio, matricula, folha, livro, cartorio, documento_area, ccir, area_ccir, data_ultima_atualizacao) 
 									values ({0}seq_crt_regula_dominio_avulso.nextval, :tid, :dominio, :matricula, :folha, :livro, :cartorio, :documento_area, :ccir, :area_ccir, 
 									:data_ultima_atualizacao)", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+										comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+									}
+
+									comando.AdicionarParametroEntrada("matricula", DbType.String, 24, itemAux.Matricula);
+									comando.AdicionarParametroEntrada("folha", DbType.String, 24, itemAux.Folha);
+									comando.AdicionarParametroEntrada("livro", DbType.String, 24, itemAux.Livro);
+									comando.AdicionarParametroEntrada("cartorio", DbType.String, 150, itemAux.Cartorio);
+									comando.AdicionarParametroEntrada("documento_area", itemAux.AreaDocumento, DbType.Decimal);
+									comando.AdicionarParametroEntrada("ccir", itemAux.NumeroCCIR, DbType.Int64);
+									comando.AdicionarParametroEntrada("area_ccir", (itemAux.AreaCCIR <= 0 ? null : (object)itemAux.AreaCCIR), DbType.Decimal);
+									comando.AdicionarParametroEntrada("data_ultima_atualizacao", itemAux.DataUltimaAtualizacao.Data, DbType.DateTime);
+									comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+									bancoDeDados.ExecutarNonQuery(comando);
 								}
-
-								comando.AdicionarParametroEntrada("matricula", DbType.String, 24, itemAux.Matricula);
-								comando.AdicionarParametroEntrada("folha", DbType.String, 24, itemAux.Folha);
-								comando.AdicionarParametroEntrada("livro", DbType.String, 24, itemAux.Livro);
-								comando.AdicionarParametroEntrada("cartorio", DbType.String, 150, itemAux.Cartorio);
-								comando.AdicionarParametroEntrada("documento_area", itemAux.AreaDocumento, DbType.Decimal);
-								comando.AdicionarParametroEntrada("ccir", itemAux.NumeroCCIR, DbType.Int64);
-								comando.AdicionarParametroEntrada("area_ccir", (itemAux.AreaCCIR <= 0 ? null : (object)itemAux.AreaCCIR), DbType.Decimal);
-								comando.AdicionarParametroEntrada("data_ultima_atualizacao", itemAux.DataUltimaAtualizacao.Data, DbType.DateTime);
-								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-								bancoDeDados.ExecutarNonQuery(comando);
 							}
-						}
 
-						#endregion
+							#endregion
 
-						#region Ocupações/Opções
+							#region Ocupações/Opções
 
-						if (item.Opcoes != null && item.Opcoes.Count > 0)
-						{
-							foreach (Opcao itemAux in item.Opcoes)
+							if (item.Opcoes != null && item.Opcoes.Count > 0)
 							{
-								if (itemAux.Id > 0)
+								foreach (Opcao itemAux in item.Opcoes)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_ocupacao d 
+									if (itemAux.Id > 0)
+									{
+										comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_ocupacao d 
 									set d.tipo = :tipo, d.valor = :valor, d.outro= :outro, d.tid = :tid where d.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", itemAux.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_ocupacao d (id, dominio, tipo, valor, outro, tid) 
+										comando.AdicionarParametroEntrada("id", itemAux.Id, DbType.Int32);
+									}
+									else
+									{
+										comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_ocupacao d (id, dominio, tipo, valor, outro, tid) 
 									values ({0}seq_crt_regularizacao_ocupacao.nextval, :dominio, :tipo, :valor, :outro, :tid)", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+										comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+									}
+
+									comando.AdicionarParametroEntrada("tipo", itemAux.Tipo, DbType.Int32);
+									comando.AdicionarParametroEntrada("valor", DbType.String, 200, itemAux.Valor);
+									comando.AdicionarParametroEntrada("outro", DbType.String, 200, itemAux.Outro);
+									comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+									bancoDeDados.ExecutarNonQuery(comando);
 								}
-
-								comando.AdicionarParametroEntrada("tipo", itemAux.Tipo, DbType.Int32);
-								comando.AdicionarParametroEntrada("valor", DbType.String, 200, itemAux.Valor);
-								comando.AdicionarParametroEntrada("outro", DbType.String, 200, itemAux.Outro);
-								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-								bancoDeDados.ExecutarNonQuery(comando);
 							}
-						}
 
-						#endregion
+							#endregion
 
-						#region Transmitentes de Posse
+							#region Transmitentes de Posse
 
-						if (item.Transmitentes != null && item.Transmitentes.Count > 0)
-						{
-							foreach (TransmitentePosse itemAux in item.Transmitentes)
+							if (item.Transmitentes != null && item.Transmitentes.Count > 0)
 							{
-								if (itemAux.Id > 0)
+								foreach (TransmitentePosse itemAux in item.Transmitentes)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_transmite d 
+									if (itemAux.Id > 0)
+									{
+										comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_transmite d 
 									set d.pessoa = :pessoa, d.tempo = :tempo, d.tid = :tid where d.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_transmite d (id, dominio, pessoa, tempo, tid) 
+										comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+									}
+									else
+									{
+										comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_transmite d (id, dominio, pessoa, tempo, tid) 
 									values ({0}seq_crt_regularizacao_transmit.nextval, :dominio, :pessoa, :tempo, :tid)", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+										comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+									}
+
+									comando.AdicionarParametroEntrada("pessoa", itemAux.Transmitente.Id, DbType.Int32);
+									comando.AdicionarParametroEntrada("tempo", itemAux.TempoOcupacao, DbType.Int32);
+									comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+									bancoDeDados.ExecutarNonQuery(comando);
 								}
-
-								comando.AdicionarParametroEntrada("pessoa", itemAux.Transmitente.Id, DbType.Int32);
-								comando.AdicionarParametroEntrada("tempo", itemAux.TempoOcupacao, DbType.Int32);
-								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-								bancoDeDados.ExecutarNonQuery(comando);
 							}
-						}
-						#endregion
+							#endregion
 
-						#region Uso atual do solo
+							#region Uso atual do solo
 
-						if (item.UsoAtualSolo != null && item.UsoAtualSolo.Count > 0)
-						{
-							foreach (UsoAtualSolo itemAux in item.UsoAtualSolo)
+							if (item.UsoAtualSolo != null && item.UsoAtualSolo.Count > 0)
 							{
-								if (itemAux.Id > 0)
+								foreach (UsoAtualSolo itemAux in item.UsoAtualSolo)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_uso_solo d 
+									if (itemAux.Id > 0)
+									{
+										comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_uso_solo d 
 									set d.tipo = :tipo, d.tipo_geo = :tipo_geo, d.area = :area, d.tid = :tid where d.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_uso_solo d (id, dominio, tipo, tipo_geo, area, tid) 
+										comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+									}
+									else
+									{
+										comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_uso_solo d (id, dominio, tipo, tipo_geo, area, tid) 
 									values ({0}seq_crt_regularizacao_uso_solo.nextval, :dominio, :tipo, :tipo_geo, :area, :tid)", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+										comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+									}
+
+									comando.AdicionarParametroEntrada("tipo", itemAux.TipoDeUso, DbType.Int32);
+									comando.AdicionarParametroEntrada("tipo_geo", DbType.String, 100, itemAux.TipoDeUsoGeo);
+									comando.AdicionarParametroEntrada("area", itemAux.AreaPorcentagem, DbType.Int32);
+									comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+									bancoDeDados.ExecutarNonQuery(comando);
 								}
-
-								comando.AdicionarParametroEntrada("tipo", itemAux.TipoDeUso, DbType.Int32);
-								comando.AdicionarParametroEntrada("tipo_geo", DbType.String, 100, itemAux.TipoDeUsoGeo);
-								comando.AdicionarParametroEntrada("area", itemAux.AreaPorcentagem, DbType.Int32);
-								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-								bancoDeDados.ExecutarNonQuery(comando);
 							}
-						}
 
-						#endregion
+							#endregion
 
-						#region Edificações
+							#region Edificações
 
-						if (item.Edificacoes != null && item.Edificacoes.Count > 0)
-						{
-							foreach (Edificacao itemAux in item.Edificacoes)
+							if (item.Edificacoes != null && item.Edificacoes.Count > 0)
 							{
-								if (itemAux.Id > 0)
+								foreach (Edificacao itemAux in item.Edificacoes)
 								{
-									comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_edifica d 
+									if (itemAux.Id > 0)
+									{
+										comando = bancoDeDados.CriarComando(@"update {0}crt_regularizacao_edifica d 
 									set d.tipo = :tipo, d.quantidade = :quantidade, d.tid = :tid where d.id = :id", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
-								}
-								else
-								{
-									comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_edifica d (id, dominio, tipo, quantidade, tid) 
+										comando.AdicionarParametroEntrada("id", item.Id, DbType.Int32);
+									}
+									else
+									{
+										comando = bancoDeDados.CriarComando(@"insert into {0}crt_regularizacao_edifica d (id, dominio, tipo, quantidade, tid) 
 									values ({0}seq_crt_regularizacao_edifica.nextval, :dominio, :tipo, :quantidade, :tid)", EsquemaBanco);
 
-									comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+										comando.AdicionarParametroEntrada("dominio", item.Id, DbType.Int32);
+									}
+
+									comando.AdicionarParametroEntrada("tipo", DbType.String, 80, itemAux.Tipo);
+									comando.AdicionarParametroEntrada("quantidade", DbType.String, 5, itemAux.Quantidade);
+									comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
+
+									bancoDeDados.ExecutarNonQuery(comando);
 								}
-
-								comando.AdicionarParametroEntrada("tipo", DbType.String, 80, itemAux.Tipo);
-								comando.AdicionarParametroEntrada("quantidade", DbType.String, 5, itemAux.Quantidade);
-								comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
-
-								bancoDeDados.ExecutarNonQuery(comando);
 							}
+
+							#endregion
 						}
-
-						#endregion
 					}
+
+					#endregion
+
+					Historico.Gerar(regularizacao.Id, eHistoricoArtefatoCaracterizacao.regularizacaofundiaria, eHistoricoAcao.atualizar, bancoDeDados, null);
+
+					bancoDeDados.Commit();
 				}
-
-				#endregion
-
-				Historico.Gerar(regularizacao.Id, eHistoricoArtefatoCaracterizacao.regularizacaofundiaria, eHistoricoAcao.atualizar, bancoDeDados, null);
-
-				bancoDeDados.Commit();
+			}
+			catch (Exception ex)
+			{
+				throw ex;
 			}
 		}
 
