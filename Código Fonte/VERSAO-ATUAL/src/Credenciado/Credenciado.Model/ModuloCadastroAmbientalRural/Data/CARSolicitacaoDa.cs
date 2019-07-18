@@ -1498,7 +1498,12 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			//TODO:Validacao de Solicitacao de Inscricao para Salvar Titulo CAR
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"update tab_controle_sicar s set s.solicitacao_passivo = 1, s.solicitacao_situacao_aprovado = 5 where s.solicitacao_car=:solicitacao_car and s.solicitacao_car_esquema = 2");
+				Comando comando = bancoDeDados.CriarComando(@"
+				update tab_controle_sicar s
+					set s.solicitacao_passivo = 1,
+						s.solicitacao_situacao_aprovado = 5,
+						s.codigo_imovel = null
+					where s.solicitacao_car=:solicitacao_car and s.solicitacao_car_esquema = 2");
 
 				comando.AdicionarParametroEntrada("solicitacao_car", solicitacaoID, DbType.Int32);
 
