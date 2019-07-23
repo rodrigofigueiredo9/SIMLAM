@@ -238,7 +238,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 
 			foreach (var item in caracterizacoesCredenciado)
 			{
-				Caracterizacao caracterizacao = caracterizacoesInterno.SingleOrDefault(x => x.Tipo == item.Tipo);
+				Caracterizacao caracterizacao = caracterizacoesInterno.FirstOrDefault(x => x.Tipo == item.Tipo);
 
 				if (item.Id > 0 && caracterizacao != null && (item.Tid != caracterizacao.Tid || item.ProjetoTid != caracterizacao.ProjetoTid))
 				{
