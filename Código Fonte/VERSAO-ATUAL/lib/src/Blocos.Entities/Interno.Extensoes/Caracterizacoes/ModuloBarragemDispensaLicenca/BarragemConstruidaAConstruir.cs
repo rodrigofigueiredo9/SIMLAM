@@ -22,7 +22,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 				else return string.Empty;
 			}
 		}
-		public int isDemarcacaoAPP { get; set; }
+		public int? isDemarcacaoAPP { get; set; }
 		public string isDemarcacaoAPPTexto
 		{
 			get
@@ -33,7 +33,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.Extensoes.Caracterizacoes.ModuloBar
 				else return string.Empty;
 			}
 		}
-		public decimal larguraDemarcada { get; set; }
+		public decimal? larguraDemarcada { get; set; }
 		public bool ?larguraDemarcadaLegislacao { get; set; }
 		public string larguraDemarcadaLegislacaoTexto
 		{

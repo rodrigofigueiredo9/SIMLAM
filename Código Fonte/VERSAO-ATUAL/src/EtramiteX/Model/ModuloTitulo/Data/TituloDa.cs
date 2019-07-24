@@ -2912,7 +2912,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						vazao_max_adequacoes = String.IsNullOrWhiteSpace(vazao_max_adequacoes) ?
 							vazao_max_adequacoes : vazao_max_adequacoes.Replace("\n", String.Empty).Replace("\r", String.Empty);
 						resultados.Add(vazao_max_adequacoes);
-						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
 						resultados.Add(reader.GetValue<string>("periodo_inicio_obra"));
 						resultados.Add(reader.GetValue<string>("periodo_termino_obra"));
 
