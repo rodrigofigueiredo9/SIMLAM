@@ -128,7 +128,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Especificidades.Modul
 			});
 
 			conf.ExibirAssinantes1 = true;
-			conf.ExibirAssinantes2 = true;
+			conf.ExibirAssinantes2 = false;
 
 			return conf;
 		}
