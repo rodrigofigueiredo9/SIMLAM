@@ -1248,6 +1248,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
 								titulo.Situacao.Nome = "Vencido";
 						}
+						else if (titulo.Situacao.Id == (int)eTituloSituacao.Valido && titulo.DataVencimento?.Data < DateTime.Now.Date)
+							titulo.Situacao.Nome = "Vencido";
 						retorno.Itens.Add(titulo);
 					}
 
