@@ -300,10 +300,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
 						break;
 					case (int)eTituloSituacao.EncerradoDeclaratorio:
-						auxiliar = _busLista.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
-						titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+						if (titulo.MotivoEncerramentoId != null)
+						{
+							auxiliar = _busLista.DeclaratorioMotivosEncerramento.Single(x => x.Id == titulo.MotivoEncerramentoId).Texto;
+							titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, auxiliar);
+						}
+						else
+						{
+							titulo.ArquivoPdf.Buffer = Tecnomapas.Blocos.Etx.ModuloRelatorio.ITextSharpEtx.PdfMetodosAuxiliares.TarjaVermelha(titulo.ArquivoPdf.Buffer, "Consultado em " + DateTime.Now.ToShortDateString() + " às " + DateTime.Now.ToString(@"HH\hmm\min"), "Encerrado");
+						}
 						break;
-
 					case (int)eTituloSituacao.Prorrogado:
 					case (int)eTituloSituacao.ProrrogadoDeclaratorio:
 						auxiliar = String.Format("{0} até {1}", titulo.Situacao.Nome, titulo.DataVencimento.DataTexto);
