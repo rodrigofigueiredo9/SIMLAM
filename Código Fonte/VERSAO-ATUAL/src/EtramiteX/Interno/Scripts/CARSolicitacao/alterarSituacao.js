@@ -21,11 +21,19 @@ CARSolicitacaoAlterarSituacao = {
 		CARSolicitacaoAlterarSituacao.container.delegate('.btnSalvar', 'click', CARSolicitacaoAlterarSituacao.salvar);
 
 		$(".ddlSituacaoNova", CARSolicitacaoAlterarSituacao.container).change(CARSolicitacaoAlterarSituacao.onSituacaoChange);
+
 	},
 
 	onSituacaoChange: function () {
+		situacao = $('.ddlSituacaoNova').val();
+		if (situacao == "3") {// invalido / cancelado
+			$('.divCancelado').removeClass('hide');
+		} else {
+			$('.divCancelado').addClass('hide');
+			$('.ddlMotivo').val("0");
+			$('.inputFile').val("");
+		}
 
-		
 		MasterPage.redimensionar();
 
 	},
@@ -40,7 +48,8 @@ CARSolicitacaoAlterarSituacao = {
 			DataSituacaoAnterior: { DataTexto: $('.txtSituacaoDataAnterior', container).val() },
 			SituacaoId: $('.ddlSituacaoNova :selected', container).val(),
 			DataSituacao: { DataTexto: $('.txtDataSituacaoNova', container).val() },
-			Motivo: $('.txtSituacaoMotivo', container).val()
+			Motivo: $('.ddlSituacaoNova :selected', container).val(),
+			DescricaoMotivo: $('.txtSituacaoMotivo', container).val()
 		};
 
 		return obj;
@@ -118,4 +127,6 @@ CARSolicitacaoAlterarSituacao = {
 		});
 		MasterPage.carregando(false);
 	}
+
+
 }

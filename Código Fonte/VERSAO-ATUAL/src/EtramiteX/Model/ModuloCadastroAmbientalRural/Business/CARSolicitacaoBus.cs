@@ -66,83 +66,83 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		{
 			try
 			{
-                if (_validar.RetificacaoValidar(entidade))
-                {
-                    if (_validar.Salvar(entidade))
-                    {
-                        GerenciadorTransacao.ObterIDAtual();
+				if (_validar.RetificacaoValidar(entidade))
+				{
+					if (_validar.Salvar(entidade))
+					{
+						GerenciadorTransacao.ObterIDAtual();
 
-                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-                        {
-                            bancoDeDados.IniciarTransacao();
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+						{
+							bancoDeDados.IniciarTransacao();
 
-                            entidade.AutorId = User.FuncionarioId;
+							entidade.AutorId = User.FuncionarioId;
 
-                            _da.Salvar(entidade, bancoDeDados);
+							_da.Salvar(entidade, bancoDeDados);
 
-                            bancoDeDados.Commit();
+							bancoDeDados.Commit();
 
-                            Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico1(entidade.Id.ToString()));
-                            Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico2);
-                            Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico3);
-                        }
+							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico1(entidade.Id.ToString()));
+							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico2);
+							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoSalvarTopico3);
+						}
 
-                        #region Carga das tabelas APP Caculada e APP Escadinha
-                        var qtdModuloFiscal = 0.0;
-                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
-                        {
-                            #region Select QTD Modulo Fiscal
-                            Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
+						#region Carga das tabelas APP Caculada e APP Escadinha
+						var qtdModuloFiscal = 0.0;
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
+						{
+							#region Select QTD Modulo Fiscal
+							Comando comando = bancoDeDados.CriarComando(@"SELECT ATP_QTD_MODULO_FISCAL FROM CRT_CAD_AMBIENTAL_RURAL WHERE EMPREENDIMENTO = :empreendimentoID");//, EsquemaBanco);
 
-                            comando.AdicionarParametroEntrada("empreendimentoID", entidade.Empreendimento.Id, DbType.Int32);
+							comando.AdicionarParametroEntrada("empreendimentoID", entidade.Empreendimento.Id, DbType.Int32);
 
-                            using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
-                            {
-                                while (reader.Read())
-                                {
-                                    qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
-                                }
+							using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
+							{
+								while (reader.Read())
+								{
+									qtdModuloFiscal = Convert.ToDouble(reader["ATP_QTD_MODULO_FISCAL"]);
+								}
 
-                                reader.Close();
-                            }
-                            #endregion
-                        }
-                        using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
-                        {
-                            #region Chamada Procedure
-                            bancoDeDados.IniciarTransacao();
-                            Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
+								reader.Close();
+							}
+							#endregion
+						}
+						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia("idafgeo"))
+						{
+							#region Chamada Procedure
+							bancoDeDados.IniciarTransacao();
+							Comando command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularAppClassificadaCAR(:emp); end;");
 
-                            command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+							command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
 
-                            bancoDeDados.ExecutarNonQuery(command);
-                            bancoDeDados.Commit();
+							bancoDeDados.ExecutarNonQuery(command);
+							bancoDeDados.Commit();
 
-                            bancoDeDados.IniciarTransacao();
-                            Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); end;");
+							bancoDeDados.IniciarTransacao();
+							Comando com = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularEscadinhaCAR(:emp, :moduloFiscal); end;");
 
-                            com.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
-                            com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
+							com.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+							com.AdicionarParametroEntrada("moduloFiscal", qtdModuloFiscal, System.Data.DbType.Double);
 
-                            bancoDeDados.ExecutarNonQuery(com);
-                            bancoDeDados.Commit();
+							bancoDeDados.ExecutarNonQuery(com);
+							bancoDeDados.Commit();
 
-                            bancoDeDados.IniciarTransacao();
-                            command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
+							bancoDeDados.IniciarTransacao();
+							command = bancoDeDados.CriarComando(@"begin OPERACOESPROCESSAMENTOGEO.CalcularArlTotalCAR(:emp); end;");
 
-                            command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
+							command.AdicionarParametroEntrada("emp", entidade.Empreendimento.Id, System.Data.DbType.Int32);
 
-                            bancoDeDados.ExecutarNonQuery(command);
+							bancoDeDados.ExecutarNonQuery(command);
 
-                            bancoDeDados.Commit();
-                            #endregion
+							bancoDeDados.Commit();
+							#endregion
 
-                        }
-                        #endregion
+						}
+						#endregion
 
-                    }
-                }
-		    }
+					}
+				}
+			}
 			catch (Exception e)
 			{
 				Validacao.AddErro(e);
@@ -167,6 +167,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				entidade.SituacaoAnteriorId = solicitacaoAtual.SituacaoId;
 				entidade.DataSituacaoAnterior = solicitacaoAtual.DataSituacao;
 				entidade.Protocolo = solicitacaoAtual.Protocolo;
+				entidade.AutorId = funcionarioId;
 
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
@@ -184,28 +185,29 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 							bancoDeDados.Commit();
 						}
 					}
-					else
+
+					using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 					{
-							using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
-							{
-								bancoDeDados.IniciarTransacao();
+						bancoDeDados.IniciarTransacao();
+						if (!IsCredenciado)
+						{
+							_da.AlterarSituacao(entidade, bancoDeDados);
+							_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
+						}
 
-								_da.AlterarSituacao(entidade, bancoDeDados);
-								_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
+						if (!isTitulo && Validacao.EhValido)
+						{
+							int situacaoArquivo = ObterNovaSituacaoArquivo(entidade.SituacaoId, entidade.SituacaoAnteriorId);
+							_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo, bancoDeDados);
 
-								bancoDeDados.Commit();
-							}
-					}
-					
-					if (!isTitulo && Validacao.EhValido)
-					{
-						int situacaoArquivo = (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido) ?
-							(int)eStatusArquivoSICAR.Cancelado :
-							(int)eStatusArquivoSICAR.ArquivoReprovado;
+							_da.InserirAlterarSituacaoLista(entidade, bancoDeDados);
+							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
+						}
+						if(Validacao.EhValido)
+							bancoDeDados.Commit();
+						else
+							bancoDeDados.Rollback();
 
-						_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo);
-
-						Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
 					}
 				}
 			}
@@ -286,14 +288,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 		{
 			try
 			{
-				if (tid == null)
-				{
-					return _da.Obter(id, simplificado, banco);
-				}
-				else
-				{
-					return _da.ObterHistorico(id, tid, simplificado, banco);
-				}
+				return (tid == null) ? _da.Obter(id, simplificado, banco) : _da.ObterHistorico(id, tid, simplificado, banco);
 			}
 			catch (Exception exc)
 			{
@@ -393,11 +388,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 				case eCARSolicitacaoSituacao.Valido:
 					return listaBus.CadastroAmbientalRuralSolicitacaoSituacao
-						.Where(x => int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Invalido).ToList();
+						.Where(x => int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Invalido
+								|| int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Suspenso).ToList();
 
 				case eCARSolicitacaoSituacao.Suspenso:
 					return listaBus.CadastroAmbientalRuralSolicitacaoSituacao
-						.Where(x => int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Valido || int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Invalido).ToList();
+						.Where(x => int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Valido
+								|| int.Parse(x.Id) == (int)eCARSolicitacaoSituacao.Invalido).ToList();
 
 				default:
 					return new List<Lista>();
@@ -418,6 +415,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return "";
 		}
 
+		public List<CARCancelamento> ObterListaCancelamentoCar(int solicitacaoId, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ObterListaCancelamentoCar(solicitacaoId, banco);
+			}
+			catch (Exception ex)
+			{
+				Validacao.AddErro(ex);
+			}
+			return new List<CARCancelamento>();
+		}
+
+		private int ObterNovaSituacaoArquivo(int situacaoNova, int situacaoAnterior)
+		{
+			if (situacaoAnterior == (int)eCARSolicitacaoSituacao.Valido && situacaoNova == (int)eCARSolicitacaoSituacao.Invalido)
+				return  (int)eStatusArquivoSICAR.Cancelado;
+			else if (situacaoAnterior == (int)eCARSolicitacaoSituacao.Valido && situacaoNova == (int)eCARSolicitacaoSituacao.Suspenso)
+				return (int)eStatusArquivoSICAR.ArquivoEntregue;
+			else
+				return (int)eStatusArquivoSICAR.ArquivoReprovado;
+		}
 		#endregion
 
 		#region Auxiliares
@@ -475,7 +494,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				return false;
 			else
 			{
-				if(!(entidade.Protocolo.Id.GetValueOrDefault() > 0 && _protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault()) ) )
+				if (!(entidade.Protocolo.Id.GetValueOrDefault() > 0 && _protocoloDa.EmPosse(entidade.Protocolo.Id.GetValueOrDefault())))
 					return true;
 				else
 				{
@@ -545,15 +564,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			if (resposta["status"] != "s")
 			{
 				return string.Empty;
-			}            
-			return UrlSICAR + resposta["dados"]; //PRODUCAO
-            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
-        }
+			}
+			//return UrlSICAR + resposta["dados"]; //PRODUCAO
+			return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG
+		}
 
-        public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
-        {
-            var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
-			if (String.IsNullOrWhiteSpace(urlGerar)) return null;
+		public string ObterUrlDemonstrativo(int solicitacaoId, int schemaSolicitacao, bool isTitulo)
+		{
+			try
+			{
+				var urlGerar = _da.ObterUrlGeracaoDemonstrativo(solicitacaoId, schemaSolicitacao, isTitulo) ?? "";
+				if (String.IsNullOrWhiteSpace(urlGerar))
+					throw new Exception();
 
 			RequestJson requestJson = new RequestJson();
 
@@ -569,9 +591,15 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
                 return string.Empty;
             }
 
-            return UrlSICAR + resposta["dados"];  // PRODUCAO 
-            //return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
-        } 
+				//return UrlSICAR + resposta["dados"];  // PRODUCAO 
+				return "http://homolog-car.mma.gov.br" + resposta["dados"]; // HOMOLOG 
+			}
+			catch (Exception ex)
+			{
+				Validacao.Add(Mensagem.CARSolicitacao.ErroPdfDemonstrativo);
+				return string.Empty;
+			}
+		}
 
 		public object ObterIdAquivoSICAR(int id, int schemaSolicitacao)
 		{

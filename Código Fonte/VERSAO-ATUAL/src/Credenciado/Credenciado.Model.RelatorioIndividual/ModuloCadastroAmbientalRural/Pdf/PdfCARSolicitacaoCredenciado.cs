@@ -93,6 +93,10 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 					case eCARSolicitacaoSituacaoRelatorio.Invalido:
 						using (MemoryStream msTemp = new MemoryStream(stream.ToArray()))
 						{
+							string motivo = solicitacao.DescricaoMotivo?.Length > 40 ? solicitacao.DescricaoMotivo.Substring(0, 40) : solicitacao.DescricaoMotivo;
+							string situacaoTarja = solicitacao.SICAR.SituacaoEnvio == eStatusArquivoSICAR.Cancelado ?
+								$"{solicitacao.SituacaoTexto} - Cancelado por: {motivo}" : solicitacao.SituacaoTexto;
+
 							stream.Close();
 							stream.Dispose();
 							stream = PdfMetodosAuxiliares.TarjaVermelha(msTemp, mensagemTarja, situacaoTexto);

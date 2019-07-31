@@ -227,7 +227,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
 						solicitacao.Declarante.Id = reader.GetValue<Int32>("declarante");
 						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nome_razao");
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
 						solicitacao.AutorModuloTexto = "Institucional";
 					}

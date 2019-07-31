@@ -873,6 +873,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business
 			get { return _configCadastroAmbientalRural.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeyCadastroAmbientalRuralSolicitacaoSituacao); }
 		}
 
+		public List<Lista> CarSolicitacaoCancelamentoMotivos
+		{
+			get { return _configCadastroAmbientalRural.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeyCarSolicitacaoCancelamentoMotivos); }
+		}
+
 		public List<Lista> CadastroAmbientalRuralSolicitacaoOrigem
 		{
 			get { return _configCadastroAmbientalRural.Obter<List<Lista>>(ConfiguracaoCadastroAmbientalRural.KeyCadastroAmbientalRuralSolicitacaoOrigem); }

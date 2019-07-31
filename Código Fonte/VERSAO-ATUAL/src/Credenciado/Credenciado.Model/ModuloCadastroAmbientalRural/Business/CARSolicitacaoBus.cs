@@ -407,16 +407,16 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 			return null;
 		}
 
-		public CARSolicitacao Obter(int id, BancoDeDados banco = null)
+		public CARSolicitacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
 			//Chamada tambem do botão enviar para SICAR
 			try
 			{
 				//Consulta no credenciado, se vier nulo, consulta no institucional
-				var onCred = _da.Obter(id, banco);
-				if (onCred.AutorId == null || onCred.Id == null || onCred.AutorId == 0 || onCred.Id == 0)
+				var onCred = _da.Obter(id, simplificado, banco);
+				if (onCred.AutorId == 0 || onCred.Id == 0)
 				{
-					return _da.ObterOnInstitucional(id, banco);
+					return _da.ObterOnInstitucional(id, simplificado, banco);
 				}
 				return onCred;
 			}
