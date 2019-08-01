@@ -2678,7 +2678,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					"vazao_max_adequacoes",
 					"periodo_inicio_obra",
 				   "periodo_termino_obra",
-					"atividades",
+					"finalidades",
 					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_nome",
 					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_profissao",
 					"rt_" + eTipoRT.ElaboracaoDeclaracao.Description() + "_registro_crea",
