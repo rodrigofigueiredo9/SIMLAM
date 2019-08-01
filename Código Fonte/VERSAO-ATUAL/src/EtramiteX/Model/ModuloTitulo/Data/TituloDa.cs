@@ -2595,6 +2595,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
 			}
 		}
+
 		internal List<List<string>> GerarRelatorio(TituloRelatorioFiltro filtro, BancoDeDados banco = null)
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -2886,7 +2887,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("fonte_vazao_enchente"));
 						resultados.Add(reader.GetValue<string>("supressao_app_implant_barragem"));
 						resultados.Add(reader.GetValue<string>("fx_demarc_app_entorno_reserv"));
-						resultados.Add(reader.GetValue<string>("largura_demarcada"));
+						var largura_demarcada = reader.GetValue<decimal>("largura_demarcada") > 0 ? reader.GetValue<string>("largura_demarcada") : "";
+						resultados.Add(largura_demarcada);
 						resultados.Add(reader.GetValue<string>("largura_demarcada_legislacao"));
 						resultados.Add(reader.GetValue<string>("faixa_cercada"));
 						var descricao_estagio_desenv = reader.GetValue<string>("descricao_estagio_desenv");

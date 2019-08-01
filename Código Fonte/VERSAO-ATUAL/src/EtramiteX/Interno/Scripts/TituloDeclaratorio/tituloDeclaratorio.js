@@ -467,7 +467,7 @@ TituloDeclaratorio = {
 				return;
 			}
 
-			if (!moment(filtro.inicioPeriodo).isValid() || !moment(filtro.fimPeriodo).isValid()) {
+			if (!moment(filtro.inicioPeriodo, 'DD/MM/YYYY').isValid() || !moment(filtro.fimPeriodo, 'DD/MM/YYYY').isValid()) {
 				Mensagem.gerar(TituloDeclaratorio.container, [TituloDeclaratorio.settings.Mensagens.PeriodoInvalido]);
 				return;
 			}
