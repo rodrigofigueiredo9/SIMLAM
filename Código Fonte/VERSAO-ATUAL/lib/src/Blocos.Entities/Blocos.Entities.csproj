@@ -297,6 +297,7 @@
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARCancelamentoMotivo.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARSolicitacaoOrigem.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusArquivoSICAR.cs" />
+    <Compile Include="Interno\ModuloCadastroAmbientalRural\SicarAnalise.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitarioConsolidado.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitarioListarFiltros.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitario.cs" />
