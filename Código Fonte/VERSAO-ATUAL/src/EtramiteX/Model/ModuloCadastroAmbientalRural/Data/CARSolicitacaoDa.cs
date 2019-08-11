@@ -459,6 +459,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 		internal CARSolicitacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
+			if (simplificado)
+				return Obter(id, banco);
+
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
@@ -499,8 +502,11 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					s.autor,
 					s.motivo,
 					tr.data_criacao requerimento_data_cadastro,
-					pg.id projeto_geo_id
+					pg.id projeto_geo_id,
+					s.arquivo,
+					cs.situacao_envio
 				from tab_car_solicitacao         s,
+					tab_controle_sicar			 cs,
 					lov_car_solicitacao_situacao l,
 					lov_car_solicitacao_situacao la,
 					tab_protocolo                p,
@@ -510,7 +516,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					tab_pessoa                   pes,
 					tab_requerimento             tr,
 					hst_funcionario              f
-				where s.situacao = l.id
+				where s.id = cs.solicitacao_car
+				and s.situacao = l.id
 				and s.situacao_anterior = la.id(+)
 				and s.protocolo_selecionado = p.id
 				and s.protocolo_selecionado = ps.id(+)
@@ -565,6 +572,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
+						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
+						solicitacao.SICAR.SituacaoEnvio = (eStatusArquivoSICAR)reader.GetValue<Int32>("situacao_envio");
 					}
 
 					reader.Close();

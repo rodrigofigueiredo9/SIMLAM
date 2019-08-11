@@ -320,5 +320,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 				return entidade;
 			}
 		}
+
+		public void SalvarPdfSolicitacaoCar(int solicitacaoId, int arquivoId)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(EsquemaBanco))
+			{
+				bancoDeDados.IniciarTransacao();
+
+				Comando comando = bancoDeDados.CriarComando(@"update {0}tab_car_solicitacao s set s.arquivo = :arquivo where s.id = :id", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("id", solicitacaoId, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", arquivoId, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
+			}
+		}
 	}
 }

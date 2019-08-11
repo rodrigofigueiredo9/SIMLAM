@@ -43,6 +43,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloCore.Business
             return retorno;
 		}
 
+		public void Inserir(string log) => _da.Inserir(log);
+
         public List<string> ObterListSource()
         {
             return _da.ObterListaSource();

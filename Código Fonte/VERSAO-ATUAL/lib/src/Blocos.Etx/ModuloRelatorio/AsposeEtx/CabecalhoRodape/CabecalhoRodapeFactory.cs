@@ -16,7 +16,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 				return bus.ObterEnderecoSetor(cab, setor);
 			}
 
-			if (HttpContext.Current.User != null && HttpContext.Current.User.Identity.IsAuthenticated)
+			if (HttpContext.Current?.User != null && HttpContext.Current.User.Identity.IsAuthenticated)
 			{
 				return bus.ObterEnderecoFuncLogado(cab);
 			}

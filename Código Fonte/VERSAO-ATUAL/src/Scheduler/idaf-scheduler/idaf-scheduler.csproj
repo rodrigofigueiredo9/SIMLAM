@@ -71,6 +71,10 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aspose.Words, Version=9.7.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Release\Aspose.Words.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging">
       <HintPath>..\packages\Common.Logging.3.3.0\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
@@ -86,6 +90,10 @@
     <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotNetZip.1.9.7\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.4.1.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -218,8 +226,11 @@
     <Compile Include="jobs\ConsultarDUAJob.cs" />
     <Compile Include="jobs\EnviarArquivoCarJob.cs" />
     <Compile Include="jobs\GerarArquivoCarJob.cs" />
+    <Compile Include="jobs\GerarPdfSolicitacaoCarJob.cs" />
     <Compile Include="jobs\ReenvioCarJob.cs" />
     <Compile Include="jobs\IntegracaoCarJob.cs" />
+    <Compile Include="misc\Relatorio\PdfPadraoRelatorio.cs" />
+    <Compile Include="misc\Relatorio\RelatorioSolicitacao.cs" />
     <Compile Include="misc\WKT\GeoJSONFromWKT.cs" />
     <Compile Include="misc\LocalDB.cs" />
     <Compile Include="misc\ItemFila.cs" />
@@ -253,6 +264,7 @@
     <Compile Include="models\sicar-v17\ReservaLegal.cs" />
     <Compile Include="models\sicar-v17\Resposta.cs" />
     <Compile Include="misc\RequisicaoJobCar.cs" />
+    <Compile Include="models\Values.cs" />
     <Compile Include="SchedulerService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -263,12 +275,197 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\_imgLogo\fundo_sobre.png" />
+    <Content Include="Content\_imgLogo\logobrasao.jpg" />
+    <Content Include="Content\_imgLogo\logoestado.png" />
+    <Content Include="Content\_imgLogo\logomarca.png" />
+    <Content Include="Content\_imgLogo\logomarcaComTexto.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_credenciado_pb.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.jpg" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_idaf.png" />
+    <Content Include="Content\_imgLogo\logomarca_simlam_pb.png" />
+    <Content Include="Content\_imgLogo\logo_entrada.png" />
+    <Content Include="Content\_imgLogo\logo_idaf_versoes.jpg" />
+    <Content Include="Content\_imgLogo\logo_login.png" />
+    <Content Include="Content\_imgLogo\logo_novo.jpg" />
+    <Content Include="Content\_imgLogo\logo_topo.png" />
+    <Content Include="Content\_imgLogo\tecnomapas_sobre.png" />
+    <Content Include="Content\_img\add.png" />
+    <Content Include="Content\_img\alerta.png" />
+    <Content Include="Content\_img\base_caixa_login.png" />
+    <Content Include="Content\_img\bg_input_login.png" />
+    <Content Include="Content\_img\bg_input_pass.png" />
+    <Content Include="Content\_img\bg_menu_sec.png" />
+    <Content Include="Content\_img\bg_sis.jpg" />
+    <Content Include="Content\_img\botao_gerar_pdf.png" />
+    <Content Include="Content\_img\botao_gerar_xls.png" />
+    <Content Include="Content\_img\botao_inserir_lista.png" />
+    <Content Include="Content\_img\bt-fechar-large.png" />
+    <Content Include="Content\_img\btn_logar.png" />
+    <Content Include="Content\_img\bt_fechar_mensagem.gif" />
+    <Content Include="Content\_img\bt_info.png" />
+    <Content Include="Content\_img\bt_lista_abaixo.png" />
+    <Content Include="Content\_img\bt_lista_acima.png" />
+    <Content Include="Content\_img\bt_lista_alterar_status.png" />
+    <Content Include="Content\_img\bt_lista_analisar_item.png" />
+    <Content Include="Content\_img\bt_lista_associar.png" />
+    <Content Include="Content\_img\bt_lista_atividades_solicitadas.png" />
+    <Content Include="Content\_img\bt_lista_cancelar.png" />
+    <Content Include="Content\_img\bt_lista_chave.png" />
+    <Content Include="Content\_img\bt_lista_dispensado.png" />
+    <Content Include="Content\_img\bt_lista_download.png" />
+    <Content Include="Content\_img\bt_lista_editar.png" />
+    <Content Include="Content\_img\bt_lista_editar_processo.png" />
+    <Content Include="Content\_img\bt_lista_excluir.png" />
+    <Content Include="Content\_img\bt_lista_historico.png" />
+    <Content Include="Content\_img\bt_lista_pdf.png" />
+    <Content Include="Content\_img\bt_lista_promover_sistema.png" />
+    <Content Include="Content\_img\bt_lista_recebido.png" />
+    <Content Include="Content\_img\bt_lista_refresh.png" />
+    <Content Include="Content\_img\bt_lista_salvar.png" />
+    <Content Include="Content\_img\bt_lista_selecionar_empreendimento.png" />
+    <Content Include="Content\_img\bt_lista_visualizar.png" />
+    <Content Include="Content\_img\bt_mensagens-2px.png" />
+    <Content Include="Content\_img\bt_mensagens.png" />
+    <Content Include="Content\_img\bt_principal.png" />
+    <Content Include="Content\_img\cancel.png" />
+    <Content Include="Content\_img\checked.png" />
+    <Content Include="Content\_img\csv_img.png" />
+    <Content Include="Content\_img\document-text.png" />
+    <Content Include="Content\_img\dot.png" />
+    <Content Include="Content\_img\exemp_agrup_relatorios.jpg" />
+    <Content Include="Content\_img\folder-horizontal-open.png" />
+    <Content Include="Content\_img\foto3x4.jpg" />
+    <Content Include="Content\_img\fundo_barra_indicadores.jpg" />
+    <Content Include="Content\_img\fundo_botao.png" />
+    <Content Include="Content\_img\fundo_caixa_chave.png" />
+    <Content Include="Content\_img\fundo_campo_erro.png" />
+    <Content Include="Content\_img\fundo_corpo_caixa_login.jpg" />
+    <Content Include="Content\_img\fundo_corpo_caixa_login.png" />
+    <Content Include="Content\_img\fundo_corpo_login.jpg" />
+    <Content Include="Content\_img\fundo_mais_campos.png" />
+    <Content Include="Content\_img\fundo_mensagen_alerta.gif" />
+    <Content Include="Content\_img\fundo_mensagen_erro.gif" />
+    <Content Include="Content\_img\fundo_mensagen_info.gif" />
+    <Content Include="Content\_img\fundo_mensagen_sucesso.gif" />
+    <Content Include="Content\_img\fundo_menunav_faux.gif" />
+    <Content Include="Content\_img\fundo_menunav_faux.png" />
+    <Content Include="Content\_img\fundo_modal.png" />
+    <Content Include="Content\_img\fundo_redirecionamento.jpg" />
+    <Content Include="Content\_img\fundo_timer.png" />
+    <Content Include="Content\_img\fundo_titulo_chave.png" />
+    <Content Include="Content\_img\fundo_topo.gif" />
+    <Content Include="Content\_img\fundo_topo.jpg" />
+    <Content Include="Content\_img\fundo_topo.png" />
+    <Content Include="Content\_img\fundo_topo_login.jpg" />
+    <Content Include="Content\_img\icones_checkbox.png" />
+    <Content Include="Content\_img\icones_versoes.png" />
+    <Content Include="Content\_img\icone_ajuda.png" />
+    <Content Include="Content\_img\icone_alerta.png" />
+    <Content Include="Content\_img\icone_alterar_situacao.png" />
+    <Content Include="Content\_img\icone_avancar.png" />
+    <Content Include="Content\_img\icone_dica.png" />
+    <Content Include="Content\_img\icone_download_manual.png" />
+    <Content Include="Content\_img\icone_editar.png" />
+    <Content Include="Content\_img\icone_engrenagem.png" />
+    <Content Include="Content\_img\icone_exportar.png" />
+    <Content Include="Content\_img\icone_fechar_sessao.png" />
+    <Content Include="Content\_img\icone_filtro_simples.png" />
+    <Content Include="Content\_img\icone_inline_documento.png" />
+    <Content Include="Content\_img\icone_inline_processo.png" />
+    <Content Include="Content\_img\icone_lixeira_branca.png" />
+    <Content Include="Content\_img\icone_mensagem_ajuda.png" />
+    <Content Include="Content\_img\icone_mensagem_aleta.png" />
+    <Content Include="Content\_img\icone_mensagem_erro.png" />
+    <Content Include="Content\_img\icone_mensagem_info.png" />
+    <Content Include="Content\_img\icone_mensagem_sucesso.png" />
+    <Content Include="Content\_img\icone_pdf.png" />
+    <Content Include="Content\_img\icone_pessoas.png" />
+    <Content Include="Content\_img\icone_protocolo.png" />
+    <Content Include="Content\_img\icone_realtorios_personalizados.jpg" />
+    <Content Include="Content\_img\icone_relatorios.png" />
+    <Content Include="Content\_img\icone_sobre.png" />
+    <Content Include="Content\_img\icone_usuario.png" />
+    <Content Include="Content\_img\icone_voltar.png" />
+    <Content Include="Content\_img\icone_xls.png" />
+    <Content Include="Content\_img\icon_calendar.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_c3c3c3_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_75_e9e9e9_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_c3c3c3_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_f5f5f5_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-hard_100_ffffff_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_000000_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_1f1f1f_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_222222_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_454545_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_888888_256x240.png" />
+    <Content Include="Content\_img\jquery-ui\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\_img\loader_branco.gif" />
+    <Content Include="Content\_img\loader_cinza.gif" />
+    <Content Include="Content\_img\loader_pequeno.gif" />
+    <Content Include="Content\_img\logo_topo.png" />
+    <Content Include="Content\_img\lupa_busca_geral.png" />
+    <Content Include="Content\_img\lupa_localizar_valor.png" />
+    <Content Include="Content\_img\menu_ativo_exp.png" />
+    <Content Include="Content\_img\menu_ativo_rec.png" />
+    <Content Include="Content\_img\menu_hover_exp.png" />
+    <Content Include="Content\_img\menu_hover_rec.png" />
+    <Content Include="Content\_img\navCurrentBtn.png" />
+    <Content Include="Content\_img\navDoneBtn.png" />
+    <Content Include="Content\_img\navLastDoneBtn.png" />
+    <Content Include="Content\_img\paginacao_anterior.png" />
+    <Content Include="Content\_img\paginacao_primeira.png" />
+    <Content Include="Content\_img\paginacao_proxima.png" />
+    <Content Include="Content\_img\paginacao_ultima.png" />
+    <Content Include="Content\_img\pdf_img.png" />
+    <Content Include="Content\_img\png_branco.png" />
+    <Content Include="Content\_img\projdigital_01.gif" />
+    <Content Include="Content\_img\projdigital_02.gif" />
+    <Content Include="Content\_img\projdigital_03.gif" />
+    <Content Include="Content\_img\projdigital_04.gif" />
+    <Content Include="Content\_img\save.png" />
+    <Content Include="Content\_img\senha_boa.png" />
+    <Content Include="Content\_img\senha_forte.png" />
+    <Content Include="Content\_img\senha_fraca.png" />
+    <Content Include="Content\_img\senha_muitofraca.png" />
+    <Content Include="Content\_img\separador_wizbar.png" />
+    <Content Include="Content\_img\setas_cmd_menu.png" />
+    <Content Include="Content\_img\setas_ordenar.png" />
+    <Content Include="Content\_img\seta_ativo_sec_menu.png" />
+    <Content Include="Content\_img\seta_azul.png" />
+    <Content Include="Content\_img\seta_filtro.png" />
+    <Content Include="Content\_img\seta_mais_campos.png" />
+    <Content Include="Content\_img\seta_submenu.png" />
+    <Content Include="Content\_img\seta_tabela_ordem.png" />
+    <Content Include="Content\_img\seta_user_hover.png" />
+    <Content Include="Content\_img\sprite_bt_lista.png" />
+    <Content Include="Content\_img\sprite_menu_principal.png" />
+    <Content Include="Content\_img\sprite_menu_principal_hover.png" />
+    <Content Include="Content\_img\sprite_operadores.png" />
+    <Content Include="Content\_img\topo_ativacao.png" />
+    <Content Include="Content\_img\topo_login.png" />
+    <Content Include="Content\_img\unchecked.png" />
+    <Content Include="Content\_img\visualizar.png" />
+    <Content Include="Content\_img\xFechar.png" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
     <Content Include="Chaves Pública e Privada.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\_pdfAspose\SolicitacaoInscricaoCAR.docx" />
+    <None Include="Content\_pdfAspose\SolicitacaoInscricaoCAR_Credenciado.docx" />
     <None Include="idaf-scheduler_TemporaryKey.pfx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>

@@ -26,10 +26,10 @@ namespace Tecnomapas.EtramiteX.Configuracao
 			Type tipo = GetType();
 			String keyCache = tipo.FullName + key;
 
-            if (GerenciadorCache.Cache[keyCache] != null)
+            if (System.Web.HttpContext.Current != null && GerenciadorCache.Cache[keyCache] != null)
                 return (T)GerenciadorCache.Cache[keyCache];
 
-			if (_dic.ContainsKey(key))
+			if (System.Web.HttpContext.Current != null && _dic.ContainsKey(key))
 			{
 				valor = _dic[key];
 			}
@@ -42,7 +42,8 @@ namespace Tecnomapas.EtramiteX.Configuracao
 				valor = propInfo.GetValue(this, null);
 			}
 
-			GerenciadorCache.SetCache(keyCache, valor);
+			if(System.Web.HttpContext.Current != null)
+				GerenciadorCache.SetCache(keyCache, valor);
 
 			return (T)valor;
 		}

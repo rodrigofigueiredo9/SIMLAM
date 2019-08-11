@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Web;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
+using Tecnomapas.Blocos.Entities.Home;
+using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 
 namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 {
 	public class CabecalhoRodapeDefault : ICabecalhoRodape
-	{
+	{			
 		public byte[] LogoOrgao { get; set; }
 		public byte[] LogoBrasao { get; set; }
 		public byte[] LogoSimlam { get; set; }
@@ -34,7 +37,14 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 		public CabecalhoRodapeDefault(bool isBrasao = false, bool isLogo = false, bool isCredenciado = false)
 		{
-			string pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logobrasao.jpg");
+			//var log = new LogBus();
+			//log.Inserir($@"1 - {AppDomain.CurrentDomain.BaseDirectory} \n
+			//			   2 - {Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)} \n
+			//			   3 - {Assembly.GetExecutingAssembly().Location.Substring(0, Assembly.GetExecutingAssembly().Location.LastIndexOf('\\'))}");
+			string caminhoRaiz = System.Web.HttpContext.Current == null ?
+				AppDomain.CurrentDomain.BaseDirectory :
+				System.Web.HttpContext.Current.Request.MapPath("~");
+			string pathImg = $"{caminhoRaiz}/Content/_imgLogo/logobrasao.jpg";
 
 			if (isBrasao)
 			{
@@ -42,9 +52,9 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 				LogoBrasao = AsposeImage.RedimensionarImagem(LogoBrasao, 1.8f);
 			}
 
-			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca.png");
-			
-			if(isLogo || (!isLogo && !isBrasao))
+			pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logomarca.png";
+
+			if (isLogo || (!isLogo && !isBrasao))
 			{
 				LogoOrgao = File.ReadAllBytes(pathImg);
 				LogoOrgao = AsposeImage.RedimensionarImagem(LogoOrgao, 1.8f);
@@ -52,21 +62,21 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 			if (isCredenciado)
 			{
-				pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca_simlam_credenciado_pb.png");
+				pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logomarca_simlam_credenciado_pb.png";
 				LogoSimlam = File.ReadAllBytes(pathImg);
 				LogoSimlam = AsposeImage.RedimensionarImagem(LogoSimlam, 3.6f);
 			}
 			else
 			{
-				pathImg = HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logomarca_simlam_pb.png");
+				pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logomarca_simlam_pb.png";
 				LogoSimlam = File.ReadAllBytes(pathImg);
 				LogoSimlam = AsposeImage.RedimensionarImagem(LogoSimlam, 1.8f);
 			}
 
-			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logoestado.png");
+			pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logoestado.png";
 			LogoEstado = File.ReadAllBytes(pathImg);
 
-			pathImg = System.Web.HttpContext.Current.Request.MapPath("~/Content/_imgLogo/logo_novo.jpg");
+			pathImg = $"{caminhoRaiz}\\Content\\_imgLogo\\logo_novo.jpg";
 			LogoNovo = File.ReadAllBytes(pathImg);
 			LogoNovo = AsposeImage.RedimensionarImagem(LogoNovo, 1.8f);
 
@@ -75,5 +85,7 @@ namespace Tecnomapas.Blocos.Etx.ModuloRelatorio.AsposeEtx.CabecalhoRodape
 
 			SetorNome = AsposeData.Empty;
 		}
+
+
 	}
 }
