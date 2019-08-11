@@ -294,6 +294,7 @@
     <Compile Include="Interno\ModuloAnaliseItens\eAnaliseSituacao.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\CARCancelamento.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\ControleArquivoSICAR.cs" />
+    <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusImovelSicar.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARCancelamentoMotivo.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARSolicitacaoOrigem.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusArquivoSICAR.cs" />

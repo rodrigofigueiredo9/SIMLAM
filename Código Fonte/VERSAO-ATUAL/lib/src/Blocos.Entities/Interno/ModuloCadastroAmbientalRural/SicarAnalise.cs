@@ -9,11 +9,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 	public class SicarAnalise
 	{
 		public int id { get; set; }
-		public int status { get; set; }
-		public int condicao { get; set; }
-		public bool retificavel { get; set; }
-		public string codigoImovel { get; set; }
-		public bool completo { get; set; }
+		public eStatusImovelSicar status { get; set; } = eStatusImovelSicar.Cancelado;
+		public eCARCancelamentoMotivo condicao { get; set; } = eCARCancelamentoMotivo.DecisaoAdmnistrativa;
+		public bool retificavel { get; set; } = true;
+		public string codigoImovel { get; set; } = "ES-3203205-DD960C5D228C469FB8DC7C7F8F0F4434";
+		public bool completo { get; set; } = false;
 		public string motivoMudancaStatus { get; set; }
 		public string cpfResponsavel { get; set; }
 		public bool vistoriaRealizada { get; set; }

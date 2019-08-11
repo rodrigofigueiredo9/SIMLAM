@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fakes\FakeFormsAuthenticationService.cs" />
+    <Compile Include="TestClass\SicarAnaliseTest.cs" />
     <Compile Include="TestClass\EPTVTest.cs" />
     <Compile Include="TestClass\CobrancaTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -133,6 +134,10 @@
     <ProjectReference Include="..\Model.Extencao\Interno.Model.Extensoes.csproj">
       <Project>{F7BAF119-128E-4151-89B3-35F1367ADD15}</Project>
       <Name>Interno.Model.Extensoes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model.WebService\Interno.Model.WebService.csproj">
+      <Project>{F612A0B1-E198-45D3-8083-30E5C9781B24}</Project>
+      <Name>Interno.Model.WebService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Model\Interno.Model.csproj">
       <Project>{1A2007A6-9C00-4169-930C-FC338A1AADA5}</Project>

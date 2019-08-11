@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Text;
 using System.Net.Http.Headers;
 using System.IO;
+using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
+using Tecnomapas.Blocos.Etx.ModuloExtensao.Entities;
 
 namespace Interno.Model.WebService.ModuloWSSicar
 {
@@ -20,7 +22,7 @@ namespace Interno.Model.WebService.ModuloWSSicar
 		};
 		private static HttpClient _client;
 
-		public CarAnaliseService()
+		public CarAnaliseService(SicarAnalise sicar)
 		{
 			var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
 			if (!String.IsNullOrWhiteSpace(proxyUrl))
@@ -33,7 +35,7 @@ namespace Interno.Model.WebService.ModuloWSSicar
 			}
 
 			//verifica se objeto já foi instanciado
-			var sicarUrl = ConfigurationManager.AppSettings["SicarUrl"];
+			var sicarUrl = ConfigurationManager.AppSettings["apiSicar"];
 			if (_client == null)
 			{
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
@@ -43,36 +45,38 @@ namespace Interno.Model.WebService.ModuloWSSicar
 
 			try
 			{
-				using (var fs = File.OpenRead(	))
+
+
+				//var imageContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync());
+				//imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+
+				using (var form = new MultipartFormDataContent())
 				{
-					using (var streamContent = new StreamContent(fs))
+					form.Headers.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
+
+					//form.Add(imageContent, "car", Path.GetFileName(localArquivoCar));
+
+					form.Add(new StringContent(sicar.status.ToDescription()), "status");
+					form.Add(new StringContent(sicar.condicao.ToDescription()), "condicao");
+					form.Add(new StringContent(sicar.retificavel.ToString()), "retificavel");
+					form.Add(new StringContent(sicar.codigoImovel), "codigoImovel");
+					form.Add(new StringContent(sicar.completo.ToString()), "completo");
+
+					var response = _client.PostAsync("/sincronia/quick", form).Result;
+
+
+					if (response.IsSuccessStatusCode)
 					{
-						var imageContent = new ByteArrayContent( streamContent.ReadAsByteArrayAsync());
-						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+						var content = response.Content.ReadAsStringAsync();
+						//var jsonFormat = JToken.Parse(content).ToString();
 
-						using (var form = new MultipartFormDataContent())
-						{
-							form.Headers.Add("token", ConfigurationManager.AppSettings["SicarToken"]);
-
-							form.Add(imageContent, "car", Path.GetFileName(localArquivoCar));
-
-							form.Add(new StringContent(dataCadastroEstadual), "dataCadastroEstadual");
-
-							var response =  _client.PostAsync("/sincronia/quick", form).Result;
-
-
-							if (response.IsSuccessStatusCode)
-							{
-								//var content =  response.Content.ReadAsStringAsync();
-								//var jsonFormat = JToken.Parse(content).ToString();
-
-								return jsonFormat;
-							}
-
-							throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
-						}
+						//return jsonFormat;
 					}
+
+					throw new ArgumentException("Erro de conexão com o SICAR, será feita uma nova tentativa ;", "resultado");
 				}
+
+
 			}
 			catch (Exception ex)
 			{

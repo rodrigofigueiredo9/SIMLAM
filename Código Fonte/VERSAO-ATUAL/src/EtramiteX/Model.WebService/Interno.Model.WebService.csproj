@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuloWSSicar\CarAnaliseService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WSProcesso\CarAnaliseService.cs" />
   </ItemGroup>
@@ -58,10 +59,16 @@
   <ItemGroup>
     <None Include="Properties\DataSources\System.Data.DataSet.datasource" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="ModuloWSSicar\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>
