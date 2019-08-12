@@ -197,13 +197,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					VALUES(seq_TAB_CAR_CANCELAMENTO.nextval, :solicitacao, :autor, :situacao, :data, :motivo, :descricao_motivo, :arquivo_anexo, :arquivo)");
 
 				comando.AdicionarParametroEntrada("solicitacao", entidade.Id, DbType.Int32);
-				comando.AdicionarParametroEntrada("autor", entidade.AutorId, DbType.Int32);
+				comando.AdicionarParametroEntrada("autor", entidade.AutorCancelamento.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("situacao", entidade.SituacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("data", entidade.DataSituacao.DataTexto, DbType.Date);
 				comando.AdicionarParametroEntrada("motivo", (int)entidade.Motivo, DbType.Int32);
 				comando.AdicionarParametroEntrada("descricao_motivo", entidade.DescricaoMotivo, DbType.String);
-				comando.AdicionarParametroEntrada("arquivo_anexo", /*entidade.ArquivoAnexo?.Id ??*/ 0, DbType.Int32);
-				comando.AdicionarParametroEntrada("arquivo", /*entidade.ArquivoCancelamento?.Id ??*/ 0, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo_anexo", entidade.ArquivoAnexo?.Id ?? 0, DbType.Int32);
+				comando.AdicionarParametroEntrada("arquivo", entidade.ArquivoCancelamento?.Id ?? 0, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 
 				bancoDeDados.Commit();
@@ -610,16 +610,20 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					s.autor,
 					s.motivo,
 					s.arquivo,
-					cs.situacao_envio
+					cs.situacao_envio,
+					cs.codigo_imovel,
+					nvl(pea.cpf, pea.cnpj) cpfCnpjAutor
 				from tab_car_solicitacao         s,
 					tab_controle_sicar			 cs,
 					lov_car_solicitacao_situacao l,
 					tab_empreendimento           e,
-					tab_pessoa                   pes
+					tab_pessoa                   pes,
+					tab_pessoa					 pea
 				where s.id = cs.solicitacao_car
 				and s.situacao = l.id
 				and s.empreendimento = e.id
 				and s.declarante = pes.id
+				and s.autor = pea.id
 				and s.id = :id", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("id", id, DbType.Int32);
@@ -643,10 +647,12 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
 						solicitacao.Declarante.Id = reader.GetValue<Int32>("declarante");
 						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nome_razao");
+						solicitacao.AutorCpf = reader.GetValue<String>("cpfCnpjAutor");
 
 						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 						solicitacao.SICAR.SituacaoEnvio = (eStatusArquivoSICAR)reader.GetValue<Int32>("situacao_envio");
+						solicitacao.SICAR.CodigoImovel = reader.GetValue<String>("codigo_imovel");
 					}
 
 					reader.Close();

@@ -144,7 +144,8 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
             return new Mensagem() { Tipo = eTipoMensagem.Sucesso, Texto = String.Format("Sua solicitação de {0} para o SICAR foi realizada com sucesso.", ((isEnviar) ? "enviar" : "reenviar")) };
         }
 
-
+		public Mensagem ErroPdfDemonstrativo { get { return new Mensagem() { Tipo = eTipoMensagem.Confirmacao, Texto = "Houve um erro ao baixar o demonstrativo." }; } }
+		
 
 		public Mensagem NaoPodeExcluirCredenciado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível excluir a Solicitação de Inscrição do Módulo Credenciado." }; } }
 		public Mensagem NaoPodeEnviarCredenciado { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Não é possível enviar a Solicitação de Inscrição do Módulo Credenciado. É necessário aguardar o protocolo." }; } }

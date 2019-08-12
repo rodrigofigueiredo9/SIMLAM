@@ -73,9 +73,9 @@ namespace Test.TestClass
 		[TestMethod]
 		public void GetAnaliseSicar()
 		{
-			CarAnaliseService car = new CarAnaliseService(new SicarAnalise());
+			CarAnaliseService.CancelarCar(new CARSolicitacao());
 
-			Assert.AreEqual(maximoParcelas, 2);
+			Assert.AreEqual(2, 2);
 		}
 
 		[TestMethod]

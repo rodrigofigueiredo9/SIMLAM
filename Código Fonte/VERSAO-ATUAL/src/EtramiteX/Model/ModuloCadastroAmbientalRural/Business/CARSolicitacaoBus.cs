@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Interno.Model.WebService.ModuloWSSicar;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -156,24 +157,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			try
 			{
 				bool IsCredenciado = false;
-				CARSolicitacao solicitacaoAtual = Obter(entidade.Id) ?? new CARSolicitacao();
+				CARSolicitacao solicitacaoAtual = Obter(entidade.Id, simplificado: true) ?? new CARSolicitacao();
 
 				if (solicitacaoAtual.Id == 0)
 				{
-					solicitacaoAtual = _busCredenciado.Obter(entidade.Id);
+					solicitacaoAtual = _busCredenciado.Obter(entidade.Id, simplificado: true);
 					IsCredenciado = true;
 				}
 
 				entidade.SituacaoAnteriorId = solicitacaoAtual.SituacaoId;
 				entidade.DataSituacaoAnterior = solicitacaoAtual.DataSituacao;
 				entidade.Protocolo = solicitacaoAtual.Protocolo;
-				entidade.AutorId = funcionarioId;
+				entidade.AutorCancelamento.Id = funcionarioId;
+				entidade.AutorCpf = solicitacaoAtual.AutorCpf;
+				entidade.SICAR.CodigoImovel = solicitacaoAtual.SICAR.CodigoImovel;
 
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
 				if (_validar.AlterarSituacao(entidade, funcionarioId, isTitulo))
 				{
+					AlterarSituacaoSicar(entidade);
+
 					if (IsCredenciado)
 					{
 						using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -217,6 +222,34 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			}
 
 			return Validacao.EhValido;
+		}
+
+		public void AlterarSituacaoSicar(CARSolicitacao solicitacao)
+		{
+			switch (solicitacao.SituacaoId)
+			{
+				case (int)eCARSolicitacaoSituacao.Valido:
+					if(solicitacao.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso)
+						CarAnaliseService.ReverterSuspensao(solicitacao);
+					else
+					{
+						solicitacao.Status = eStatusImovelSicar.Ativo;
+						CarAnaliseService.AlterarSituacaoSicar(solicitacao);
+					}
+					break;
+
+				case (int)eCARSolicitacaoSituacao.Invalido:
+					solicitacao.Status = eStatusImovelSicar.Cancelado;
+					CarAnaliseService.AlterarSituacaoSicar(solicitacao);
+					break;
+
+				case (int)eCARSolicitacaoSituacao.Suspenso:
+						CarAnaliseService.SolicitarSuspensao(solicitacao);
+					break;
+
+				default:
+					break;
+			}
 		}
 
 		internal void SubstituirPorTituloCARCredenciado(int empreendimentoInstitucionalID, BancoDeDados banco = null)

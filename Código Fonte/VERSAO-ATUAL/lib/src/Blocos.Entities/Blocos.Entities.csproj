@@ -294,11 +294,12 @@
     <Compile Include="Interno\ModuloAnaliseItens\eAnaliseSituacao.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\CARCancelamento.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\ControleArquivoSICAR.cs" />
+    <Compile Include="Interno\ModuloCadastroAmbientalRural\eSituacaoRL.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusImovelSicar.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARCancelamentoMotivo.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eCARSolicitacaoOrigem.cs" />
     <Compile Include="Interno\ModuloCadastroAmbientalRural\eStatusArquivoSICAR.cs" />
-    <Compile Include="Interno\ModuloCadastroAmbientalRural\SicarAnalise.cs" />
+    <Compile Include="Interno\ModuloCadastroAmbientalRural\SicarAnaliseRetornoDTO.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitarioConsolidado.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitarioListarFiltros.cs" />
     <Compile Include="Interno\ModuloConfiguracaoDocumentoFitossanitario\DocumentoFitossanitario.cs" />

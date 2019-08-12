@@ -18,6 +18,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		
 		public String Numero { get; set; }
 		public eCARCancelamentoMotivo Motivo { get; set; }
+		public eStatusImovelSicar Status { get; set; }
 		public String DescricaoMotivo { get; set; }
 		public Int32 ProjetoId { get; set; }
 		public String ProjetoTid { get; set; }
@@ -31,9 +32,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public Int32 AutorId { get; set; }
 		public String AutorTid { get; set; }
 		public String AutorNome { get; set; }
+		public String AutorCpf { get; set; }
 		public String AutorSetorTexto { get; set; }
 		public String AutorTipoTexto { get; set; }
 		public String AutorModuloTexto { get; set; }
+
 
 		public Int32 ExecutorTipoID { get; set; }
 
@@ -127,6 +130,13 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		}
 
 		public List<CARCancelamento> CarCancelamento { get; set; }
+
+		public Pessoa _autorCancelamento { get; set; }
+		public Pessoa AutorCancelamento
+		{
+			get { return _autorCancelamento; }
+			set { _autorCancelamento = value; }
+		}
 
 		public CARSolicitacao(){}
 	}
