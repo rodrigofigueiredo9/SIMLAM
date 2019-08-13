@@ -309,7 +309,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
 
-			_bus.AlterarSituacao(solicitacao, funcionarioId: func.FuncionarioId);
+			_bus.AlterarSituacao(solicitacao, funcionario: func);
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + solicitacao.Id + "&situacaoId=" + solicitacao.SituacaoId;
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @UrlRedirecionar = urlRetorno }, JsonRequestBehavior.AllowGet);

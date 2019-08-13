@@ -37,7 +37,8 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
 			{
 				return ViewModelHelper.Json(new
 				{
-					@AlterarSituacaoMsgConfirmacao = Mensagem.CARSolicitacao.@AlterarSituacaoMsgConfirmacao
+					@AlterarSituacaoMsgConfirmacao = Mensagem.CARSolicitacao.@AlterarSituacaoMsgConfirmacao,
+					@ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio
 
 				});
 			}
@@ -60,7 +61,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
 		{
 			get
 			{
-				if (ArquivoAnexo == null || ArquivoAnexo.Id <= 0)
+				if (ArquivoAnexo == null || ArquivoAnexo.Id == null || ArquivoAnexo.Id <= 0)
 					return "";
 				return ViewModelHelper.Json(new
 				{

@@ -92,14 +92,14 @@
                             <%= Html.ActionLink(ViewModelHelper.StringFit(Model.ArquivoAnexo.Nome, 45), "Baixar", "Arquivo", new { @id = Model.ArquivoAnexo.Id.GetValueOrDefault() }, new { @Style = "display: block", @class = "lnkArquivo", @title = Model.ArquivoAnexo.Nome })%>
                         </div>
                         <% } %>
-                        <%= Html.TextBox("responsaveisTecnicos[1].autorizacaoCREA.Nome", null, new { readOnly = "true", @class = "text txtArquivoNome hide disabled", @disabled = "disabled" })%>
+                        <%= Html.TextBox("ArquivoCancelamento", null, new { readOnly = "true", @class = "text txtArquivoNome hide disabled", @disabled = "disabled" })%>
                         <span class="spanInputFile <%= string.IsNullOrEmpty(Model.ArquivoAnexo.Nome) ? "" : "hide" %>">
                             <input type="file" id="ArquivoId" class="inputFile" style="display: block; width: 100%" name="file" /></span>
                         <input type="hidden" class="hdnArquivo" value="<%: Model.AutorizacaoJson%>" />
                     </div>
 
                     <div class="block ultima spanBotoes">
-                        <button type="button" class="inlineBotao btnArq <%= string.IsNullOrEmpty(Model.ArquivoAnexo.Nome) ? "" : "hide" %>" title="Enviar anexo" onclick="BarragemDispensaLicenca.enviarArquivo('<%= Url.Action("arquivo", "arquivo") %>');">Enviar</button>
+                        <button type="button" class="inlineBotao btnArq <%= string.IsNullOrEmpty(Model.ArquivoAnexo.Nome) ? "" : "hide" %>" title="Enviar anexo" onclick="CARSolicitacaoAlterarSituacao.enviarArquivo('<%= Url.Action("arquivo", "arquivo") %>');">Enviar</button>
                         <%if (!Model.isVisualizar)
 							{%>
                         <button type="button" class="inlineBotao btnArqLimpar <%= string.IsNullOrEmpty(Model.ArquivoAnexo.Nome) ? "hide" : "" %>" title="Limpar arquivo"><span>Limpar</span></button>

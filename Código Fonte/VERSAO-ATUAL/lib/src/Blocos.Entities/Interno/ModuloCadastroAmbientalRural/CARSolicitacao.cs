@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Interno.ModuloAtividade;
 using Tecnomapas.Blocos.Entities.Interno.ModuloEmpreendimento;
+using Tecnomapas.Blocos.Entities.Interno.ModuloFuncionario;
 using Tecnomapas.Blocos.Entities.Interno.ModuloPessoa;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.ModuloRequerimento;
@@ -131,8 +132,8 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 
 		public List<CARCancelamento> CarCancelamento { get; set; }
 
-		public Pessoa _autorCancelamento { get; set; }
-		public Pessoa AutorCancelamento
+		public Funcionario _autorCancelamento = new Funcionario();
+		public Funcionario AutorCancelamento
 		{
 			get { return _autorCancelamento; }
 			set { _autorCancelamento = value; }

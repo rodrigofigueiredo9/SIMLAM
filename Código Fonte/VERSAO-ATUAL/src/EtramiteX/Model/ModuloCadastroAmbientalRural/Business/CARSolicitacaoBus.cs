@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using Tecnomapas.Blocos.Arquivo.Data;
 using Tecnomapas.Blocos.Data;
 using Tecnomapas.Blocos.Entities.Configuracao.Interno;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
@@ -11,10 +12,12 @@ using Tecnomapas.Blocos.Entities.Etx.ModuloSecurity;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
 using Tecnomapas.Blocos.Entities.Interno.ModuloProtocolo;
 using Tecnomapas.Blocos.Entities.Interno.Security;
+using Tecnomapas.Blocos.Etx.ModuloArquivo.Business;
 using Tecnomapas.Blocos.Etx.ModuloCore.Business;
 using Tecnomapas.Blocos.Etx.ModuloValidacao;
 using Tecnomapas.EtramiteX.Configuracao;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data;
+using Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloProtocolo.Data;
@@ -152,32 +155,30 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			return Validacao.EhValido;
 		}
 
-		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool isTitulo = false, int funcionarioId = 0)
+		public bool AlterarSituacao(CARSolicitacao entidade, BancoDeDados banco = null, bool isTitulo = false, EtramiteIdentity funcionario = null)
 		{
 			try
 			{
 				bool IsCredenciado = false;
-				CARSolicitacao solicitacaoAtual = Obter(entidade.Id, simplificado: true) ?? new CARSolicitacao();
+				ArquivoBus _busArquivo = new ArquivoBus(eExecutorTipo.Interno);
+				ArquivoDa _arquivoDa = new ArquivoDa();
 
-				if (solicitacaoAtual.Id == 0)
+				entidade = obterDados(entidade);
+
+				if (!isTitulo)
 				{
-					solicitacaoAtual = _busCredenciado.Obter(entidade.Id, simplificado: true);
-					IsCredenciado = true;
+					entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
+					entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
 				}
-
-				entidade.SituacaoAnteriorId = solicitacaoAtual.SituacaoId;
-				entidade.DataSituacaoAnterior = solicitacaoAtual.DataSituacao;
-				entidade.Protocolo = solicitacaoAtual.Protocolo;
-				entidade.AutorCancelamento.Id = funcionarioId;
-				entidade.AutorCpf = solicitacaoAtual.AutorCpf;
-				entidade.SICAR.CodigoImovel = solicitacaoAtual.SICAR.CodigoImovel;
 
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
-				if (_validar.AlterarSituacao(entidade, funcionarioId, isTitulo))
+				if (_validar.AlterarSituacao(entidade, funcionario.FuncionarioId, isTitulo))
 				{
 					AlterarSituacaoSicar(entidade);
+
+					if (!Validacao.EhValido) return false;
 
 					if (IsCredenciado)
 					{
@@ -205,6 +206,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 							int situacaoArquivo = ObterNovaSituacaoArquivo(entidade.SituacaoId, entidade.SituacaoAnteriorId);
 							_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo, bancoDeDados);
 
+							_arquivoDa.Salvar(entidade.ArquivoCancelamento, funcionario.FuncionarioId, funcionario.Name, funcionario.Login, (int)eExecutorTipo.Interno, funcionario.FuncionarioTid);
 							_da.InserirAlterarSituacaoLista(entidade, bancoDeDados);
 							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
 						}
@@ -222,35 +224,66 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			}
 
 			return Validacao.EhValido;
-		}
 
-		public void AlterarSituacaoSicar(CARSolicitacao solicitacao)
-		{
-			switch (solicitacao.SituacaoId)
+
+
+			CARSolicitacao obterDados(CARSolicitacao solicitacaoCar)
 			{
-				case (int)eCARSolicitacaoSituacao.Valido:
-					if(solicitacao.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso)
-						CarAnaliseService.ReverterSuspensao(solicitacao);
-					else
-					{
-						solicitacao.Status = eStatusImovelSicar.Ativo;
-						CarAnaliseService.AlterarSituacaoSicar(solicitacao);
-					}
-					break;
+				CARSolicitacao solicitacaoAtual = Obter(solicitacaoCar.Id, simplificado: true) ?? new CARSolicitacao();
 
-				case (int)eCARSolicitacaoSituacao.Invalido:
-					solicitacao.Status = eStatusImovelSicar.Cancelado;
-					CarAnaliseService.AlterarSituacaoSicar(solicitacao);
-					break;
+				if (solicitacaoAtual.Id == 0)
+					solicitacaoAtual = _busCredenciado.Obter(solicitacaoCar.Id, simplificado: true);
 
-				case (int)eCARSolicitacaoSituacao.Suspenso:
-						CarAnaliseService.SolicitarSuspensao(solicitacao);
-					break;
+				solicitacaoCar.SituacaoAnteriorId = solicitacaoAtual.SituacaoId;
+				solicitacaoCar.DataSituacaoAnterior = solicitacaoAtual.DataSituacao;
+				solicitacaoCar.Protocolo = solicitacaoAtual.Protocolo;
+				solicitacaoCar.AutorCpf = solicitacaoAtual.AutorCpf;
+				solicitacaoCar.SICAR.CodigoImovel = solicitacaoAtual.SICAR.CodigoImovel;
+				solicitacaoCar.AutorCancelamento = new FuncionarioBus().Obter(funcionario?.FuncionarioId ?? 0);
 
-				default:
-					break;
+				return solicitacaoCar;
+			}
+
+			void AlterarSituacaoSicar(CARSolicitacao solicitacao)
+			{
+				SicarAnaliseRetornoDTO resultado = new SicarAnaliseRetornoDTO();
+				switch (solicitacao.SituacaoId)
+				{
+					case (int)eCARSolicitacaoSituacao.Valido:
+						if (solicitacao.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso)
+							resultado = CarAnaliseService.ReverterSuspensao(solicitacao);
+						else
+						{
+							solicitacao.Status = eStatusImovelSicar.Ativo;
+							resultado = CarAnaliseService.AlterarSituacaoSicar(solicitacao);
+						}
+						break;
+
+					case (int)eCARSolicitacaoSituacao.Invalido:
+						solicitacao.Status = eStatusImovelSicar.Cancelado;
+						resultado = CarAnaliseService.AlterarSituacaoSicar(solicitacao);
+						break;
+
+					case (int)eCARSolicitacaoSituacao.Suspenso:
+						resultado = CarAnaliseService.SolicitarSuspensao(solicitacao);
+						break;
+
+					default:
+						break;
+				}
+
+				if (resultado?.codigoResposta == 400)
+				{
+					if (resultado.mensagensResposta?.Count > 0)
+						resultado.mensagensResposta.ForEach(mensagem =>
+						{
+							Validacao.Add(eTipoMensagem.Erro, mensagem);
+						});
+				}
 			}
 		}
+
+		
 
 		internal void SubstituirPorTituloCARCredenciado(int empreendimentoInstitucionalID, BancoDeDados banco = null)
 		{

@@ -538,6 +538,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					{
 						solicitacao.Id = id;
 						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Esquema = (int)eCARSolicitacaoOrigem.Institucional;
 						solicitacao.Numero = reader.GetValue<String>("numero");
 						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
 						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
@@ -932,6 +933,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 					{
 						solicitacao.Id = id;
 						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Esquema = (int)eCARSolicitacaoOrigem.Institucional;
 						solicitacao.Numero = reader.GetValue<String>("numero");
 						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
 						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao_id");
