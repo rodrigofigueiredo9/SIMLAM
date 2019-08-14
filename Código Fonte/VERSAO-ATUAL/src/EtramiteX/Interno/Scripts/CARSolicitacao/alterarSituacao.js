@@ -73,6 +73,8 @@ CARSolicitacaoAlterarSituacao = {
 		Mensagem.limpar(CARSolicitacaoAlterarSituacao.container);
 		var SituacaoAnteriorTexto = $('.txtSituacaoAtual').val();
 
+		MasterPage.carregando(true);
+
 		if (SituacaoAnteriorTexto === 'Válido') {
 			Modal.confirma({
 				btnOkCallback: function (container) {
@@ -83,7 +85,6 @@ CARSolicitacaoAlterarSituacao = {
 				tamanhoModal: Modal.tamanhoModalMedia
 			});
 		} else {
-			MasterPage.carregando(true);
 			$.ajax({
 				url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
 				data: JSON.stringify(CARSolicitacaoAlterarSituacao.obter()),

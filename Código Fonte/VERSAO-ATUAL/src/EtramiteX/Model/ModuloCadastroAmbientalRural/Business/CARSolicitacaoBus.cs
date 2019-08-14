@@ -277,7 +277,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 					if (resultado.mensagensResposta?.Count > 0)
 						resultado.mensagensResposta.ForEach(mensagem =>
 						{
-							Validacao.Add(eTipoMensagem.Erro, mensagem);
+							Validacao.Add(eTipoMensagem.Advertencia, mensagem);
 						});
 				}
 			}

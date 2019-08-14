@@ -64,6 +64,7 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					form.Add(new StringContent(solicitacao.AutorCpf), "cpfResponsavel");
 					//form.Add(new StringContent("false"), "vistoriaRealizada");
 					//form.Add(new StringContent("12/08/2019"), "dataValidacaoAnalise");
+					form.Add(new StringContent("13/08/2019 21:00"), "dataCadastroEstadual");
 
 					var response = _client.PostAsync("/sincronia/quick", form).Result;
 
