@@ -31,8 +31,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -40,20 +50,31 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tecnomapas.Blocos.Arquivo, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuloWSSicar\CarAnaliseService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\DataSources\System.Data.DataSet.datasource" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WSProcesso\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Entities\Blocos.Entities.csproj">
+      <Project>{707F196A-8A05-4B96-92E1-E60335DDC933}</Project>
+      <Name>Blocos.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\lib\src\Blocos.Etx\Blocos.Etx.csproj">
+      <Project>{7F898E80-F828-4618-B27B-2D039DCB461E}</Project>
+      <Name>Blocos.Etx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\lib\src\Configuracao\Configuracao.csproj">
       <Project>{d73edcc9-8660-4ae7-b2d4-56f907f5db5c}</Project>
       <Name>Configuracao</Name>

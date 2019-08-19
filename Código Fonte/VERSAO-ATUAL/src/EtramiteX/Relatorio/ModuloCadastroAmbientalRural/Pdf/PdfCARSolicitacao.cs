@@ -119,7 +119,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloCadastroA
 					case eCARSolicitacaoSituacaoRelatorio.Invalido:
 						using (MemoryStream msTemp = new MemoryStream(stream.ToArray()))
 						{
-							string motivo = solicitacao.Motivo?.Length > 40 ? solicitacao.Motivo.Substring(0, 40) : solicitacao.Motivo;
+							string motivo = solicitacao.DescricaoMotivo?.Length > 40 ? solicitacao.DescricaoMotivo.Substring(0, 40) : solicitacao.DescricaoMotivo;
 							string situacaoTarja = solicitacao.SICAR.SituacaoEnvio == eStatusArquivoSICAR.Cancelado ?
 								$"{solicitacao.SituacaoTexto} - Cancelado por: {motivo}" : solicitacao.SituacaoTexto;
 

@@ -529,6 +529,7 @@
     <Content Include="Scripts\TituloDeclaratorioConfiguracao\listar.js" />
     <Content Include="Scripts\Titulo\tituloAutorizacaoExploracaoFlorestal.js" />
     <Content Include="Scripts\Titulo\tituloLaudoExploracaoFlorestal.js" />
+    <Content Include="Views\CARSolicitacao\AlterarSituacaoPartial.ascx" />
     <Content Include="Views\DUA\EmitirDuaListar.ascx" />
     <Content Include="Views\DUA\Listar.aspx" />
     <Content Include="Views\Empreendimento\ListarResultadosCorte.ascx" />

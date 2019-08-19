@@ -115,7 +115,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				comando.AdicionarParametroEntrada("situacao", entidade.SituacaoId, DbType.Int32);
 				comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
 				bancoDeDados.ExecutarNonQuery(comando);
-
+				
 				Historico.Gerar(entidade.Id, eHistoricoArtefato.carsolicitacao, acao, bancoDeDados);
 
 				bancoDeDados.Commit();
@@ -437,8 +437,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return retorno;
 		}
 
-		public CARSolicitacao Obter(int id, BancoDeDados banco = null)
+		public CARSolicitacao Obter(int id, bool simplificado = false, BancoDeDados banco = null)
 		{
+			if (simplificado)
+				return Obter(id, banco);
+
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado))
@@ -507,6 +510,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 					{
 						solicitacao.Id = id;
 						solicitacao.Tid = reader.GetValue<String>("tid");
+						solicitacao.Esquema = (int)eCARSolicitacaoOrigem.Credenciado;
 						solicitacao.Numero = reader.GetValue<String>("numero");
 						solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
 						solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
@@ -534,7 +538,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.AutorTipoTexto = reader.GetValue<String>("autor_tipo");
 						solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
 
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_digital");
 						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 					}
@@ -548,7 +552,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return solicitacao;
 		}
 
-		public CARSolicitacao ObterSimplificado(int id, BancoDeDados banco = null)
+		private CARSolicitacao Obter(int id, BancoDeDados banco = null)
 		{
 			CARSolicitacao solicitacao = new CARSolicitacao();
 
@@ -566,7 +570,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						LVC.TEXTO SITUACAO_TEXTO,
 						EMP.ID EMPREENDIMENTO_ID,
 						EMP.DENOMINADOR EMPREENDIMENTO_NOME,
-						EMP.CODIGO EMPREENDIMENTO_CODIGO
+						EMP.CODIGO EMPREENDIMENTO_CODIGO,
+						CAR.CREDENCIADO
 					FROM TAB_CAR_SOLICITACAO					CAR 
 					INNER JOIN TAB_EMPREENDIMENTO				EMP ON EMP.ID = CAR.EMPREENDIMENTO
 					INNER JOIN LOV_CAR_SOLICITACAO_SITUACAO		LVC ON LVC.ID = CAR.SITUACAO    
@@ -590,6 +595,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.Empreendimento.Id = reader.GetValue<Int32>("empreendimento_id");
 						solicitacao.Empreendimento.NomeRazao = reader.GetValue<String>("empreendimento_nome");
 						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
+						solicitacao.AutorId = reader.GetValue<Int32>("CREDENCIADO");
 					}
 
 					reader.Close();
@@ -601,12 +607,14 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 			return solicitacao;
 		}
 
-		internal CARSolicitacao ObterOnInstitucional(int id, BancoDeDados banco = null)
+		internal CARSolicitacao ObterOnInstitucional(int id, bool simplificado = false, BancoDeDados banco = null)
         {
-            CARSolicitacao solicitacao = new CARSolicitacao();
-
             using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
             {
+				if (simplificado)
+					return Obter(id, banco);
+
+				CARSolicitacao solicitacao = new CARSolicitacao();
                 #region Solicitação
 
                 Comando comando = bancoDeDados.CriarComando(@"select s.tid,
@@ -663,7 +671,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                     {
                         solicitacao.Id = id;
                         solicitacao.Tid = reader.GetValue<String>("tid");
-                        solicitacao.Numero = reader.GetValue<String>("numero");
+						solicitacao.Esquema = (int)eCARSolicitacaoOrigem.Institucional;
+						solicitacao.Numero = reader.GetValue<String>("numero");
                         solicitacao.DataEmissao.DataTexto = reader.GetValue<String>("data_emissao");
                         solicitacao.SituacaoId = reader.GetValue<Int32>("situacao");
                         solicitacao.SituacaoTexto = reader.GetValue<String>("situacao_texto");
@@ -690,7 +699,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                         solicitacao.AutorTipoTexto = reader.GetValue<String>("autor_tipo");
                         solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
 
-                        solicitacao.Motivo = reader.GetValue<String>("motivo");
+                        solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
                         solicitacao.Arquivo = reader.GetValue<int>("arquivo");
                         //solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_digital");
                     }
@@ -699,9 +708,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
                 }
 
                 #endregion
+				return solicitacao;
             }
 
-            return solicitacao;
         }
 
 		internal CARSolicitacao ObterHistorico(int id, string tid, BancoDeDados banco = null)
@@ -796,7 +805,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.AutorTipoTexto = reader.GetValue<String>("autor_tipo");
 						solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
 
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
 
 						solicitacao.ExecutorTipoID = reader.GetValue<Int32>("executor_tipo_id");
@@ -849,7 +858,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.SituacaoAnteriorId = reader.GetValue<Int32>("situacao_anterior_id");
 						solicitacao.SituacaoAnteriorTexto = reader.GetValue<String>("situacao_anterior_texto");
 						solicitacao.DataSituacaoAnterior.DataTexto = reader.GetValue<String>("situacao_anterior_data");
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 					}
 
 					reader.Close();
@@ -1035,7 +1044,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-							solicitacao = ObterSimplificado(solicitacaoId, banco: bd);
+							solicitacao = Obter(solicitacaoId, simplificado: true, banco: bd);
 							return solicitacao;
 						}
 						else if (solicitacao.Esquema == 1)
@@ -1082,7 +1091,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						{
 							BancoDeDados bd = BancoDeDados.ObterInstancia(banco, UsuarioCredenciado);
 
-							solicitacao = ObterSimplificado(solicitacaoId, banco: bd);
+							solicitacao = Obter(solicitacaoId, simplificado: true, banco: bd);
 							solicitacao.Esquema = esquema;
 							return solicitacao;
 						}
@@ -1132,6 +1141,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 
             return controleSicar;
         }
+
 		internal Resultados<SolicitacaoListarResultados> Filtrar(Filtro<SolicitacaoListarFiltro> filtros, BancoDeDados banco = null)
 		{
 			Resultados<SolicitacaoListarResultados> retorno = new Resultados<SolicitacaoListarResultados>();
@@ -1383,6 +1393,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 				}
 			}
 		}
+
 
 		#endregion
 

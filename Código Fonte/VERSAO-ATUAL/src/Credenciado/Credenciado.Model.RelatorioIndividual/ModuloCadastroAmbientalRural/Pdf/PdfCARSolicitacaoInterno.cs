@@ -2,6 +2,7 @@
 using System.IO;
 using Tecnomapas.Blocos.Arquivo;
 using Tecnomapas.Blocos.Arquivo.Data;
+using Tecnomapas.Blocos.Entities;
 using Tecnomapas.Blocos.Entities.Etx.ModuloCore;
 using Tecnomapas.Blocos.Entities.Etx.ModuloRelatorio.AsposeEtx;
 using Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural;
@@ -123,7 +124,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 						using (MemoryStream msTemp = new MemoryStream(stream.ToArray()))
 						{
 							string situacaoTarja = solicitacao.SICAR.SituacaoEnvio == eStatusArquivoSICAR.Cancelado ?
-								solicitacao.SituacaoTexto + " - Canelado por: " + solicitacao.Motivo.Substring(0, 40) : solicitacao.SituacaoTexto;
+								solicitacao.SituacaoTexto + " - Canelado por: " + solicitacao.DescricaoMotivo.Substring(0, 40) : solicitacao.SituacaoTexto;
 
 							stream.Close();
 							stream.Dispose();
@@ -159,8 +160,9 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
 			_busArquivo.Salvar(arquivo);
 
-			Executor executor = Executor.Current;
-			_arquivoDa.Salvar(arquivo, executor.Id, executor.Nome, executor.Login, (int)executor.Tipo, executor.Tid);
+            Executor executor = Executor?.Current;
+
+			_arquivoDa.Salvar(arquivo, executor?.Id ?? 0, executor?.Nome ?? "Modo público", executor?.Login ?? "publico", (int)(executor?.Tipo ?? 0), executor?.Tid ?? "TID");
 
 			_da.SalvarPdfSolicitacaoCar(solicitacaoId, arquivo.Id ?? 0);
 		}

@@ -1668,10 +1668,10 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 		#region Cadastro Ambiental Rural - CAR
 
 		#region Solicitacao
-		internal List<Lista> ObterCadastroAmbientalRuralSolicitacaoSituacao()
+		internal List<Lista> ObterCadastroAmbientalRural(string tabela)
 		{
 			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_car_solicitacao_situacao t order by t.id");
+			IEnumerable<IDataReader> daReader = DaHelper.ObterLista($@"select t.id, t.texto from {tabela} t order by t.id");
 			foreach (var item in daReader)
 			{
 				lst.Add(new Lista()
@@ -1683,39 +1683,6 @@ namespace Tecnomapas.EtramiteX.Configuracao.Interno.Data
 			}
 			return lst;
 		}
-
-        internal List<Lista> ObterSicarSituacao()
-        {
-            List<Lista> lst = new List<Lista>();
-            IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_situacao_envio_sicar t where t.id != 7 order by t.id");
-            foreach (var item in daReader)
-            {
-                lst.Add(new Lista()
-                {
-                    Id = Convert.ToString(item["id"]),
-                    Texto = Convert.ToString(item["texto"]),
-                    IsAtivo = true
-                });
-            }
-            return lst;
-        }
-
-		internal List<Lista> ObterCadastroAmbientalRuralSolicitacaoOrigem()
-		{
-			List<Lista> lst = new List<Lista>();
-			IEnumerable<IDataReader> daReader = DaHelper.ObterLista(@"select t.id, t.texto from lov_car_solicitacao_origem t order by t.id");
-			foreach (var item in daReader)
-			{
-				lst.Add(new Lista()
-				{
-					Id = Convert.ToString(item["id"]),
-					Texto = Convert.ToString(item["texto"]),
-					IsAtivo = true
-				});
-			}
-			return lst;
-		}
-
 		#endregion Recibo
 
 		#endregion Cadastro Ambiental Rural - CAR

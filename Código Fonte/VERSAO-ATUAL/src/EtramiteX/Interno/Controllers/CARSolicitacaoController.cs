@@ -281,21 +281,25 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		[Permite(RoleArray = new Object[] { ePermissao.CadastroAmbientalRuralSolicitacaoAlterarSituacao })]
 		public ActionResult AlterarSituacao(int id)
 		{
-			CARSolicitacao solicitacao = _bus.ObterSimplificado(id);
+			CARSolicitacao solicitacao = _bus.Obter(id, simplificado: true);
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
-			
-			if (solicitacao.Id == 0)
-			{
-				solicitacao = _busCredenciado.ObterSimplificado(id);
-			}
-			
-			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
-			{
-				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
-			}
+			solicitacao.AutorId = func.UsuarioId;
 
-			CARSolicitacaoAlterarSituacaoVM vm = new CARSolicitacaoAlterarSituacaoVM(solicitacao, _bus.ObterSituacoes(solicitacao.SituacaoId));
+			if (solicitacao.Id == 0)
+				solicitacao = _busCredenciado.Obter(id, simplificado: true);
+			
+			solicitacao.CarCancelamento = _bus.ObterListaCancelamentoCar(id);
+
+			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
+				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
+
+			var situacoes = _bus.ObterSituacoes(solicitacao.SituacaoId);
+			var motivos = _busLista.CarSolicitacaoCancelamentoMotivos; //motivos so para quando a situacao for valido
+
+			CARSolicitacaoAlterarSituacaoVM vm = new CARSolicitacaoAlterarSituacaoVM(solicitacao, situacoes, motivos);
 			vm.isVisualizar = _bus.ValidarVisualizarAlterarSituacao(solicitacao, func.FuncionarioId);
+			vm.Autor.Id = func.FuncionarioId;
+			vm.Autor.Nome = func.Name;
 			return View(vm);
 		}
 
@@ -305,7 +309,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 		{
 			EtramiteIdentity func = User.Identity as EtramiteIdentity;
 
-			_bus.AlterarSituacao(solicitacao, funcionarioId: func.FuncionarioId);
+			_bus.AlterarSituacao(solicitacao, funcionario: func);
 
 			string urlRetorno = Url.Action("Index", "CARSolicitacao") + "?Msg=" + Validacao.QueryParam() + "&acaoId=" + solicitacao.Id + "&situacaoId=" + solicitacao.SituacaoId;
 			return Json(new { @EhValido = Validacao.EhValido, @Msg = Validacao.Erros, @UrlRedirecionar = urlRetorno }, JsonRequestBehavior.AllowGet);
