@@ -175,6 +175,8 @@ TituloAlterarSituacao = {
 						$.ajax({
 							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/Integracao',
 							data: JSON.stringify(objetoIntegracao),
+							dataType: 'json',
+							contentType: 'application/json; charset=utf-8',
 							beforeSend: function (xhr) {
 								xhr.setRequestHeader('Authorization', 'Bearer ' + TituloAlterarSituacao.settings.urls.token);
 							},
