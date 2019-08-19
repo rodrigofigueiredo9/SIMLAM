@@ -163,9 +163,18 @@ TituloAlterarSituacao = {
 							prazo = objeto.DiasProrrogados == '' ? 1 : objeto.DiasProrrogados;
 						if (prazo == '') prazo = 1;
 
+						var objetoIntegracao = {
+							"tituloId": objeto.Id,
+							"codigoSicar": codigoSicar,
+							"dataEmissao": dataEmissao,
+							"prazo": prazo,
+							"situacao": situacao,
+							"arquivoIntegrado": $('.hdnArquivoIntegrado', TituloAlterarSituacao.container).val()
+						};
+
 						$.ajax({
-							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/titulo/' + objeto.Id + '/dataEmissao/' + dataEmissao +
-								'/prazo/' + prazo + '/situacao/' + situacao + (codigoSicar != '' ? '/Sicar/' + codigoSicar : ''),
+							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/Integracao',
+							data: JSON.stringify(objetoIntegracao),
 							beforeSend: function (xhr) {
 								xhr.setRequestHeader('Authorization', 'Bearer ' + TituloAlterarSituacao.settings.urls.token);
 							},

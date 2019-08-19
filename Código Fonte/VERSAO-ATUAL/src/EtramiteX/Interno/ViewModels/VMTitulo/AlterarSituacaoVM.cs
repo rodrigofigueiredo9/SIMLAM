@@ -23,6 +23,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMTitulo
 		public Boolean MostrarPrazo { get; set; }
 		public Boolean PrazoAutomatico { get; set; }
 		public String CodigoSinaflor { get; set; }
+		public String ArquivoIntegrado { get; set; }
 
 		private List<SelectListItem> _situacoes = new List<SelectListItem>();
 		public List<SelectListItem> Situacoes

@@ -998,6 +998,17 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			vm.MostrarPrazo = titulo.Modelo.Regra(eRegra.Prazo);
 			vm.PrazoAutomatico = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.CertificadoRegistroAtividadeFlorestal;
 
+			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+			{
+				Arquivo arquivo = _bus.GerarPdf(id);				
+				if (arquivo.Buffer is MemoryStream)
+				{
+					// Memorystreams criados por itext sao fechados, portanto use array de bytes
+					MemoryStream stream = arquivo.Buffer as MemoryStream;
+					vm.ArquivoIntegrado = Convert.ToBase64String(stream.ToArray());
+				}
+			}
+
 			_tituloSituacaoValidar.ValidarParaConcluir(titulo);
 
 			if (vm.MostrarPrazo)
