@@ -428,25 +428,6 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Bu
 
 		}
 
-		public CARSolicitacao ObterSimplificado(int id, BancoDeDados banco = null)
-		{
-			try
-			{
-                var onCred = _da.ObterSimplificado(id, banco);
-                if(onCred.Id == 0)
-                {
-                    return _da.ObterOnInstitucional(id, banco);
-                }
-                return onCred;
-			}
-			catch (Exception exc)
-			{
-				Validacao.AddErro(exc);
-			}
-			return null;
-
-		}
-
 		public CARSolicitacao ObterHistoricoPrimeiraSituacao(int id, eCARSolicitacaoSituacao situacao, BancoDeDados banco = null)
 		{
 			try
