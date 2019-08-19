@@ -57,23 +57,6 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 				vm.Filtros = ViewModelHelper.JsSerializer.Deserialize<ListarVM>(vm.UltimaBusca).Filtros;
 			}
 
-			#region Situacoes Permitidas
-
-			_busLista.CadastroAmbientalRuralSolicitacaoSituacao.Where(x => x.Id == ((int)eCARSolicitacaoSituacao.Valido).ToString() || 
-																		   x.Id == ((int)eCARSolicitacaoSituacao.Suspenso).ToString() ||
-																		   x.Id == ((int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR).ToString() ||
-																		   x.Id == ((int)eCARSolicitacaoSituacao.Invalido).ToString()).ToList().ForEach(item =>
-			{
-				vm.Filtros.Situacoes.Add("'" + item.Texto + "'");
-			});
-
-			_busLista.TituloSituacoes.Where(x => x.Id == (int)eTituloSituacao.Concluido).ToList().ForEach(item =>
-			{
-				vm.Filtros.Situacoes.Add("'" + item.Texto + "'");
-			});
-
-			#endregion
-
 			vm.Paginacao = paginacao;
 			vm.UltimaBusca = HttpUtility.HtmlEncode(ViewModelHelper.JsSerializer.Serialize(vm.Filtros));
 			vm.Paginacao.QuantPaginacao = Convert.ToInt32(ViewModelHelper.CookieQuantidadePorPagina);
@@ -133,26 +116,12 @@ namespace Tecnomapas.EtramiteX.Publico.Controllers
 				MemoryStream resultado = null;
 
 				if (_bus.ExisteCredenciado(id))
-				{
-					CARSolicitacao solicitacao = _bus.ObterCredenciado(id);
-					int situacaoId = solicitacao.SituacaoId;
-					string situacaoTexto = solicitacao.SituacaoTexto;
-
-					resultado = new PdfCARSolicitacaoCredenciado().Gerar(id, situacaoId, situacaoTexto);
-				}
+					resultado = new PdfCARSolicitacaoCredenciado().Gerar(_bus.ObterCredenciado(id));
 				else
-				{
-					CARSolicitacao solicitacao = _bus.ObterInterno(id);
-					int situacaoId = solicitacao.SituacaoId;
-					string situacaoTexto = solicitacao.SituacaoTexto;
-
-					resultado = new PdfCARSolicitacaoInterno().Gerar(id, situacaoId, situacaoTexto);
-				}
+					resultado = new PdfCARSolicitacaoInterno().Gerar(_bus.ObterInterno(id));
 
 				if (!Validacao.EhValido)
-				{
 					return RedirectToAction("Index", Validacao.QueryParamSerializer());
-				}
 
 				return ViewModelHelper.GerarArquivo("Solicitacao Inscricao CAR.pdf", resultado, "application/pdf");
 			}

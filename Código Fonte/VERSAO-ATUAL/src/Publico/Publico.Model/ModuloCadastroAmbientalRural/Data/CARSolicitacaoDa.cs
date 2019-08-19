@@ -89,15 +89,14 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 
 					s.autor,
 					s.motivo,
-					tr.data_criacao requerimento_data_cadastro,
-					pg.id projeto_geo_id
+					s.arquivo,
+					tr.data_criacao requerimento_data_cadastro
 				from tab_car_solicitacao         s,
 					lov_car_solicitacao_situacao l,
 					lov_car_solicitacao_situacao la,
 					tab_protocolo                p,
 					tab_protocolo                ps,
 					tab_empreendimento           e,
-					crt_projeto_geo              pg,
 					tab_pessoa                   pes,
 					tab_requerimento             tr,
 					hst_funcionario              f
@@ -106,10 +105,8 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				and s.protocolo = p.id
 				and s.protocolo_selecionado = ps.id(+)
 				and s.empreendimento = e.id
-				and s.empreendimento = pg.empreendimento
 				and s.declarante = pes.id
 				and s.requerimento = tr.id
-				and pg.caracterizacao = 1
 				and f.funcionario_id = s.autor
 				and f.tid = (select autor_tid from hst_car_solicitacao where acao_executada = 342 and solicitacao_id = s.id)
 				and s.id = :id", EsquemaBanco);
@@ -152,8 +149,8 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 						solicitacao.AutorSetorTexto = reader.GetValue<String>("autor_setor");
 						solicitacao.AutorModuloTexto = reader.GetValue<String>("autor_modulo");
 
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
-						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_geo_id");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
+						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 					}
 
 					reader.Close();
@@ -192,7 +189,8 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 					s.declarante,
 					s.motivo,
 					tr.data_criacao requerimento_data_cadastro,
-					s.projeto_digital
+					s.projeto_digital,
+					s.arquivo
 				from 
 					tab_car_solicitacao          s,
 					lov_car_solicitacao_situacao l,
@@ -232,8 +230,9 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
 						solicitacao.Declarante.Id = reader.GetValue<Int32>("declarante");
 						solicitacao.Declarante.NomeRazaoSocial = reader.GetValue<String>("declarante_nome_razao");
-						solicitacao.Motivo = reader.GetValue<String>("motivo");
+						solicitacao.DescricaoMotivo = reader.GetValue<String>("motivo");
 						solicitacao.ProjetoId = reader.GetValue<Int32>("projeto_digital");
+						solicitacao.Arquivo = reader.GetValue<Int32>("arquivo");
 					}
 
 					reader.Close();
@@ -290,28 +289,20 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 				#region Adicionando Filtros
 
 				comandtxt += comando.FiltroAnd("l.solicitacao_numero", "solicitacao_numero", filtros.Dados.SolicitacaoNumero);
-
-				comandtxt += comando.FiltroAnd("l.empreendimento_codigo", "empreendimento_codigo", filtros.Dados.EmpreendimentoCodigo);
-
-				comandtxt += comando.FiltroAndLike("l.protocolo_numero_completo", "protocolo_numero_completo", filtros.Dados.Protocolo.NumeroTexto);
-
-				comandtxt += comando.FiltroAndLike("l.declarante_nome_razao", "declarante_nome_razao", filtros.Dados.DeclaranteNomeRazao, true);
-
 				comandtxt += comando.FiltroAnd("l.declarante_cpf_cnpj", "declarante_cpf_cnpj", filtros.Dados.DeclaranteCPFCNPJ);
 
+				comandtxt += comando.FiltroAnd("l.empreendimento_codigo", "empreendimento_codigo", filtros.Dados.EmpreendimentoCodigo);
+				comandtxt += comando.FiltroAnd("l.responsavel", "responsavel_cpf_cnpj", filtros.Dados.ResponsavelEmpreendimentoCPFCNPJ);
+
+
+				comandtxt += comando.FiltroAndLike("l.protocolo_numero_completo", "protocolo_numero_completo", filtros.Dados.Protocolo.NumeroTexto);
+				comandtxt += comando.FiltroAndLike("l.declarante_nome_razao", "declarante_nome_razao", filtros.Dados.DeclaranteNomeRazao, true);
 				comandtxt += comando.FiltroAndLike("l.empreendimento_denominador", "empreendimento_denominador", filtros.Dados.EmpreendimentoDenominador, true);
-
 				comandtxt += comando.FiltroAnd("l.municipio_id", "municipio_id", filtros.Dados.Municipio);
-
 				comandtxt += comando.FiltroAnd("l.requerimento", "requerimento", filtros.Dados.Requerimento);
-
 				comandtxt += comando.FiltroAnd("l.titulo_numero", "titulo_numero", filtros.Dados.Titulo.Inteiro);
-
 				comandtxt += comando.FiltroAnd("l.titulo_ano", "titulo_ano", filtros.Dados.Titulo.Ano);
-
 				comandtxt += comando.FiltroAnd("l.origem", "origem", filtros.Dados.Origem);
-
-                comandtxt += comando.FiltroAnd("l.responsavel", "responsavel_cpf_cnpj", filtros.Dados.ResponsavelEmpreendimentoCPFCNPJ);
 
 				if (!String.IsNullOrWhiteSpace(filtros.Dados.Situacao))
 				{
@@ -319,13 +310,10 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 					comandtxt += comando.FiltroAnd("l.tipo", "tipo", 1);//Solicitacao
 				}
 
-				if (filtros.Dados.Situacoes.Count > 0)
-				{
-					comandtxt += String.Format(" and l.situacao_texto in ({0})", String.Join(",", filtros.Dados.Situacoes));
-				}
+				comandtxt += String.Format(" and l.situacao in ({0})", String.Join(",", "2, 3, 4, 5"));
 
 				List<String> ordenar = new List<String>();
-				List<String> colunas = new List<String>() { "solicitacao_numero", "empreendimento_denominador", "municipio_texto", "situacao_texto" };
+				List<String> colunas = new List<String>() { "solicitacao_numero", "empreendimento_denominador" };
 
 				if (filtros.OdenarPor > 0)
 				{
@@ -338,78 +326,80 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 
 				#endregion
 
+				#region Query
+				string query = @"
+					select 	t.id, 
+						t.numero solicitacao_numero, 
+						'' responsavel,
+						nvl(pe.cpf, pe.cnpj) declarante_cpf_cnpj,
+						null titulo_numero, 
+						null titulo_ano,
+						e.codigo empreendimento_codigo,
+						e.denominador empreendimento_denominador,
+						t.situacao, 
+						1 tipo,
+						1 origem
+       	 
+				   from 	tab_car_solicitacao t 
+       						inner join idaf.tab_empreendimento              e  on e.id = t.empreendimento
+							inner join idaf.tab_pessoa                      pe on pe.id = t.declarante 
+				   union all 
+				   select ht.titulo_id id, 
+						  null solicitacao_numero, 
+						  nvl(hp.cpf, hp.cnpj) responsavel,
+						  '' declarante_cpf_cnpj,
+						  tn.numero titulo_numero, 
+						  tn.ano titulo_ano,
+						  he.codigo empreendimento_codigo,
+						  he.denominador empreendimento_denominador, 
+						  ht.situacao_id, 
+						  2 tipo,
+						  null origem
+
+				   from   hst_titulo ht
+						  inner join tab_titulo_numero tn               ON ht.titulo_id = tn.titulo
+						  inner join hst_empreendimento he              ON he.empreendimento_id = ht.empreendimento_id and he.tid = ht.empreendimento_tid
+						  inner join hst_empreendimento_responsavel her ON  her.id_hst = he.id
+						  inner join hst_pessoa hp                      ON  hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid
+              
+				   where ht.modelo_id = 66 
+				   union all 
+				   select        t.id, 
+						  t.numero solicitacao_numero, 
+						  '' responsavel,
+						  nvl(pe.cpf, pe.cnpj) declarante_cpf_cnpj,
+						  null titulo_numero, 
+						  null titulo_ano,
+						  e.codigo empreendimento_codigo,
+						  e.denominador empreendimento_denominador,
+						  t.situacao, 
+						  1 tipo,
+						  2 origem
+               
+				   from   idafcredenciado.tab_car_solicitacao t 
+						  inner join idafcredenciado.tab_empreendimento              e  on e.id = t.empreendimento
+						  inner join idafcredenciado.tab_pessoa                      pe on pe.id = t.declarante ";
+
+				#endregion
+
 				#region Quantidade de registro do resultado
 
-				comando.DbCommand.CommandText = String.Format(@"
-				select count(1) from (
-				select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero, 
-						null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null 
-						credenciado, s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,
-						s.empreendimento_denominador, s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo, tcs.situacao_envio 
-						from lst_car_solic_tit s, idaf.tab_controle_sicar tcs 
-				where s.tipo = 1 and s.solic_tit_id = tcs.solicitacao_car(+)        
-				union all         
-				select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero, 
-						s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
-						s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, s.empreendimento_denominador, 
-						s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 1 origem, 2 tipo, tcs.situacao_envio 
-				from lst_car_solic_tit s, hst_titulo ht, hst_empreendimento he, hst_empreendimento_responsavel her, hst_pessoa hp, idaf.tab_controle_sicar tcs 
-				where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ and he.empreendimento_id = ht.empreendimento_id 
-						and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid and s.tipo = 2  
-				and s.solic_tit_id = tcs.solicitacao_car(+)		
-        		union all
-				select '' responsavel, c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero, 
-						null titulo_ano, null protocolo_id, null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital, 
-						c.credenciado, c.declarante_id, c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo, 
-						c.empreendimento_denominador, c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo, tcs.situacao_envio 
-						from lst_car_solicitacao_cred c, idaf.tab_controle_sicar tcs
-				where c.solicitacao_id = tcs.solicitacao_car(+)
-							) l where 1 = 1" + comandtxt, esquemaBanco);
+				comando.DbCommand.CommandText = String.Format($@"
+				select count(1) from ( {query} ) l where 1 = 1" + comandtxt, esquemaBanco);
 
 				retorno.Quantidade = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
 
 				comando.AdicionarParametroEntrada("menor", filtros.Menor);
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
-				comandtxt = @"select l.solic_tit_id, l.responsavel ,nvl(l.solicitacao_numero, l.titulo_numero) numero, l.titulo_ano ano, l.empreendimento_denominador, 
-				l.municipio_texto, l.situacao_id, l.situacao_texto, l.credenciado, l.origem, l.tipo, l.situacao_envio from        
+				comandtxt = $@"select l.id, l.solicitacao_numero, l.responsavel , l.declarante_cpf_cnpj, l.titulo_ano ano, l.empreendimento_denominador, 
+				l.situacao, l.origem, l.tipo from        
 				(
-				select '' responsavel, s.id, s.solic_tit_id, s.solicitacao_numero, null titulo_numero,             
-				null titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null             credenciado,
-				s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo,            s.empreendimento_denominador, 
-				s.municipio_id, s.municipio_texto, s.situacao_id, s.situacao_texto, s.requerimento, 1 origem, 1 tipo, 
-				(case when s.protocolo_ano is null then (select tcs.situacao_envio from tab_controle_sicar tcs where s.solic_tit_id = tcs.solicitacao_car(+)) else 0 end) situacao_envio     
-           
-				from   lst_car_solic_tit s           where s.tipo = 1 
-				union all             
-           
-				select nvl(hp.cpf, hp.cnpj) responsavel, s.id, s.solic_tit_id, null solicitacao_numero, s.titulo_numero,        
-					s.titulo_ano, s.protocolo_id, s.protocolo_numero, s.protocolo_ano, s.protocolo_numero_completo, null projeto_digital, null credenciado, 
-								s.declarante_id, s.declarante_nome_razao, s.declarante_cpf_cnpj, s.empreendimento_id, s.empreendimento_codigo, 
-								s.empreendimento_denominador,             s.municipio_id, s.municipio_texto, null situacao_id, s.situacao_texto, s.requerimento, 
-								1 origem, 2 tipo,
-								(case when s.protocolo_ano is null then (select tcs.situacao_envio from tab_controle_sicar tcs where s.solic_tit_id = tcs.solicitacao_car(+)) else 0 end) situacao_envio     
-								from lst_car_solic_tit s, hst_titulo ht, hst_empreendimento he, 
-								hst_empreendimento_responsavel her, hst_pessoa hp          
-
-				where ht.titulo_id = s.solic_tit_id and ht.situacao_id = 3/*Concluído*/ and he.empreendimento_id = ht.empreendimento_id            
-				and he.tid = ht.empreendimento_tid and her.id_hst = he.id and hp.pessoa_id = her.responsavel_id and hp.tid = her.responsavel_tid 
-				and s.tipo = 2                         
-				union all          
-            
-				  select '' responsavel, 
-				  c.id, c.solicitacao_id solic_tit_id, c.numero solicitacao_numero, null titulo_numero,             null titulo_ano, null protocolo_id, 
-				  null protocolo_numero, null protocolo_ano, null protocolo_numero_completo, c.projeto_digital,             c.credenciado, c.declarante_id, 
-				  c.declarante_nome_razao, c.declarante_cpf_cnpj, c.empreendimento_id, c.empreendimento_codigo,             c.empreendimento_denominador, 
-				  c.municipio_id, c.municipio_texto, c.situacao_id, c.situacao_texto, c.requerimento, 2 origem, 1 tipo, tcs.situacao_envio            
-
-				 from lst_car_solicitacao_cred c, idaf.tab_controle_sicar tcs          
-
-				 where c.solicitacao_id = tcs.solicitacao_car(+)
+				{query}
 				) l where 1 = 1" + comandtxt + DaHelper.Ordenar(colunas, ordenar);
 
 				comando.DbCommand.CommandText = String.Format(@"select distinct
-				solic_tit_id, responsavel, numero, ano, empreendimento_denominador, municipio_texto, situacao_id, situacao_texto, credenciado, origem, tipo, situacao_envio
+				id, responsavel, solicitacao_numero, ano, empreendimento_denominador, situacao, origem, tipo
 				from (select a.*, rownum rnum from ( " + comandtxt + @") a) where rnum <= :maior and rnum >= :menor", esquemaBanco);
 
 				#endregion
@@ -423,17 +413,17 @@ namespace Tecnomapas.EtramiteX.Publico.Model.ModuloCadastroAmbientalRural.Data
 					while (reader.Read())
 					{
 						item = new SolicitacaoListarResultados();
-						item.Id = reader.GetValue<int>("solic_tit_id");
-						item.Numero = reader.GetValue<string>("numero");
+						item.Id = reader.GetValue<int>("id");
+						item.Numero = reader.GetValue<string>("solicitacao_numero");
 						item.Ano = reader.GetValue<string>("ano");
 						item.EmpreendimentoDenominador = reader.GetValue<string>("empreendimento_denominador");
-						item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
-						item.SituacaoID = reader.GetValue<int>("situacao_id");
-						item.SituacaoTexto = reader.GetValue<string>("situacao_texto");
+						//item.MunicipioTexto = reader.GetValue<string>("municipio_texto");
+						item.SituacaoID = reader.GetValue<int>("situacao");
+						//item.SituacaoTexto = reader.GetValue<string>("situacao_texto");
 						item.IsTitulo = reader.GetValue<int>("tipo") == 2;
-						item.CredenciadoId = reader.GetValue<int>("credenciado");
+						//item.CredenciadoId = reader.GetValue<int>("credenciado");
 						item.Origem = (eCARSolicitacaoOrigem)(reader.GetValue<int>("origem"));
-						item.SituacaoArquivoCarID = reader.GetValue<int>("situacao_envio");
+						//item.SituacaoArquivoCarID = reader.GetValue<int>("situacao_envio");
 						retorno.Itens.Add(item);
 					}
 
