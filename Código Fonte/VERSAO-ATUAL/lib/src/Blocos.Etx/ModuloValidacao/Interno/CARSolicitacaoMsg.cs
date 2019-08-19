@@ -162,6 +162,5 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		public Mensagem SolicitacaoJaEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Arquivo já enviado ao SICAR." }; } }
-		public Mensagem ErroPdfDemonstrativo { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Houve um problema ao baixar o PDF do demonstrativo CAR. Por favor comunique o administrador do sistema." }; } }
 	}
 }
