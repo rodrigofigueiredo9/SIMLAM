@@ -160,7 +160,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.RelatorioIndividual.ModuloCadas
 
 			_busArquivo.Salvar(arquivo);
 
-            Executor executor = Executor?.Current;
+            Executor executor = Executor.Current;
 
 			_arquivoDa.Salvar(arquivo, executor?.Id ?? 0, executor?.Nome ?? "Modo público", executor?.Login ?? "publico", (int)(executor?.Tipo ?? 0), executor?.Tid ?? "TID");
 

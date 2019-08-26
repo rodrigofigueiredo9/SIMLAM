@@ -73,7 +73,7 @@ namespace Test.TestClass
 		[TestMethod]
 		public void GetAnaliseSicar()
 		{
-			CarAnaliseService.CancelarCar(new CARSolicitacao());
+			//CarAnaliseService.CancelarCar(new CARSolicitacao());
 
 			Assert.AreEqual(2, 2);
 		}
