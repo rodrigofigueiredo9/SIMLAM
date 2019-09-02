@@ -9,6 +9,7 @@
 	<input type="hidden" class="hdnTituloId" value="<%= Model.Id %>" />
 	<input type="hidden" class="hdnModeloId" value="<%= Model.ModeloId %>" />
 	<input type="hidden" class="hdnCodigoSicar" value="<%= Model.CodigoSicar %>" />
+	<input type="hidden" class="hdnArquivoIntegrado" value="<%= Model.ArquivoIntegrado %>" />
 
 	<fieldset class="block box">
 		<legend>Título</legend>

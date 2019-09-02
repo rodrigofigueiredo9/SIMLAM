@@ -42,10 +42,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 		private String SchemaUsuarioCredenciado { get { return _configSys.Obter<String>(ConfiguracaoSistema.KeyUsuarioCredenciado); } }
 
-		private static EtramiteIdentity User
-		{
-			get { return (HttpContext.Current.User as EtramitePrincipal).EtramiteIdentity; }
-		}
+		private new static EtramiteIdentity User => (HttpContext.Current.User as EtramitePrincipal)?.EtramiteIdentity ?? null;
 
 		#endregion
 
@@ -1161,7 +1158,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			bool houveAlerta = false;
 
-			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+			int funcionarioId = User?.FuncionarioId ?? 0;
 
 			//verifica se o usuário está habilitado para emissão de PTV
 			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
@@ -1184,7 +1181,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 		{
 			bool exibirMensagem = false;
 
-			int funcionarioId = HttpContext.Current.User != null ? (HttpContext.Current.User.Identity as EtramiteIdentity).FuncionarioId : 0;
+			int funcionarioId = User?.FuncionarioId ?? 0;
 
 			//verifica se o usuário está habilitado para emissão de PTV
 			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
