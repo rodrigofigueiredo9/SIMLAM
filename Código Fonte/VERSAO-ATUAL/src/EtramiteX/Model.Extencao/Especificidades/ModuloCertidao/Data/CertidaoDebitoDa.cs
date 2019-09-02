@@ -303,7 +303,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCer
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select t.id Id, t.id NumeroFiscalizacao, t.situacao SituacaoId, ls.texto SituacaoTexto,
-															t.tid Tid, i.infracao_autuada InfracaoAutuada, (case when p.numero is not null then p.numero 
+															t.tid Tid, coalesce(i.infracao_autuada, i.possui_infracao) InfracaoAutuada, (case when p.numero is not null then p.numero 
 															|| '/' ||p.ano end) NumeroProcesso, p.tid ProtocoloTid, p.Id ProtocoloId, l.data DataFiscalizacao 
 															from {0}tab_fiscalizacao t, {0}lov_fiscalizacao_situacao ls, {0}tab_fisc_local_infracao l,
 															{0}tab_fisc_infracao i, {0}tab_protocolo p where t.situacao = ls.id(+) and l.fiscalizacao(+) = t.id
@@ -331,7 +331,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloCer
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				Comando comando = bancoDeDados.CriarComando(@"select f.fiscalizacao_id Id, f.fiscalizacao_id NumeroFiscalizacao, f.situacao_id situacaoId,
-															f.situacao_texto situacaoTexto, l.data DataFiscalizacao, i.infracao_autuada InfracaoAutuada,
+															f.situacao_texto situacaoTexto, l.data DataFiscalizacao, coalesce(i.infracao_autuada, i.possui_infracao) InfracaoAutuada,
 															(select p.numero || '/' || p.ano from hst_protocolo p where p.fiscalizacao_id = f.fiscalizacao_id and 
 															p.id_protocolo = :protocoloId and p.tid = :protocoloTid) NumeroProcesso, f.tid Tid from hst_fiscalizacao f,
 															hst_fisc_local_infracao l, hst_fisc_infracao i where f.fiscalizacao_id = :fiscalizacao_id and 
