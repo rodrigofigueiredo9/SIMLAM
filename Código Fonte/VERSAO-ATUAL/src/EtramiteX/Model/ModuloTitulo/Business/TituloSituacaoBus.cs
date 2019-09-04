@@ -34,6 +34,9 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
+using System.Net.Http;
+using System.Configuration;
+using Newtonsoft.Json;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 {
@@ -609,6 +612,28 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
 
 						_da.SalvarPdfTitulo(titulo, bancoDeDados);
+
+						if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+						{
+							HttpClient _client = new HttpClient();
+
+							var apiUri = ConfigurationManager.AppSettings["apiInstitucional"];
+							var token = ConfigurationManager.AppSettings["tokenApiInstitucional"];
+
+							_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
+							var busCar = new CARSolicitacaoBus();
+							var codigoSicar = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal ? busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0)) : "";
+							var parametro = new InegracaoSinaflorParam() {
+								TituloId = titulo.Id,
+								CodigoSicar = codigoSicar,
+								DataEmissao = titulo.DataEmissao.Data?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"),
+								Prazo = titulo.Prazo ?? 1,
+								Situacao = atualTitulo.Situacao.Codigo,
+								ArquivoIntegrado = titulo.ArquivoPdf.Caminho
+							};
+				
+							HttpResponseMessage response = _client.PostAsync($"{apiUri}/IntegracaoSinaflor/Integracao", new StringContent(JsonConvert.SerializeObject(parametro))).Result;
+						}
 					}
 				}
 
@@ -967,6 +992,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Habilitado = concluir;
 
 			return acoes;
+		}
+
+		private class InegracaoSinaflorParam
+		{
+			public int TituloId { get; set; }
+			public string CodigoSicar { get; set; }
+			public string DataEmissao { get; set; }
+			public int Prazo { get; set; }
+			public int Situacao { get; set; }
+			public string ArquivoIntegrado { get; set; }
 		}
 	}
 }

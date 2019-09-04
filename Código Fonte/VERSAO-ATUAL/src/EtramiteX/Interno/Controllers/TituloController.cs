@@ -1000,12 +1000,12 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
 			{
-				Arquivo arquivo = _bus.GerarPdf(id);				
-				if (arquivo.Buffer is MemoryStream)
+				Arquivo arquivo = _bus.GerarPdf(id);
+				if (arquivo != null)
 				{
-					// Memorystreams criados por itext sao fechados, portanto use array de bytes
-					MemoryStream stream = arquivo.Buffer as MemoryStream;
-					vm.ArquivoIntegrado = Convert.ToBase64String(stream.ToArray());
+					ArquivoBus arqBus = new ArquivoBus(eExecutorTipo.Interno);
+					arqBus.SalvarTemp(arquivo);
+					vm.ArquivoIntegrado = arquivo.TemporarioPathNome;
 				}
 			}
 
