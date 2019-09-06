@@ -115,6 +115,7 @@ TituloAlterarSituacao = {
 	},
 
 	onSalvar: function () {
+		MasterPage.carregando(true);
 		var objeto = {
 			Id: $('.hdnTituloId', TituloAlterarSituacao.container).val(),
 			Prazo: $('.txtPrazo', TituloAlterarSituacao.container).val(),
@@ -124,111 +125,13 @@ TituloAlterarSituacao = {
 			DataAssinatura: { DataTexto: $('.txtDataAssinatura', TituloAlterarSituacao.container).val() },
 			DataEncerramento: { DataTexto: $('.txtDataEncerramento', TituloAlterarSituacao.container).val() }
 		};
-		var modelo = $('.hdnModeloId', TituloAlterarSituacao.container).val();
-		var codigoSicar = $('.hdnCodigoSicar', TituloAlterarSituacao.container).val();
-		var situacao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
-		if (situacao == 4) situacao = 6;
-		if (situacao == 8) situacao = 7;
-		var realizarIntegracao = modelo == 13 && (situacao == 1 || situacao == 5 || situacao == 6 || situacao == 7);
-		if (situacao != 1 && realizarIntegracao) {
-			var codigoIntegracao = $('.txtCodigoSinaflor', TituloAlterarSituacao.container).val();
-			if (codigoIntegracao == "") realizarIntegracao = false;
-		}
 
-		if (realizarIntegracao) {
-			var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
-
-			$.ajax({
-				url: TituloAlterarSituacao.settings.urls.validarAlterarSituacao,
-				data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
-				cache: false,
-				async: false,
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json; charset=utf-8',
-				error: function (XMLHttpRequest, textStatus, erroThrown) {
-					Aux.error(XMLHttpRequest, textStatus, erroThrown, TituloAlterarSituacao.container);
-					MasterPage.carregando(false);
-				},
-				success: function (retorno, textStatus, XMLHttpRequest) {
-					if (retorno.EhValido) {
-						$('.loaderTxtCinza')[0].textContent = "Realizando integração com SINAFLOR, por favor aguarde.";
-						MasterPage.carregando(true);
-						var data = $('.txtDataEmissao', TituloAlterarSituacao.container).val();
-						if (situacao == 5 || situacao == 7) //Cancelar ou Suspender
-							data = $('.txtDataEncerramento', TituloAlterarSituacao.container).val();
-						var dataEmissao = data.substring(6, data.length) + '-' + data.substring(3, data.length - 5) + '-' + data.substring(0, data.length - 8);
-						var prazo = objeto.Prazo;
-						if (situacao == 6)
-							prazo = objeto.DiasProrrogados == '' ? 1 : objeto.DiasProrrogados;
-						if (prazo == '') prazo = 1;
-
-						var objetoIntegracao = {
-							"tituloId": objeto.Id,
-							"codigoSicar": codigoSicar,
-							"dataEmissao": dataEmissao,
-							"prazo": prazo,
-							"situacao": situacao,
-							"arquivoIntegrado": $('.hdnArquivoIntegrado', TituloAlterarSituacao.container).val()
-						};
-
-						$.ajax({
-							url: TituloAlterarSituacao.settings.urls.api + '/IntegracaoSinaflor/Integracao',
-							data: JSON.stringify(objetoIntegracao),
-							dataType: 'json',
-							contentType: 'application/json; charset=utf-8',
-							beforeSend: function (xhr) {
-								xhr.setRequestHeader('Authorization', 'Bearer ' + TituloAlterarSituacao.settings.urls.token);
-							},
-							type: "POST",
-							success: function (msg) {
-								console.info(msg);
-								$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
-								TituloAlterarSituacao.alterarSituacao(objeto);
-							},
-							error: function (XMLHttpRequest, textStatus, errorThrown) {
-								MasterPage.carregando(false);
-								$('.loaderTxtCinza')[0].textContent = "Carregando, por favor aguarde.";
-								if (XMLHttpRequest.response != "") {
-									var data = JSON.parse(XMLHttpRequest.response);
-									console.log(data);
-									var msg = "";
-									if (typeof (data.message) == "string") {
-										msg = data.message;
-									}
-									else {
-										if (data.message[0].description) {
-											msg = data.message[0].description[0];
-										} else {
-											msg = data.message[0];
-										}
-									}
-									ExibirMensagemValidacao(msg);
-								}
-							},
-							timeout: 250000
-						});
-					} else {
-						if (retorno.Msg && retorno.Msg.length > 0) {
-							Mensagem.gerar(MasterPage.getContent(TituloAlterarSituacao.container), retorno.Msg);
-						}
-					}
-				}
-			});
-		} else {
-			MasterPage.carregando(true);
-			TituloAlterarSituacao.alterarSituacao(objeto);
-		}
-	},
-
-	alterarSituacao: function (objeto) {
-		MasterPage.carregando(true);
 		var acao = $('.rdbOpcaoSituacao:checked', TituloAlterarSituacao.container).val();
 		$.ajax({
 			url: TituloAlterarSituacao.settings.urls.salvar,
 			data: JSON.stringify({ titulo: objeto, acao: acao, gerouPdf: TituloAlterarSituacao.settings.gerouPdf }),
 			cache: false,
-			async: false,
+			async: true,
 			type: 'POST',
 			dataType: 'json',
 			contentType: 'application/json; charset=utf-8',
@@ -248,26 +151,4 @@ TituloAlterarSituacao = {
 			}
 		});
 	}
-}
-
-function ExibirMensagemValidacao(erro) {
-	var mensagem = '\
-			<div class=\"mensagemSistema alerta ui-draggable\" style=\"position: relative;\">\
-				<div class=\"textoMensagem \">\
-					<a class=\"fecharMensagem\" title=\"Fechar Mensagem\">Fechar Mensagem</a>\
-					<p> Mensagem do Sistema</p>\
-					<ul>\
-						<li>' + erro + '</li>\
-					</ul>\
-				</div>\
-				<div class=\"redirecinamento block containerAcoes hide\">\
-					<h5> O que deseja fazer agora ?</h5>\
-					<p class=\"hide\">#DESCRICAO</p>\
-					<div class=\"coluna100 margem0 divAcoesContainer\">\
-						<p class=\"floatLeft margem0 append1\"><button title=\"[title]\" class=\"btnTemplateAcao hide ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" role=\"button\" aria-disabled=\"false\"><span class=\"ui-button-text\">[ACAO]</span></button></p>\
-						<div class=\"containerBotoes\"></div>\
-					</div>\
-				</div>\
-			</div>';
-	$('.mensagemSistemaHolder')[0].innerHTML = mensagem;
 }

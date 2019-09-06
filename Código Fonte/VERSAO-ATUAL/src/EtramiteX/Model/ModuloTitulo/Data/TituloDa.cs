@@ -2175,11 +2175,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							from {0}crt_exp_florestal_exploracao ep
                             where ep.parecer_favoravel = :parecer_favoravel
 							and ep.exploracao_florestal = :exploracao_florestal
-							and not exists (select 1 from tab_titulo_exp_flor_exp t
-							where t.exp_florestal_exploracao = ep.id)", EsquemaBanco);
+							and not exists (select 1 from tab_titulo_exp_flor_exp tee
+							inner join tab_titulo_exp_florestal te
+							on (te.id = tee.titulo_exploracao_florestal)							
+							where tee.exp_florestal_exploracao = ep.id
+							and exists (select 1 from tab_titulo t where t.id = te.titulo
+							and t.MODELO = (select m.id from tab_titulo_modelo m where m.codigo = :modelo_autorizacao)
+							and t.situacao <> :situacao_encerrado))", EsquemaBanco);
 
 					comando.AdicionarParametroEntrada("exploracao_florestal", tituloExploracao.ExploracaoFlorestalId, DbType.Int32);
 					comando.AdicionarParametroEntrada("parecer_favoravel", true, DbType.Boolean);
+					comando.AdicionarParametroEntrada("modelo_autorizacao", (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal, DbType.Int32);
+					comando.AdicionarParametroEntrada("situacao_encerrado", (int)eTituloSituacao.Encerrado, DbType.Int32);
 
 					using (IDataReader reader = bancoDeDados.ExecutarReader(comando))
 					{

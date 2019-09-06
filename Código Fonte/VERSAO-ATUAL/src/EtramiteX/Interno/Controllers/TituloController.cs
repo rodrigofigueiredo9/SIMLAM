@@ -990,24 +990,11 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			titulo.Modelo = _busModelo.Obter(titulo.Modelo.Id);
 
-			var busCar = new CARSolicitacaoBus();
-			var codigoSicar = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal ? busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0)) : "";
-			AlterarSituacaoVM vm = new AlterarSituacaoVM(_busLista.MotivosEncerramento, titulo, codigoSicar: codigoSicar);
+			AlterarSituacaoVM vm = new AlterarSituacaoVM(_busLista.MotivosEncerramento, titulo);
 			vm.AcoesAlterar = _busLista.TituloAlterarSituacaoAcoes;
 			vm.AcoesAlterar = _tituloSituacaoBus.SetarAcoesTela(vm.AcoesAlterar, titulo);
 			vm.MostrarPrazo = titulo.Modelo.Regra(eRegra.Prazo);
 			vm.PrazoAutomatico = titulo.Modelo.Codigo == (int)eTituloModeloCodigo.CertificadoRegistroAtividadeFlorestal;
-
-			if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
-			{
-				Arquivo arquivo = _bus.GerarPdf(id);
-				if (arquivo != null)
-				{
-					ArquivoBus arqBus = new ArquivoBus(eExecutorTipo.Interno);
-					arqBus.SalvarTemp(arquivo);
-					vm.ArquivoIntegrado = arquivo.TemporarioPathNome;
-				}
-			}
 
 			_tituloSituacaoValidar.ValidarParaConcluir(titulo);
 
