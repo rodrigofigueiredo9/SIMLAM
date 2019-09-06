@@ -34,6 +34,12 @@ using Tecnomapas.EtramiteX.Interno.Model.ModuloEmpreendimento.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloLista.Business;
 using Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
+using System.Net.Http;
+using System.Configuration;
+using Newtonsoft.Json;
+using Tecnomapas.Blocos.Arquivo;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 {
@@ -349,6 +355,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
 				bancoDeDados.IniciarTransacao();
+
 				#region Condicionante
 
 				if (novaSituacaoCondicionante > 0)
@@ -590,15 +597,22 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				#region Gerar Pdf de Titulo
 
 				ArquivoBus arqBus = new ArquivoBus(eExecutorTipo.Interno);
+				if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+				{
+					Arquivo arquivo = _busTitulo.GerarPdf(titulo.Id);
+					if (arquivo != null)
+					{
+						arqBus.SalvarTemp(arquivo);
+						this.RealizarIntegracaoSinaflor(atualTitulo, titulo, arquivo.TemporarioPathNome);
+					}
+				}
 
 				if (isGerarPdf && titulo.Modelo.Regra(eRegra.PdfGeradoSistema))
 				{
-					TituloBus bus = new TituloBus();
-
 					titulo.ArquivoPdf.Nome = "Titulo.pdf";
 					titulo.ArquivoPdf.Extensao = ".pdf";
 					titulo.ArquivoPdf.ContentType = "application/pdf";
-					titulo.ArquivoPdf.Buffer = bus.GerarPdf(titulo, bancoDeDados);
+					titulo.ArquivoPdf.Buffer = _busTitulo.GerarPdf(titulo, bancoDeDados);
 
 					if (titulo.ArquivoPdf.Buffer != null)
 					{
@@ -609,6 +623,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 							User.EtramiteIdentity.Login, (int)eExecutorTipo.Interno, User.EtramiteIdentity.FuncionarioTid, bancoDeDados);
 
 						_da.SalvarPdfTitulo(titulo, bancoDeDados);
+
+						if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
+							this.RealizarIntegracaoSinaflor(atualTitulo, titulo, titulo.ArquivoPdf.Caminho);
 					}
 				}
 
@@ -859,6 +876,57 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 		}
 
+		public bool RealizarIntegracaoSinaflor(Titulo atualTitulo, Titulo titulo, string pathPdf)
+		{
+			if (!Validacao.EhValido) return false;
+
+			var _client = new HttpClient();
+
+			var apiUri = ConfigurationManager.AppSettings["apiInstitucional"];
+			var token = ConfigurationManager.AppSettings["tokenApiInstitucional"];
+
+			_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
+			var busCar = new CARSolicitacaoBus();
+			var codigoSicar = busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0));
+			var parametro = new InegracaoSinaflorParam()
+			{
+				TituloId = titulo.Id,
+				CodigoSicar = codigoSicar,
+				DataEmissao = titulo.DataEmissao.Data?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"),
+				Prazo = titulo.Prazo ?? 1,
+				Situacao = atualTitulo.Situacao.Id,
+				ArquivoIntegrado = pathPdf
+			};
+
+			string jsonData = JsonConvert.SerializeObject(parametro);
+			using (var stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json"))
+			{
+				var response = _client.PostAsync($"{apiUri}/IntegracaoSinaflor/Integracao", stringContent);
+				response.Wait();
+				var result = response.Result;
+
+				if (!result.IsSuccessStatusCode)
+				{
+					var content = result.Content.ReadAsStringAsync();
+					content.Wait();
+					if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
+					{
+						var values = JsonConvert.DeserializeObject<ErroDefaultViewModel>(content.Result);
+						var erros = String.Join(",", values.Message.SelectMany(x => x.Values).Distinct().ToList());
+						Validacao.AddAdvertencia(erros);
+					}
+					else
+					{
+						var values = JsonConvert.DeserializeAnonymousType(content.Result, new { Message = "" });
+						Validacao.AddAdvertencia(String.Concat("Ocorreu erro ao tentar realizar a integração: ", values.Message));
+					}
+					return false;
+				};
+
+				return true;
+			}
+		}
+
 		public Situacao ObterNovaSituacao(Titulo titulo, int acao)
 		{
 			if (titulo.Modelo == null || titulo.Modelo.Regras == null || titulo.Modelo.Regras.Count == 0)
@@ -967,6 +1035,39 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			acoes.SingleOrDefault(x => x.Id == (int)eAlterarSituacaoAcao.Concluir).Habilitado = concluir;
 
 			return acoes;
+		}
+
+		private class InegracaoSinaflorParam
+		{
+			public int TituloId { get; set; }
+			public string CodigoSicar { get; set; }
+			public string DataEmissao { get; set; }
+			public int Prazo { get; set; }
+			public int Situacao { get; set; }
+			public string ArquivoIntegrado { get; set; }
+		}
+
+		private class ErroDefaultViewModel
+		{
+			public bool Sucess { get; set; }
+			public List<ModelStateErro> Message { get; set; }
+			public string EntityName { get; set; }
+			public string Exception { get; set; }
+		}
+
+		private class ModelStateErro
+		{
+			public ModelStateErro() { }
+			public ModelStateErro(string key, string[] values, string[] description)
+			{
+				this.Key = key;
+				this.Values = values;
+				this.Description = description;
+			}
+
+			public string Key { get; set; }
+			public string[] Values { get; set; }
+			public string[] Description { get; set; }
 		}
 	}
 }
