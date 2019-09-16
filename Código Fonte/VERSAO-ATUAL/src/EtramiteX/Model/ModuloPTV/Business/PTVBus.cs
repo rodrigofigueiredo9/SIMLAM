@@ -44,6 +44,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 		private new static EtramiteIdentity User => (HttpContext.Current.User as EtramitePrincipal)?.EtramiteIdentity ?? null;
 
+		private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 		#endregion
 
 		#region DML
@@ -1170,6 +1172,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 				if (quantidade > 0)
 				{
+					Log.Error(String.Concat("PTVBus.cs: FuncionarioId=", funcionarioId, ", FuncionarioNome: ", User?.Name, ", Quantidade=", quantidade));
 					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
 					houveAlerta = true;
 				}

@@ -603,7 +603,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 					if (arquivo != null)
 					{
 						arqBus.SalvarTemp(arquivo);
-						this.RealizarIntegracaoSinaflor(atualTitulo, titulo, arquivo.TemporarioPathNome);
+						this.RealizarIntegracaoSinaflor(titulo, arquivo.TemporarioPathNome);
 					}
 				}
 
@@ -625,7 +625,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 						_da.SalvarPdfTitulo(titulo, bancoDeDados);
 
 						if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
-							this.RealizarIntegracaoSinaflor(atualTitulo, titulo, titulo.ArquivoPdf.Caminho);
+							this.RealizarIntegracaoSinaflor(titulo, titulo.ArquivoPdf.Caminho);
 					}
 				}
 
@@ -876,9 +876,27 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			}
 		}
 
-		public bool RealizarIntegracaoSinaflor(Titulo atualTitulo, Titulo titulo, string pathPdf)
+		public bool RealizarIntegracaoSinaflor(Titulo titulo, string pathPdf)
 		{
 			if (!Validacao.EhValido) return false;
+
+			var situacaoIntegravel = false;
+			switch (titulo.Situacao.Id)
+			{
+				case (int)eTituloSituacao.Concluido:
+				case (int)eTituloSituacao.Prorrogado:
+				case (int)eTituloSituacao.Encerrado:
+				case (int)eTituloSituacao.Suspenso:
+					situacaoIntegravel = true;
+					break;
+				default:
+					situacaoIntegravel = false;
+					break;
+			}
+
+			if (!situacaoIntegravel) return false;
+
+			if (!_busExploracao.ExisteExploracaoParaTitulo(titulo.Id)) return false;
 
 			var _client = new HttpClient();
 
@@ -894,7 +912,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 				CodigoSicar = codigoSicar,
 				DataEmissao = titulo.DataEmissao.Data?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"),
 				Prazo = titulo.Prazo ?? 1,
-				Situacao = atualTitulo.Situacao.Id,
+				Situacao = titulo.Situacao.Id,
 				ArquivoIntegrado = pathPdf
 			};
 

@@ -1156,6 +1156,19 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
+		internal bool ExisteExploracaoParaTitulo(int titulo, BancoDeDados banco = null)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+								select count(*) from {0}tab_titulo_exp_florestal t where t.titulo = :titulo", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("titulo", titulo, DbType.Int32);
+
+				return (bancoDeDados.ExecutarScalar<int>(comando) > 0);
+			}
+		}
+
 		internal IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, int modelo, BancoDeDados banco = null)
 		{
 			var exploracoes = new List<ExploracaoFlorestal>();
