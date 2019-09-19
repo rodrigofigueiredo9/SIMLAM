@@ -9,11 +9,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 	public enum eStatusImovelSicar
 	{
 		Nulo,
-		[Description("AT")]
+		[Description("Ativo")]
 		Ativo,
-		[Description("PE")]
+		[Description("Pendente")]
 		Pendente,
-		[Description("CA")]
+		[Description("Cancelado")]
 		Cancelado
 	}
 }

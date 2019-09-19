@@ -246,7 +246,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 			void AlterarSituacaoSicar(CARSolicitacao solicitacao)
 			{
-				SicarAnaliseRetornoDTO resultado = new SicarAnaliseRetornoDTO();
+				var resultado = new SicarAnaliseRetornoDTO();
 				switch (solicitacao.SituacaoId)
 				{
 					case (int)eCARSolicitacaoSituacao.Valido:
@@ -272,14 +272,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 						break;
 				}
 
-				if (resultado?.codigoResposta == 400)
-				{
-					if (resultado.mensagensResposta?.Count > 0)
-						resultado.mensagensResposta.ForEach(mensagem =>
-						{
-							Validacao.Add(eTipoMensagem.Advertencia, mensagem);
-						});
-				}
+				if (resultado?.Status != "s")
+					Validacao.Add(eTipoMensagem.Advertencia, resultado.Mensagem);
 			}
 		}
 
@@ -645,8 +639,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 			RequestJson requestJson = new RequestJson();
 
-            urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
-            //urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
+				//urlGerar = "http://www.car.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar"; 
+				urlGerar = "http://homolog-car.mma.gov.br/pdf/demonstrativo/" + urlGerar + "/gerar";
 
             var strResposta = requestJson.Executar(urlGerar);
 

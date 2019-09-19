@@ -46,7 +46,8 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					HttpClient _client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 					_client.DefaultRequestHeaders.Clear();
 
-					form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
+					//form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
+					form.Headers.Add("token", "06-F6-A4-89-20-91-15-C5-CE-F3-F4-50-36-AA"); //ConfigurationManager.AppSettings["SicarToken"]);
 
 					//solicitacao.Status = eStatusImovelSicar.Pendente;
 					if (solicitacao.Status == eStatusImovelSicar.Cancelado)
@@ -62,11 +63,8 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					form.Add(new StringContent("true"), "completo");
 					form.Add(new StringContent(solicitacao.DescricaoMotivo), "motivoMudancaStatus");
 					form.Add(new StringContent(solicitacao.AutorCpf), "cpfResponsavel");
-					//form.Add(new StringContent("false"), "vistoriaRealizada");
-					//form.Add(new StringContent("12/08/2019"), "dataValidacaoAnalise");
-					form.Add(new StringContent("13/08/2019 21:00"), "dataCadastroEstadual");
-
-					var response = _client.PostAsync("/sincronia/quick", form).Result;
+					
+					var response = _client.PostAsync("/imovel/analise/atualizar", form).Result;
 
 
 					if (response.IsSuccessStatusCode)

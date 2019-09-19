@@ -9,11 +9,11 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 	public enum eCARCancelamentoMotivo
 	{
 		Nulo,
-		[Description("Decisão judicial")]
+		[Description("Cancelado por decisão judicial")]
 		DecisaoJudicial,
-		[Description("Decisão administrativa")]
+		[Description("Cancelado por decisão administrativa")]
 		DecisaoAdmnistrativa,
-		[Description("Solicitação do proprietário")]
+		[Description("Cancelaodo por solicitação do proprietário")]
 		SolicitacaoProprietaro
 	}
 }
