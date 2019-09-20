@@ -40,16 +40,18 @@ CARSolicitacaoAlterarSituacao = {
 	},
 
 	obter: function () {
-		debugger;
 		var container = CARSolicitacaoAlterarSituacao.container;
-
+		var arquivo; 
 		// ObterArquivoCancelamento
 		situacao = $('.ddlSituacaoNova').val();
-		if (situacao === "3") {// invalido / cancelado
+		motivo = $(".ddlMotivo ").val();
+		if (situacao === "3") {// invalido / cancelado 
 			arquivo = $('.hdnArquivo').val();
 			if (arquivo.isNullOrWhitespace()) {
-				Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, [CARSolicitacaoAlterarSituacao.mensagem.ArquivoObrigatorio]);
-				return;
+				if (motivo === "1") { // [] decisão judicial
+					Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, [CARSolicitacaoAlterarSituacao.mensagem.ArquivoObrigatorio]);
+					return false;
+				}
 			} else
 				arquivo = JSON.parse(arquivo);
 		}
@@ -63,7 +65,7 @@ CARSolicitacaoAlterarSituacao = {
 			Motivo: $('.ddlMotivo :selected', container).val(),
 			DescricaoMotivo: $('.txtSituacaoMotivo', container).val(),
 			SituacaoId: situacao,
-			ArquivoCancelamento: arquivo
+			ArquivoCancelamento: arquivo || null
 		};
 
 		return obj;
@@ -85,9 +87,13 @@ CARSolicitacaoAlterarSituacao = {
 				tamanhoModal: Modal.tamanhoModalMedia
 			});
 		} else {
+			var data = CARSolicitacaoAlterarSituacao.obter();
+			if (!data)
+				return;
+
 			$.ajax({
 				url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
-				data: JSON.stringify(CARSolicitacaoAlterarSituacao.obter()),
+				data: JSON.stringify(data),
 				cache: false,
 				async: false,
 				type: 'POST',
@@ -113,11 +119,13 @@ CARSolicitacaoAlterarSituacao = {
 
 	callBackAlterarSituacao: function (container) {
 
+		var data = CARSolicitacaoAlterarSituacao.obter();
+		if (!data)
+			return;
 		MasterPage.carregando(true);
-
 		$.ajax({
 			url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
-			data: JSON.stringify(CARSolicitacaoAlterarSituacao.obter()),
+			data: JSON.stringify(),
 			cache: false,
 			async: false,
 			type: 'POST',

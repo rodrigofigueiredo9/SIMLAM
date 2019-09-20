@@ -165,17 +165,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 				entidade = obterDados(entidade);
 
-				if (!isTitulo)
-				{
-					entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
-					entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
-				}
 
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
 				if (_validar.AlterarSituacao(entidade, funcionario.FuncionarioId, isTitulo))
 				{
+					if (!isTitulo)
+					{
+						entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
+						entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
+					}
+
 					AlterarSituacaoSicar(entidade);
 
 					if (!Validacao.EhValido) return false;
