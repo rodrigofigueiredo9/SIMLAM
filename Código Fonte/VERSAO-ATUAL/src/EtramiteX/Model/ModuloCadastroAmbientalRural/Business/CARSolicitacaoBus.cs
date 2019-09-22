@@ -171,7 +171,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 				if (_validar.AlterarSituacao(entidade, funcionario.FuncionarioId, isTitulo))
 				{
-					if (!isTitulo)
+					if (!isTitulo && entidade.ArquivoCancelamento != null)
 					{
 						entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
 						entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
@@ -207,7 +207,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 							int situacaoArquivo = ObterNovaSituacaoArquivo(entidade.SituacaoId, entidade.SituacaoAnteriorId);
 							_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo, bancoDeDados);
 
-							_arquivoDa.Salvar(entidade.ArquivoCancelamento, funcionario.FuncionarioId, funcionario.Name, funcionario.Login, (int)eExecutorTipo.Interno, funcionario.FuncionarioTid);
+							if(entidade.ArquivoCancelamento != null)
+								_arquivoDa.Salvar(entidade.ArquivoCancelamento, funcionario.FuncionarioId, funcionario.Name, funcionario.Login, (int)eExecutorTipo.Interno, funcionario.FuncionarioTid);
+
 							_da.InserirAlterarSituacaoLista(entidade, bancoDeDados);
 							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
 						}

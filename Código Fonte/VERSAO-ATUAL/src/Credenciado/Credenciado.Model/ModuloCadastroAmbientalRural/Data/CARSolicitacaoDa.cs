@@ -571,8 +571,11 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						EMP.ID EMPREENDIMENTO_ID,
 						EMP.DENOMINADOR EMPREENDIMENTO_NOME,
 						EMP.CODIGO EMPREENDIMENTO_CODIGO,
-						CAR.CREDENCIADO
-					FROM TAB_CAR_SOLICITACAO					CAR 
+						CAR.CREDENCIADO,
+						COS.CODIGO_IMOVEL,
+						COS.SITUACAO_ENVIO
+					FROM TAB_CAR_SOLICITACAO					CAR
+					INNER JOIN TAB_CONTROLE_SICAR				COS ON CAR.ID = COS.SOLICITACAO_CAR
 					INNER JOIN TAB_EMPREENDIMENTO				EMP ON EMP.ID = CAR.EMPREENDIMENTO
 					INNER JOIN LOV_CAR_SOLICITACAO_SITUACAO		LVC ON LVC.ID = CAR.SITUACAO    
 					WHERE CAR.ID = :id
@@ -596,6 +599,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Da
 						solicitacao.Empreendimento.NomeRazao = reader.GetValue<String>("empreendimento_nome");
 						solicitacao.Empreendimento.Codigo = reader.GetValue<Int64?>("empreendimento_codigo");
 						solicitacao.AutorId = reader.GetValue<Int32>("CREDENCIADO");
+						solicitacao.SICAR.CodigoImovel = reader.GetValue<String>("CODIGO_IMOVEL");
+						solicitacao.SICAR.SituacaoEnvio = (eStatusArquivoSICAR)reader.GetValue<Int32>("SITUACAO_ENVIO");
 					}
 
 					reader.Close();

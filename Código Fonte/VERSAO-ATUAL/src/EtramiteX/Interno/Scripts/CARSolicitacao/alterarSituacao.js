@@ -125,7 +125,7 @@ CARSolicitacaoAlterarSituacao = {
 		MasterPage.carregando(true);
 		$.ajax({
 			url: CARSolicitacaoAlterarSituacao.settings.urls.salvar,
-			data: JSON.stringify(),
+			data: JSON.stringify(data),
 			cache: false,
 			async: false,
 			type: 'POST',

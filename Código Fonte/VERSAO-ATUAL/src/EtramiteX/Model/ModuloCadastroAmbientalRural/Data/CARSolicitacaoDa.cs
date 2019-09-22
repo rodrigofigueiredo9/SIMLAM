@@ -193,8 +193,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 
 				Comando comando = bancoDeDados.CriarComando(@"
 					INSERT INTO IDAF.TAB_CAR_CANCELAMENTO
-					(ID, SOLICITACAO_CAR, AUTOR, SITUACAO, SITUACAO_DATA, MOTIVO, DESCRICAO_MOTIVO, ARQUIVO_ANEXO, ARQUIVO_CANCELADO)
-					VALUES(seq_TAB_CAR_CANCELAMENTO.nextval, :solicitacao, :autor, :situacao, :data, :motivo, :descricao_motivo, :arquivo_anexo, :arquivo)");
+					(ID, SOLICITACAO_CAR, AUTOR, SITUACAO, SITUACAO_DATA, MOTIVO, DESCRICAO_MOTIVO, ARQUIVO_CANCELADO)
+					VALUES(seq_TAB_CAR_CANCELAMENTO.nextval, :solicitacao, :autor, :situacao, :data, :motivo, :descricao_motivo, :arquivo)");
 
 				comando.AdicionarParametroEntrada("solicitacao", entidade.Id, DbType.Int32);
 				comando.AdicionarParametroEntrada("autor", entidade.AutorCancelamento.Id, DbType.Int32);
@@ -202,7 +202,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 				comando.AdicionarParametroEntrada("data", entidade.DataSituacao.DataTexto, DbType.Date);
 				comando.AdicionarParametroEntrada("motivo", (int)entidade.Motivo, DbType.Int32);
 				comando.AdicionarParametroEntrada("descricao_motivo", entidade.DescricaoMotivo, DbType.String);
-				comando.AdicionarParametroEntrada("arquivo_anexo", entidade.ArquivoAnexo?.Id ?? 0, DbType.Int32);
+				//comando.AdicionarParametroEntrada("arquivo_anexo", entidade.ArquivoAnexo?.Id ?? 0, DbType.Int32);
 				comando.AdicionarParametroEntrada("arquivo", entidade.ArquivoCancelamento?.Id ?? 0, DbType.Int32);
 				bancoDeDados.ExecutarNonQuery(comando);
 

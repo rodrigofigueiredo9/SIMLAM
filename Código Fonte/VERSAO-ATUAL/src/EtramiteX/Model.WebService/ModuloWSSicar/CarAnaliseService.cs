@@ -50,7 +50,7 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					form.Headers.Add("token", "06-F6-A4-89-20-91-15-C5-CE-F3-F4-50-36-AA"); //ConfigurationManager.AppSettings["SicarToken"]);
 
 					//solicitacao.Status = eStatusImovelSicar.Pendente;
-					if (solicitacao.Status == eStatusImovelSicar.Cancelado)
+					if (solicitacao.Status == eStatusImovelSicar.Cancelado && solicitacao.ArquivoCancelamento != null)
 					{
 						var imageContent = new StreamContent(solicitacao.ArquivoCancelamento.Buffer); //new ByteArrayContent(solicitacao.ArquivoCancelamento.Buffer,);
 						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
@@ -110,9 +110,9 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					form.Add(new StringContent("DECISAO_ADMINISTRATIVA"), "descricaoMotivo");
 					form.Add(new StringContent("EST"), "tipoOrigem");
 					form.Add(new StringContent("SISTEMA"), "tipoResponsavel");
-					form.Add(new StringContent(solicitacao.ArquivoCancelamento.Id.ToString()), "numeroDocumento");
 					if (false /*solicitacao.Status == eStatusImovelSicar.Cancelado*/)
 					{
+						form.Add(new StringContent(solicitacao.ArquivoCancelamento.Id.ToString()), "numeroDocumento");
 						var imageContent = new StreamContent(solicitacao.ArquivoCancelamento.Buffer);
 						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
 						form.Add(imageContent, "arquivoSuspensao", solicitacao.ArquivoCancelamento.Nome);
