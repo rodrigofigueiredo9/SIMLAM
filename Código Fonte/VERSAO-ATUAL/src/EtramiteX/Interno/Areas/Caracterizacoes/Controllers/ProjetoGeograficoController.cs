@@ -144,12 +144,7 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			#endregion
 
-			if (vm.Projeto.Dependencias == null || vm.Projeto.Dependencias.Count == 0)
-			{
-				vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
-			}
-
-			if (vm.Projeto.Id > 0 && mostrarModalDependencias && tipo != eCaracterizacao.ExploracaoFlorestal)
+			if (vm.Projeto.Id > 0 && mostrarModalDependencias)
 			{
 				vm.TextoMerge = _caracterizacaoValidar.DependenciasAlteradas(
 						vm.Projeto.EmpreendimentoId,
@@ -157,8 +152,6 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 						eCaracterizacaoDependenciaTipo.ProjetoGeografico,
 						vm.Projeto.Dependencias, isVisualizar);
 			}
-
-			vm.Projeto.Dependencias = _caracterizacaoBus.ObterDependenciasAtual(vm.Projeto.EmpreendimentoId, tipo, eCaracterizacaoDependenciaTipo.ProjetoGeografico);
 
 			//Busca as dependencias desse projeto geográfico
 			_bus.ObterDependencias(vm.Projeto, true);
@@ -445,7 +438,19 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				return Json(new { @EhValido = Validacao.EhValido, Msg = Validacao.Erros, urlRedirect = Url.Action("Index", "../Empreendimento", Validacao.QueryParamSerializer()) });
 			}
 
-			_bus.Refazer(projeto);
+			if (projeto.Id > 0 && _bus.ExisteProjetoGeografico(projeto.EmpreendimentoId, projeto.CaracterizacaoId, true) <= 0)
+			{
+				_bus.ObterDependencias(projeto, true);
+				_caracterizacaoBus.Dependencias(new Caracterizacao()
+				{
+					Id = projeto.Id,
+					Tipo = (eCaracterizacao)projeto.CaracterizacaoId,
+					DependenteTipo = eCaracterizacaoDependenciaTipo.ProjetoGeografico,
+					Dependencias = projeto.Dependencias
+				});
+			}
+			else
+				_bus.Refazer(projeto);
 
 			return Json(new
 			{
