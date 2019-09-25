@@ -1140,7 +1140,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 
 				comandtxt += comando.FiltroAnd("l.modelo_id", "modelo", filtros.Dados.Modelo);
 
-				comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
+				if (filtros.Dados.Situacao == (int)eTituloSituacao.VencidoDeclaratorio || filtros.Dados.Situacao == (int)eTituloSituacao.Vencido)
+				{
+					comandtxt += "and l.data_vencimento < sysdate";
+				}
+				else
+				{
+					comandtxt += comando.FiltroAnd("l.situacao_id", "situacao", filtros.Dados.Situacao);
+				}
 
 				comandtxt += comando.FiltroAnd("l.setor_id", "setor", filtros.Dados.Setor);
 
@@ -1199,11 +1206,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 				comando.AdicionarParametroEntrada("maior", filtros.Maior);
 
 				comandtxt = String.Format(@"
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla,
+					case when data_vencimento < sysdate
+					then 'Vencido' else situacao_texto end situacao_texto, situacao_id,
 					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is null " + comandtxt +
 				@" union all 
-				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, situacao_texto, situacao_id,
+				select titulo_id, titulo_tid, numero, numero_completo, data_vencimento, autor_id, autor_nome, modelo_sigla, case when data_vencimento < sysdate
+					then 'Vencido' else situacao_texto end situacao_texto, situacao_id,
 					modelo_id, modelo_nome, modelo_codigo, protocolo_id, protocolo protocolo_tipo, protocolo_numero, empreendimento_codigo, empreendimento_denominador, requerimento 
 					from lst_titulo l where l.credenciado is not null and l.situacao_id != 7 and exists (select 1 from tab_requerimento r where r.id = l.requerimento) " + comandtxt, (string.IsNullOrEmpty(EsquemaBanco) ? "" : "."));
 
@@ -1243,13 +1253,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 							titulo.Protocolo.NumeroProtocolo = prot.Numero;
 							titulo.Protocolo.Ano = prot.Ano;
 						}
-						if (titulo.Situacao.Id == (int)eTituloSituacao.Concluido && titulo.DataVencimento?.Data < DateTime.Now.Date)
-						{
-							if (titulo.Modelo.Codigo == (int)eTituloModeloCodigo.LaudoVistoriaFlorestal || titulo.Modelo.Codigo == (int)eTituloModeloCodigo.AutorizacaoExploracaoFlorestal)
-								titulo.Situacao.Nome = "Vencido";
-						}
-						else if (titulo.Situacao.Id == (int)eTituloSituacao.Valido && titulo.DataVencimento?.Data < DateTime.Now.Date)
-							titulo.Situacao.Nome = "Vencido";
+						
 						retorno.Itens.Add(titulo);
 					}
 

@@ -60,6 +60,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.Extensoes.Caracterizacoes.Modul
 			{
 				if (!item.DataVencimento.IsValido)
 					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
+				else if(item.DataVencimento.Data < DateTime.Now)
+					Validacao.Add(Mensagem.InformacaoCorte.DataVencimentoInvalida(item.NumeroLicenca));
 			}
 
 			return Validacao.EhValido;

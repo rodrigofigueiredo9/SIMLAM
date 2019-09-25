@@ -15,6 +15,8 @@
 		EncerradoDeclaratorio = 10,
 		Suspenso = 11,
 		AguardandoPagamento = 12,
-		ProrrogadoDeclaratorio = 13
+		ProrrogadoDeclaratorio = 13,
+		VencidoDeclaratorio = 14,
+		Vencido = 15
 	}
 }
