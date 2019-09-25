@@ -202,10 +202,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 										}
 									}
 
-									if (!_validar.Salvar(representante))
+									if (!isAtividadeDeCorte)
 									{
-										bancoDeDados.Rollback();
-										return false;
+										if (!_validar.Salvar(representante))
+										{
+											bancoDeDados.Rollback();
+											return false;
+										}
 									}
 
 									_da.Salvar(representante, bancoDeDados);
@@ -232,10 +235,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 											aux2.Fisica.ConjugeCPF = string.Empty;
 											aux2.Id = 0;
 
-											if (!_validar.Salvar(aux2, true))
+											if (!isAtividadeDeCorte)
 											{
-												bancoDeDados.Rollback();
-												return false;
+												if (!_validar.Salvar(aux2, true))
+												{
+													bancoDeDados.Rollback();
+													return false;
+												}
 											}
 
 											_da.Salvar(aux2, bancoDeDados);
@@ -248,10 +254,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 									aux.InternoId = aux.Id;
 									aux.Id = 0;
 
-									if (!_validar.Salvar(aux))
+									if (!isAtividadeDeCorte)
 									{
-										bancoDeDados.Rollback();
-										return false;
+										if (!_validar.Salvar(aux))
+										{
+											bancoDeDados.Rollback();
+											return false;
+										}
 									}
 
 									_da.Salvar(aux, bancoDeDados);
@@ -271,10 +280,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 							{
 								if (pessoa.Fisica.Conjuge != null && pessoa.Fisica.Conjuge.IsCopiado)
 								{
-									if (!_validar.Salvar(pessoa.Fisica.Conjuge, true))
+									if (!isAtividadeDeCorte)
 									{
-										bancoDeDados.Rollback();
-										return false;
+										if (!_validar.Salvar(pessoa.Fisica.Conjuge, true))
+										{
+											bancoDeDados.Rollback();
+											return false;
+										}
 									}
 
 									pessoa.Fisica.Conjuge.CredenciadoId = User.FuncionarioId;
@@ -299,10 +311,13 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPessoa.Business
 										aux.Fisica.ConjugeCPF = string.Empty;
 										aux.Id = 0;
 
-										if (!_validar.Salvar(aux, true))
+										if (!isAtividadeDeCorte)
 										{
-											bancoDeDados.Rollback();
-											return false;
+											if (!_validar.Salvar(aux, true))
+											{
+												bancoDeDados.Rollback();
+												return false;
+											}
 										}
 
 										_da.Salvar(aux, bancoDeDados);
