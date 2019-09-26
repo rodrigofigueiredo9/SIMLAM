@@ -2859,7 +2859,14 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						resultados.Add(reader.GetValue<string>("modelo_nome"));
 						resultados.Add(reader.GetValue<string>("modelo_sigla"));
 						resultados.Add(reader.GetValue<string>("situacao"));
-						resultados.Add(reader.GetValue<string>("situacao_motivo"));
+						if (reader.GetValue<string>("situacao") != "Válido")
+						{
+							resultados.Add(reader.GetValue<string>("situacao_motivo"));
+						}
+						else
+						{
+							resultados.Add("");
+						}
 						resultados.Add(reader.GetValue<string>("local_emissao"));
 						resultados.Add(reader.GetValue<string>("codigo_empreendimento"));
 						resultados.Add(reader.GetValue<string>("empreendimento"));
