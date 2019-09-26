@@ -2591,10 +2591,10 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 					//	comando.FiltroAnd("mp.id", "", "municipio", filtro.municipio.ToString());
 
 				if (!string.IsNullOrWhiteSpace(filtro.inicioPeriodo) && !string.IsNullOrWhiteSpace(filtro.fimPeriodo))
-					comandtxt += $@"AND tt.data_criacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
+					comandtxt += $@"AND (tt.data_criacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
 										AND TO_DATE ('{filtro.fimPeriodo}', 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND OR
 									tt.data_situacao BETWEEN TO_DATE ('{filtro.inicioPeriodo}', 'DD/MM/YYYY') - 1 + INTERVAL '1' SECOND
-										AND TO_DATE ('{filtro.fimPeriodo}', 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND";
+										AND TO_DATE ('{filtro.fimPeriodo}', 'DD/MM/YYYY') + 1 - INTERVAL '1' SECOND)";
 
 
 				if (!string.IsNullOrWhiteSpace(filtro.nomeRazaoSocial))
