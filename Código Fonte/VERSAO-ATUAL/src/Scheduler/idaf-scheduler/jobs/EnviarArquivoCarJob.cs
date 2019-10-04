@@ -226,6 +226,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 			{
 				Log.Info($"Instanciando HTTP Client N.º {count} - {DateTime.Now} ");
 				_client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
+				_client.Timeout = TimeSpan.FromMinutes(20);
 				_client.DefaultRequestHeaders.Clear();
 				_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mozilla", "5.0"));
 
@@ -282,7 +283,7 @@ namespace Tecnomapas.EtramiteX.Scheduler.jobs
 				Log.Error($"Ocorreu um erro ao tentar enviar Arquivo CAR - {DateTime.Now}");
 				Log.Error($"Arquivo que gerou o Erro: {localArquivoCar }");
 				Log.Error($"Error Message: {ex.Message}");
-				Log.Error($"Error InnerException: {ex.InnerException.ToString()}");
+				Log.Error($"Error InnerException: {ex.InnerException?.ToString()}");
 				Log.Error($"ERROR FULL: {ex.ToString()}");
 				Log.Error("*************************************************************************************************************************");
 				Log.Error("*************************************************************************************************************************");

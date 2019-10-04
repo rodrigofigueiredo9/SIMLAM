@@ -404,6 +404,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Caracterizacoes.ModuloExp
 			}
 		}
 
+		public bool ExisteExploracaoParaTitulo(int titulo, BancoDeDados banco = null)
+		{
+			try
+			{
+				return _da.ExisteExploracaoParaTitulo(titulo, banco);
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		public IEnumerable<ExploracaoFlorestal> ObterExploracoes(int tituloId, int modelo, BancoDeDados banco = null)
 		{
 			try
