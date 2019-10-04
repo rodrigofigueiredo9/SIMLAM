@@ -827,7 +827,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 										     {0}ins_hst_crt_unidade_prod_unid  i,
 										     {0}hst_cultura_cultivar hcc,
 										     {0}hst_cultivar_configuracao cconf,
-										     {0}lov_cultivar_declara_adicional lcda,
+										     {0}hst_cultivar_declara_adicional lcda,
 										     {0}hst_cfo_praga tcp
 										where cfo.id = cp.id_hst
 										      and cp.unidade_producao_id = i.unidade_producao_unidade_id
@@ -835,7 +835,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 										      and i.cultivar_id = hcc.cultivar_id
 										      --and i.cultivar_tid = hcc.tid
 										      and hcc.id = cconf.id_hst
-										      and cconf.declaracao_adicional_id = lcda.id
+										      and cconf.declaracao_adicional_id = lcda.declaracao_adicional_id
+											  and cconf.declaracao_adicional_tid = lcda.declaracao_adicional_tid
 										      and cfo.id = tcp.id_hst
 										      and tcp.praga_id = cconf.praga_id
 										      and cfo.cfo_id = :cfoId
@@ -872,7 +873,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 										     hst_lote_item hli,
 										     hst_cultura_cultivar hcc,
 										     hst_cultivar_configuracao cconf,
-										     lov_cultivar_declara_adicional lcda,
+										     hst_cultivar_declara_adicional lcda,
 										     hst_cfoc_praga tcp
 										where cfoc.id = cp.id_hst
 										      and cp.lote_id = hl.lote_id
@@ -881,7 +882,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.RelatorioIndividual.ModuloHabilitac
 										      and hli.cultivar_id = hcc.cultivar_id
 										      and hli.cultivar_tid = hcc.tid
 										      and hcc.id = cconf.id_hst
-										      and cconf.declaracao_adicional_id = lcda.id
+										      and cconf.declaracao_adicional_id = lcda.declaracao_adicional_id
+											  and cconf.declaracao_adicional_tid = lcda.declaracao_adicional_tid
 										      and cfoc.id = tcp.id_hst
 										      and tcp.praga_id = cconf.praga_id
 											  and instr(Cfoc.Informacoes_Complementares, Lcda.Texto_Formatado) > 0	--Para garantir que a declaração adicional consta no documento de origem. Isso é necessário devido a falta de informações nas tabelas histórico.

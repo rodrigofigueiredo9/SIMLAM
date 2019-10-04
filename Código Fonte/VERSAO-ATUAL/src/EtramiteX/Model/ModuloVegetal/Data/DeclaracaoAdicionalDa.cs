@@ -22,7 +22,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
         private Historico Historico { get { return _historico; } }
         private string EsquemaBanco { get; set; }
 
-
         #endregion
 
         #region Ações DML
@@ -76,20 +75,21 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
                 comando.AdicionarParametroEntrada("texto", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("texto_formatado", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("outro_estado", declaracao.OutroEstado, DbType.String);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroSaida("id", DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
                 declaracao.Id = comando.ObterValorParametro<int>("id");
-                #endregion
+				#endregion
 
-                #region Histórico
+				#region Histórico
 
-              //  Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.criar, bancoDeDados);
+				Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.criar, bancoDeDados);
 
-                #endregion
+				#endregion
 
-                bancoDeDados.Commit();
+				bancoDeDados.Commit();
             }
         }
 
@@ -102,24 +102,25 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
                 #region Praga
 
                 Comando comando = bancoDeDados.CriarComando(@"update lov_cultivar_declara_adicional set texto = :texto, texto_formatado = :texto_formatado,
-				 outro_estado = :outro_estado where id = :id", EsquemaBanco);
+				 outro_estado = :outro_estado, tid = :tid where id = :id", EsquemaBanco);
 
                 comando.AdicionarParametroEntrada("texto", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("texto_formatado", declaracao.Texto, DbType.String);
                 comando.AdicionarParametroEntrada("outro_estado", declaracao.OutroEstado, DbType.String);
+                comando.AdicionarParametroEntrada("tid", DbType.String, 36, GerenciadorTransacao.ObterIDAtual());
                 comando.AdicionarParametroEntrada("id", declaracao.Id, DbType.Int32);
 
                 bancoDeDados.ExecutarNonQuery(comando);
 
-                #endregion
+				#endregion
 
-                #region Histórico
+				#region Histórico
 
-                //Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.atualizar, bancoDeDados);
+				Historico.Gerar(declaracao.Id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.atualizar, bancoDeDados);
 
-                #endregion Histórico
+				#endregion Histórico
 
-                bancoDeDados.Commit();
+				bancoDeDados.Commit();
             }
         }
 
@@ -136,11 +137,16 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
                 comando.AdicionarParametroEntrada("id", id, DbType.Int32);
                 bancoDeDados.ExecutarNonQuery(comando);
-                bancoDeDados.Commit();
 
+				#region Histórico
+
+				Historico.Gerar(id, eHistoricoArtefato.declaracaoadicional, eHistoricoAcao.excluir, bancoDeDados);
+
+				#endregion
+
+				bancoDeDados.Commit();
             }
         }
-
     
         #endregion
 
@@ -209,8 +215,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
             return declaracao;
         }
 
-    
-
         internal Resultados<DeclaracaoAdicional> Filtrar(Filtro<DeclaracaoAdicional> filtros, BancoDeDados banco = null)
         {
             Resultados<DeclaracaoAdicional> retorno = new Resultados<DeclaracaoAdicional>();
@@ -276,8 +280,6 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloVegetal.Data
 
             return retorno;
         }
-
-       
 
         #endregion
 
