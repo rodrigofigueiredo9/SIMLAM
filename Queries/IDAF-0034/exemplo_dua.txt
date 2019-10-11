@@ -1,0 +1,70 @@
+<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">
+	<soap:Body>
+		<duaConsultaResponse xmlns=\"http://www.sefaz.es.gov.br/duae\">
+			<duaConsultaResult>
+				<retConsDua versao=\"1.00\" xmlns=\"http://www.sefaz.es.gov.br/duae\">
+					<tpAmb>1</tpAmb>
+					<dRet>2019-10-10T16:38:21</dRet>
+					<nProt>47097be6-6506-401c-a2c8-43611999c656</nProt>
+					<tProc>46</tProc>
+					<cStat>104</cStat>
+					<xMotivo>Consulta Dua realizada com sucesso</xMotivo>
+					<dua>
+						<infDUAe versao=\"1.00\">
+							<ide>
+								<nDUA>2666325568</nDUA>
+								<dEmis>2018-07-25T08:46:45</dEmis>
+								<cBarra>858000000046908000072012807252666320556822910176</cBarra>
+							</ide>
+							<orgao>
+								<cnpj>02254666000100</cnpj>
+								<cOrg>8</cOrg>
+								<xNome>Instituto de Defesa Agropecuária e Florestal</xNome>
+								<xSigla>IDAF</xSigla>
+							</orgao>
+							<area>
+								<cArea>552</cArea>
+								<xNome>Defesa Sanitaria Vegetal</xNome>
+							</area>
+							<serv>
+								<cServ>21212</cServ>
+								<xNome>Emissão de Permissão de Trânsito - PTV</xNome>
+							</serv>
+							<rece>
+								<cRece>2291</cRece>
+								<vRece>490.80</vRece>
+							</rece>
+							<contri>
+								<cnpj>02405002000196</cnpj>
+								<xNome>BANANAS EP LTDA</xNome>
+							</contri>
+							<data>
+								<dRef>2018-07</dRef>
+								<dVen>2018-07-25</dVen>
+								<dPag>2018-07-25</dPag>
+							</data>
+							<valor>
+								<vMul>0.00</vMul>
+								<vJur>0.00</vJur>
+								<vAtu>0.00</vAtu>
+								<vCred>0.00</vCred>
+								<vTot>490.80</vTot>
+							</valor>
+							<infComp>30 PTV'S.</infComp>
+							<pgto>
+								<cPgto>2</cPgto>
+								<dAut>2018-07-25</dAut>
+								<cAge>0104</cAge>
+								<cAut>E703444082DCFD96</cAut>
+								<fPgto>D</fPgto>
+								<tCap>2</tCap>
+								<cBan>001</cBan>
+							</pgto>
+						</infDUAe>
+					</dua>
+				</retConsDua>
+			</duaConsultaResult>
+		</duaConsultaResponse>
+	</soap:Body>
+</soap:Envelope>

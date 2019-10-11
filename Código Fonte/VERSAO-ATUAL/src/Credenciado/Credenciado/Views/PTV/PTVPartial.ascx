@@ -29,7 +29,7 @@
 			<label class="append5"><%= Html.RadioButton("TipoPessoa", PessoaTipo.JURIDICA, Model.PTV.TipoPessoa == PessoaTipo.JURIDICA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "radio pessoaj rdbPessaoTipo" }))%> Jurídica</label>
 		</div>
 
-		<div class="coluna20 prepend7 divDUA">
+		<div class="coluna20 divDUA">
 			<div class="CpfPessoaFisicaContainer <%= Model.PTV.TipoPessoa != PessoaTipo.JURIDICA ? "" : "hide" %> ">
 				<label for="CPFCNPJDUA">CPF *</label>
 				<%= Html.TextBox("CPFCNPJDUA", Model.PTV.CPFCNPJDUA, ViewModelHelper.SetaDisabled(Model.PTV.Id > 0, new { @class = "text maskCpf txtCPFDUA" }))%>
@@ -45,7 +45,12 @@
 			<button type="button" class="inlineBotao btnVerificarDua <%= Model.PTV.Id > 0 ? "hide":""%>">Verificar</button>
 			<button type="button" class="inlineBotao btnLimparDua <%= Model.PTV.Id <= 0 ? "hide":""%>">Editar</button>
 		</div>
+		<div class="linhaConteudo hide">
+			<br />
+			<label>Saldo restante no DUA: <span class="saldoAtualDua"></span> EPTVs</label>
+		</div>
 		<% } %>
+
 		</div>
 </fieldset>
 

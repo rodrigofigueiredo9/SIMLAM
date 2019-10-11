@@ -943,16 +943,37 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 		{
 			try
 			{
-				var wSDUA = new WSDUA();
-				var dua = wSDUA.ObterDUA(numero, cpfCnpj, tipo == "1" ? eTipoPessoa.Fisica : eTipoPessoa.Juridica);
+				int saldo = _validar.VerificarSaldoDuaJaConsultado(numero, cpfCnpj, ptvId);
 
-				if (Validacao.EhValido)
-					_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
+				if (saldo < 0)
+				{
+					var wSDUA = new WSDUA();
+					var dua = wSDUA.ObterDUA(numero, cpfCnpj, tipo == "1" ? eTipoPessoa.Fisica : eTipoPessoa.Juridica);
+
+					if (Validacao.EhValido)
+						_validar.ValidarDadosWebServiceDua(dua, numero, cpfCnpj, tipo, ptvId);
+				}
 			}
 			catch (Exception exc)
 			{
 				Validacao.AddErro(exc);
 			}
+		}
+
+		public int VerificarSaldoAtualDUA(string numero, string cpfCnpj, int ptvId)
+		{
+			int saldo = 0;
+
+			try
+			{
+				saldo = _validar.VerificarSaldoDuaJaConsultado(numero, cpfCnpj, ptvId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return saldo;
 		}
 
 		#endregion

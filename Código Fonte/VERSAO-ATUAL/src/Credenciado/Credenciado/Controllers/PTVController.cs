@@ -670,11 +670,18 @@ namespace Tecnomapas.EtramiteX.Credenciado.Controllers
 		{
             _busPTV.VerificarDUA(numero, cpfCnpj, tipo, ptvId);
 
+			int saldo = 0;
+			if (Validacao.EhValido)
+			{
+				saldo = _busPTV.VerificarSaldoAtualDUA(numero, cpfCnpj, ptvId) - 1;
+			}
+
 			return Json(new
 			{
 				@Valido = Validacao.EhValido,
 				@Msg = Validacao.Erros,
-				@Consultado = true
+				@Consultado = true,
+				@Saldo = saldo
 			}, JsonRequestBehavior.AllowGet);
 		}
 
