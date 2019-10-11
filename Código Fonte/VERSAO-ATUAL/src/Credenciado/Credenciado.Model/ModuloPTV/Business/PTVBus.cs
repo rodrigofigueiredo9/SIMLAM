@@ -960,6 +960,22 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 			}
 		}
 
+		public int VerificarSaldoAtualDUA(string numero, string cpfCnpj, int ptvId)
+		{
+			int saldo = 0;
+
+			try
+			{
+				saldo = _validar.VerificarSaldoDuaJaConsultado(numero, cpfCnpj, ptvId);
+			}
+			catch (Exception exc)
+			{
+				Validacao.AddErro(exc);
+			}
+
+			return saldo;
+		}
+
 		#endregion
 
 		#region Alerta de E-PTV

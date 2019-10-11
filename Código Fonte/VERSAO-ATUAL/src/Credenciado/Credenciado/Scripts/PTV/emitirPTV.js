@@ -319,6 +319,8 @@ PTVEmitir = {
 					return;
 				}
 
+				$('.saldoAtualDua', PTVEmitir.container).text(response.Saldo);
+
 				$('.linhaConteudo', PTVEmitir.container).removeClass('hide');
 				$('.btnVerificarDua', PTVEmitir.container).addClass('hide');
 				$('.btnLimparDua', PTVEmitir.container).removeClass('hide');
