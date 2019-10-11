@@ -2321,12 +2321,20 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia())
 			{
-				Comando comando = bancoDeDados.CriarComando(@"
-                    select valor from cnf_valor_dua t where t.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') 
-                        and t.tipo = 1 and t.id = (select max(tt.id) from cnf_valor_dua tt where tt.data_inicial <= to_date(:dataReferencia, 'yyyy/mm') and tt.tipo = 1)", EsquemaBanco);
+				float valor = 0;
 
-				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia, DbType.String);
-				return (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+				Comando comando = bancoDeDados.CriarComando(@"
+							SELECT (LVDV.VALOR_VRTE*TFV.VRTE) valor_dua
+							FROM LOV_VALOR_DOCS_VRTE LVDV,
+								 TAB_FISC_VRTE TFV
+							WHERE LVDV.ID = 1	--PTV
+								  AND TFV.ANO = :dataReferencia", EsquemaBanco);
+
+				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia.Substring(0, 4), DbType.Int32);
+
+				valor = (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+
+				return valor;
 			}
 		}
 
