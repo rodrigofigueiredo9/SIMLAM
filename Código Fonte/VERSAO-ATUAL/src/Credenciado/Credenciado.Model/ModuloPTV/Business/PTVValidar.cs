@@ -574,7 +574,24 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Business
 				Validacao.Add(Mensagem.Dua.SemSaldo(numero));
 			}
 
+			if (Validacao.EhValido) _da.SalvarDuaConsultado(numero, cpfCnpj, quantidadeDuaPagos);
+
 			return Validacao.EhValido;
+		}
+
+		//Se o retorno for 0, é porque todo o saldo foi utilizado. Se o retorno for negativo, o DUA não consta no sistema.
+		internal int VerificarSaldoDuaJaConsultado(string numero, string cpfCnpj, int ptvId)
+		{
+			int saldoInicialDua = _da.ObterSaldoInicialDuaJaUtiizado(numero, cpfCnpj);
+
+			if (saldoInicialDua <= 0) return -1;
+
+			int quantidadeDuaEmitido = _da.ObterQuantidadeDuaEmitidos(numero, cpfCnpj, ptvId);
+			int saldoAtual = saldoInicialDua - quantidadeDuaEmitido;
+
+			if (saldoAtual < 0) saldoAtual = 0;
+
+			return saldoAtual;
 		}
 
 		public bool ValidarAcessoComunicadorPTV(int idPTV)

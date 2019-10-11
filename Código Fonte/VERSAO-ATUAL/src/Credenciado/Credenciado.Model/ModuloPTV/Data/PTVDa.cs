@@ -2338,6 +2338,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 			}
 		}
 
+		internal int ObterSaldoInicialDuaJaUtiizado(string numero, string cpfCnpj)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				int saldo = 0;
+
+				Comando comando = bancoDeDados.CriarComando(@"
+							SELECT tdp.saldo_inicial saldo
+							FROM TAB_DUA_PTV tdp
+							WHERE tdp.DUA = :dua
+								  AND tdp.CPF_CNPJ = :cpfcnpj", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("dua", numero, DbType.String);
+				comando.AdicionarParametroEntrada("cpfcnpj", cpfCnpj, DbType.String);
+
+				saldo = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+
+				return saldo;
+			}
+		}
+
 		internal string ObterSiglaSetorFuncionario(int funcionario)
 		{
 			var siglaSetor = String.Empty;
@@ -2852,6 +2873,27 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("id", filaID, DbType.Int32);
 
 				return bancoDeDados.ExecutarScalar<int>(comando) > 0;
+			}
+		}
+
+		internal void SalvarDuaConsultado(string numero, string cpfCnpj, int saldoInicial)
+		{
+			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
+			{
+				Comando comando = bancoDeDados.CriarComando(@"
+							INSERT INTO TAB_DUA_PTV
+							VALUES(SEQ_TAB_DUA_PTV.nextval,
+								   :dua,
+								   :cpfcnpj,
+								   :saldoInicial)", UsuarioCredenciado);
+
+				comando.AdicionarParametroEntrada("dua", numero, DbType.String);
+				comando.AdicionarParametroEntrada("cpfcnpj", cpfCnpj, DbType.String);
+				comando.AdicionarParametroEntrada("saldoInicial", saldoInicial, DbType.Int32);
+
+				bancoDeDados.ExecutarNonQuery(comando);
+
+				bancoDeDados.Commit();
 			}
 		}
 
