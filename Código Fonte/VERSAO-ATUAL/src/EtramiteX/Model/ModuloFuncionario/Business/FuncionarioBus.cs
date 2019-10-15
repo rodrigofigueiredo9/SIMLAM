@@ -454,7 +454,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloFuncionario.Business
 			return null;
 		}
 
-		internal Funcionario ObterFuncionarioAutenticacao(String login)
+		public Funcionario ObterFuncionarioAutenticacao(String login)
 		{
 			return _da.ObterFuncionarioAutenticacao(login);
 		}

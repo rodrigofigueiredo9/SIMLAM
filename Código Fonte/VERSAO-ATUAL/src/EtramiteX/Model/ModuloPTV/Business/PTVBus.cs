@@ -1156,11 +1156,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 		#region Alerta de E-PTV
 
-		public bool VerificaAlertaEPTV()
+		public bool VerificaAlertaEPTV(int funcionarioId, string login)
 		{
 			bool houveAlerta = false;
-
-			int funcionarioId = User?.FuncionarioId ?? 0;
 
 			//verifica se o usuário está habilitado para emissão de PTV
 			bool habilitado = _validar.FuncionarioHabilitadoValido(funcionarioId);
@@ -1172,7 +1170,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloPTV.Business
 
 				if (quantidade > 0)
 				{
-					Log.Error(String.Concat("PTVBus.cs: FuncionarioId=", funcionarioId, ", FuncionarioNome: ", User?.Name, ", Quantidade=", quantidade));
+					if (funcionarioId != User?.FuncionarioId)
+						Log.Error($"FuncionarioId={funcionarioId}, UserFuncionarioId: {User?.FuncionarioId}, Login: {login}, Quantidade={quantidade}");
 					Validacao.AddAlertaEPTV(Mensagem.PTV.ExistemEPTVsAguardandoAnalise(quantidade));
 					houveAlerta = true;
 				}

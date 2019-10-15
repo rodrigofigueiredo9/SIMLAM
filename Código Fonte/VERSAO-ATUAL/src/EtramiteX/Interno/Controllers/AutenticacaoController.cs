@@ -138,8 +138,9 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 				//Gera a mensagem de alerta de E-PTV (se houver)
 				#region Alerta de E-PTV
 
+				var funcionario = new FuncionarioBus().ObterFuncionarioAutenticacao(login);
 				PTVBus _busPTV = new PTVBus();
-				_busPTV.VerificaAlertaEPTV();
+				_busPTV.VerificaAlertaEPTV(funcionario.Id, login);
 
 				#endregion Alerta de E-PTV
 

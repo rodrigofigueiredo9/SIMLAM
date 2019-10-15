@@ -65,7 +65,8 @@ namespace Interno
 					aCookie.Expires = DateTime.Now.AddDays(1);
 					Response.Cookies.Add(aCookie);
 
-					_bus.VerificaAlertaEPTV();	//emite o alerta
+					var usuario = (HttpContext.Current.User as EtramitePrincipal)?.EtramiteIdentity ?? null;
+					_bus.VerificaAlertaEPTV(usuario?.FuncionarioId ?? 0, login);	//emite o alerta
 				}
 			}
 

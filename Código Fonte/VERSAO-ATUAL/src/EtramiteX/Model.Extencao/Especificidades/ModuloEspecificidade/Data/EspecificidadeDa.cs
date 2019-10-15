@@ -1286,19 +1286,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.Extensoes.Especificidades.ModuloEsp
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select
-                       l.codigo_imovel                      
-				  from (select s.codigo_imovel from {0}tab_controle_sicar s
-					where s.empreendimento = :empreendimento and s.solicitacao_car_esquema = 1
-					union all
-					select s.codigo_imovel from tab_controle_sicar s
-					where empreendimento = :empreendimento and solicitacao_car_esquema = 2
-					and exists
-					(
-					  select 1 from idafcredenciado.tab_empreendimento t
-					  where t.interno = s.empreendimento  
-					)) l
-				 where l.codigo_imovel is not null and rownum = 1", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select l.codigo_imovel from 
+							 (select codigo_imovel from {0}tab_controle_sicar tcs
+							 where nvl(tcs.solicitacao_car_esquema, 1) = 1
+							 and tcs.codigo_imovel is not null
+							 and tcs.empreendimento = :empreendimento
+							 union all
+							 select codigo_imovel from {0}tab_controle_sicar tcs
+							 where nvl(tcs.solicitacao_car_esquema, 2) = 2
+							 and tcs.codigo_imovel is not null
+							 and exists (select 1 from {1}tab_empreendimento e
+							 where e.interno = :empreendimento and e.id = tcs.empreendimento)) l
+							 where rownum = 1", EsquemaBanco);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 

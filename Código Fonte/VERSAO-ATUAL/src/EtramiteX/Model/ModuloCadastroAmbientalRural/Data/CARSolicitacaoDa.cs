@@ -1466,45 +1466,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(banco))
 			{
-				Comando comando = bancoDeDados.CriarComando(@"select
-                       l.codigo_imovel                      
-				  from (select tsicar.codigo_imovel
-                              from tab_car_solicitacao tcs, tab_protocolo pt, tab_pessoa pe, tab_empreendimento e, tab_empreendimento_endereco ee,
-                                   lov_municipio lme, lov_car_solicitacao_situacao lcss, tab_controle_sicar tsicar,lov_situacao_envio_sicar lses
-                             where not exists (select lst.solic_tit_id from lst_car_solic_tit lst where lst.tipo=1 and lst.solic_tit_id=tcs.id)
-                               and tcs.protocolo=pt.id
-                               and tcs.declarante=pe.id
-                               and tcs.empreendimento=e.id
-                               and e.id=ee.empreendimento(+)
-                               and ee.municipio=lme.id(+)
-                               and ee.correspondencia(+)=0
-                               and tcs.situacao=lcss.id
-                               and tcs.id=tsicar.solicitacao_car(+)
-                               and tsicar.solicitacao_car_esquema(+)=1
-                               and tsicar.situacao_envio=lses.id(+)
-                               and e.id = :empreendimento
-                                 union all
-							select tcs.codigo_imovel
-						  from lst_car_solic_tit        s,
-							   tab_controle_sicar       tcs,
-							   lov_situacao_envio_sicar lses
-						 where s.tipo = 1
-						   and nvl(tcs.solicitacao_car_esquema, 1) = 1
-						   and s.solic_tit_id = tcs.solicitacao_car(+)
-						   and tcs.situacao_envio = lses.id(+)
-						   and s.empreendimento_id = :empreendimento
-						union all
-						select tcs.codigo_imovel
-						  from lst_car_solicitacao_cred c,
-							   tab_controle_sicar       tcs,
-							   lov_situacao_envio_sicar lses,
-							   tab_protocolo            tp
-						 where nvl(tcs.solicitacao_car_esquema, 2) = 2
-						   and c.solicitacao_id = tcs.solicitacao_car(+)
-						   and tcs.situacao_envio = lses.id(+)
-						   AND c.requerimento = TP.Requerimento(+)
-						   and c.empreendimento_id = :empreendimento) l
-				 where l.codigo_imovel is not null and rownum = 1", EsquemaBanco);
+				Comando comando = bancoDeDados.CriarComando(@"select l.codigo_imovel from 
+							 (select codigo_imovel from {0}tab_controle_sicar tcs
+							 where nvl(tcs.solicitacao_car_esquema, 1) = 1
+							 and tcs.codigo_imovel is not null
+							 and tcs.empreendimento = :empreendimento
+							 union all
+							 select codigo_imovel from {0}tab_controle_sicar tcs
+							 where nvl(tcs.solicitacao_car_esquema, 2) = 2
+							 and tcs.codigo_imovel is not null
+							 and exists (select 1 from {1}tab_empreendimento e
+							 where e.interno = :empreendimento and e.id = tcs.empreendimento)) l
+							 where rownum = 1", EsquemaBanco, UsuarioCredenciado);
 
 				comando.AdicionarParametroEntrada("empreendimento", empreendimentoId, DbType.Int32);
 
