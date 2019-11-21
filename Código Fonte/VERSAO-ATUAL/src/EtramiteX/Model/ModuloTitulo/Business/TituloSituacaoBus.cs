@@ -903,6 +903,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 			var apiUri = ConfigurationManager.AppSettings["apiInstitucional"];
 			var token = ConfigurationManager.AppSettings["tokenApiInstitucional"];
 
+			_client.Timeout = TimeSpan.FromMinutes(20);
 			_client.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
 			var busCar = new CARSolicitacaoBus();
 			var codigoSicar = busCar.ObterCodigoSicarPorEmpreendimento(titulo.EmpreendimentoId.GetValueOrDefault(0));
