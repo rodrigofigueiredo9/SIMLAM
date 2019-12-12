@@ -165,17 +165,18 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 				entidade = obterDados(entidade);
 
-				if (!isTitulo)
-				{
-					entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
-					entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
-				}
 
 				//passivo arrumado
 				GerenciadorTransacao.ObterIDAtual();
 
 				if (_validar.AlterarSituacao(entidade, funcionario.FuncionarioId, isTitulo))
 				{
+					if (!isTitulo && entidade.ArquivoCancelamento != null)
+					{
+						entidade.ArquivoCancelamento = _busArquivo.Copiar(entidade.ArquivoCancelamento);
+						entidade.ArquivoCancelamento = _busArquivo.ObterTemporario(entidade.ArquivoCancelamento);
+					}
+
 					AlterarSituacaoSicar(entidade);
 
 					if (!Validacao.EhValido) return false;
@@ -206,7 +207,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 							int situacaoArquivo = ObterNovaSituacaoArquivo(entidade.SituacaoId, entidade.SituacaoAnteriorId);
 							_da.AlterarSituacaoArquivoSicar(entidade, situacaoArquivo, bancoDeDados);
 
-							_arquivoDa.Salvar(entidade.ArquivoCancelamento, funcionario.FuncionarioId, funcionario.Name, funcionario.Login, (int)eExecutorTipo.Interno, funcionario.FuncionarioTid);
+							if(entidade.ArquivoCancelamento != null)
+								_arquivoDa.Salvar(entidade.ArquivoCancelamento, funcionario.FuncionarioId, funcionario.Name, funcionario.Login, (int)eExecutorTipo.Interno, funcionario.FuncionarioTid);
+
 							_da.InserirAlterarSituacaoLista(entidade, bancoDeDados);
 							Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacao);
 						}
@@ -246,7 +249,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 
 			void AlterarSituacaoSicar(CARSolicitacao solicitacao)
 			{
-				SicarAnaliseRetornoDTO resultado = new SicarAnaliseRetornoDTO();
+				var resultado = new SicarAnaliseRetornoDTO();
 				switch (solicitacao.SituacaoId)
 				{
 					case (int)eCARSolicitacaoSituacao.Valido:
@@ -272,14 +275,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 						break;
 				}
 
-				if (resultado?.codigoResposta == 400)
-				{
-					if (resultado.mensagensResposta?.Count > 0)
-						resultado.mensagensResposta.ForEach(mensagem =>
-						{
-							Validacao.Add(eTipoMensagem.Advertencia, mensagem);
-						});
-				}
+				if (resultado?.Status != "s")
+					Validacao.Add(eTipoMensagem.Advertencia, resultado.Mensagem);
 			}
 		}
 

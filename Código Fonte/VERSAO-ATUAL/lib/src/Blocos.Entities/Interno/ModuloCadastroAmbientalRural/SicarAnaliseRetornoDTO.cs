@@ -8,6 +8,10 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 {
 	public class SicarAnaliseRetornoDTO
 	{
+		public string Status { get; set; }
+		public string Mensagem { get; set; }
+		public string Dados { get; set; }
+		/*
 		public int codigoResposta { get; set; }
 		public string idtImovel { get; set; }
 		public string diretorioTemp { get; set; }
@@ -19,5 +23,6 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
 		public List<string> mensagensResposta { get; set; }
 		public string imoveisImpactados { get; set; }
 		public string protocoloImovel { get; set; }
+		*/
 	}
 }
