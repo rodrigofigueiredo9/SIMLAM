@@ -420,9 +420,13 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				&& (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))
 				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
-			if (!(entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido && situacaoArquivo == eStatusArquivoSICAR.ArquivoEntregue
-				&& (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR || entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso)))
-				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
+			//if (!((entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Valido || entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso) &&
+			//	situacaoArquivo == eStatusArquivoSICAR.ArquivoEntregue &&
+			//	(entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
+			//	entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR ||
+			//	entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso ||
+			//	entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Valido)))
+			//	Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoNaoPermitida);
 
 			if (entidade.SituacaoAnteriorId == (int)eCARSolicitacaoSituacao.Suspenso && situacaoArquivo == eStatusArquivoSICAR.Nulo
 				&& (entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Valido && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Invalido))

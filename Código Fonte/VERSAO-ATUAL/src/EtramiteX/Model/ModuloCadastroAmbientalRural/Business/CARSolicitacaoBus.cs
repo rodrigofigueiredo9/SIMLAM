@@ -199,7 +199,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 						if (!IsCredenciado)
 						{
 							_da.AlterarSituacao(entidade, bancoDeDados);
-							_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
+							if(entidade.SituacaoAnteriorId != (int)eCARSolicitacaoSituacao.Suspenso && entidade.SituacaoId != (int)eCARSolicitacaoSituacao.Suspenso)
+								_da.FazerVirarPassivo(entidade.Id, bancoDeDados);
 						}
 
 						if (!isTitulo && Validacao.EhValido)
@@ -563,8 +564,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			if (entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido ||
 				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.EmCadastro ||
 				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Nulo ||
-				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR ||
-				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.Suspenso)
+				entidade.SituacaoId == (int)eCARSolicitacaoSituacao.SubstituidoPeloTituloCAR)
 				return true;
 
 			if (_validar.validarFuncionario(funcionarioId, (int)ePermissao.CadastroAmbientalRuralSolicitacaoInvalida))

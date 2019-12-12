@@ -26,6 +26,7 @@ using Tecnomapas.EtramiteX.Interno.Model.Security;
 using Tecnomapas.EtramiteX.Interno.ViewModels;
 using Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao;
 using CARSolicitacaoCredenciadoBus = Tecnomapas.EtramiteX.Credenciado.Model.ModuloCadastroAmbientalRural.Business.CARSolicitacaoBus;
+using System.Linq;
 
 namespace Tecnomapas.EtramiteX.Interno.Controllers
 {
@@ -287,9 +288,15 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 
 			if (solicitacao.Id == 0)
 				solicitacao = _busCredenciado.Obter(id, simplificado: true);
-			
-			solicitacao.CarCancelamento = _bus.ObterListaCancelamentoCar(id);
 
+			if (solicitacao.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido)
+				solicitacao.CarCancelamento = _bus.ObterListaCancelamentoCar(id);
+			else
+			{
+				solicitacao.DescricaoMotivo = string.Empty;
+				solicitacao.CarCancelamento = new List<CARCancelamento>();
+			}
+			
 			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
 				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());
 
