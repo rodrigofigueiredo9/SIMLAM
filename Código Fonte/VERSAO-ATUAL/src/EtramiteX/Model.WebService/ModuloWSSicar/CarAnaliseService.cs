@@ -45,9 +45,11 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					var sicarUrl = $"{urlSicarHomolog}/imovel/analise/atualizar";
 					HttpClient _client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 					_client.DefaultRequestHeaders.Clear();
+					//_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
+					//_client.DefaultRequestHeaders.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
 
-					//form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
-					form.Headers.Add("token", "06-F6-A4-89-20-91-15-C5-CE-F3-F4-50-36-AA"); //ConfigurationManager.AppSettings["SicarToken"]);
+					form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
+					//form.Headers.Add("token", "06-F6-A4-89-20-91-15-C5-CE-F3-F4-50-36-AA"); //ConfigurationManager.AppSettings["SicarToken"]);
 
 					//solicitacao.Status = eStatusImovelSicar.Pendente;
 					if (solicitacao.Status == eStatusImovelSicar.Cancelado && solicitacao.ArquivoCancelamento != null)
@@ -100,25 +102,20 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					var sicarUrl = $"{urlSicarHomolog}/imovel/{uri}/suspensao";
 					HttpClient _client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 					_client.DefaultRequestHeaders.Clear();
+					_client.DefaultRequestHeaders.Add("WWW-Authenticate", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD");
 
-					form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD");
+					//form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD");
 
-					form.Add(new StringContent(solicitacao.AutorCancelamento.Cpf), "cpfUsuario");
+					form.Add(new StringContent(solicitacao.AutorCancelamento.Cpf.Replace("-", string.Empty).Replace(".", string.Empty).Replace("/", string.Empty)), "cpfUsuario");
 					form.Add(new StringContent(solicitacao.SICAR.CodigoImovel), "codImovel");
 					//form.Add(new StringContent(), "idInstituicao");
 					form.Add(new StringContent(solicitacao.DescricaoMotivo), "descricaoJustificativa");
 					form.Add(new StringContent("DECISAO_ADMINISTRATIVA"), "descricaoMotivo");
 					form.Add(new StringContent("EST"), "tipoOrigem");
 					form.Add(new StringContent("SISTEMA"), "tipoResponsavel");
-					if (false /*solicitacao.Status == eStatusImovelSicar.Cancelado*/)
-					{
-						form.Add(new StringContent(solicitacao.ArquivoCancelamento.Id.ToString()), "numeroDocumento");
-						var imageContent = new StreamContent(solicitacao.ArquivoCancelamento.Buffer);
-						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
-						form.Add(imageContent, "arquivoSuspensao", solicitacao.ArquivoCancelamento.Nome);
-					}
+					
 
-					var response = _client.PostAsync("/sincronia/quick", form).Result;
+					var response = _client.PostAsync($"/imovel/{uri}/suspensao", form).Result;
 
 					if (response.IsSuccessStatusCode)
 					{
@@ -128,7 +125,7 @@ namespace Interno.Model.WebService.ModuloWSSicar
 						return jsonFormat;
 					}
 
-					throw new ArgumentException("Erro de conexão com o SICAR");
+					throw new ArgumentException(String.Concat("Erro de conexão com o SICAR", " - ", response.Content.ReadAsStringAsync().Result));
 				}
 				catch (Exception ex)
 				{
