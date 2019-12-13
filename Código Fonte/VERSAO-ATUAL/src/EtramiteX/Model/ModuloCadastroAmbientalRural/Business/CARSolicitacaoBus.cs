@@ -512,6 +512,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 				return  (int)eStatusArquivoSICAR.Cancelado;
 			else if (situacaoAnterior == (int)eCARSolicitacaoSituacao.Valido && situacaoNova == (int)eCARSolicitacaoSituacao.Suspenso)
 				return (int)eStatusArquivoSICAR.ArquivoEntregue;
+			else if (situacaoAnterior == (int)eCARSolicitacaoSituacao.Suspenso && situacaoNova == (int)eCARSolicitacaoSituacao.Valido)
+				return (int)eStatusArquivoSICAR.ArquivoEntregue;
 			else
 				return (int)eStatusArquivoSICAR.ArquivoReprovado;
 		}

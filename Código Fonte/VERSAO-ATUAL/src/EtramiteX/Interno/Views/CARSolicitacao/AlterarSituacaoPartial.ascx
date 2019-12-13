@@ -23,24 +23,26 @@
             <%= Html.TextBox("CarCancelamento..Autor", Model.Autor.Nome, new { @class = "disabled text", @disabled = "disabled" })%>
         </div>
     </div>
-    <div class="block">
-        <div class="coluna20">
-            <label for="Situacao_Nova">Motivo*</label>
-            <%= Html.TextBox("CarCancelamento.Motivo", Model.Motivo.ToDescription(), new { @class = "disabled text", @disabled = "disabled" }) %>
-        </div>
+	<% if(Model.Situacao != eCARSolicitacaoSituacao.Suspenso) {%>
+		<div class="block">
+			<div class="coluna20">
+				<label for="Situacao_Nova">Motivo*</label>
+				<%= Html.TextBox("CarCancelamento.Motivo", Model.Motivo.ToDescription(), new { @class = "disabled text", @disabled = "disabled" }) %>
+			</div>
 
-        <div class="block">
-            <div class="coluna41 prepend1 inputFileDiv">
-                <label for="ArquivoTexto">Arquivo de autorização *</label>
-                <% if (Model.ArquivoAnexo.Id.GetValueOrDefault() > 0)
-					{ %>
-                <div>
-                    <%= Html.ActionLink(ViewModelHelper.StringFit(Model.ArquivoAnexo.Nome, 45), "Baixar", "Arquivo", new { @id = Model.ArquivoAnexo.Id.GetValueOrDefault() }, new { @Style = "display: block", @class = "lnkArquivo", @title = Model.ArquivoAnexo.Nome })%>
-                </div>
-                <% } %>
-            </div>
-        </div>
-    </div>
+			<div class="block">
+				<div class="coluna41 prepend1 inputFileDiv">
+					<label for="ArquivoTexto">Arquivo de autorização *</label>
+					<% if (Model.ArquivoAnexo.Id.GetValueOrDefault() > 0)
+						{ %>
+					<div>
+						<%= Html.ActionLink(ViewModelHelper.StringFit(Model.ArquivoAnexo.Nome, 45), "Baixar", "Arquivo", new { @id = Model.ArquivoAnexo.Id.GetValueOrDefault() }, new { @Style = "display: block", @class = "lnkArquivo", @title = Model.ArquivoAnexo.Nome })%>
+					</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	<%} %>
     <div class="ultima divMotivo">
         <label for="AlterarSituacao_Motivo">Descrição do motivo*</label>
         <%= Html.TextArea("CarCancelamento.Motivo", Model.DecricaoMotivo, ViewModelHelper.SetaDisabled(true, new { @class = "media text ", @maxlength="300" }))%>
