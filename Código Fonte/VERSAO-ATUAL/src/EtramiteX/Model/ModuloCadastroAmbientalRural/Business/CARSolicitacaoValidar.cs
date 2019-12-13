@@ -386,7 +386,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloCadastroAmbientalRural.Busine
 			if (car.SituacaoId <= 0)
 				Validacao.Add(Mensagem.CARSolicitacao.SolicitacaoAlterarSituacaoNovaSituacaoObrigatoria);
 
-			if(car.Motivo == eCARCancelamentoMotivo.DecisaoJudicial && (car.ArquivoCancelamento == null || car.ArquivoCancelamento.Buffer == null))
+			if(car.Motivo == eCARCancelamentoMotivo.DecisaoJudicial && car.ArquivoCancelamento == null)
 				Validacao.Add(Mensagem.CARSolicitacao.ArquivoCancelamentoObrigatorio);
 
 			if (String.IsNullOrWhiteSpace(car.DescricaoMotivo))

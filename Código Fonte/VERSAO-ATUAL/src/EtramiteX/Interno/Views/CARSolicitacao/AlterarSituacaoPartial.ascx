@@ -31,7 +31,7 @@
 
         <div class="block">
             <div class="coluna41 prepend1 inputFileDiv">
-                <label for="ArquivoTexto">Autorização do conselho de classe *</label>
+                <label for="ArquivoTexto">Arquivo de autorização *</label>
                 <% if (Model.ArquivoAnexo.Id.GetValueOrDefault() > 0)
 					{ %>
                 <div>

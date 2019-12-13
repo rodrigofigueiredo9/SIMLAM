@@ -289,13 +289,8 @@ namespace Tecnomapas.EtramiteX.Interno.Controllers
 			if (solicitacao.Id == 0)
 				solicitacao = _busCredenciado.Obter(id, simplificado: true);
 
-			if (solicitacao.SituacaoId == (int)eCARSolicitacaoSituacao.Invalido)
-				solicitacao.CarCancelamento = _bus.ObterListaCancelamentoCar(id);
-			else
-			{
-				solicitacao.DescricaoMotivo = string.Empty;
-				solicitacao.CarCancelamento = new List<CARCancelamento>();
-			}
+			solicitacao.DescricaoMotivo = string.Empty;
+			solicitacao.CarCancelamento = _bus.ObterListaCancelamentoCar(id);
 			
 			if (!_bus.Validar.AcessarAlterarSituacao(solicitacao))
 				return RedirectToAction("Index", "CARSolicitacao", Validacao.QueryParamSerializer());

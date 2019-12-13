@@ -28,16 +28,6 @@ namespace Interno.Model.WebService.ModuloWSSicar
 
 		public static SicarAnaliseRetornoDTO AlterarSituacaoSicar(CARSolicitacao solicitacao)
 		{
-			//var proxyUrl = ConfigurationManager.AppSettings["ProxyUrl"];
-			//if (!String.IsNullOrWhiteSpace(proxyUrl))
-			//{
-			//	_httpClientHandler.Proxy = new WebProxy(proxyUrl, false)
-			//	{
-			//		UseDefaultCredentials = false,
-			//		Credentials = CredentialCache.DefaultCredentials
-			//	};
-			//}
-
 			try
 			{
 				using (var form = new MultipartFormDataContent())
@@ -45,13 +35,9 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					var sicarUrl = $"{urlSicarHomolog}/imovel/analise/atualizar";
 					HttpClient _client = new HttpClient(_httpClientHandler) { BaseAddress = new Uri(sicarUrl) };
 					_client.DefaultRequestHeaders.Clear();
-					//_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
-					//_client.DefaultRequestHeaders.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
 
 					form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD"); //ConfigurationManager.AppSettings["SicarToken"]);
-					//form.Headers.Add("token", "06-F6-A4-89-20-91-15-C5-CE-F3-F4-50-36-AA"); //ConfigurationManager.AppSettings["SicarToken"]);
 
-					//solicitacao.Status = eStatusImovelSicar.Pendente;
 					if (solicitacao.Status == eStatusImovelSicar.Cancelado && solicitacao.ArquivoCancelamento != null)
 					{
 						var imageContent = new StreamContent(solicitacao.ArquivoCancelamento.Buffer); //new ByteArrayContent(solicitacao.ArquivoCancelamento.Buffer,);
