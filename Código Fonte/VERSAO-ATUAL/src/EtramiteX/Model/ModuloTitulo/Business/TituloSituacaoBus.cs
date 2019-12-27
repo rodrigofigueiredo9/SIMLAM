@@ -880,6 +880,8 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Business
 		{
 			if (!Validacao.EhValido) return false;
 
+			if (titulo.IgnorarIntegracao) return false;
+
 			var situacaoIntegravel = false;
 			switch (titulo.Situacao.Id)
 			{

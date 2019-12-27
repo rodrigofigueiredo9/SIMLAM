@@ -1288,8 +1288,9 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
                                    ta.data_inicio,
                                    ta.data_vencimento,
                                    ta.data_encerramento,
-									ta.data_situacao,
+								   ta.data_situacao,
                                    ta.arquivo,
+								   ta.ignorar_integracao,
                                    p.id representante,
                                    p.nome representante_nome,
                                    tp.id relacionamento_representante
@@ -1428,6 +1429,7 @@ namespace Tecnomapas.EtramiteX.Interno.Model.ModuloTitulo.Data
 						titulo.RequerimetoId = reader.GetValue<int?>("requerimento_titulo");
 						titulo.CredenciadoId = reader.GetValue<int?>("credenciado");
 						titulo.CodigoSinaflor = reader["codigo_sinaflor"].ToString();
+						titulo.IgnorarIntegracao = reader.GetValue<bool>("ignorar_integracao");
 
 						#endregion
 					}

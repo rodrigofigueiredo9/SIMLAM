@@ -26,6 +26,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloTitulo
 		public int? MotivoEncerramentoId { get; set; }
 		public string MotivoSuspensao { get; set; }
 		public int? RequerimentoAtividades { get; set; }
+		public bool IgnorarIntegracao { get; set; }
 
 		private TituloNumero _numero = new TituloNumero();
 		public TituloNumero Numero { get { return _numero; } set { _numero = value; } }
