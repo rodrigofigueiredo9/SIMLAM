@@ -38,7 +38,7 @@ namespace Tecnomapas.EtramiteX.Interno.ViewModels.VMCARSolicitacao
 				return ViewModelHelper.Json(new
 				{
 					@AlterarSituacaoMsgConfirmacao = Mensagem.CARSolicitacao.@AlterarSituacaoMsgConfirmacao,
-					@ArquivoObrigatorio = Mensagem.Arquivo.ArquivoObrigatorio
+					@ArquivoObrigatorio = Mensagem.CARSolicitacao.ArquivoCancelamentoObrigatorio
 
 				});
 			}

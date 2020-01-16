@@ -162,6 +162,6 @@ namespace Tecnomapas.Blocos.Etx.ModuloValidacao
 		}
 
 		public Mensagem SolicitacaoJaEnviada { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "Arquivo já enviado ao SICAR." }; } }
-		public Mensagem ArquivoCancelamentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "A arquivo de autorização é obrigatório quando a situação for por decisão administrativa." }; } }
+		public Mensagem ArquivoCancelamentoObrigatorio { get { return new Mensagem() { Tipo = eTipoMensagem.Advertencia, Texto = "É obrigatório anexar cópia do Documento." }; } }
 	}
 }

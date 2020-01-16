@@ -27,7 +27,7 @@ namespace Tecnomapas.Blocos.Entities.Interno.ModuloCadastroAmbientalRural
         public int Arquivo { get; set; }
         public Arquivo.Arquivo ArquivoCancelamento { get; set; }
         public Arquivo.Arquivo ArquivoAnexo { get; set; }
-		
+		public String NumeroDocumento { get; set; }
 
 		/*Autor*/
 		public Int32 AutorId { get; set; }

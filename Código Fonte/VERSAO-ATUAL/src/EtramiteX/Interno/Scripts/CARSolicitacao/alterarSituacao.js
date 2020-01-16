@@ -26,8 +26,12 @@ CARSolicitacaoAlterarSituacao = {
 
 	onSituacaoChange: function () {
 		situacao = $('.ddlSituacaoNova').val();
-		if (situacao == "3") {// invalido / cancelado
+		$('.divNumeroDocumento').hide();
+		if (situacao === "3" || situacao === "4") {// invalido / cancelado
 			$('.divCancelado').removeClass('hide');
+			if (situacao === "4") { //suspenso
+				$('.divNumeroDocumento').show();
+			}
 		} else {
 			$('.divCancelado').addClass('hide');
 			$('.ddlMotivo').val("0");
@@ -45,16 +49,15 @@ CARSolicitacaoAlterarSituacao = {
 		// ObterArquivoCancelamento
 		situacao = $('.ddlSituacaoNova').val();
 		motivo = $(".ddlMotivo ").val();
-		if (situacao === "3") {// invalido / cancelado 
-			arquivo = $('.hdnArquivo').val();
-			if (arquivo.isNullOrWhitespace()) {
-				if (motivo === "1") { // [] decisão judicial
-					Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, [CARSolicitacaoAlterarSituacao.mensagem.ArquivoObrigatorio]);
-					return false;
-				}
-			} else
-				arquivo = JSON.parse(arquivo);
-		}
+		arquivo = $('.hdnArquivo').val();
+		if (arquivo.isNullOrWhitespace()) {
+			if (motivo === "1") { // [] decisão judicial
+				Mensagem.gerar(CARSolicitacaoAlterarSituacao.container, [CARSolicitacaoAlterarSituacao.mensagem.ArquivoObrigatorio]);
+				return false;
+			}
+		} else
+			arquivo = JSON.parse(arquivo);
+
 		var obj = {
 			Id: $('.hdnSolicitacaoId', container).val(),
 			Numero: $('.txtSituacaoNumeroControle', container).val(),
@@ -65,7 +68,8 @@ CARSolicitacaoAlterarSituacao = {
 			Motivo: $('.ddlMotivo :selected', container).val(),
 			DescricaoMotivo: $('.txtSituacaoMotivo', container).val(),
 			SituacaoId: situacao,
-			ArquivoCancelamento: arquivo || null
+			ArquivoCancelamento: arquivo || null,
+			NumeroDocumento: $('.txtNumeroDocumento', container).val() 
 		};
 
 		return obj;
@@ -74,16 +78,25 @@ CARSolicitacaoAlterarSituacao = {
 	salvar: function () {
 		Mensagem.limpar(CARSolicitacaoAlterarSituacao.container);
 		var SituacaoAnteriorTexto = $('.txtSituacaoAtual').val();
+		var situacao = $('.ddlSituacaoNova').val();
+		var conteudo = "";
+
+		if (situacao === "2")
+			conteudo = "Esta Solicitação de Inscrição no CAR já foi enviada ao SICAR, se a situação for alterada irá ocorrer a alteração também no SICAR. Deseja continuar?";
+		else if (situacao === "3")
+			conteudo = "Esta Solicitação de Inscrição no CAR já foi enviada ao SICAR, se a situação for alterada para Inválido irá ocorrer o Cancelamento no SICAR e não poderá ser revertido. Deseja continuar?";
+		else
+			conteudo = CARSolicitacaoAlterarSituacao.mensagem.AlterarSituacaoMsgConfirmacao.Texto;
 
 		MasterPage.carregando(true);
 
-		if (SituacaoAnteriorTexto === 'Válido') {
+		if (SituacaoAnteriorTexto === 'Válido' || (SituacaoAnteriorTexto === 'Suspenso' && situacao === "2")) {
 			Modal.confirma({
 				btnOkCallback: function (container) {
 					CARSolicitacaoAlterarSituacao.callBackAlterarSituacao(container);
 				},
 				titulo: "Alterar situação solicitação CAR",
-				conteudo: CARSolicitacaoAlterarSituacao.mensagem.AlterarSituacaoMsgConfirmacao.Texto,
+				conteudo: conteudo,
 				tamanhoModal: Modal.tamanhoModalMedia
 			});
 		} else {

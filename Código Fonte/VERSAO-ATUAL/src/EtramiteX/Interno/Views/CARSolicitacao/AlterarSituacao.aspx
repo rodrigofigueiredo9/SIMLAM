@@ -32,7 +32,7 @@
             <legend>Solicitação de Inscrição do CAR/ES</legend>
             <div class="block">
                 <div class="coluna20">
-                    <label for="Situacao_NumeroControle">Nº de controle da solicitação*</label>
+                    <label for="Situacao_NumeroControle">Nº de controle da solicitação *</label>
                     <%= Html.TextBox("Situacao.NumeroControle", Model.Solicitacao.Numero, new { @class = "disabled text txtSituacaoNumeroControle", @disabled="disabled", @maxlength="7" })%>
                 </div>
 
@@ -48,7 +48,7 @@
             <legend>Situação</legend>
             <div class="block">
                 <div class="coluna20">
-                    <label for="Situacao_Atual">Situação atual*</label>
+                    <label for="Situacao_Atual">Situação atual *</label>
                     <%= Html.TextBox("Situacao.Atual", Model.Solicitacao.SituacaoTexto, new { @class = "disabled text txtSituacaoAtual", @disabled = "disabled" })%>
                 </div>
 
@@ -61,17 +61,17 @@
 				{ %>
             <div class="block">
                 <div class="coluna20">
-                    <label for="Situacao_Nova">Nova situação*</label>
+                    <label for="Situacao_Nova">Nova situação *</label>
                     <%= Html.DropDownList("Situacao.Nova", Model.Situacoes, new { @class = "text ddlSituacaoNova" }) %>
                 </div>
 
                 <div class="coluna15 prepend1">
-                    <label for="Situacao_DataNova">Data da nova situação*</label>
+                    <label for="Situacao_DataNova">Data da nova situação *</label>
                     <%= Html.TextBox("Situacao.DataNova", DateTime.Now.Date.ToShortDateString(), new { @class = "disabled text txtDataSituacaoNova", @disabled = "disabled" })%>
                 </div>
 
                 <div class="coluna15 prepend1">
-                    <label for="Situacao_DataNova">Autor*</label>
+                    <label for="Situacao_DataNova">Autor *</label>
                     <%= Html.TextBox("Situacao.Autor", Model.Autor.Nome, new { @class = "disabled text txtDataSituacaoNova", @disabled = "disabled" })%>
                 </div>
             </div>
@@ -80,12 +80,16 @@
 				{ %>
             <div class="block divCancelado hide">
                 <div class="coluna20">
-                    <label for="Situacao_Nova">Motivo*</label>
+                    <label for="Situacao_Nova">Motivo *</label>
                     <%= Html.DropDownList("Situacao.Nova", Model.Motivos, new { @class = "text ddlMotivo" }) %>
+                </div>
+				<div class="coluna15 prepend1 divNumeroDocumento hide">
+                    <label for="Situacao_NumeroDocumento">Número do Documento *</label>
+                    <%= Html.TextBox("Situacao.NumeroDocumento", Model.Solicitacao.NumeroDocumento, new { @class = "text txtNumeroDocumento maskNum15" }) %>
                 </div>
                 <div class="block">
                     <div class="coluna41 prepend1 inputFileDiv">
-                        <label for="ArquivoTexto">Arquivo de autorização *</label>
+                        <label for="ArquivoTexto">Documento *</label>
                         <% if (Model.ArquivoAnexo.Id.GetValueOrDefault() > 0)
 							{ %>
                         <div>
@@ -109,7 +113,7 @@
             </div>
 			<%} %>
             <div class="ultima divMotivo">
-                <label for="AlterarSituacao_Motivo">Descrição do motivo*</label>
+                <label for="AlterarSituacao_Motivo">Justificativa *</label>
                 <%= Html.TextArea("Situacao.Motivo", Model.Solicitacao.DescricaoMotivo, ViewModelHelper.SetaDisabled(Model.isVisualizar, new { @class = "media text txtSituacaoMotivo ", @maxlength = "300" }))%>
             </div>
         </fieldset>

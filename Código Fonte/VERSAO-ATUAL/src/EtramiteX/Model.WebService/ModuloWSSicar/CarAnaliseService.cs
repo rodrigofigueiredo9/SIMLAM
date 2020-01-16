@@ -91,16 +91,25 @@ namespace Interno.Model.WebService.ModuloWSSicar
 					_client.DefaultRequestHeaders.Add("WWW-Authenticate", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD");
 
 					//form.Headers.Add("token", "04-C1-9F-A1-E7-72-AB-66-F0-AA-D2-EF-E6-1F-25-CD");
-
+					if (solicitacao.ArquivoCancelamento != null)
+					{
+						var imageContent = new StreamContent(solicitacao.ArquivoCancelamento.Buffer); 
+						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+						form.Add(imageContent, "arquivoSuspensao", solicitacao.ArquivoCancelamento.Nome);
+					}
 					form.Add(new StringContent(solicitacao.AutorCancelamento.Cpf.Replace("-", string.Empty).Replace(".", string.Empty).Replace("/", string.Empty)), "cpfUsuario");
 					form.Add(new StringContent(solicitacao.SICAR.CodigoImovel), "codImovel");
 					//form.Add(new StringContent(), "idInstituicao");
 					form.Add(new StringContent(solicitacao.DescricaoMotivo), "descricaoJustificativa");
-					form.Add(new StringContent("DECISAO_ADMINISTRATIVA"), "descricaoMotivo");
+					if(solicitacao.Motivo == eCARCancelamentoMotivo.DecisaoJudicial)
+						form.Add(new StringContent("DECISAO_JUDICIAL"), "descricaoMotivo");
+					else
+						form.Add(new StringContent("DECISAO_ADMINISTRATIVA"), "descricaoMotivo");
+					if (!string.IsNullOrWhiteSpace(solicitacao.NumeroDocumento))
+						form.Add(new StringContent(solicitacao.NumeroDocumento), "numeroDocumento");
 					form.Add(new StringContent("EST"), "tipoOrigem");
 					form.Add(new StringContent("SISTEMA"), "tipoResponsavel");
 					
-
 					var response = _client.PostAsync($"/imovel/{uri}/suspensao", form).Result;
 
 					if (response.IsSuccessStatusCode)
