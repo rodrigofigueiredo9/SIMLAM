@@ -2332,7 +2332,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 
 				comando.AdicionarParametroEntrada("dataReferencia", dataReferencia.Substring(0, 4), DbType.Int32);
 
-				valor = (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+				valor = (float)Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando) ?? 0);
 
 				return valor;
 			}
@@ -2353,7 +2353,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("dua", numero, DbType.String);
 				comando.AdicionarParametroEntrada("cpfcnpj", cpfCnpj, DbType.String);
 
-				saldo = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+				saldo = Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
 
 				return saldo;
 			}
@@ -2398,7 +2398,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 				comando.AdicionarParametroEntrada("cpfCnpj", cpfCnpj, DbType.String);
 				comando.AdicionarParametroEntrada("ptvId", ptvId, DbType.Int32);
 
-				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando));
+				return Convert.ToInt32(bancoDeDados.ExecutarScalar(comando) ?? 0);
 			}
 		}
 
@@ -2645,7 +2645,7 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 						break;
 				}
 
-				return Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando));
+				return Convert.ToDecimal(bancoDeDados.ExecutarScalar(comando) ?? 0);
 			}
 		}
 
@@ -2880,6 +2880,8 @@ namespace Tecnomapas.EtramiteX.Credenciado.Model.ModuloPTV.Data
 		{
 			using (BancoDeDados bancoDeDados = BancoDeDados.ObterInstancia(UsuarioCredenciado))
 			{
+				bancoDeDados.IniciarTransacao();
+
 				Comando comando = bancoDeDados.CriarComando(@"
 							INSERT INTO TAB_DUA_PTV
 							VALUES(SEQ_TAB_DUA_PTV.nextval,
